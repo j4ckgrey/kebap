@@ -1,5 +1,3 @@
-import 'dart:developer';
-
 import 'package:flutter/material.dart';
 
 import 'package:ficonsax/ficonsax.dart';
@@ -26,7 +24,6 @@ class _FullScreenButtonState extends State<FullScreenButton> {
     setState(() {
       isFullScreen = fullScreen;
     });
-    log(isFullScreen.toString());
   }
 
   @override
