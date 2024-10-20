@@ -22,6 +22,7 @@ class DiscoverServersWidget extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
+    if (FladderConfig.baseUrl?.isNotEmpty == true) return const SizedBox.shrink();
     final existingServers = serverCredentials
         .map(
           (credentials) => DiscoveryInfo(
@@ -59,7 +60,7 @@ class DiscoverServersWidget extends ConsumerWidget {
               .toList()
               .addInBetween(const SizedBox(height: 4)),
         ],
-        if (!kIsWeb && FladderConfig.baseUrl?.isEmpty == true) ...[
+        if (!kIsWeb) ...[
           const Divider(),
           Row(
             children: [

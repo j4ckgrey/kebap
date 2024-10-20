@@ -1,5 +1,4 @@
 import 'dart:async';
-import 'dart:developer';
 
 import 'package:flutter/material.dart';
 
@@ -55,6 +54,11 @@ class _LoginPageState extends ConsumerState<LoginScreen> {
       addingNewUser = true;
       editingUsers = false;
     });
+    if (FladderConfig.baseUrl != null) {
+      serverTextController.text = FladderConfig.baseUrl!;
+      _parseUrl(FladderConfig.baseUrl!);
+      retrieveListOfUsers();
+    }
   }
 
   @override
@@ -224,7 +228,6 @@ class _LoginPageState extends ConsumerState<LoginScreen> {
   Future<Null> Function()? get enterCredentialsTryLogin => emptyFields()
       ? null
       : () async {
-          log('try login');
           serverTextController.text = serverTextController.text.rtrim('/');
           ref.read(authProvider.notifier).setServer(serverTextController.text.rtrim('/'));
           final response = await ref.read(authProvider.notifier).authenticateByName(
