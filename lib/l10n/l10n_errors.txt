@@ -1,41 +1,26 @@
 {
-  "es": [
-    "nativeName",
-    "settingsHomeBannerTitle",
-    "settingsHomeBannerDescription",
-    "homeBannerBanner",
-    "homeBannerCarousel"
-  ],
-
-  "fr": [
-    "nativeName",
-    "settingsHomeBannerTitle",
-    "settingsHomeBannerDescription",
-    "homeBannerBanner",
-    "homeBannerCarousel"
-  ],
-
-  "ja": [
-    "nativeName",
-    "settingsHomeBannerTitle",
-    "settingsHomeBannerDescription",
-    "homeBannerBanner",
-    "homeBannerCarousel"
-  ],
-
-  "nl": [
-    "nativeName",
-    "settingsHomeBannerTitle",
-    "settingsHomeBannerDescription",
-    "homeBannerBanner",
-    "homeBannerCarousel"
-  ],
-
-  "zh": [
-    "nativeName",
-    "settingsHomeBannerTitle",
-    "settingsHomeBannerDescription",
-    "homeBannerBanner",
-    "homeBannerCarousel"
+  "de": [
+    "masonry",
+    "mediaTypeBoxset",
+    "settingsHomeNextUpDesc",
+    "settingsNextUpCutoffDays",
+    "settingsPlayerNativeLibassAccelDesc",
+    "settingsPlayerNativeLibassAccelTitle",
+    "settingsPosterPinch",
+    "settingsPosterSize",
+    "settingsShowScaleSlider",
+    "syncDeleteItemDesc",
+    "syncRemoveDataDesc",
+    "timeAndAnnotation",
+    "totalSize",
+    "unknown",
+    "useDefaults",
+    "videoScalingFillScreenNotif",
+    "videoScalingFillScreenTitle",
+    "videoScalingFitHeight",
+    "videoScalingFitWidth",
+    "videoScalingScaleDown",
+    "viewPhotos",
+    "writer"
   ]
 }
