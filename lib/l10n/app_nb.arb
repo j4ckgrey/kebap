@@ -1,5 +1,4 @@
 {
-  "@@locale": "nb",
   "amoledBlack": "Nattsvart",
   "@amoledBlack": {},
   "addAsFavorite": "Legg til som favoritt",
@@ -940,6 +939,6 @@
   "@somethingWentWrongPasswordCheck": {},
   "settingsPlayerMobileWarning": "Å skru på maskinvareaskelerasjon og systemspesifikke libass-undertekster på Android kan føre til at noen undertekster ikke vises.",
   "@settingsPlayerMobileWarning": {},
-  "nativeName": "Norsk",
+  "nativeName": "Norsk bokmål",
   "@nativeName": {}
 }
