@@ -14,6 +14,5 @@ Resolves #issue-number
 
 ## Checklist
 
-- [ ] If a new package was added, did you ensure it works for all supported platforms? Is the package also well maintained?
-- [ ] Did you add localization for any text? If yes, did you sort the .arb file using ```arb_utils sort <INPUT_FILE>```?
+- [ ] If a new package was added, did you ensure it works for all supported platforms? Is the package well maintained
 - [ ] Check that any changes are related to the issue at hand.
