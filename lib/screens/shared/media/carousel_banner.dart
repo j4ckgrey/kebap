@@ -4,6 +4,7 @@ import 'package:collection/collection.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import 'package:fladder/models/item_base_model.dart';
+import 'package:fladder/screens/shared/flat_button.dart';
 import 'package:fladder/screens/shared/media/banner_play_button.dart';
 import 'package:fladder/util/adaptive_layout.dart';
 import 'package:fladder/util/fladder_image.dart';
@@ -53,102 +54,103 @@ class _CarouselBannerState extends ConsumerState<CarouselBanner> {
               ...widget.items.mapIndexed(
                 (index, item) => LayoutBuilder(builder: (context, constraints) {
                   final opacity = (constraints.maxWidth / maxExtent);
-                  return GestureDetector(
-                    onTap: () => widget.items[index].navigateTo(context),
-                    onLongPress: AdaptiveLayout.of(context).inputDevice == InputDevice.pointer
-                        ? null
-                        : () {
-                            final poster = widget.items[index];
-                            showBottomSheetPill(
-                              context: context,
-                              item: poster,
-                              content: (scrollContext, scrollController) => ListView(
-                                shrinkWrap: true,
-                                controller: scrollController,
-                                children:
-                                    poster.generateActions(context, ref).listTileItems(scrollContext, useIcons: true),
-                              ),
-                            );
-                          },
-                    onSecondaryTapDown: AdaptiveLayout.of(context).inputDevice == InputDevice.touch
-                        ? null
-                        : (details) async {
-                            Offset localPosition = details.globalPosition;
-                            RelativeRect position = RelativeRect.fromLTRB(
-                                localPosition.dx - 320, localPosition.dy, localPosition.dx, localPosition.dy);
-                            final poster = widget.items[index];
-
-                            await showMenu(
-                              context: context,
-                              position: position,
-                              items: poster.generateActions(context, ref).popupMenuItems(useIcons: true),
-                            );
-                          },
-                    child: Stack(
-                      clipBehavior: Clip.none,
-                      children: [
-                        FladderImage(image: item.bannerImage),
-                        Opacity(
-                          opacity: opacity.clamp(0, 1),
-                          child: Stack(
-                            children: [
-                              Positioned.fill(
-                                child: Container(
-                                  decoration: BoxDecoration(
-                                    gradient: LinearGradient(
-                                      begin: Alignment.bottomLeft,
-                                      end: Alignment.topCenter,
-                                      colors: [
-                                        ThemesData.of(context).dark.colorScheme.primaryContainer.withOpacity(0.85),
-                                        Colors.transparent,
-                                      ],
-                                    ),
+                  return Stack(
+                    clipBehavior: Clip.none,
+                    children: [
+                      FladderImage(image: item.bannerImage),
+                      Opacity(
+                        opacity: opacity.clamp(0, 1),
+                        child: Stack(
+                          children: [
+                            Positioned.fill(
+                              child: Container(
+                                decoration: BoxDecoration(
+                                  gradient: LinearGradient(
+                                    begin: Alignment.bottomLeft,
+                                    end: Alignment.topCenter,
+                                    colors: [
+                                      ThemesData.of(context).dark.colorScheme.primaryContainer.withOpacity(0.85),
+                                      Colors.transparent,
+                                    ],
                                   ),
                                 ),
                               ),
-                            ],
-                          ),
-                        ),
-                        Align(
-                          alignment: Alignment.bottomLeft,
-                          child: Padding(
-                            padding: const EdgeInsets.all(16.0).copyWith(right: constraints.maxWidth * 0.2),
-                            child: Column(
-                              mainAxisSize: MainAxisSize.min,
-                              crossAxisAlignment: CrossAxisAlignment.start,
-                              children: [
-                                Text(
-                                  item.title,
-                                  maxLines: 2,
-                                  softWrap: item.title.length > 25,
-                                  overflow: TextOverflow.fade,
-                                  style: Theme.of(context).textTheme.headlineMedium?.copyWith(color: Colors.white),
-                                ),
-                                if (item.label(context) != null || item.subText != null)
-                                  Text(
-                                    item.label(context) ?? item.subText ?? "",
-                                    maxLines: 2,
-                                    softWrap: false,
-                                    overflow: TextOverflow.fade,
-                                    style: Theme.of(context).textTheme.titleMedium?.copyWith(color: Colors.white),
-                                  ),
-                              ].addInBetween(const SizedBox(height: 4)),
                             ),
-                          ),
+                          ],
                         ),
-                        BannerPlayButton(item: widget.items[index]),
-                        IgnorePointer(
-                          child: Container(
-                            decoration: BoxDecoration(
-                                border: Border.all(
-                                  color: Colors.white.withOpacity(0.1),
-                                  width: 1.0,
+                      ),
+                      Align(
+                        alignment: Alignment.bottomLeft,
+                        child: Padding(
+                          padding: const EdgeInsets.all(16.0).copyWith(right: constraints.maxWidth * 0.2),
+                          child: Column(
+                            mainAxisSize: MainAxisSize.min,
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              Text(
+                                item.title,
+                                maxLines: 2,
+                                softWrap: item.title.length > 25,
+                                overflow: TextOverflow.fade,
+                                style: Theme.of(context).textTheme.headlineMedium?.copyWith(color: Colors.white),
+                              ),
+                              if (item.label(context) != null || item.subText != null)
+                                Text(
+                                  item.label(context) ?? item.subText ?? "",
+                                  maxLines: 2,
+                                  softWrap: false,
+                                  overflow: TextOverflow.fade,
+                                  style: Theme.of(context).textTheme.titleMedium?.copyWith(color: Colors.white),
                                 ),
-                                borderRadius: border),
+                            ].addInBetween(const SizedBox(height: 4)),
                           ),
                         ),
-                      ],
-                    ),
+                      ),
+                      FlatButton(
+                        onTap: () => widget.items[index].navigateTo(context),
+                        onLongPress: AdaptiveLayout.of(context).inputDevice == InputDevice.pointer
+                            ? null
+                            : () {
+                                final poster = widget.items[index];
+                                showBottomSheetPill(
+                                  context: context,
+                                  item: poster,
+                                  content: (scrollContext, scrollController) => ListView(
+                                    shrinkWrap: true,
+                                    controller: scrollController,
+                                    children: poster
+                                        .generateActions(context, ref)
+                                        .listTileItems(scrollContext, useIcons: true),
+                                  ),
+                                );
+                              },
+                        onSecondaryTapDown: AdaptiveLayout.of(context).inputDevice == InputDevice.touch
+                            ? null
+                            : (details) async {
+                                Offset localPosition = details.globalPosition;
+                                RelativeRect position = RelativeRect.fromLTRB(
+                                    localPosition.dx - 320, localPosition.dy, localPosition.dx, localPosition.dy);
+                                final poster = widget.items[index];
+
+                                await showMenu(
+                                  context: context,
+                                  position: position,
+                                  items: poster.generateActions(context, ref).popupMenuItems(useIcons: true),
+                                );
+                              },
+                      ),
+                      BannerPlayButton(item: widget.items[index]),
+                      IgnorePointer(
+                        child: Container(
+                          decoration: BoxDecoration(
+                              border: Border.all(
+                                color: Colors.white.withOpacity(0.1),
+                                width: 1.0,
+                              ),
+                              borderRadius: border),
+                        ),
+                      ),
+                    ],
                   );
                 }),
               )

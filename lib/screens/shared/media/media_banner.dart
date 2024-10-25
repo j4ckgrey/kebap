@@ -5,6 +5,7 @@ import 'package:ficonsax/ficonsax.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import 'package:fladder/models/item_base_model.dart';
+import 'package:fladder/screens/shared/flat_button.dart';
 import 'package:fladder/screens/shared/media/banner_play_button.dart';
 import 'package:fladder/util/adaptive_layout.dart';
 import 'package:fladder/util/fladder_image.dart';
@@ -104,89 +105,55 @@ class _MediaBannerState extends ConsumerState<MediaBanner> {
               surfaceTintColor: overlayColor,
               color: overlayColor,
               child: MouseRegion(
-                cursor: SystemMouseCursors.click,
-                child: GestureDetector(
-                  onTap: () => currentItem.navigateTo(context),
-                  onLongPress: AdaptiveLayout.of(context).inputDevice == InputDevice.touch
-                      ? () async {
-                          interacting = true;
-                          final poster = currentItem;
-                          showBottomSheetPill(
-                            context: context,
-                            item: poster,
-                            content: (scrollContext, scrollController) => ListView(
-                              shrinkWrap: true,
-                              controller: scrollController,
-                              children:
-                                  poster.generateActions(context, ref).listTileItems(scrollContext, useIcons: true),
-                            ),
-                          );
-                          interacting = false;
-                          timer.reset();
+                onEnter: (event) => setState(() => showControls = true),
+                onHover: (event) => timer.reset(),
+                onExit: (event) => setState(() => showControls = false),
+                child: Stack(
+                  fit: StackFit.expand,
+                  children: [
+                    Dismissible(
+                      key: const Key("Dismissable"),
+                      direction: DismissDirection.horizontal,
+                      onUpdate: (details) {
+                        setState(() {
+                          dragOffset = details.progress * 4;
+                        });
+                      },
+                      confirmDismiss: (direction) async {
+                        if (direction == DismissDirection.startToEnd) {
+                          previousSlide();
+                        } else {
+                          nextSlide();
                         }
-                      : null,
-                  onSecondaryTapDown: AdaptiveLayout.of(context).inputDevice == InputDevice.touch
-                      ? null
-                      : (details) async {
-                          Offset localPosition = details.globalPosition;
-                          RelativeRect position = RelativeRect.fromLTRB(
-                              localPosition.dx - 320, localPosition.dy, localPosition.dx, localPosition.dy);
-                          final poster = currentItem;
-
-                          await showMenu(
-                            context: context,
-                            position: position,
-                            items: poster.generateActions(context, ref).popupMenuItems(useIcons: true),
-                          );
-                        },
-                  child: MouseRegion(
-                    onEnter: (event) => setState(() => showControls = true),
-                    onHover: (event) => timer.reset(),
-                    onExit: (event) => setState(() => showControls = false),
-                    child: Stack(
-                      fit: StackFit.expand,
-                      children: [
-                        Dismissible(
-                          key: const Key("Dismissable"),
-                          direction: DismissDirection.horizontal,
-                          onUpdate: (details) {
-                            setState(() {
-                              dragOffset = details.progress * 4;
-                            });
-                          },
-                          confirmDismiss: (direction) async {
-                            if (direction == DismissDirection.startToEnd) {
-                              previousSlide();
-                            } else {
-                              nextSlide();
-                            }
-                            return false;
-                          },
-                          child: AnimatedOpacity(
-                            duration: const Duration(milliseconds: 125),
-                            opacity: dragOpacity.abs(),
-                            child: AnimatedSwitcher(
-                              duration: const Duration(milliseconds: 125),
-                              child: Container(
-                                key: Key(currentItem.id),
-                                clipBehavior: Clip.hardEdge,
-                                decoration: BoxDecoration(
-                                  borderRadius: BorderRadius.circular(14),
-                                ),
-                                foregroundDecoration: BoxDecoration(
-                                  borderRadius: BorderRadius.circular(14),
-                                  border: Border.all(
-                                      color: Colors.white.withOpacity(0.10), strokeAlign: BorderSide.strokeAlignInside),
-                                  gradient: LinearGradient(
-                                    begin: Alignment.bottomLeft,
-                                    end: Alignment.topCenter,
-                                    colors: [
-                                      overlayColor.withOpacity(0.85),
-                                      Colors.transparent,
-                                    ],
-                                  ),
-                                ),
-                                child: SizedBox(
+                        return false;
+                      },
+                      child: AnimatedOpacity(
+                        duration: const Duration(milliseconds: 125),
+                        opacity: dragOpacity.abs(),
+                        child: AnimatedSwitcher(
+                          duration: const Duration(milliseconds: 125),
+                          child: Container(
+                            key: Key(currentItem.id),
+                            clipBehavior: Clip.hardEdge,
+                            decoration: BoxDecoration(
+                              borderRadius: BorderRadius.circular(14),
+                            ),
+                            foregroundDecoration: BoxDecoration(
+                              borderRadius: BorderRadius.circular(14),
+                              border: Border.all(
+                                  color: Colors.white.withOpacity(0.10), strokeAlign: BorderSide.strokeAlignInside),
+                              gradient: LinearGradient(
+                                begin: Alignment.bottomLeft,
+                                end: Alignment.topCenter,
+                                colors: [
+                                  overlayColor.withOpacity(0.85),
+                                  Colors.transparent,
+                                ],
+                              ),
+                            ),
+                            child: Stack(
+                              children: [
+                                SizedBox(
                                   width: double.infinity,
                                   height: double.infinity,
                                   child: Padding(
@@ -197,76 +164,112 @@ class _MediaBannerState extends ConsumerState<MediaBanner> {
                                     ),
                                   ),
                                 ),
-                              ),
+                                FlatButton(
+                                  onTap: () => currentItem.navigateTo(context),
+                                  onLongPress: AdaptiveLayout.of(context).inputDevice == InputDevice.touch
+                                      ? () async {
+                                          interacting = true;
+                                          final poster = currentItem;
+                                          showBottomSheetPill(
+                                            context: context,
+                                            item: poster,
+                                            content: (scrollContext, scrollController) => ListView(
+                                              shrinkWrap: true,
+                                              controller: scrollController,
+                                              children: poster
+                                                  .generateActions(context, ref)
+                                                  .listTileItems(scrollContext, useIcons: true),
+                                            ),
+                                          );
+                                          interacting = false;
+                                          timer.reset();
+                                        }
+                                      : null,
+                                  onSecondaryTapDown: AdaptiveLayout.of(context).inputDevice == InputDevice.touch
+                                      ? null
+                                      : (details) async {
+                                          Offset localPosition = details.globalPosition;
+                                          RelativeRect position = RelativeRect.fromLTRB(localPosition.dx - 320,
+                                              localPosition.dy, localPosition.dx, localPosition.dy);
+                                          final poster = currentItem;
+
+                                          await showMenu(
+                                            context: context,
+                                            position: position,
+                                            items: poster.generateActions(context, ref).popupMenuItems(useIcons: true),
+                                          );
+                                        },
+                                ),
+                              ],
                             ),
                           ),
                         ),
-                        Row(
-                          children: [
-                            Expanded(
-                              child: Padding(
-                                padding: const EdgeInsets.all(16),
-                                child: Column(
-                                  mainAxisAlignment: MainAxisAlignment.end,
-                                  crossAxisAlignment: CrossAxisAlignment.start,
-                                  children: [
-                                    Flexible(
-                                      child: IgnorePointer(
-                                        child: Column(
-                                          crossAxisAlignment: CrossAxisAlignment.start,
-                                          mainAxisSize: MainAxisSize.min,
-                                          children: [
-                                            Flexible(
-                                              child: Text(
-                                                currentItem.title,
-                                                maxLines: 2,
-                                                style: Theme.of(context).textTheme.headlineMedium?.copyWith(
-                                                      shadows: shadows,
-                                                      color: Colors.white,
-                                                    ),
-                                              ),
-                                            ),
-                                            if (currentItem.label(context) != null || currentItem.subText != null)
-                                              Flexible(
-                                                child: Text(
-                                                  currentItem.label(context) ?? currentItem.subText ?? "",
-                                                  maxLines: 2,
-                                                  style: Theme.of(context).textTheme.titleMedium?.copyWith(
-                                                        shadows: shadows,
-                                                        color: Colors.white.withOpacity(0.75),
-                                                      ),
+                      ),
+                    ),
+                    Row(
+                      children: [
+                        Expanded(
+                          child: Padding(
+                            padding: const EdgeInsets.all(16),
+                            child: Column(
+                              mainAxisAlignment: MainAxisAlignment.end,
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: [
+                                Flexible(
+                                  child: IgnorePointer(
+                                    child: Column(
+                                      crossAxisAlignment: CrossAxisAlignment.start,
+                                      mainAxisSize: MainAxisSize.min,
+                                      children: [
+                                        Flexible(
+                                          child: Text(
+                                            currentItem.title,
+                                            maxLines: 2,
+                                            style: Theme.of(context).textTheme.headlineMedium?.copyWith(
+                                                  shadows: shadows,
+                                                  color: Colors.white,
                                                 ),
-                                              ),
-                                          ].addInBetween(const SizedBox(height: 6)),
+                                          ),
                                         ),
-                                      ),
+                                        if (currentItem.label(context) != null || currentItem.subText != null)
+                                          Flexible(
+                                            child: Text(
+                                              currentItem.label(context) ?? currentItem.subText ?? "",
+                                              maxLines: 2,
+                                              style: Theme.of(context).textTheme.titleMedium?.copyWith(
+                                                    shadows: shadows,
+                                                    color: Colors.white.withOpacity(0.75),
+                                                  ),
+                                            ),
+                                          ),
+                                      ].addInBetween(const SizedBox(height: 6)),
                                     ),
-                                  ].addInBetween(const SizedBox(height: 16)),
+                                  ),
                                 ),
-                              ),
+                              ].addInBetween(const SizedBox(height: 16)),
                             ),
-                            Padding(
-                              padding: const EdgeInsets.symmetric(horizontal: 12),
-                              child: AnimatedOpacity(
-                                opacity: showControls ? 1 : 0,
-                                duration: const Duration(milliseconds: 250),
-                                child: Column(
-                                  mainAxisAlignment: MainAxisAlignment.center,
-                                  children: [
-                                    IconButton.filledTonal(
-                                      onPressed: () => nextSlide(),
-                                      icon: const Icon(IconsaxOutline.arrow_right_3),
-                                    )
-                                  ],
-                                ),
-                              ),
-                            ),
-                          ],
+                          ),
                         ),
-                        BannerPlayButton(item: currentItem),
+                        Padding(
+                          padding: const EdgeInsets.symmetric(horizontal: 12),
+                          child: AnimatedOpacity(
+                            opacity: showControls ? 1 : 0,
+                            duration: const Duration(milliseconds: 250),
+                            child: Column(
+                              mainAxisAlignment: MainAxisAlignment.center,
+                              children: [
+                                IconButton.filledTonal(
+                                  onPressed: () => nextSlide(),
+                                  icon: const Icon(IconsaxOutline.arrow_right_3),
+                                )
+                              ],
+                            ),
+                          ),
+                        ),
                       ],
                     ),
-                  ),
+                    BannerPlayButton(item: currentItem),
+                  ],
                 ),
               ),
             ),
