@@ -300,7 +300,9 @@ jobs:
           path: fladder-windows
 
       - name: Compress Windows
-        run:  zip -r Fladder-Windows-${{needs.fetch-info.outputs.version_name}}.zip fladder-windows
+        run:  |
+          cd fladder-windows
+          zip -r ../Fladder-Windows-${{needs.fetch-info.outputs.version_name}}.zip .
       
       - name: Download Artifacts iOS
         uses: actions/download-artifact@v4
@@ -327,7 +329,9 @@ jobs:
           path: fladder-linux
 
       - name: Compress Linux
-        run: zip -r Fladder-Linux-${{needs.fetch-info.outputs.version_name}}.zip fladder-linux
+        run: |
+          cd fladder-linux
+          zip -r ../Fladder-Linux-${{needs.fetch-info.outputs.version_name}}.zip .
 
       - name: Download Artifacts Web
         uses: actions/download-artifact@v4
@@ -336,7 +340,9 @@ jobs:
           path: fladder-web
 
       - name: Compress Web
-        run: zip -r Fladder-Web-${{needs.fetch-info.outputs.version_name}}.zip fladder-web
+        run: |
+          cd fladder-web
+          zip -r ../Fladder-Web-${{needs.fetch-info.outputs.version_name}}.zip .
 
       - name: Release
         uses: softprops/action-gh-release@v2
