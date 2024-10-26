@@ -2,7 +2,7 @@ version: '3.4'
 
 services:
   fladder:
-    image: ghcr.io/donutware/fladder:v0.2.6
+    image: ghcr.io/donutware/fladder:latest
     ports:
       - 80:80
     environment:
