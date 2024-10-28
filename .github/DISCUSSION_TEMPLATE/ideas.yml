@@ -1,4 +1,5 @@
 title: "💡 Feature Request <title> "
+title: "<title>"
 labels: ["question"]
 body:
   - type: textarea
