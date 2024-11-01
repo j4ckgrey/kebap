@@ -34,7 +34,7 @@
   "@appLockAutoLogin": {},
   "appLockBiometrics": "Biometrics",
   "@appLockBiometrics": {},
-  "appLockPasscode": "Passcode",
+  "appLockPasscode": "Pass-code",
   "@appLockPasscode": {},
   "appLockTitle": "Set the log-in method for {userName}",
   "@appLockTitle": {
@@ -137,7 +137,7 @@
   "@days": {},
   "delete": "Delete",
   "@delete": {},
-  "deleteFileFromSystem": "Deleting this item {item} will delete it from both the file system and your media library.\nAre you sure you wish to continue?",
+  "deleteFileFromSystem": "Deleting this item {item} will delete it from both the file system and your media library. Are you sure you wish to continue?",
   "@deleteFileFromSystem": {
     "description": "Delete file from system",
     "placeholders": {
@@ -175,7 +175,7 @@
   "@discovered": {},
   "displayLanguage": "Display language",
   "@displayLanguage": {},
-  "downloadsClearDesc": "Remove all synced data, clearing\nall data for every synced user?",
+  "downloadsClearDesc": "Remove all synced data, clearing all data for every synced user?",
   "@downloadsClearDesc": {},
   "downloadsClearTitle": "Clear synced data",
   "@downloadsClearTitle": {},
@@ -332,7 +332,7 @@
   "@logout": {},
   "logoutUserPopupContent": "This will log out {userName} and delete the user from the app.\nYou will have to log back in on {serverName}.",
   "@logoutUserPopupContent": {
-    "description": "Pop-up for loging out the user description",
+    "description": "Pop-up for logging out the user description",
     "placeholders": {
       "userName": {
         "type": "String"
@@ -344,7 +344,7 @@
   },
   "logoutUserPopupTitle": "Log out {userName}?",
   "@logoutUserPopupTitle": {
-    "description": "Pop-up for loging out the user",
+    "description": "Pop-up for logging out the user",
     "placeholders": {
       "userName": {
         "type": "String"
@@ -486,7 +486,7 @@
   "@password": {},
   "pathClearTitle": "Clear downloads path",
   "@pathClearTitle": {},
-  "pathEditDesc": "This location is set for all users, any synced data will no longer be accessible.\nIt will remain on your storage.",
+  "pathEditDesc": "This location is set for all users, any synced data will no longer be accessible. It will remain on your storage.",
   "@pathEditDesc": {},
   "pathEditSelect": "Select downloads destination",
   "@pathEditSelect": {},
@@ -547,7 +547,7 @@
       }
     }
   },
-  "reWatch": "Rewatch",
+  "reWatch": "Re-watch",
   "@reWatch": {},
   "read": "Read {item}",
   "@read": {
@@ -807,7 +807,7 @@
   },
   "subtitleConfigurator": "Subtitle configurator",
   "@subtitleConfigurator": {},
-  "subtitleConfiguratorPlaceHolder": "This is placeholder text, \n nothing to see here.",
+  "subtitleConfiguratorPlaceHolder": "This is placeholder text, nothing to see here.",
   "@subtitleConfiguratorPlaceHolder": {},
   "subtitles": "Subtitles",
   "@subtitles": {},
@@ -826,7 +826,7 @@
   },
   "syncDeleteItemTitle": "Delete synced item",
   "@syncDeleteItemTitle": {},
-  "syncDeletePopupPermanent": "This action is permanent and will remove all localy synced files",
+  "syncDeletePopupPermanent": "This action is permanent and will remove all locally synced files",
   "@syncDeletePopupPermanent": {},
   "syncDetails": "Sync details",
   "@syncDetails": {},
@@ -1020,7 +1020,7 @@
   "@syncSelectDownloadsFolder": {},
   "syncNoFolderSetup": "No sync folder setup",
   "@syncNoFolderSetup": {},
-  "syncRemoveUnableToDeleteItem": "Unable to remove synced item, somethin went wrong",
+  "syncRemoveUnableToDeleteItem": "Unable to remove synced item, something went wrong",
   "@syncRemoveUnableToDeleteItem": {},
   "syncAddItemForSyncing": "Added {item} for syncing",
   "@syncAddItemForSyncing": {
