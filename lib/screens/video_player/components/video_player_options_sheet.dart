@@ -1,4 +1,6 @@
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 
 import 'package:collection/collection.dart';
 import 'package:ficonsax/ficonsax.dart';
@@ -19,6 +21,7 @@ import 'package:fladder/screens/playlists/add_to_playlists.dart';
 import 'package:fladder/screens/video_player/components/video_player_queue.dart';
 import 'package:fladder/screens/video_player/components/video_subtitle_controls.dart';
 import 'package:fladder/util/adaptive_layout.dart';
+import 'package:fladder/util/device_orientation_extension.dart';
 import 'package:fladder/util/list_padding.dart';
 import 'package:fladder/util/localization_helper.dart';
 import 'package:fladder/util/refresh_state.dart';
@@ -175,6 +178,11 @@ class _VideoOptionsMobileState extends ConsumerState<VideoOptions> {
                   )
                 ],
               ),
+            ),
+          if (!AdaptiveLayout.of(context).isDesktop && !kIsWeb)
+            SpacedListTile(
+              title: Text(context.localized.playerSettingsOrientationTitle),
+              onTap: () => showOrientationOptions(context, ref),
             ),
           ListTile(
             onTap: () {
@@ -487,6 +495,73 @@ Future<void> showPlaybackSpeed(BuildContext context) {
               ],
             );
           },
+        );
+      });
+    },
+  );
+}
+
+Future<void> showOrientationOptions(BuildContext context, WidgetRef ref) async {
+  Set<DeviceOrientation> orientations = ref
+      .read(videoPlayerSettingsProvider
+          .select((value) => value.allowedOrientations ?? Set.from(DeviceOrientation.values)))
+      .toSet();
+
+  void toggleOrientation(DeviceOrientation orientation) {
+    if (orientations.contains(orientation) && orientations.length > 1) {
+      orientations.remove(orientation);
+    } else {
+      orientations.add(orientation);
+    }
+  }
+
+  await showDialog(
+    context: context,
+    builder: (context) {
+      return StatefulBuilder(builder: (context, state) {
+        return SimpleDialog(
+          contentPadding: const EdgeInsets.only(top: 8, bottom: 24),
+          title: Row(children: [Text(context.localized.playbackRate)]),
+          children: [
+            Padding(
+              padding: const EdgeInsets.symmetric(horizontal: 12).copyWith(top: 6),
+              child: Column(
+                mainAxisSize: MainAxisSize.min,
+                mainAxisAlignment: MainAxisAlignment.center,
+                crossAxisAlignment: CrossAxisAlignment.center,
+                children: [
+                  const Divider(),
+                  ...DeviceOrientation.values.map(
+                    (orientation) => CheckboxListTile.adaptive(
+                      title: Text(orientation.label(context)),
+                      value: orientations.contains(orientation),
+                      onChanged: (value) {
+                        state(() => toggleOrientation(orientation));
+                      },
+                    ),
+                  ),
+                  const Divider(),
+                  Row(
+                    mainAxisSize: MainAxisSize.max,
+                    mainAxisAlignment: MainAxisAlignment.end,
+                    children: [
+                      ElevatedButton(
+                        onPressed: () => Navigator.of(context).pop(),
+                        child: Text(context.localized.cancel),
+                      ),
+                      FilledButton(
+                        onPressed: () {
+                          Navigator.of(context).pop();
+                          ref.read(videoPlayerSettingsProvider.notifier).toggleOrientation(orientations);
+                        },
+                        child: Text(context.localized.save),
+                      ),
+                    ].addInBetween(const SizedBox(width: 8)),
+                  )
+                ].addInBetween(const SizedBox(width: 8)),
+              ),
+            )
+          ],
         );
       });
     },
