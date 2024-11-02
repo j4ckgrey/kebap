@@ -14,6 +14,7 @@ import 'package:fladder/screens/settings/widgets/settings_label_divider.dart';
 import 'package:fladder/screens/settings/widgets/settings_message_box.dart';
 import 'package:fladder/screens/settings/widgets/subtitle_editor.dart';
 import 'package:fladder/screens/shared/animated_fade_size.dart';
+import 'package:fladder/screens/video_player/components/video_player_options_sheet.dart';
 import 'package:fladder/util/adaptive_layout.dart';
 import 'package:fladder/util/box_fit_extension.dart';
 import 'package:fladder/util/localization_helper.dart';
@@ -151,6 +152,12 @@ class _PlayerSettingsPageState extends ConsumerState<PlayerSettingsPage> {
                     );
                   },
           ),
+          if (!AdaptiveLayout.of(context).isDesktop && !kIsWeb)
+            SettingsListTile(
+              label: Text(context.localized.playerSettingsOrientationTitle),
+              subLabel: Text(context.localized.playerSettingsOrientationDesc),
+              onTap: () => showOrientationOptions(context, ref),
+            ),
         ],
       ),
     );
