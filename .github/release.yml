@@ -5,7 +5,7 @@ changelog:
   categories:
     - title: Exciting New Features 🏕
       labels:
-        - enhancement
+        - feature
     - title: Bugfixes 🐞
       labels:
         - bug

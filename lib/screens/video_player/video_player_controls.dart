@@ -103,6 +103,12 @@ class _DesktopControlsState extends ConsumerState<DesktopControls> {
   }
 
   @override
+  void initState() {
+    super.initState();
+    timer.reset();
+  }
+
+  @override
   Widget build(BuildContext context) {
     final introSkipModel = ref.watch(playBackModel.select((value) => value?.introSkipModel));
     final player = ref.watch(videoPlayerProvider.select((value) => value.controller));

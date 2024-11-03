@@ -300,9 +300,13 @@ class _VideoPlayerNextWrapperState extends ConsumerState<VideoPlayerNextWrapper>
             ),
           ),
           if (AdaptiveLayout.of(context).isDesktop)
-            const Align(
-              alignment: Alignment.topRight,
-              child: DefaultTitleBar(),
+            AnimatedOpacity(
+              duration: animSpeed,
+              opacity: show ? 1 : 0,
+              child: const Align(
+                alignment: Alignment.topRight,
+                child: DefaultTitleBar(),
+              ),
             ),
         ],
       ),
