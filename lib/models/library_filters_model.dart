@@ -21,6 +21,7 @@ class LibraryFiltersModel with _$LibraryFiltersModel {
   factory LibraryFiltersModel._internal({
     required String id,
     required String name,
+    // ignore: unused_element
     @Default(false) isFavourite,
     required List<String> ids,
     required Map<String, bool> genres,

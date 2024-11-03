@@ -84,7 +84,7 @@ class LibrarySavedFiltersDialogue extends ConsumerWidget {
                                     IconButton.filledTonal(
                                       tooltip: context.localized.updateFilterForLibrary,
                                       onPressed: () => provider.updateFilter(filter),
-                                      icon: Icon(IconsaxBold.refresh),
+                                      icon: const Icon(IconsaxBold.refresh),
                                     ),
                                     IconButton.filledTonal(
                                       tooltip: context.localized.delete,
@@ -110,7 +110,7 @@ class LibrarySavedFiltersDialogue extends ConsumerWidget {
                                         foregroundColor:
                                             WidgetStatePropertyAll(Theme.of(context).colorScheme.onErrorContainer),
                                       ),
-                                      icon: Icon(IconsaxOutline.trash),
+                                      icon: const Icon(IconsaxOutline.trash),
                                     ),
                                   ].addInBetween(const SizedBox(width: 8)),
                                 ),
@@ -138,7 +138,7 @@ class LibrarySavedFiltersDialogue extends ConsumerWidget {
                   const SizedBox(width: 6),
                   FilledButton.tonal(
                     onPressed: () => provider.saveFiltersNew(controller.text),
-                    child: Icon(IconsaxOutline.save_2),
+                    child: const Icon(IconsaxOutline.save_2),
                   ),
                 ],
               )
