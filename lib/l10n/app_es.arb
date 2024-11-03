@@ -157,7 +157,7 @@
   },
   "descending": "Descendente",
   "@descending": {},
-  "director": "{count, plural, other{Directores} one{Director}}",
+  "director": "{count, plural, zero{Ningún director} one{Director} other{Directores}}",
   "@director": {
     "description": "director",
     "placeholders": {
@@ -1079,5 +1079,27 @@
   "playBackSettings": "Configuración de reproducción",
   "@playBackSettings": {},
   "off": "Apagar",
-  "@off": {}
+  "@off": {},
+  "settingsAutoNextTitle": "Vista previa a continuación",
+  "@settingsAutoNextTitle": {},
+  "settingsAutoNextDesc": "Muestra una vista previa de la siguiente entrada cerca del final si hay otro elemento en cola",
+  "@settingsAutoNextDesc": {},
+  "autoNextOffStaticTitle": "Estática",
+  "@autoNextOffStaticTitle": {},
+  "autoNextOffStaticDesc": "Mostrar la siguiente pantalla cuando queden 30 segundos de tiempo de reproducción",
+  "@autoNextOffStaticDesc": {},
+  "autoNextOffSmartTitle": "Elegante",
+  "@autoNextOffSmartTitle": {},
+  "playbackRate": "Velocidad de reproducción",
+  "@playbackRate": {},
+  "speed": "Velocidad",
+  "@speed": {},
+  "autoNextOffSmartDesc": "Muestra la siguiente pantalla cuando comienzan los créditos, si no quedan más de 10 segundos después de los créditos. Si no muestra la siguiente pantalla con 30 segundos de tiempo de reproducción restante",
+  "@autoNextOffSmartDesc": {},
+  "unableToPlayMedia": "Hubo un error al encontrar un tipo de medio compatible",
+  "@unableToPlayMedia": {},
+  "errorOpeningMedia": "Algo sucedió al reproducir este medio",
+  "@errorOpeningMedia": {},
+  "unableToPlayBooksOnWeb": "Los libros no se pueden consultar en la web por ahora",
+  "@unableToPlayBooksOnWeb": {}
 }
