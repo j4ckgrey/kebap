@@ -92,8 +92,6 @@ Yay: `yay -S fladder-git`
 Paru: `paru -S fladder-git`
 -->
 ### Play Store (Android)
-The Android app is currently in testing, you can help by joining this group: https://groups.google.com/g/fladder
-
 <a href='https://play.google.com/store/apps/details?id=nl.jknaapen.fladder&pcampaignid=pcampaignidMKT-Other-global-all-co-prtnr-py-PartBadge-Mar2515-1'><img alt='Get it on Google Play' src='https://play.google.com/intl/en_us/badges/static/images/badges/en_badge_web_generic.png' width=250/></a>
 
 
