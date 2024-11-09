@@ -81,7 +81,9 @@ Web/Desktop [try out the web build!](https://DonutWare.github.io/Fladder)
 
 ## Download
 
-The latest executables for Windows, macOS, Linux, iOS and Android can be found on the [releases page](https://github.com/DonutWare/Fladder/releases).
+The latest executables for Windows, macOS, Linux, iOS, Android and Web can be found on the [releases page](https://github.com/DonutWare/Fladder/releases).
+
+You can pull the Docker version using the following tag: ghcr.io/donutware/fladder:latest
 
 <!-- ### Linux
 
