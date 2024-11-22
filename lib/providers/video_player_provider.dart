@@ -1,15 +1,11 @@
 import 'dart:async';
 
-import 'package:collection/collection.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import 'package:fladder/models/media_playback_model.dart';
 import 'package:fladder/models/playback/playback_model.dart';
 import 'package:fladder/providers/settings/video_player_settings_provider.dart';
-import 'package:fladder/wrappers/media_control_wrapper.dart'
-    if (dart.library.html) 'package:fladder/wrappers/media_control_wrapper_web.dart';
-import 'package:flutter/foundation.dart';
-import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:media_kit/media_kit.dart';
+import 'package:fladder/wrappers/media_control_wrapper.dart';
 
 final mediaPlaybackProvider = StateProvider<MediaPlaybackModel>((ref) => MediaPlaybackModel());
 
@@ -30,45 +26,37 @@ class VideoPlayerNotifier extends StateNotifier<MediaControlsWrapper> {
 
   late final mediaState = ref.read(mediaPlaybackProvider.notifier);
 
-  bool initMediaControls = false;
+  MediaPlaybackModel get playbackState => ref.read(mediaPlaybackProvider);
 
   void init() async {
-    state.player?.dispose();
-    if (!initMediaControls && !kDebugMode) {
-      state.init();
-      initMediaControls = true;
-    }
+    await state.dispose();
+    await state.init();
+
     for (final s in subscriptions) {
       s.cancel();
     }
-    final player = state.setup();
-    if (player.platform is NativePlayer) {
-      await (player.platform as dynamic).setProperty(
-        'force-seekable',
-        'yes',
-      );
+
+    final subscription = state.stateStream?.listen((value) {
+      mediaState.update((state) => state.copyWith(buffering: value.buffering));
+      mediaState.update((state) => state.copyWith(buffer: value.buffer));
+      updatePlaying(value.playing);
+      updatePosition(value.position);
+      mediaState.update((state) => state.copyWith(duration: value.duration));
+    });
+
+    if (subscription != null) {
+      subscriptions.add(subscription);
     }
-    subscriptions.addAll(
-      [
-        player.stream.buffering.listen((event) => mediaState.update((state) => state.copyWith(buffering: event))),
-        player.stream.buffer.listen((event) => mediaState.update((state) => state.copyWith(buffer: event))),
-        player.stream.playing.listen((event) => updatePlaying(event)),
-        player.stream.position.listen((event) => updatePosition(event)),
-        player.stream.duration.listen((event) => mediaState.update((state) => state.copyWith(duration: event))),
-      ].whereNotNull(),
-    );
   }
 
   Future<void> updatePlaying(bool event) async {
-    final player = state.player;
-    if (player == null) return;
+    if (!state.hasPlayer) return;
     mediaState.update((state) => state.copyWith(playing: event));
   }
 
   Future<void> updatePosition(Duration event) async {
-    final player = state.player;
-    if (player == null) return;
-    if (!player.state.playing) return;
+    if (!state.hasPlayer) return;
+    if (playbackState.playing == false) return;
 
     final position = event;
     final lastPosition = ref.read(mediaPlaybackProvider.select((value) => value.lastPosition));
@@ -77,16 +65,16 @@ class VideoPlayerNotifier extends StateNotifier<MediaControlsWrapper> {
     if (diff > const Duration(seconds: 1, milliseconds: 500).inMilliseconds) {
       mediaState.update((value) => value.copyWith(
             position: event,
-            playing: player.state.playing,
-            duration: player.state.duration,
+            playing: playbackState.playing,
+            duration: playbackState.duration,
             lastPosition: position,
           ));
-      ref.read(playBackModel)?.updatePlaybackPosition(position, player.state.playing, ref);
+      ref.read(playBackModel)?.updatePlaybackPosition(position, playbackState.playing, ref);
     } else {
       mediaState.update((value) => value.copyWith(
             position: event,
-            playing: player.state.playing,
-            duration: player.state.duration,
+            playing: playbackState.playing,
+            duration: playbackState.duration,
           ));
     }
   }
@@ -100,22 +88,24 @@ class VideoPlayerNotifier extends StateNotifier<MediaControlsWrapper> {
     PlaybackModel? newPlaybackModel = model;
 
     if (media != null) {
+      await state.open(media.url, false);
       await state.setVolume(ref.read(videoPlayerSettingsProvider).volume);
-      await state.open(media, play: false);
-      state.player?.stream.buffering.takeWhile((event) => event == true).listen(
+      state.stateStream?.takeWhile((event) => event.buffering == true).listen(
         null,
         onDone: () async {
           final start = startPosition ?? await model.startDuration();
           if (start != null) {
             await state.seek(start);
           }
-          newPlaybackModel = await newPlaybackModel?.setAudio(null, state);
-          newPlaybackModel = await newPlaybackModel?.setSubtitle(null, state);
-          ref.read(playBackModel.notifier).update((state) => newPlaybackModel);
+          await state.setAudioTrack(null, model);
+          await state.setSubtitleTrack(null, model);
           state.play();
+          ref.read(playBackModel.notifier).update((state) => newPlaybackModel);
         },
       );
+
       ref.read(playBackModel.notifier).update((state) => model);
+
       return true;
     }
 

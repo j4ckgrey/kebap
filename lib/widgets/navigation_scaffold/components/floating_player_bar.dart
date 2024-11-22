@@ -3,7 +3,6 @@ import 'package:flutter/material.dart';
 
 import 'package:ficonsax/ficonsax.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:media_kit_video/media_kit_video.dart';
 import 'package:window_manager/window_manager.dart';
 
 import 'package:fladder/models/media_playback_model.dart';
@@ -103,12 +102,11 @@ class _CurrentlyPlayingBarState extends ConsumerState<FloatingPlayerBar> {
                                             children: [
                                               Hero(
                                                 tag: videoPlayerHeroTag,
-                                                child: Video(
-                                                  controller: player.controller!,
-                                                  fit: BoxFit.fitHeight,
-                                                  controls: NoVideoControls,
-                                                  wakelock: playbackInfo.playing,
-                                                ),
+                                                child: player.videoWidget(
+                                                      UniqueKey(),
+                                                      BoxFit.fitHeight,
+                                                    ) ??
+                                                    const SizedBox.shrink(),
                                               ),
                                               Positioned.fill(
                                                 child: Tooltip(
@@ -169,8 +167,7 @@ class _CurrentlyPlayingBarState extends ConsumerState<FloatingPlayerBar> {
                                 if (constraints.maxWidth > 500) ...{
                                   IconButton(
                                     onPressed: () {
-                                      final volume = player.player?.state.volume == 0 ? 100.0 : 0.0;
-                                      ref.read(videoPlayerSettingsProvider.notifier).setVolume(volume);
+                                      final volume = player.lastState?.volume == 0 ? 100.0 : 0.0;
                                       player.setVolume(volume);
                                     },
                                     icon: Icon(

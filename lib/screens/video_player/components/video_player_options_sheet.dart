@@ -12,6 +12,7 @@ import 'package:fladder/models/playback/direct_playback_model.dart';
 import 'package:fladder/models/playback/offline_playback_model.dart';
 import 'package:fladder/models/playback/playback_model.dart';
 import 'package:fladder/models/playback/transcode_playback_model.dart';
+import 'package:fladder/models/settings/video_player_settings.dart';
 import 'package:fladder/providers/settings/video_player_settings_provider.dart';
 import 'package:fladder/providers/user_provider.dart';
 import 'package:fladder/providers/video_player_provider.dart';
@@ -375,15 +376,16 @@ Future<void> showSubSelection(BuildContext context) {
               children: [
                 Text(context.localized.subtitle),
                 const Spacer(),
-                IconButton.outlined(
-                    onPressed: () {
-                      Navigator.pop(context);
-                      showSubtitleControls(
-                        context: context,
-                        label: context.localized.subtitleConfiguration,
-                      );
-                    },
-                    icon: const Icon(Icons.display_settings_rounded))
+                if (player.backend == PlayerOptions.libMPV)
+                  IconButton.outlined(
+                      onPressed: () {
+                        Navigator.pop(context);
+                        showSubtitleControls(
+                          context: context,
+                          label: context.localized.subtitleConfiguration,
+                        );
+                      },
+                      icon: const Icon(Icons.display_settings_rounded))
               ],
             ),
             children: playbackModel?.subStreams?.mapIndexed(
@@ -459,7 +461,7 @@ Future<void> showPlaybackSpeed(BuildContext context) {
       return StatefulBuilder(builder: (context, setState) {
         return Consumer(
           builder: (context, ref, child) {
-            final player = ref.watch(videoPlayerProvider.select((value) => value.player));
+            final player = ref.watch(videoPlayerProvider);
             final lastSpeed = ref.watch(playbackRateProvider);
             return SimpleDialog(
               contentPadding: const EdgeInsets.only(top: 8, bottom: 24),
@@ -484,7 +486,7 @@ Future<void> showPlaybackSpeed(BuildContext context) {
                             divisions: 39,
                             onChanged: (value) {
                               ref.read(playbackRateProvider.notifier).state = value;
-                              player?.setRate(value);
+                              player.setSpeed(value);
                             },
                           ),
                         ),
