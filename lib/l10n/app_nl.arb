@@ -1166,5 +1166,45 @@
   "clientSettingsShowAllCollectionsTitle": "Toon alle soorten collecties",
   "@clientSettingsShowAllCollectionsTitle": {},
   "clientSettingsShowAllCollectionsDesc": "Als deze optie is ingeschakeld, worden alle bibliotheek types weergegeven, inclusief de types die niet door Fladder worden ondersteund",
-  "@clientSettingsShowAllCollectionsDesc": {}
+  "@clientSettingsShowAllCollectionsDesc": {},
+  "closeVideo": "Video sluiten",
+  "@closeVideo": {},
+  "playNextVideo": "Volgend video afspelen",
+  "@playNextVideo": {},
+  "resumeVideo": "Video hervatten",
+  "@resumeVideo": {},
+  "stop": "Stop",
+  "@stop": {},
+  "playerSettingsBackendTitle": "Videospeler Backend",
+  "@playerSettingsBackendTitle": {},
+  "noVideoPlayerOptions": "De geselecteerde backend heeft geen instellingen",
+  "@noVideoPlayerOptions": {},
+  "playerSettingsBackendDesc": "Kies je mediaspeler backend voor een optimale afspeelervaring",
+  "@playerSettingsBackendDesc": {},
+  "defaultLabel": "Standaard",
+  "@defaultLabel": {
+    "description": "To indicate a default value, default video player backend"
+  },
+  "mdkExperimental": "MDK backend is nog experimenteel",
+  "@mdkExperimental": {},
+  "skipButtonLabel": "(S)kip {segment}",
+  "@skipButtonLabel": {
+    "placeholders": {
+      "segment": {
+        "type": "String"
+      }
+    }
+  },
+  "mediaSegmentPreview": "Voorvertoning",
+  "@mediaSegmentPreview": {},
+  "mediaSegmentRecap": "Samenvatting",
+  "@mediaSegmentRecap": {},
+  "mediaSegmentUnknown": "Onbekend",
+  "@mediaSegmentUnknown": {},
+  "mediaSegmentOutro": "Uitro",
+  "@mediaSegmentOutro": {},
+  "mediaSegmentCommercial": "Reclame",
+  "@mediaSegmentCommercial": {},
+  "mediaSegmentIntro": "Inleiding",
+  "@mediaSegmentIntro": {}
 }

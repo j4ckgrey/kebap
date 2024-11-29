@@ -1173,5 +1173,25 @@
   "clientSettingsShowAllCollectionsTitle": "Показати всі типи колекцій",
   "@clientSettingsShowAllCollectionsTitle": {},
   "clientSettingsShowAllCollectionsDesc": "Якщо увімкнено, показувати всі типи колекцій, включно з тими, що не підтримує Fladder",
-  "@clientSettingsShowAllCollectionsDesc": {}
+  "@clientSettingsShowAllCollectionsDesc": {},
+  "stop": "Зупинити",
+  "@stop": {},
+  "closeVideo": "Закрити відео",
+  "@closeVideo": {},
+  "resumeVideo": "Відновити відео",
+  "@resumeVideo": {},
+  "playNextVideo": "Відтворити наступне відео",
+  "@playNextVideo": {},
+  "defaultLabel": "За замовчуванням",
+  "@defaultLabel": {
+    "description": "To indicate a default value, default video player backend"
+  },
+  "mdkExperimental": "MDK все ще перебуває на експериментальній стадії",
+  "@mdkExperimental": {},
+  "playerSettingsBackendTitle": "Бекенд відеопрогравача",
+  "@playerSettingsBackendTitle": {},
+  "playerSettingsBackendDesc": "Виберіть медіапрогравач, який вам подобається, для оптимального відтворення",
+  "@playerSettingsBackendDesc": {},
+  "noVideoPlayerOptions": "Обраний бекенд не має опцій",
+  "@noVideoPlayerOptions": {}
 }

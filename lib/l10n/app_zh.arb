@@ -1164,5 +1164,45 @@
   "clientSettingsShowAllCollectionsTitle": "显示所有收藏类型",
   "@clientSettingsShowAllCollectionsTitle": {},
   "clientSettingsShowAllCollectionsDesc": "启用后，显示所有收藏类型，包括 Fladder 不支持的收藏类型",
-  "@clientSettingsShowAllCollectionsDesc": {}
+  "@clientSettingsShowAllCollectionsDesc": {},
+  "resumeVideo": "恢复播放视频",
+  "@resumeVideo": {},
+  "playNextVideo": "播放下一个视频",
+  "@playNextVideo": {},
+  "closeVideo": "关闭视频",
+  "@closeVideo": {},
+  "stop": "停止",
+  "@stop": {},
+  "defaultLabel": "默认",
+  "@defaultLabel": {
+    "description": "To indicate a default value, default video player backend"
+  },
+  "noVideoPlayerOptions": "所选的后端没有设置项",
+  "@noVideoPlayerOptions": {},
+  "mdkExperimental": "MDK 仍处于实验阶段",
+  "@mdkExperimental": {},
+  "playerSettingsBackendTitle": "视频播放器后端",
+  "@playerSettingsBackendTitle": {},
+  "playerSettingsBackendDesc": "选择您喜好的媒体播放器以获得最佳播放体验",
+  "@playerSettingsBackendDesc": {},
+  "skipButtonLabel": "跳过{segment}",
+  "@skipButtonLabel": {
+    "placeholders": {
+      "segment": {
+        "type": "String"
+      }
+    }
+  },
+  "mediaSegmentPreview": "预告",
+  "@mediaSegmentPreview": {},
+  "mediaSegmentRecap": "回顾",
+  "@mediaSegmentRecap": {},
+  "mediaSegmentOutro": "片尾",
+  "@mediaSegmentOutro": {},
+  "mediaSegmentIntro": "片头",
+  "@mediaSegmentIntro": {},
+  "mediaSegmentUnknown": "未知",
+  "@mediaSegmentUnknown": {},
+  "mediaSegmentCommercial": "广告",
+  "@mediaSegmentCommercial": {}
 }
