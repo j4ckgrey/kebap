@@ -1186,5 +1186,17 @@
     "description": "To indicate a default value, default video player backend"
   },
   "noVideoPlayerOptions": "El backend seleccionado no tiene opciones",
-  "@noVideoPlayerOptions": {}
+  "@noVideoPlayerOptions": {},
+  "mediaSegmentRecap": "Resumen",
+  "@mediaSegmentRecap": {},
+  "mediaSegmentIntro": "Introducción",
+  "@mediaSegmentIntro": {},
+  "mediaSegmentUnknown": "Desconocido",
+  "@mediaSegmentUnknown": {},
+  "mediaSegmentCommercial": "Comercial",
+  "@mediaSegmentCommercial": {},
+  "mediaSegmentPreview": "Vista previa",
+  "@mediaSegmentPreview": {},
+  "mediaSegmentOutro": "Otro",
+  "@mediaSegmentOutro": {}
 }
