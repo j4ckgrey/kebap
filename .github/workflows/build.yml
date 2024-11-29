@@ -299,6 +299,8 @@ jobs:
         with:
           image: fladder
           addLatest: true
+          multiPlatform: true
+          platform: linux/amd64,linux/arm64,linux/arm/v7
           registry: ghcr.io
           username: ${{ github.actor }}
           password: ${{ secrets.GITHUB_TOKEN }}
