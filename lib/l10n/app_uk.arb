@@ -1193,5 +1193,25 @@
   "playerSettingsBackendDesc": "Виберіть медіапрогравач, який вам подобається, для оптимального відтворення",
   "@playerSettingsBackendDesc": {},
   "noVideoPlayerOptions": "Обраний бекенд не має опцій",
-  "@noVideoPlayerOptions": {}
+  "@noVideoPlayerOptions": {},
+  "skipButtonLabel": "Пропустити {segment}",
+  "@skipButtonLabel": {
+    "placeholders": {
+      "segment": {
+        "type": "String"
+      }
+    }
+  },
+  "mediaSegmentPreview": "Попередній перегляд",
+  "@mediaSegmentPreview": {},
+  "mediaSegmentRecap": "Підсумок",
+  "@mediaSegmentRecap": {},
+  "mediaSegmentIntro": "Вступ",
+  "@mediaSegmentIntro": {},
+  "mediaSegmentOutro": "Завершення",
+  "@mediaSegmentOutro": {},
+  "mediaSegmentUnknown": "Невідомо",
+  "@mediaSegmentUnknown": {},
+  "mediaSegmentCommercial": "Реклама",
+  "@mediaSegmentCommercial": {}
 }
