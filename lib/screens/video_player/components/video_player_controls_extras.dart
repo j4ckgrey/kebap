@@ -2,9 +2,12 @@ import 'package:flutter/material.dart';
 
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
+import 'package:fladder/models/items/media_segments_model.dart';
 import 'package:fladder/providers/video_player_provider.dart';
+import 'package:fladder/screens/shared/animated_fade_size.dart';
 import 'package:fladder/screens/video_player/components/video_player_chapters.dart';
 import 'package:fladder/screens/video_player/components/video_player_queue.dart';
+import 'package:fladder/util/localization_helper.dart';
 
 class ChapterButton extends ConsumerWidget {
   final Duration position;
@@ -61,28 +64,36 @@ class OpenQueueButton extends ConsumerWidget {
 }
 
 class SkipSegmentButton extends ConsumerWidget {
-  final String label;
+  final MediaSegment? segment;
   final bool isOverlayVisible;
 
   final Function() pressedSkip;
-  const SkipSegmentButton({required this.label, required this.isOverlayVisible, required this.pressedSkip, super.key});
+  const SkipSegmentButton(
+      {required this.segment, required this.isOverlayVisible, required this.pressedSkip, super.key});
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    return AnimatedOpacity(
-      opacity: isOverlayVisible ? 0.85 : 0,
-      duration: const Duration(milliseconds: 500),
-      child: ElevatedButton(
-        onPressed: pressedSkip,
-        style: ElevatedButton.styleFrom(shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(5))),
-        child: Padding(
-          padding: const EdgeInsets.all(8),
-          child: Row(
-            mainAxisSize: MainAxisSize.min,
-            children: [Text(label), const Icon(Icons.skip_next_rounded)],
-          ),
-        ),
-      ),
+    return AnimatedFadeSize(
+      child: segment != null
+          ? AnimatedOpacity(
+              opacity: isOverlayVisible ? 1 : 0.15,
+              duration: const Duration(milliseconds: 500),
+              child: ElevatedButton(
+                onPressed: pressedSkip,
+                style: ElevatedButton.styleFrom(shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(5))),
+                child: Padding(
+                  padding: const EdgeInsets.all(8),
+                  child: Row(
+                    mainAxisSize: MainAxisSize.min,
+                    children: [
+                      Text(context.localized.skipButtonLabel(segment!.type.label(context))),
+                      const Icon(Icons.skip_next_rounded)
+                    ],
+                  ),
+                ),
+              ),
+            )
+          : const SizedBox.shrink(key: Key("Other")),
     );
   }
 }

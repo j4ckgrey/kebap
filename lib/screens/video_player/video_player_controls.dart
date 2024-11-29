@@ -159,18 +159,17 @@ class _DesktopControlsState extends ConsumerState<DesktopControls> {
                     bool forceShow = segment?.forceShow(position) ?? false;
                     return Stack(
                       children: [
-                        if (segment != null)
-                          Align(
-                            alignment: Alignment.centerRight,
-                            child: Padding(
-                              padding: const EdgeInsets.all(32),
-                              child: SkipSegmentButton(
-                                label: context.localized.skipButtonLabel(segment.type.label(context).toLowerCase()),
-                                isOverlayVisible: forceShow ? true : showOverlay,
-                                pressedSkip: () => skipToSegmentEnd(segment),
-                              ),
+                        Align(
+                          alignment: Alignment.centerRight,
+                          child: Padding(
+                            padding: const EdgeInsets.all(32),
+                            child: SkipSegmentButton(
+                              segment: segment,
+                              isOverlayVisible: forceShow ? true : showOverlay,
+                              pressedSkip: () => skipToSegmentEnd(segment),
                             ),
                           ),
+                        ),
                       ],
                     );
                   },
