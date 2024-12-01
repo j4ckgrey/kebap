@@ -30,7 +30,7 @@ jobs:
           VERSION_NAME=$(grep '^version:' pubspec.yaml | cut -d ':' -f2 | cut -d '+' -f1 | tr -d ' ')
           echo "version_name=${VERSION_NAME}" >> "$GITHUB_OUTPUT"
         shell: bash
-        
+
   build-android:
     needs: [fetch-info]
     runs-on: ubuntu-latest
@@ -78,7 +78,7 @@ jobs:
       - name: Build Android APK and AAB
         run: |
           flutter build apk --release --build-number=${{github.run_number}} --flavor production
-          flutter build appbundle --release --build-number=${{github.run_number}} --flavor production    
+          flutter build appbundle --release --build-number=${{github.run_number}} --flavor production
 
       - name: Rename APK and AAB
         run: |
@@ -90,11 +90,10 @@ jobs:
         uses: actions/upload-artifact@v4.0.0
         with:
           name: fladder-android
-          path: build/app/outputs/android_artifacts/            
+          path: build/app/outputs/android_artifacts/
 
   build-windows:
-    #Use windows-2019, latest(2022) causes MSVCP140.dll related crashes
-    runs-on: windows-2019
+    runs-on: windows-latest
     needs: [fetch-info]
 
     steps:
@@ -143,7 +142,7 @@ jobs:
         run: flutter pub get
 
       - name: Build iOS app
-        run: flutter build ipa --no-codesign --flavor production --build-number=${{ github.run_number }} 
+        run: flutter build ipa --no-codesign --flavor production --build-number=${{ github.run_number }}
 
       - name: Create unsigned IPA
         run: |
@@ -161,7 +160,7 @@ jobs:
   build-macos:
     runs-on: macos-latest
     needs: [fetch-info]
-    
+
     steps:
       - name: Checkout repository
         uses: actions/checkout@v4.1.1
@@ -182,7 +181,7 @@ jobs:
         run: flutter build macos --flavor production --build-number=${{ github.run_number }}
 
       - name: Create DMG file
-        run:  hdiutil create -format UDZO -srcfolder build/macos/Build/Products/Release-production/fladder.app build/macos/Build/Products/Release-production/macOS.dmg
+        run: hdiutil create -format UDZO -srcfolder build/macos/Build/Products/Release-production/fladder.app build/macos/Build/Products/Release-production/macOS.dmg
 
       - name: Archive macOS artifact
         uses: actions/upload-artifact@v4.0.0
@@ -191,7 +190,7 @@ jobs:
           path: build/macos/Build/Products/Release-production/macOS.dmg
 
   build-linux:
-    runs-on: ubuntu-24.04  # bumped from 22.04 (latest) as it would otherwise use libmpv1
+    runs-on: ubuntu-24.04 # bumped from 22.04 (latest) as it would otherwise use libmpv1
     needs: [fetch-info]
 
     steps:
@@ -225,7 +224,7 @@ jobs:
             patchelf --set-rpath '$ORIGIN' "$lib"
           done
           patchelf --set-rpath '$ORIGIN/lib' "build/linux/x64/release/bundle/Fladder"
-          
+
       - name: Archive Linux artifact
         uses: actions/upload-artifact@v4
         with:
@@ -235,7 +234,7 @@ jobs:
   build-linux-flatpak:
     name: "Flatpak"
     runs-on: ubuntu-latest
-    if: startsWith(github.ref, 'refs/tags/v')       
+    if: startsWith(github.ref, 'refs/tags/v')
     needs: [fetch-info, build-linux]
     container:
       image: bilelmoussaoui/flatpak-github-actions:gnome-46
@@ -306,11 +305,11 @@ jobs:
           password: ${{ secrets.GITHUB_TOKEN }}
 
       - name: Build Github pages web
-        if: startsWith(github.ref, 'refs/tags/v')        
+        if: startsWith(github.ref, 'refs/tags/v')
         run: flutter build web --base-href /${{ github.event.repository.name }}/ --release --build-number=$GITHUB_RUN_NUMBER
 
       - name: Deploy to GitHub Pages
-        if: startsWith(github.ref, 'refs/tags/v')        
+        if: startsWith(github.ref, 'refs/tags/v')
         uses: peaceiris/actions-gh-pages@v4
         with:
           github_token: ${{ secrets.GITHUB_TOKEN }} # Automatically provided by GitHub Actions
@@ -328,7 +327,7 @@ jobs:
       - build-linux-flatpak
       - build-web
     runs-on: ubuntu-latest
-    if: startsWith(github.ref, 'refs/tags/v')       
+    if: startsWith(github.ref, 'refs/tags/v')
     steps:
       - name: Download Artifacts Android
         uses: actions/download-artifact@v4
@@ -348,10 +347,10 @@ jobs:
           path: fladder-windows
 
       - name: Compress Windows
-        run:  |
+        run: |
           cd fladder-windows
           zip -r ../Fladder-Windows-${{needs.fetch-info.outputs.version_name}}.zip .
-      
+
       - name: Download Artifacts iOS
         uses: actions/download-artifact@v4
         with:
@@ -415,5 +414,3 @@ jobs:
             Fladder-Web-${{needs.fetch-info.outputs.version_name}}.zip
             Fladder-Linux-${{needs.fetch-info.outputs.version_name}}.zip
             Fladder-Linux-${{needs.fetch-info.outputs.version_name}}.flatpak
-
-  
