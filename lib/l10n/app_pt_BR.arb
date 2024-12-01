@@ -1179,5 +1179,27 @@
   "closeVideo": "Fechar vídeo",
   "@closeVideo": {},
   "playNextVideo": "Reproduzir próximo vídeo",
-  "@playNextVideo": {}
+  "@playNextVideo": {},
+  "skipButtonLabel": "Pular {segment}",
+  "@skipButtonLabel": {
+    "placeholders": {
+      "segment": {
+        "type": "String"
+      }
+    }
+  },
+  "mediaSegmentCommercial": "Comercial",
+  "@mediaSegmentCommercial": {},
+  "playerSettingsBackendDesc": "Escolha o seu reprodutor de mídia preferido para uma experiência de reprodução ideal",
+  "@playerSettingsBackendDesc": {},
+  "mediaSegmentUnknown": "Desconhecido",
+  "@mediaSegmentUnknown": {},
+  "defaultLabel": "Padrão",
+  "@defaultLabel": {
+    "description": "To indicate a default value, default video player backend"
+  },
+  "noVideoPlayerOptions": "O back-end selecionado não tem opções",
+  "@noVideoPlayerOptions": {},
+  "mdkExperimental": "MDK ainda está em fase experimental",
+  "@mdkExperimental": {}
 }
