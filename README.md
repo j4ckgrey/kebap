@@ -91,7 +91,7 @@ You can pull the Docker version using the following tag: ```ghcr.io/donutware/fl
 <a href='https://play.google.com/store/apps/details?id=nl.jknaapen.fladder&pcampaignid=pcampaignidMKT-Other-global-all-co-prtnr-py-PartBadge-Mar2515-1'><img alt='Get it on Google Play' src='https://play.google.com/intl/en_us/badges/static/images/badges/en_badge_web_generic.png' width=250/></a>
 
 > [!WARNING]
-> For windows users, some applications are marked as false positives by windows defender for more info see [this issue](https://github.com/DonutWare/Fladder/issues/197).
+> For windows users, some applications are marked as false positives by windows defender for more info see [this issue](https://github.com/DonutWare/Fladder/issues/197#issuecomment-2568906874).
 
 ## How to Contribute
 Interest in contributing? Here are a couple of ways you can help:
