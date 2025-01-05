@@ -60,6 +60,7 @@ class _NavigationButtonState extends ConsumerState<NavigationButton> {
               elevation: const WidgetStatePropertyAll(0),
               padding: const WidgetStatePropertyAll(EdgeInsets.zero),
               backgroundColor: const WidgetStatePropertyAll(Colors.transparent),
+              iconSize: const WidgetStatePropertyAll(24),
               iconColor: WidgetStateProperty.resolveWith((states) {
                 return widget.selected
                     ? Theme.of(context).colorScheme.primary
