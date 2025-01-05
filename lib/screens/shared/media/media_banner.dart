@@ -141,12 +141,13 @@ class _MediaBannerState extends ConsumerState<MediaBanner> {
                             foregroundDecoration: BoxDecoration(
                               borderRadius: BorderRadius.circular(14),
                               border: Border.all(
-                                  color: Colors.white.withOpacity(0.10), strokeAlign: BorderSide.strokeAlignInside),
+                                  color: Colors.white.withValues(alpha: 0.10),
+                                  strokeAlign: BorderSide.strokeAlignInside),
                               gradient: LinearGradient(
                                 begin: Alignment.bottomLeft,
                                 end: Alignment.topCenter,
                                 colors: [
-                                  overlayColor.withOpacity(0.85),
+                                  overlayColor.withValues(alpha: 0.85),
                                   Colors.transparent,
                                 ],
                               ),
@@ -238,7 +239,7 @@ class _MediaBannerState extends ConsumerState<MediaBanner> {
                                               maxLines: 2,
                                               style: Theme.of(context).textTheme.titleMedium?.copyWith(
                                                     shadows: shadows,
-                                                    color: Colors.white.withOpacity(0.75),
+                                                    color: Colors.white.withValues(alpha: 0.75),
                                                   ),
                                             ),
                                           ),

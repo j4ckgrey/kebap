@@ -69,7 +69,7 @@ class _CarouselBannerState extends ConsumerState<CarouselBanner> {
                                     begin: Alignment.bottomLeft,
                                     end: Alignment.topCenter,
                                     colors: [
-                                      ThemesData.of(context).dark.colorScheme.primaryContainer.withOpacity(0.85),
+                                      ThemesData.of(context).dark.colorScheme.primaryContainer.withValues(alpha: 0.85),
                                       Colors.transparent,
                                     ],
                                   ),
@@ -144,7 +144,7 @@ class _CarouselBannerState extends ConsumerState<CarouselBanner> {
                         child: Container(
                           decoration: BoxDecoration(
                               border: Border.all(
-                                color: Colors.white.withOpacity(0.1),
+                                color: Colors.white.withValues(alpha: 0.1),
                                 width: 1.0,
                               ),
                               borderRadius: border),
