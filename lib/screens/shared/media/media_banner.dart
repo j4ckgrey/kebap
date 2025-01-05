@@ -12,7 +12,6 @@ import 'package:fladder/util/fladder_image.dart';
 import 'package:fladder/util/item_base_model/item_base_model_extensions.dart';
 import 'package:fladder/util/list_padding.dart';
 import 'package:fladder/util/themes_data.dart';
-import 'package:fladder/widgets/shared/fladder_carousel.dart';
 import 'package:fladder/widgets/shared/fladder_slider.dart';
 import 'package:fladder/widgets/shared/item_actions.dart';
 import 'package:fladder/widgets/shared/modal_bottom_sheet.dart';
@@ -80,8 +79,6 @@ class _MediaBannerState extends ConsumerState<MediaBanner> {
     }
     timer.reset();
   }
-
-  final controller = FladderCarouselController();
 
   @override
   Widget build(BuildContext context) {
