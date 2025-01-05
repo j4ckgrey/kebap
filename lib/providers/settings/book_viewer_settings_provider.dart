@@ -125,7 +125,7 @@ class BookViewerSettingsNotifier extends StateNotifier<BookViewerSettingsModel> 
       screenBrightness: () => value,
     );
     if (state.screenBrightness != null) {
-      ScreenBrightness().setSystemScreenBrightness(state.screenBrightness!);
+      ScreenBrightness().setApplicationScreenBrightness(state.screenBrightness!);
     } else {
       ScreenBrightness().resetApplicationScreenBrightness();
     }
@@ -133,7 +133,7 @@ class BookViewerSettingsNotifier extends StateNotifier<BookViewerSettingsModel> 
 
   void setSavedBrightness() {
     if (state.screenBrightness != null) {
-      ScreenBrightness().setSystemScreenBrightness(state.screenBrightness!);
+      ScreenBrightness().setApplicationScreenBrightness(state.screenBrightness!);
     }
   }
 
