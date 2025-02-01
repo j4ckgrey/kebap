@@ -1210,5 +1210,15 @@
   "errorLogs": "Foutlogs",
   "@errorLogs": {},
   "external": "Extern",
-  "@external": {}
+  "@external": {},
+  "downloadFile": "Download {type}",
+  "@downloadFile": {
+    "placeholders": {
+      "type": {
+        "type": "String"
+      }
+    }
+  },
+  "copyStreamUrl": "Stream-URL kopiëren",
+  "@copyStreamUrl": {}
 }
