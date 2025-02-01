@@ -1217,5 +1217,15 @@
   "errorLogs": "Журнал помилок",
   "@errorLogs": {},
   "external": "Зовнішнє",
-  "@external": {}
+  "@external": {},
+  "downloadFile": "Завантажити {type}",
+  "@downloadFile": {
+    "placeholders": {
+      "type": {
+        "type": "String"
+      }
+    }
+  },
+  "copyStreamUrl": "Скопіювати URL потоку",
+  "@copyStreamUrl": {}
 }
