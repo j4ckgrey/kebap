@@ -766,7 +766,7 @@
   "@loggedIn": {},
   "mediaTypeMovie": "Film",
   "@mediaTypeMovie": {},
-  "random": "Losowy",
+  "random": "Wylosuj",
   "@random": {},
   "read": "Przeczytaj {item}",
   "@read": {
