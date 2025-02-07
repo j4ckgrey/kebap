@@ -1220,5 +1220,7 @@
     }
   },
   "copyStreamUrl": "Stream-URL kopiëren",
-  "@copyStreamUrl": {}
+  "@copyStreamUrl": {},
+  "settingsLayoutSizesTitle": "Lay-out Formaten",
+  "@settingsLayoutSizesTitle": {}
 }
