@@ -1,3 +1,5 @@
+import 'dart:collection';
+
 import 'package:flutter/material.dart';
 
 Future<List<T>> openMultiSelectOptions<T>(
@@ -40,6 +42,10 @@ Future<List<T>> openMultiSelectOptions<T>(
                       currentSelection = {item};
                     }
                   });
+                  currentSelection = SplayTreeSet.of(
+                    currentSelection,
+                    (a, b) => items.indexOf(a).compareTo(items.indexOf(b)),
+                  );
                   onChanged?.call(currentSelection.toList());
                 },
               );

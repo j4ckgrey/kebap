@@ -26,7 +26,7 @@ List<Widget> buildClientSettingsAdvanced(BuildContext context, WidgetRef ref) {
             contentPadding: EdgeInsets.zero,
             value: selected,
             onChanged: (value) => tap(),
-            title: Text(type.name),
+            title: Text(type.label(context)),
           ),
         );
         ref.read(homeSettingsProvider.notifier).setViewSize(newItems.toSet());
