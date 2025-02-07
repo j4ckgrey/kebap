@@ -3,8 +3,10 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import 'package:fladder/models/media_playback_model.dart';
+import 'package:fladder/models/settings/home_settings_model.dart';
 import 'package:fladder/providers/video_player_provider.dart';
 import 'package:fladder/providers/views_provider.dart';
+import 'package:fladder/routes/auto_router.dart';
 import 'package:fladder/screens/shared/nested_bottom_appbar.dart';
 import 'package:fladder/util/adaptive_layout.dart';
 import 'package:fladder/widgets/navigation_scaffold/components/destination_model.dart';
@@ -65,7 +67,7 @@ class _NavigationScaffoldState extends ConsumerState<NavigationScaffold> {
         extendBody: true,
         floatingActionButtonLocation:
             playerState == VideoPlayerState.minimized ? FloatingActionButtonLocation.centerFloat : null,
-        floatingActionButton: AdaptiveLayout.of(context).size == ScreenLayout.single
+        floatingActionButton: AdaptiveLayout.layoutModeOf(context) == LayoutMode.single
             ? switch (playerState) {
                 VideoPlayerState.minimized => const Padding(
                     padding: EdgeInsets.symmetric(horizontal: 8),
@@ -83,9 +85,10 @@ class _NavigationScaffoldState extends ConsumerState<NavigationScaffold> {
           destinations: widget.destinations,
           currentLocation: currentLocation,
         ),
-        bottomNavigationBar: AdaptiveLayout.of(context).layout == LayoutState.phone
+        bottomNavigationBar: AdaptiveLayout.viewSizeOf(context) == ViewSize.phone
             ? HideOnScroll(
                 controller: AdaptiveLayout.scrollOf(context),
+                forceHide: !homeRoutes.any((element) => element.name.contains(currentLocation)),
                 child: NestedBottomAppBar(
                   child: Transform.translate(
                     offset: const Offset(0, 8),

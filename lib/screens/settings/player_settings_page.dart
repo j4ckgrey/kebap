@@ -6,6 +6,7 @@ import 'package:flutter/material.dart';
 import 'package:auto_route/auto_route.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
+import 'package:fladder/models/settings/home_settings_model.dart';
 import 'package:fladder/models/settings/video_player_settings.dart';
 import 'package:fladder/providers/settings/video_player_settings_provider.dart';
 import 'package:fladder/screens/settings/settings_list_tile.dart';
@@ -34,8 +35,8 @@ class _PlayerSettingsPageState extends ConsumerState<PlayerSettingsPage> {
   Widget build(BuildContext context) {
     final videoSettings = ref.watch(videoPlayerSettingsProvider);
     final provider = ref.read(videoPlayerSettingsProvider.notifier);
-    final showBackground = AdaptiveLayout.of(context).layout != LayoutState.phone &&
-        AdaptiveLayout.of(context).size != ScreenLayout.single;
+    final showBackground = AdaptiveLayout.viewSizeOf(context) != ViewSize.phone &&
+        AdaptiveLayout.layoutModeOf(context) != LayoutMode.single;
     return Card(
       elevation: showBackground ? 2 : 0,
       child: SettingsScaffold(
@@ -63,20 +64,19 @@ class _PlayerSettingsPageState extends ConsumerState<PlayerSettingsPage> {
           SettingsListTile(
             label: Text(context.localized.videoScalingFillScreenTitle),
             subLabel: Text(videoSettings.videoFit.label(context)),
-            onTap: () => openOptionDialogue(
+            onTap: () => openMultiSelectOptions(
               context,
               label: context.localized.videoScalingFillScreenTitle,
               items: BoxFit.values,
-              itemBuilder: (type) => RadioListTile(
-                title: Text(type?.label(context) ?? ""),
+              selected: [ref.read(videoPlayerSettingsProvider.select((value) => value.videoFit))],
+              onChanged: (values) => ref.read(videoPlayerSettingsProvider.notifier).setFitType(values.first),
+              itemBuilder: (type, selected, tap) => RadioListTile(
+                groupValue: ref.read(videoPlayerSettingsProvider.select((value) => value.videoFit)),
+                title: Text(type.label(context)),
                 value: type,
                 shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
                 contentPadding: EdgeInsets.zero,
-                groupValue: ref.read(videoPlayerSettingsProvider.select((value) => value.videoFit)),
-                onChanged: (value) {
-                  provider.setFitType(value);
-                  Navigator.pop(context);
-                },
+                onChanged: (value) => tap(),
               ),
             ),
           ),
