@@ -3,6 +3,7 @@ import 'dart:developer';
 import 'package:chopper/chopper.dart';
 import 'package:collection/collection.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:path/path.dart';
 
 import 'package:fladder/jellyfin/jellyfin_open_api.swagger.dart';
 import 'package:fladder/models/item_base_model.dart';
@@ -224,6 +225,7 @@ class PlaybackModelHelper {
         }
 
         final params = Uri(queryParameters: directOptions).query;
+        final playbackUrl = joinAll([ref.read(userProvider)!.server, "Videos", mediaSource.id!, "stream?$params"]);
 
         return DirectPlaybackModel(
           item: fullItem.body ?? item,
@@ -233,7 +235,7 @@ class PlaybackModelHelper {
           playbackInfo: playbackInfo,
           trickPlay: trickPlay,
           media: Media(
-            url: mediaPath ?? '${ref.read(userProvider)?.server ?? ""}/Videos/${mediaSource.id}/stream?$params',
+            url: mediaPath ?? playbackUrl,
           ),
           mediaStreams: mediaStreamsWithUrls,
         );
