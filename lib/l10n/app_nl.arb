@@ -1222,5 +1222,21 @@
   "copyStreamUrl": "Stream-URL kopiëren",
   "@copyStreamUrl": {},
   "settingsLayoutSizesTitle": "Lay-out Formaten",
-  "@settingsLayoutSizesTitle": {}
+  "@settingsLayoutSizesTitle": {},
+  "settingsLayoutSizesDesc": "Kies welke lay-outformaten de app mag gebruiken op basis van de venstergrootte",
+  "@settingsLayoutSizesDesc": {},
+  "settingsLayoutModesTitle": "Lay-out modi",
+  "@settingsLayoutModesTitle": {},
+  "settingsLayoutModesDesc": "Bepaal of de app lay-outs met één of twee panelen kan gebruiken",
+  "@settingsLayoutModesDesc": {},
+  "phone": "Telefoon",
+  "@phone": {},
+  "tablet": "Tablet",
+  "@tablet": {},
+  "desktop": "Desktop",
+  "@desktop": {},
+  "layoutModeSingle": "Enkel",
+  "@layoutModeSingle": {},
+  "layoutModeDual": "Twee",
+  "@layoutModeDual": {}
 }
