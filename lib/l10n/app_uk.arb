@@ -1245,5 +1245,7 @@
   "desktop": "Комп'ютер",
   "@desktop": {},
   "layoutModeDual": "Подвійний",
-  "@layoutModeDual": {}
+  "@layoutModeDual": {},
+  "copiedToClipboard": "Скопійовано в буфер обміну",
+  "@copiedToClipboard": {}
 }
