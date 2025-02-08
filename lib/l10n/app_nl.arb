@@ -1238,5 +1238,7 @@
   "layoutModeSingle": "Enkel",
   "@layoutModeSingle": {},
   "layoutModeDual": "Twee",
-  "@layoutModeDual": {}
+  "@layoutModeDual": {},
+  "copiedToClipboard": "Gekopieerd naar klembord",
+  "@copiedToClipboard": {}
 }
