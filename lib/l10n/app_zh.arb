@@ -1236,5 +1236,7 @@
   "layoutModeDual": "双",
   "@layoutModeDual": {},
   "layoutModeSingle": "单",
-  "@layoutModeSingle": {}
+  "@layoutModeSingle": {},
+  "copiedToClipboard": "已复制到剪贴板",
+  "@copiedToClipboard": {}
 }
