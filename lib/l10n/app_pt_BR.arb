@@ -1225,5 +1225,25 @@
     }
   },
   "copyStreamUrl": "Copiar URL do stream",
-  "@copyStreamUrl": {}
+  "@copyStreamUrl": {},
+  "settingsLayoutSizesTitle": "Tamanhos de layout",
+  "@settingsLayoutSizesTitle": {},
+  "settingsLayoutSizesDesc": "Escolha quais tamanhos de layout o aplicativo pode usar com base no tamanho da janela",
+  "@settingsLayoutSizesDesc": {},
+  "settingsLayoutModesTitle": "Modos de layout",
+  "@settingsLayoutModesTitle": {},
+  "settingsLayoutModesDesc": "Controle se o aplicativo pode usar layouts de painel único ou duplo",
+  "@settingsLayoutModesDesc": {},
+  "phone": "Telefone",
+  "@phone": {},
+  "tablet": "Tablet",
+  "@tablet": {},
+  "desktop": "Desktop",
+  "@desktop": {},
+  "layoutModeSingle": "Único",
+  "@layoutModeSingle": {},
+  "layoutModeDual": "Duplo",
+  "@layoutModeDual": {},
+  "copiedToClipboard": "Copiado para a área de transferência",
+  "@copiedToClipboard": {}
 }
