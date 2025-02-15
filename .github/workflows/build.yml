@@ -86,7 +86,7 @@ jobs:
       - name: Set up Flutter
         uses: subosito/flutter-action@v2.16.0
         with:
-          channel: ${{ vars.FLUTTER_CHANNEL }}
+          channel: "stable"
           flutter-version: ${{needs.fetch-info.outputs.flutter-version}}
           cache: true
           cache-key: "flutter-:os:-:channel:-:version:-:arch:-:hash:"
@@ -123,7 +123,7 @@ jobs:
       - name: Set up Flutter
         uses: subosito/flutter-action@v2.16.0
         with:
-          channel: ${{ vars.FLUTTER_CHANNEL }}
+          channel: "stable"
           flutter-version: ${{needs.fetch-info.outputs.flutter-version}}
           cache: true
           cache-key: "flutter-:os:-:channel:-:version:-:arch:-:hash:" # optional, change this to force refresh cache
@@ -166,7 +166,7 @@ jobs:
       - name: Set up Flutter
         uses: subosito/flutter-action@v2.16.0
         with:
-          channel: ${{ vars.FLUTTER_CHANNEL }}
+          channel: "stable"
           flutter-version: ${{needs.fetch-info.outputs.flutter-version}}
           cache: true
           cache-key: "flutter-:os:-:channel:-:version:-:arch:-:hash:" # optional, change this to specify the cache path
@@ -202,7 +202,7 @@ jobs:
       - name: Set up Flutter
         uses: subosito/flutter-action@v2.16.0
         with:
-          channel: ${{ vars.FLUTTER_CHANNEL }}
+          channel: "stable"
           flutter-version: ${{needs.fetch-info.outputs.flutter-version}}
           cache: true
           cache-key: "flutter-:os:-:channel:-:version:-:arch:-:hash:" # optional, change this to force refresh cache
@@ -234,7 +234,7 @@ jobs:
       - name: Set up Flutter
         uses: subosito/flutter-action@v2.16.0
         with:
-          channel: ${{ vars.FLUTTER_CHANNEL }}
+          channel: "stable"
           flutter-version: ${{needs.fetch-info.outputs.flutter-version}}
           cache: true
           cache-key: "flutter-:os:-:channel:-:version:-:arch:-:hash:" # optional, change this to force refresh cache
@@ -307,7 +307,7 @@ jobs:
       - name: Set up Flutter
         uses: subosito/flutter-action@v2.16.0
         with:
-          channel: ${{ vars.FLUTTER_CHANNEL }}
+          channel: "stable"
           flutter-version: ${{needs.fetch-info.outputs.flutter-version}}
           cache: true
           cache-key: "flutter-:os:-:channel:-:version:-:arch:-:hash:" # optional, change this to force refresh cache
