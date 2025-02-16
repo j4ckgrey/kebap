@@ -1208,5 +1208,35 @@
   "errorLogs": "错误日志",
   "@errorLogs": {},
   "external": "外部的",
-  "@external": {}
+  "@external": {},
+  "downloadFile": "下载{type}",
+  "@downloadFile": {
+    "placeholders": {
+      "type": {
+        "type": "String"
+      }
+    }
+  },
+  "copyStreamUrl": "复制流媒体网址",
+  "@copyStreamUrl": {},
+  "settingsLayoutSizesTitle": "布局尺寸",
+  "@settingsLayoutSizesTitle": {},
+  "settingsLayoutSizesDesc": "根据窗口大小选择应用程序可以使用的布局大小",
+  "@settingsLayoutSizesDesc": {},
+  "settingsLayoutModesTitle": "布局模式",
+  "@settingsLayoutModesTitle": {},
+  "settingsLayoutModesDesc": "控制应用是否可以使用单面板或双面板布局",
+  "@settingsLayoutModesDesc": {},
+  "phone": "手机",
+  "@phone": {},
+  "tablet": "平板电脑",
+  "@tablet": {},
+  "desktop": "桌面",
+  "@desktop": {},
+  "layoutModeDual": "双",
+  "@layoutModeDual": {},
+  "layoutModeSingle": "单",
+  "@layoutModeSingle": {},
+  "copiedToClipboard": "已复制到剪贴板",
+  "@copiedToClipboard": {}
 }
