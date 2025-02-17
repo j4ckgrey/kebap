@@ -1247,5 +1247,11 @@
   "layoutModeDual": "Подвійний",
   "@layoutModeDual": {},
   "copiedToClipboard": "Скопійовано в буфер обміну",
-  "@copiedToClipboard": {}
+  "@copiedToClipboard": {},
+  "episodeAvailable": "Доступна",
+  "@episodeAvailable": {},
+  "episodeUnaired": "Непоказана",
+  "@episodeUnaired": {},
+  "episodeMissing": "Відсутня",
+  "@episodeMissing": {}
 }
