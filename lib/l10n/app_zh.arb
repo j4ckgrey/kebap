@@ -1238,5 +1238,11 @@
   "layoutModeSingle": "单",
   "@layoutModeSingle": {},
   "copiedToClipboard": "已复制到剪贴板",
-  "@copiedToClipboard": {}
+  "@copiedToClipboard": {},
+  "episodeAvailable": "可用",
+  "@episodeAvailable": {},
+  "episodeUnaired": "未播出",
+  "@episodeUnaired": {},
+  "episodeMissing": "缺少的",
+  "@episodeMissing": {}
 }
