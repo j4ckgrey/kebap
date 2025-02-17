@@ -1240,5 +1240,11 @@
   "layoutModeDual": "Twee",
   "@layoutModeDual": {},
   "copiedToClipboard": "Gekopieerd naar klembord",
-  "@copiedToClipboard": {}
+  "@copiedToClipboard": {},
+  "episodeAvailable": "Beschikbaar",
+  "@episodeAvailable": {},
+  "episodeUnaired": "Niet uitgezonden",
+  "@episodeUnaired": {},
+  "episodeMissing": "Ontbreekt",
+  "@episodeMissing": {}
 }
