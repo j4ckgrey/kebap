@@ -342,7 +342,7 @@ class PlaybackModelHelper {
         deviceProfile: ref.read(videoProfileProvider),
         userId: userId,
         maxStreamingBitrate: playbackModel.bitRateOptions.enabledFirst.entries.firstOrNull?.key.bitRate,
-        mediaSourceId: item.id,
+        mediaSourceId: playbackModel.mediaStreams?.currentVersionStream?.id,
       ),
     );
 
