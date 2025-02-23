@@ -1258,5 +1258,7 @@
   "qualityOptionsOriginal": "原画",
   "@qualityOptionsOriginal": {},
   "qualityOptionsAuto": "自动",
-  "@qualityOptionsAuto": {}
+  "@qualityOptionsAuto": {},
+  "version": "版本",
+  "@version": {}
 }
