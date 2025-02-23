@@ -145,7 +145,7 @@
   "@editMetadata": {},
   "empty": "فارغ",
   "@empty": {},
-  "enabled": "تشغيل",
+  "enabled": "على",
   "@enabled": {},
   "endsAt": "ينتهي في {date}",
   "@endsAt": {
