@@ -1183,5 +1183,6 @@
   "mediaSegmentActions": "Media segment actions",
   "segmentActionNone": "None",
   "segmentActionAskToSkip": "Ask to skip",
-  "segmentActionSkip": "Skip"
+  "segmentActionSkip": "Skip",
+  "loading": "Loading"
 }

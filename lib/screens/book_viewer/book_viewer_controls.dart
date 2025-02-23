@@ -17,6 +17,7 @@ import 'package:fladder/screens/shared/default_title_bar.dart';
 import 'package:fladder/screens/shared/fladder_snackbar.dart';
 import 'package:fladder/util/adaptive_layout.dart';
 import 'package:fladder/util/input_handler.dart';
+import 'package:fladder/util/localization_helper.dart';
 import 'package:fladder/util/throttler.dart';
 import 'package:fladder/widgets/shared/fladder_slider.dart';
 
@@ -356,7 +357,7 @@ class _BookViewerControlsState extends ConsumerState<BookViewerControls> {
                     children: [
                       if (bookViewerDetails.book != null) ...{
                         Flexible(
-                          child: Text("Loading ${bookViewerDetails.book?.name}",
+                          child: Text("${context.localized.loading} ${bookViewerDetails.book?.name}",
                               style: Theme.of(context).textTheme.titleMedium),
                         ),
                         const SizedBox(width: 16),
