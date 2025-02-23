@@ -1244,5 +1244,19 @@
   "episodeUnaired": "未播出",
   "@episodeUnaired": {},
   "episodeMissing": "缺少的",
-  "@episodeMissing": {}
+  "@episodeMissing": {},
+  "homeStreamingQualityTitle": "家庭网络质量",
+  "@homeStreamingQualityTitle": {},
+  "homeStreamingQualityDesc": "连接到家庭网络时可获得最佳流媒体质量",
+  "@homeStreamingQualityDesc": {},
+  "internetStreamingQualityTitle": "移动网络质量",
+  "@internetStreamingQualityTitle": {},
+  "internetStreamingQualityDesc": "使用移动网络时可获得最佳流媒体质量",
+  "@internetStreamingQualityDesc": {},
+  "qualityOptionsTitle": "质量选项",
+  "@qualityOptionsTitle": {},
+  "qualityOptionsOriginal": "原画",
+  "@qualityOptionsOriginal": {},
+  "qualityOptionsAuto": "自动",
+  "@qualityOptionsAuto": {}
 }
