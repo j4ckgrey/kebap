@@ -132,7 +132,7 @@ begin
   case CurUninstallStep of
     usUninstall:
       begin
-        if MsgBox("Would you like to delete the application's data? This action cannot be undone. Synced files will remain unaffected.", mbConfirmation, MB_YESNO) = IDYES then
+        if MsgBox('Would you like to delete the application''s data? This action cannot be undone. Synced files will remain unaffected.', mbConfirmation, MB_YESNO) = IDYES then
         begin
             if DelTree(ExpandConstant('{localappdata}\DonutWare'), True, True, True) = False then
             begin

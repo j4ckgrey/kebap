@@ -52,7 +52,7 @@ jobs:
             echo "ARTIFACT_SUFFIX=release-signed" >> $GITHUB_ENV
             echo "AAB_PATH=productionRelease" >> $GITHUB_ENV
           else
-            echo "BUILD_MODE=profile" >> $GITHUB_ENV 
+            echo "BUILD_MODE=profile" >> $GITHUB_ENV
             echo "ARTIFACT_SUFFIX=production" >> $GITHUB_ENV
             echo "AAB_PATH=productionProfile" >> $GITHUB_ENV
           fi
@@ -128,7 +128,7 @@ jobs:
           cache: true
           cache-key: "flutter-:os:-:channel:-:version:-:arch:-:hash:" # optional, change this to force refresh cache
           cache-path: "${{ runner.tool_cache }}/flutter/:channel:-:version:-:arch:" # optional, change this to specify the cache path
-      
+
       - name: Get dependencies
         run: flutter pub get
 
@@ -385,7 +385,7 @@ jobs:
         with:
           name: fladder-windows-installer
           path: fladder-windows-installer
-      
+
       - name: Rename Windows installer
         run: |
           cd fladder-windows-installer
@@ -460,4 +460,3 @@ jobs:
             Fladder-Web-${{needs.fetch-info.outputs.version_name}}.zip
             Fladder-Linux-${{needs.fetch-info.outputs.version_name}}.zip
             Fladder-Linux-${{needs.fetch-info.outputs.version_name}}.flatpak
-            
