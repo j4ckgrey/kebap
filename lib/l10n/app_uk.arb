@@ -1253,5 +1253,11 @@
   "episodeUnaired": "Непоказана",
   "@episodeUnaired": {},
   "episodeMissing": "Відсутня",
-  "@episodeMissing": {}
+  "@episodeMissing": {},
+  "homeStreamingQualityTitle": "Якість вдома",
+  "@homeStreamingQualityTitle": {},
+  "homeStreamingQualityDesc": "Максимальна якість трансляції при підключенні до домашньої мережі",
+  "@homeStreamingQualityDesc": {},
+  "internetStreamingQualityDesc": "Максимальна якість трансляції через Інтернет (мобільний)",
+  "@internetStreamingQualityDesc": {}
 }
