@@ -1259,5 +1259,7 @@
   "homeStreamingQualityDesc": "Максимальна якість трансляції при підключенні до домашньої мережі",
   "@homeStreamingQualityDesc": {},
   "internetStreamingQualityDesc": "Максимальна якість трансляції через Інтернет (мобільний)",
-  "@internetStreamingQualityDesc": {}
+  "@internetStreamingQualityDesc": {},
+  "internetStreamingQualityTitle": "Якість інтернету",
+  "@internetStreamingQualityTitle": {}
 }
