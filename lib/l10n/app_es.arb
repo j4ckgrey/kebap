@@ -1206,5 +1206,21 @@
         "type": "String"
       }
     }
-  }
+  },
+  "downloadFile": "Descargar {type}",
+  "@downloadFile": {
+    "placeholders": {
+      "type": {
+        "type": "String"
+      }
+    }
+  },
+  "copyStreamUrl": "Copiar url de la transmisión",
+  "@copyStreamUrl": {},
+  "settingsLayoutSizesTitle": "Tamaños de interfaz",
+  "@settingsLayoutSizesTitle": {},
+  "settingsLayoutSizesDesc": "Selecciona los diseños que la app puede utilizar según el tamaño de la ventana",
+  "@settingsLayoutSizesDesc": {},
+  "errorLogs": "Registro de errores",
+  "@errorLogs": {}
 }
