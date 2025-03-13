@@ -1197,7 +1197,7 @@
   "@mediaSegmentCommercial": {},
   "mediaSegmentPreview": "Vista previa",
   "@mediaSegmentPreview": {},
-  "mediaSegmentOutro": "Otro",
+  "mediaSegmentOutro": "Créditos",
   "@mediaSegmentOutro": {},
   "skipButtonLabel": "Omitir {segment}",
   "@skipButtonLabel": {
@@ -1222,5 +1222,9 @@
   "settingsLayoutSizesDesc": "Selecciona los diseños que la app puede utilizar según el tamaño de la ventana",
   "@settingsLayoutSizesDesc": {},
   "errorLogs": "Registro de errores",
-  "@errorLogs": {}
+  "@errorLogs": {},
+  "mediaSegmentActions": "Acciones para los segmentos de vídeo",
+  "@mediaSegmentActions": {},
+  "external": "Externo",
+  "@external": {}
 }
