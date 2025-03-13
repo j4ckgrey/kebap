@@ -1226,5 +1226,15 @@
   "mediaSegmentActions": "Acciones para los segmentos de vídeo",
   "@mediaSegmentActions": {},
   "external": "Externo",
-  "@external": {}
+  "@external": {},
+  "qualityOptionsOriginal": "Original",
+  "@qualityOptionsOriginal": {},
+  "version": "Versión",
+  "@version": {},
+  "qualityOptionsTitle": "Opciones de calidad",
+  "@qualityOptionsTitle": {},
+  "qualityOptionsAuto": "Auto",
+  "@qualityOptionsAuto": {},
+  "episodeAvailable": "Disponible",
+  "@episodeAvailable": {}
 }
