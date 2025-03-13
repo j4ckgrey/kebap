@@ -1275,5 +1275,7 @@
   "episodeUnaired": "Não exibido",
   "@episodeUnaired": {},
   "episodeMissing": "Faltando",
-  "@episodeMissing": {}
+  "@episodeMissing": {},
+  "episodeAvailable": "Disponível",
+  "@episodeAvailable": {}
 }
