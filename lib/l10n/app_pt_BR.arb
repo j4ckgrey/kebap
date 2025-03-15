@@ -444,7 +444,7 @@
   "@replaceExistingImages": {},
   "save": "Salvar",
   "@save": {},
-  "search": "Pesquisa",
+  "search": "Buscar",
   "@search": {},
   "resume": "Continuar {item}",
   "@resume": {
