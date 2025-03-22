@@ -1264,5 +1264,7 @@
   "episodeUnaired": "No emitido",
   "@episodeUnaired": {},
   "episodeMissing": "Faltante",
-  "@episodeMissing": {}
+  "@episodeMissing": {},
+  "segmentActionNone": "Ninguno",
+  "@segmentActionNone": {}
 }
