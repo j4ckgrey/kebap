@@ -441,5 +441,17 @@
   "mediaTypeEpisode": "에피소드",
   "@mediaTypeEpisode": {},
   "logout": "로그아웃",
-  "@logout": {}
+  "@logout": {},
+  "openParent": "상위 폴더 열기",
+  "@openParent": {},
+  "openShow": "쇼 열기",
+  "@openShow": {},
+  "openWebLink": "웹 링크 열기",
+  "@openWebLink": {},
+  "options": "옵션",
+  "@options": {},
+  "outlineColor": "윤곽선 색",
+  "@outlineColor": {},
+  "outlineSize": "윤곽선 크기",
+  "@outlineSize": {}
 }
