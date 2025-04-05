@@ -471,7 +471,7 @@ class _PhotoViewerScreenState extends ConsumerState<PhotoViewerScreen> with Widg
                               ? IconsaxOutline.filter_remove
                               : IconsaxOutline.filter,
                         ),
-                      ].addInBetween(const SizedBox(width: 18)),
+                      ].addInBetween(const SizedBox(width: 16)),
                     );
                   }),
                 ),
