@@ -68,12 +68,16 @@ class SettingsListTile extends StatelessWidget {
               child: Row(
                 mainAxisAlignment: MainAxisAlignment.start,
                 children: [
-                  ColorFiltered(
-                    colorFilter: ColorFilter.mode(
-                      contentColor ?? Theme.of(context).colorScheme.onSurface,
-                      BlendMode.srcIn,
+                  DefaultTextStyle.merge(
+                    style: TextStyle(
+                      color: contentColor ?? Theme.of(context).colorScheme.onSurface,
                     ),
-                    child: leadingWidget,
+                    child: IconTheme(
+                      data: IconThemeData(
+                        color: contentColor ?? Theme.of(context).colorScheme.onSurface,
+                      ),
+                      child: leadingWidget,
+                    ),
                   ),
                   Expanded(
                     child: Column(
