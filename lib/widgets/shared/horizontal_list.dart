@@ -1,12 +1,14 @@
+import 'package:flutter/material.dart';
+
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:iconsax_plus/iconsax_plus.dart';
+import 'package:scrollable_positioned_list/scrollable_positioned_list.dart';
+
 import 'package:fladder/providers/settings/client_settings_provider.dart';
 import 'package:fladder/util/adaptive_layout.dart';
 import 'package:fladder/util/disable_keypad_focus.dart';
 import 'package:fladder/util/list_padding.dart';
 import 'package:fladder/util/sticky_header_text.dart';
-import 'package:flutter/material.dart';
-import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:scrollable_positioned_list/scrollable_positioned_list.dart';
 
 class HorizontalList extends ConsumerStatefulWidget {
   final String? label;
@@ -124,7 +126,7 @@ class _HorizontalListState extends ConsumerState<HorizontalList> {
                                       curve: Curves.easeInOut);
                                 },
                                 icon: const Icon(
-                                  IconsaxPlusLinear.arrow_left_2,
+                                  IconsaxPlusLinear.arrow_left_1,
                                   size: 20,
                                 )),
                           ),
