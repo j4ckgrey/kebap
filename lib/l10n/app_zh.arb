@@ -1282,5 +1282,9 @@
         "example": "1"
       }
     }
-  }
+  },
+  "settingsPlayerBufferSizeDesc": "配置视频播放的缓冲区大小，确定加载到缓存中的数据量。",
+  "@settingsPlayerBufferSizeDesc": {},
+  "settingsPlayerBufferSizeTitle": "视频缓冲区大小",
+  "@settingsPlayerBufferSizeTitle": {}
 }
