@@ -1283,5 +1283,9 @@
         "example": "1"
       }
     }
-  }
+  },
+  "settingsPlayerBufferSizeTitle": "حجم ذاكرة التخزين المؤقت للفيديو",
+  "@settingsPlayerBufferSizeTitle": {},
+  "settingsPlayerBufferSizeDesc": "قم بتهيئة حجم ذاكرة التخزين المؤقت لتشغيل الفيديو، مما يحدد كمية البيانات التي يتم تحميلها في الذاكرة المؤقتة.",
+  "@settingsPlayerBufferSizeDesc": {}
 }
