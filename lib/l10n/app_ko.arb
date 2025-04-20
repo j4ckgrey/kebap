@@ -618,5 +618,13 @@
         "type": "String"
       }
     }
+  },
+  "refreshPopup": "새로 고침 - {name}",
+  "@refreshPopup": {
+    "placeholders": {
+      "name": {
+        "type": "String"
+      }
+    }
   }
 }
