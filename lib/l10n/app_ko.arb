@@ -151,11 +151,11 @@
       }
     }
   },
-  "dashboardContinue": "계속",
+  "dashboardContinue": "이어서 보기",
   "@dashboardContinue": {},
-  "dashboardContinueListening": "계속 듣기",
+  "dashboardContinueListening": "이어서 듣기",
   "@dashboardContinueListening": {},
-  "dashboardContinueReading": "계속 읽기",
+  "dashboardContinueReading": "이어서 읽기",
   "@dashboardContinueReading": {},
   "nextUp": "다음",
   "@nextUp": {},
@@ -192,7 +192,7 @@
   "@downloadsSyncedData": {},
   "downloadsTitle": "다운로드",
   "@downloadsTitle": {},
-  "dynamicText": "동적",
+  "dynamicText": "자동",
   "@dynamicText": {},
   "editMetadata": "메타데이터 수정",
   "@editMetadata": {},
@@ -422,7 +422,7 @@
       }
     }
   },
-  "dashboardContinueWatching": "계속 보기",
+  "dashboardContinueWatching": "이어서 보기",
   "@dashboardContinueWatching": {},
   "delete": "삭제",
   "@delete": {},
@@ -587,5 +587,36 @@
   "result": "결과",
   "@result": {},
   "releaseDate": "릴리즈 날짜",
-  "@releaseDate": {}
+  "@releaseDate": {},
+  "resume": "{item}을 이어보기",
+  "@resume": {
+    "description": "resume",
+    "placeholders": {
+      "item": {
+        "type": "String"
+      }
+    }
+  },
+  "retrievePublicListOfUsers": "공개 사용자 목록 가져오기",
+  "@retrievePublicListOfUsers": {},
+  "retry": "재시도",
+  "@retry": {},
+  "runTime": "재생 시간",
+  "@runTime": {},
+  "save": "저장",
+  "@save": {},
+  "saved": "저장됨",
+  "@saved": {},
+  "scanBiometricHint": "인증",
+  "@scanBiometricHint": {},
+  "scanLibrary": "라이브러리 스캔",
+  "@scanLibrary": {},
+  "scanYourFingerprintToAuthenticate": "지문으로  {user} 인증",
+  "@scanYourFingerprintToAuthenticate": {
+    "placeholders": {
+      "user": {
+        "type": "String"
+      }
+    }
+  }
 }
