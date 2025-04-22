@@ -1254,5 +1254,17 @@
   "homeStreamingQualityTitle": "Qualité de la maison",
   "@homeStreamingQualityTitle": {},
   "episodeAvailable": "Disponible",
-  "@episodeAvailable": {}
+  "@episodeAvailable": {},
+  "qualityOptionsTitle": "Options de qualité",
+  "@qualityOptionsTitle": {},
+  "qualityOptionsOriginal": "Original",
+  "@qualityOptionsOriginal": {},
+  "qualityOptionsAuto": "Auto",
+  "@qualityOptionsAuto": {},
+  "version": "Version",
+  "@version": {},
+  "segmentActionAskToSkip": "Demander à sauter",
+  "@segmentActionAskToSkip": {},
+  "loading": "Chargement",
+  "@loading": {}
 }
