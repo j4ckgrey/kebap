@@ -1251,7 +1251,7 @@
   "@mediaSegmentOutro": {},
   "mediaSegmentIntro": "Intro",
   "@mediaSegmentIntro": {},
-  "homeStreamingQualityTitle": "Qualité de la maison",
+  "homeStreamingQualityTitle": "Qualité à domicile",
   "@homeStreamingQualityTitle": {},
   "episodeAvailable": "Disponible",
   "@episodeAvailable": {},
@@ -1266,5 +1266,11 @@
   "segmentActionAskToSkip": "Demander à sauter",
   "@segmentActionAskToSkip": {},
   "loading": "Chargement",
-  "@loading": {}
+  "@loading": {},
+  "homeStreamingQualityDesc": "Qualité maximale de streaming lorsque connecté au réseau domestique",
+  "@homeStreamingQualityDesc": {},
+  "segmentActionNone": "Aucun",
+  "@segmentActionNone": {},
+  "segmentActionSkip": "Sauter",
+  "@segmentActionSkip": {}
 }
