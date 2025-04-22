@@ -1230,5 +1230,29 @@
   "episodeUnaired": "Non diffusé",
   "@episodeUnaired": {},
   "episodeMissing": "Manquant",
-  "@episodeMissing": {}
+  "@episodeMissing": {},
+  "external": "Externe",
+  "@external": {},
+  "downloadFile": "Télécharger {type}",
+  "@downloadFile": {
+    "placeholders": {
+      "type": {
+        "type": "String"
+      }
+    }
+  },
+  "mediaSegmentUnknown": "Inconnu",
+  "@mediaSegmentUnknown": {},
+  "mediaSegmentCommercial": "Commercial",
+  "@mediaSegmentCommercial": {},
+  "mediaSegmentPreview": "Aperçu",
+  "@mediaSegmentPreview": {},
+  "mediaSegmentOutro": "Outro",
+  "@mediaSegmentOutro": {},
+  "mediaSegmentIntro": "Intro",
+  "@mediaSegmentIntro": {},
+  "homeStreamingQualityTitle": "Qualité de la maison",
+  "@homeStreamingQualityTitle": {},
+  "episodeAvailable": "Disponible",
+  "@episodeAvailable": {}
 }
