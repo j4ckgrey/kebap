@@ -417,7 +417,7 @@
   "@name": {},
   "navigation": "导航",
   "@navigation": {},
-  "navigationDashboard": "仪表板",
+  "navigationDashboard": "控制台",
   "@navigationDashboard": {},
   "navigationFavorites": "收藏夹",
   "@navigationFavorites": {},
@@ -571,7 +571,7 @@
       }
     }
   },
-  "refreshPopupContentMetadata": "根据仪表板中启用的设置和互联网服务刷新元数据。",
+  "refreshPopupContentMetadata": "根据控制台中启用的设置和互联网服务刷新元数据。",
   "@refreshPopupContentMetadata": {},
   "related": "相关",
   "@related": {},
@@ -715,7 +715,7 @@
   "@settingsHomeCarouselDesc": {},
   "settingsHomeCarouselTitle": "仪表板轮播",
   "@settingsHomeCarouselTitle": {},
-  "settingsHomeNextUpDesc": "仪表板屏幕上显示的海报类型",
+  "settingsHomeNextUpDesc": "控制台屏幕上显示的海报类型",
   "@settingsHomeNextUpDesc": {},
   "settingsHomeNextUpTitle": "下一个海报",
   "@settingsHomeNextUpTitle": {},
