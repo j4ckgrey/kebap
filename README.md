@@ -1,3 +1,17 @@
+# Kebap
+
+Kebap — rebranded from Fladder.
+
+Small notes to get started:
+
+- Open this repository in GitHub Codespaces (or VS Code with Remote - Containers).
+- Recommended: use the provided devcontainer to start a dedicated development environment.
+- Useful commands:
+  - `flutter pub get` — fetch Dart/Flutter dependencies
+  - `flutter analyze` — run static analysis
+  - `flutter build` — build platform artifacts
+
+This README is intentionally minimal — tell me if you want a more detailed contributor guide.
 
 <h1 align="center">
   <br>

@@ -1,3 +1,23 @@
+# Flutter / Dart
+.dart_tool/
+.packages
+pubspec.lock
+build/
+.flutter-plugins
+.flutter-plugins-dependencies
+
+# IDE
+.idea/
+.vscode/
+
+# macOS
+.DS_Store
+
+# Windows
+Thumbs.db
+
+# misc
+*.log
 # Miscellaneous
 *.class
 *.log

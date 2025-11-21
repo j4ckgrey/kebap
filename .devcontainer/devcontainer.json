@@ -1,0 +1,15 @@
+{
+  "name": "Kebap Dev Container",
+  "image": "mcr.microsoft.com/devcontainers/base:ubuntu",
+  "features": {},
+  "customizations": {
+    "vscode": {
+      "extensions": [
+        "Dart-Code.dart-code",
+        "Dart-Code.flutter"
+      ]
+    }
+  },
+  "postCreateCommand": "echo 'Devcontainer created'",
+  "remoteUser": "vscode"
+}
