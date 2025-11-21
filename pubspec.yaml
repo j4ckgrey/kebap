@@ -1,4 +1,4 @@
-name: fladder
+name: kebap
 description: A simple cross-platform Jellyfin client.
 # The following line prevents the package from being accidentally published to
 # pub.dev using `flutter pub publish`. This is preferred for private packages.
@@ -225,8 +225,8 @@ flutter:
 flutter_native_splash:
   color: "#210000"
   color_dark: "#210000"
-  image: icons/production/fladder_icon.png
-  image_dark: icons/production/fladder_icon.png
+  image: icons/production/kebap_icon_desktop.png
+  image_dark: icons/production/kebap_icon_desktop.png
   android: true
   ios: false
   web: false

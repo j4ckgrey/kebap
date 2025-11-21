@@ -1158,7 +1158,7 @@
   "@libraryPlayItems": {},
   "clientSettingsRequireWifiDesc": "வைஃபை நெட்வொர்க்குடன் இணைக்கப்படும்போது மட்டுமே பதிவிறக்கவும்",
   "@clientSettingsRequireWifiDesc": {},
-  "clientSettingsShowAllCollectionsDesc": "இயக்கப்பட்டால், FLADDER ஆல் ஆதரிக்கப்படாதவை உட்பட அனைத்து சேகரிப்பு வகைகளையும் காட்டு",
+  "clientSettingsShowAllCollectionsDesc": "இயக்கப்பட்டால், Kebap ஆல் ஆதரிக்கப்படாதவை உட்பட அனைத்து சேகரிப்பு வகைகளையும் காட்டு",
   "@clientSettingsShowAllCollectionsDesc": {},
   "resumeVideo": "வீடியோவை மீண்டும் தொடங்குங்கள்",
   "@resumeVideo": {},
