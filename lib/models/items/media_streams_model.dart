@@ -16,11 +16,13 @@ class MediaStreamsModel {
   final int? defaultAudioStreamIndex;
   final int? defaultSubStreamIndex;
   final List<VersionStreamModel> versionStreams;
+  final bool isLoading;
   MediaStreamsModel({
     this.versionStreamIndex,
     this.defaultAudioStreamIndex,
     this.defaultSubStreamIndex,
     required this.versionStreams,
+    this.isLoading = false,
   });
 
   VersionStreamModel? get currentVersionStream => versionStreams.elementAtOrNull(versionStreamIndex ?? 0);
@@ -141,6 +143,7 @@ class MediaStreamsModel {
     int? defaultAudioStreamIndex,
     int? defaultSubStreamIndex,
     List<VersionStreamModel>? versionStreams,
+    bool? isLoading,
   }) {
     final streamIndexChanged = versionStreamIndex != this.versionStreamIndex && versionStreamIndex != null;
     final currentVersionStreams = versionStreams ?? this.versionStreams;
@@ -153,6 +156,7 @@ class MediaStreamsModel {
           ? currentVersionStreams.elementAtOrNull(versionStreamIndex)?.defaultSubStreamIndex
           : defaultSubStreamIndex ?? this.defaultSubStreamIndex,
       versionStreams: versionStreams ?? this.versionStreams,
+      isLoading: isLoading ?? this.isLoading,
     );
   }
 

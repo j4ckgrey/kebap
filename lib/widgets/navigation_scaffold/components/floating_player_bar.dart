@@ -97,8 +97,8 @@ class _CurrentlyPlayingBarState extends ConsumerState<FloatingPlayerBar> {
       ItemActionButton(
         label: Text(isFavourite ? context.localized.removeAsFavorite : context.localized.addAsFavorite),
         icon: Icon(
-          color: isFavourite ? Colors.red : null,
           isFavourite ? IconsaxPlusBold.heart : IconsaxPlusLinear.heart,
+          color: isFavourite ? Colors.red : null,
         ),
         action: () async {
           final result = (await ref.read(userProvider.notifier).setAsFavorite(

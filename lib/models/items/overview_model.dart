@@ -27,6 +27,8 @@ class OverviewModel with OverviewModelMappable {
   final List<GenreItems> genreItems;
   final List<String> tags;
   final List<Person> people;
+  final Map<String, String>? providerIds;
+
   const OverviewModel({
     this.runTime,
     this.summary = "",
@@ -44,6 +46,7 @@ class OverviewModel with OverviewModelMappable {
     this.genreItems = const [],
     this.tags = const [],
     this.people = const [],
+    this.providerIds,
   });
 
   List<Person> get directors {
@@ -73,6 +76,7 @@ class OverviewModel with OverviewModelMappable {
       genreItems: item.genreItems?.map((e) => GenreItems(id: e.id ?? "", name: e.name ?? "")).toList() ?? [],
       externalUrls: ExternalUrls.fromDto(item.externalUrls ?? []),
       people: Person.peopleFromDto(item.people ?? [], ref),
+      providerIds: item.providerIds?.cast<String, String>(),
     );
   }
 }

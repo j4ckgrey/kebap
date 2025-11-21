@@ -19,6 +19,7 @@ import 'package:fladder/widgets/navigation_scaffold/components/adaptive_fab.dart
 import 'package:fladder/widgets/navigation_scaffold/components/destination_model.dart';
 import 'package:fladder/widgets/navigation_scaffold/components/drawer_list_button.dart';
 import 'package:fladder/widgets/navigation_scaffold/components/settings_user_icon.dart';
+import 'package:fladder/widgets/requests/requests_sheet.dart';
 import 'package:fladder/widgets/shared/item_actions.dart';
 
 class NestedNavigationDrawer extends ConsumerWidget {
@@ -131,6 +132,26 @@ class NestedNavigationDrawer extends ConsumerWidget {
                 icon: posterIcon ?? Icon(library.collectionType.iconOutlined));
           }),
         },
+        const Divider(indent: 28, endIndent: 28),
+        // Requests button
+        Consumer(
+          builder: (context, ref, child) {
+            return DrawerListButton(
+              label: 'Media Requests',
+              selectedIcon: const Icon(IconsaxPlusBold.task_square),
+              icon: const Icon(IconsaxPlusLinear.task_square),
+              selected: false,
+              onPressed: () {
+                Scaffold.of(context).closeDrawer();
+                showModalBottomSheet(
+                  context: context,
+                  isScrollControlled: true,
+                  builder: (context) => const RequestsSheet(),
+                );
+              },
+            );
+          },
+        ),
         const Divider(indent: 28, endIndent: 28),
         if (isExpanded)
           Transform.translate(

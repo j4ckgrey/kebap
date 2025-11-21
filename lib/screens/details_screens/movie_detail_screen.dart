@@ -23,6 +23,7 @@ import 'package:fladder/util/list_padding.dart';
 import 'package:fladder/util/router_extension.dart';
 import 'package:fladder/util/widget_extensions.dart';
 import 'package:fladder/widgets/shared/item_actions.dart';
+import 'package:fladder/widgets/shared/item_details_reviews_carousel.dart';
 import 'package:fladder/widgets/shared/modal_bottom_sheet.dart';
 import 'package:fladder/widgets/shared/selectable_icon_button.dart';
 
@@ -141,7 +142,7 @@ class _ItemDetailScreenState extends ConsumerState<MovieDetailScreen> {
                     officialRating: details.overview.parentalRating,
                     communityRating: details.overview.communityRating,
                   ),
-                  if (details.mediaStreams.isNotEmpty)
+                  if (details.mediaStreams.versionStreams.isNotEmpty)
                     MediaStreamInformation(
                       onVersionIndexChanged: (index) {
                         ref.read(providerInstance.notifier).setVersionIndex(index);
@@ -175,6 +176,10 @@ class _ItemDetailScreenState extends ConsumerState<MovieDetailScreen> {
                       people: details.overview.people,
                       contentPadding: padding,
                     ),
+                  ItemDetailsReviewsCarousel(
+                    item: details,
+                    contentPadding: padding,
+                  ),
                   if (details.related.isNotEmpty)
                     PosterRow(posters: details.related, contentPadding: padding, label: "Related"),
                   if (details.overview.externalUrls?.isNotEmpty == true)

@@ -111,7 +111,7 @@ class _NavigationScaffoldState extends ConsumerState<NavigationScaffold> {
                 return Scaffold(
                   key: _key,
                   appBar: fullScreenChildRoute ? null : const FladderAppBar(),
-                  extendBodyBehindAppBar: true,
+                  extendBodyBehindAppBar: false,
                   resizeToAvoidBottomInset: false,
                   extendBody: true,
                   floatingActionButton: AdaptiveLayout.layoutModeOf(context) == LayoutMode.single && isHomeScreen

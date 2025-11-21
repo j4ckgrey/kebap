@@ -36,6 +36,7 @@ import 'package:fladder/util/refresh_state.dart';
 import 'package:fladder/util/router_extension.dart';
 import 'package:fladder/widgets/navigation_scaffold/components/background_image.dart';
 import 'package:fladder/widgets/navigation_scaffold/components/settings_user_icon.dart';
+import 'package:fladder/widgets/search/search_mode_toggle.dart';
 import 'package:fladder/widgets/shared/fladder_scrollbar.dart';
 import 'package:fladder/widgets/shared/hide_on_scroll.dart';
 import 'package:fladder/widgets/shared/item_actions.dart';
@@ -398,6 +399,12 @@ class _LibrarySearchScreenState extends ConsumerState<LibrarySearchScreen> {
                               ),
                             );
                           }),
+                          SearchModeToggle(
+                            onModeChanged: () {
+                              // Trigger search refresh when mode changes
+                              refreshKey.currentState?.show();
+                            },
+                          ),
                           if (AdaptiveLayout.layoutModeOf(context) == LayoutMode.single) ...[
                             const SizedBox(width: 6),
                             SizedBox.square(dimension: toolbarHeight - 3.0, child: const SettingsUserIcon()),
@@ -428,10 +435,7 @@ class _LibrarySearchScreenState extends ConsumerState<LibrarySearchScreen> {
                                     key: uniqueKey,
                                     title: librarySearchResults.searchBarTitle(context),
                                     debounceDuration: const Duration(seconds: 1),
-                                    onItem: (value) async {
-                                      await value.navigateTo(context);
-                                      refreshKey.currentState?.show();
-                                    },
+                                    // Removed onItem callback - let SuggestionSearchBar handle it based on search mode
                                     onSubmited: (value) async {
                                       if (librarySearchResults.searchQuery != value) {
                                         libraryProvider.setSearch(value);

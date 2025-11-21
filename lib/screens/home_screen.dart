@@ -7,6 +7,7 @@ import 'package:iconsax_plus/iconsax_plus.dart';
 import 'package:window_manager/window_manager.dart';
 
 import 'package:fladder/models/settings/client_settings_model.dart';
+import 'package:fladder/providers/baklava_requests_provider.dart';
 import 'package:fladder/providers/settings/client_settings_provider.dart';
 import 'package:fladder/providers/sync_provider.dart';
 import 'package:fladder/providers/user_provider.dart';
@@ -24,6 +25,7 @@ enum HomeTabs {
   dashboard,
   library,
   favorites,
+  requests,
   sync;
 
   const HomeTabs();
@@ -32,6 +34,7 @@ enum HomeTabs {
         HomeTabs.dashboard => IconsaxPlusLinear.home_1,
         HomeTabs.library => IconsaxPlusLinear.book,
         HomeTabs.favorites => IconsaxPlusLinear.heart,
+        HomeTabs.requests => IconsaxPlusLinear.task_square,
         HomeTabs.sync => IconsaxPlusLinear.cloud,
       };
 
@@ -39,6 +42,7 @@ enum HomeTabs {
         HomeTabs.dashboard => IconsaxPlusBold.home_1,
         HomeTabs.library => IconsaxPlusBold.book,
         HomeTabs.favorites => IconsaxPlusBold.heart,
+        HomeTabs.requests => IconsaxPlusBold.task_square,
         HomeTabs.sync => IconsaxPlusBold.cloud,
       };
 
@@ -46,6 +50,7 @@ enum HomeTabs {
         HomeTabs.dashboard => context.router.navigate(const DashboardRoute()),
         HomeTabs.library => context.router.navigate(const LibraryRoute()),
         HomeTabs.favorites => context.router.navigate(const FavouritesRoute()),
+        HomeTabs.requests => context.router.navigate(const RequestsRoute()),
         HomeTabs.sync => context.router.navigate(const SyncedRoute()),
       };
 
@@ -53,6 +58,7 @@ enum HomeTabs {
         HomeTabs.dashboard => context.localized.dashboard,
         HomeTabs.library => context.localized.library(0),
         HomeTabs.favorites => context.localized.favorites,
+        HomeTabs.requests => 'Requests',
         HomeTabs.sync => context.localized.sync,
       };
 }
@@ -134,6 +140,37 @@ class HomeScreen extends ConsumerWidget {
                   onPressed: () => context.router.navigate(LibrarySearchRoute()),
                   child: const Icon(IconsaxPlusLinear.search_status),
                 ),
+              );
+            case HomeTabs.requests:
+              return DestinationModel(
+                label: 'Requests',
+                icon: Icon(e.icon),
+                badge: Consumer(
+                  builder: (context, ref, child) {
+                    final pendingCount = ref.watch(
+                      baklavaRequestsProvider.select((state) {
+                        final user = ref.watch(userProvider);
+                        if (user == null) return 0;
+
+                        final isAdmin = user.policy?.isAdministrator ?? false;
+                        final filtered = state.filterByUser(user.name, isAdmin: isAdmin);
+
+                        return filtered.where((r) => r.status == 'pending').length;
+                      }),
+                    );
+                    return pendingCount != 0
+                        ? CircleAvatar(
+                            radius: 10,
+                            child: FittedBox(
+                              child: Text(pendingCount.toString()),
+                            ),
+                          )
+                        : const SizedBox.shrink();
+                  },
+                ),
+                selectedIcon: Icon(e.selectedIcon),
+                route: const RequestsRoute(),
+                action: () => e.navigate(context),
               );
           }
         })

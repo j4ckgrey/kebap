@@ -5,7 +5,11 @@ import 'package:auto_route/auto_route.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import 'package:fladder/providers/settings/client_settings_provider.dart';
+import 'package:fladder/providers/settings/media_stream_view_type_provider.dart';
+import 'package:fladder/models/settings/media_stream_view_type.dart';
 import 'package:fladder/providers/shared_provider.dart';
+import 'package:fladder/widgets/shared/enum_selection.dart';
+import 'package:fladder/widgets/shared/item_actions.dart';
 import 'package:fladder/routes/auto_router.gr.dart';
 import 'package:fladder/screens/settings/client_sections/client_settings_advanced.dart';
 import 'package:fladder/screens/settings/client_sections/client_settings_dashboard.dart';
@@ -70,6 +74,28 @@ class _ClientSettingsPageState extends ConsumerState<ClientSettingsPage> {
         ...buildClientSettingsDashboard(context, ref),
         const SizedBox(height: 12),
         ...buildClientSettingsVisual(context, ref, nextUpDaysEditor, libraryPageSizeController),
+        const SizedBox(height: 12),
+        ...settingsListGroup(
+          context,
+          const SettingsLabelDivider(label: 'Media Stream Display'),
+          [
+            SettingsListTile(
+              label: const Text('Stream Selection Style'),
+              subLabel: const Text('Choose how to display version, audio and subtitle options'),
+              trailing: EnumBox(
+                current: ref.watch(mediaStreamViewTypeProvider).label,
+                itemBuilder: (context) => MediaStreamViewType.values
+                    .map(
+                      (entry) => ItemActionButton(
+                        label: Text(entry.label),
+                        action: () => ref.read(mediaStreamViewTypeProvider.notifier).state = entry,
+                      ),
+                    )
+                    .toList(),
+              ),
+            ),
+          ],
+        ),
         const SizedBox(height: 12),
         ...buildClientSettingsTheme(context, ref),
         const SizedBox(height: 12),

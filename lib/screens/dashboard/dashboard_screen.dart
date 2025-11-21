@@ -80,6 +80,9 @@ class _DashboardScreenState extends ConsumerState<DashboardScreen> {
         ? HomeBanner.detailedBanner
         : ref.watch(homeSettingsProvider.select((value) => value.homeBanner));
 
+    // Debug: log banner visibility and items
+    debugPrint('[Dashboard] bannerType=$bannerType');
+
     final dashboardData = ref.watch(dashboardProvider);
     final views = ref.watch(viewsProvider);
     final homeSettings = ref.watch(homeSettingsProvider);
@@ -90,11 +93,24 @@ class _DashboardScreenState extends ConsumerState<DashboardScreen> {
 
     final allResume = [...resumeVideo, ...resumeAudio, ...resumeBooks].toList();
 
-    final homeCarouselItems = switch (homeSettings.carouselSettings) {
+    var homeCarouselItems = switch (homeSettings.carouselSettings) {
       HomeCarouselSettings.nextUp => dashboardData.nextUp,
       HomeCarouselSettings.combined => [...allResume, ...dashboardData.nextUp],
       HomeCarouselSettings.cont => allResume,
     };
+
+    // If no resume/nextUp items are available, fallback to showing library
+    // recentlyAdded items from the user's dashboard views so the home
+    // carousel isn't empty.
+    if (homeCarouselItems.isEmpty) {
+      final List<ItemBaseModel> fallback = views.dashboardViews
+          .expand((v) => v.recentlyAdded ?? <ItemBaseModel>[])
+          .cast<ItemBaseModel>()
+          .toList();
+      if (fallback.isNotEmpty) homeCarouselItems = fallback;
+    }
+
+    debugPrint('[Dashboard] homeBanner=${homeBanner.toString()} carouselItems=${homeCarouselItems.length}');
 
     final viewSize = AdaptiveLayout.viewSizeOf(context);
 
@@ -143,7 +159,14 @@ class _DashboardScreenState extends ConsumerState<DashboardScreen> {
                       ),
                       child: HomeBannerWidget(
                         posters: homeCarouselItems,
-                        onSelect: (poster) => selectedPoster.value = poster,
+                        onSelect: (poster) {
+                          selectedPoster.value = poster;
+                          Navigator.of(context).push(
+                            MaterialPageRoute(
+                              builder: (context) => poster.detailScreenWidget,
+                            ),
+                          );
+                        },
                       ),
                     ),
                   ),

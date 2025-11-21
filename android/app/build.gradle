@@ -75,20 +75,12 @@ android {
         kotlinCompilerExtensionVersion '1.6.4'
     }
 
-    signingConfigs {
-        release {
-            storeFile file('keystore.jks')
-            keyAlias keystoreProperties['keyAlias']
-            keyPassword keystoreProperties['keyPassword']
-            storePassword keystoreProperties['storePassword']
-        }
-    }
     buildTypes {
         release {
             minifyEnabled true
             shrinkResources true
             proguardFiles getDefaultProguardFile("proguard-android.txt"), "proguard-rules.pro"
-            signingConfig signingConfigs.release
+            // Signing disabled - build will produce unsigned AAB
         }
     }
 

@@ -1,5 +1,5 @@
 {
-    "about": "Fladder बद्दल",
+    "about": "Kebap बद्दल",
     "@about": {},
     "accept": "स्वीकार करा",
     "@accept": {},
@@ -941,8 +941,8 @@
     "@latestReleases": {},
     "newUpdateFoundOnGithub": "Github वर नवीन आवृत्ती सापडली",
     "@newUpdateFoundOnGithub": {},
-    "exitFladderTitle": "Fladder बंद करा",
-    "@exitFladderTitle": {},
+    "exitKebapTitle": "Kebap बंद करा",
+    "@exitKebapTitle": {},
     "playbackTypeTranscode": "ट्रान्सकोड",
     "@playbackTypeTranscode": {},
     "hasLikedActor": "आवडीचा अभिनेता असलेला",

@@ -25,6 +25,8 @@ class HomeBannerWidget extends ConsumerWidget {
     final bannerType = ref.watch(homeSettingsProvider.select((value) => value.homeBanner));
     final maxHeight = (MediaQuery.sizeOf(context).shortestSide * 0.6).clamp(125.0, 375.0);
 
+    debugPrint('[HomeBannerWidget] type=$bannerType posters=${posters.length}');
+
     return switch (bannerType) {
       HomeBanner.carousel => Column(
           mainAxisSize: MainAxisSize.min,

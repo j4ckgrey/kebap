@@ -74,6 +74,13 @@ class _HorizontalListState extends ConsumerState<HorizontalList> with TickerProv
   @override
   void dispose() {
     _scrollAnimation?.dispose();
+    // Clear firstContentNode if this row registered it
+    if (widget.autoFocus && firstContentNode != null) {
+      final nodesOnSameRow = _nodesInRow(parentNode);
+      if (nodesOnSameRow.isNotEmpty && firstContentNode == nodesOnSameRow.first) {
+        firstContentNode = null;
+      }
+    }
     super.dispose();
   }
 
@@ -87,10 +94,20 @@ class _HorizontalListState extends ConsumerState<HorizontalList> with TickerProv
         _scrollToPosition(widget.startIndex ?? 0);
       }
 
-      if ((FocusProvider.autoFocusOf(context) || widget.autoFocus) &&
-          AdaptiveLayout.inputDeviceOf(context) == InputDevice.dPad) {
+      if (AdaptiveLayout.inputDeviceOf(context) == InputDevice.dPad) {
         final nodesOnSameRow = _nodesInRow(parentNode);
-        nodesOnSameRow[widget.startIndex ?? 0].requestFocus();
+        if (nodesOnSameRow.isNotEmpty && (FocusProvider.autoFocusOf(context) || widget.autoFocus)) {
+          // CRITICAL: Only register as first content if this row has autoFocus.
+          // This ensures only the truly first visible row is registered,
+          // not every row that happens to have focus capability.
+          if (widget.autoFocus) {
+            try {
+              registerFirstContentNode(nodesOnSameRow.first);
+            } catch (_) {}
+          }
+
+          nodesOnSameRow[widget.startIndex ?? 0].requestFocus();
+        }
       }
     });
   }
@@ -281,6 +298,7 @@ class _HorizontalListState extends ConsumerState<HorizontalList> with TickerProv
                 parentNode: parentNode,
                 scrollController: _scrollController,
                 firstItemWidth: _firstItemWidth ?? 250,
+                isFirstRow: widget.autoFocus,
                 onFocused: (node) {
                   lastFocused = node;
                   final correctIndex = _getCorrectIndexForNode(node);
@@ -382,12 +400,14 @@ class HorizontalRailFocus extends WidgetOrderTraversalPolicy {
   final void Function(FocusNode node) onFocused;
   final ScrollController scrollController;
   final double firstItemWidth;
+  final bool isFirstRow;
 
   HorizontalRailFocus({
     required this.parentNode,
     required this.onFocused,
     required this.scrollController,
     required this.firstItemWidth,
+    this.isFirstRow = false,
   });
 
   @override
@@ -395,17 +415,41 @@ class HorizontalRailFocus extends WidgetOrderTraversalPolicy {
     final rowNodes = _nodesInRow(parentNode);
     final index = rowNodes.indexOf(currentNode);
     if (index == -1) return false;
-
+    
+    // Handle LEFT navigation within the row
     if (direction == TraversalDirection.left) {
-      final shouldAllowNavBarFocus =
-          scrollController.hasClients && (scrollController.offset <= firstItemWidth * 0.5) && (index == 0);
-
-      if (shouldAllowNavBarFocus) {
-        lastMainFocus = currentNode;
-        navBarNode.requestFocus();
-        return true;
+      // Check if we're at the first item and scroll is near start
+      bool isFullyVisible(FocusNode node) {
+        try {
+          if (node.context == null) return false;
+          final scrollable = Scrollable.of(node.context!);
+          if (scrollable == null) return false;
+          final viewportBox = scrollable.context.findRenderObject() as RenderBox;
+          final itemBox = node.context!.findRenderObject() as RenderBox;
+          final left = itemBox.localToGlobal(Offset.zero, ancestor: viewportBox).dx;
+          final right = left + itemBox.size.width;
+          final viewportWidth = viewportBox.size.width;
+          return left >= 0 && right <= viewportWidth;
+        } catch (_) {
+          return false;
+        }
       }
 
+      // At first item with scroll at start - don't navigate anywhere
+      // Let the GlobalFallbackTraversalPolicy handle it if truly stuck
+      final shouldBlockNavigation = scrollController.hasClients &&
+          (scrollController.offset <= firstItemWidth * 0.5) &&
+          (index == 0) &&
+          isFullyVisible(currentNode);
+
+      if (shouldBlockNavigation) {
+        // Store this as the last main focus for potential navbar return
+        lastMainFocus = currentNode;
+        // Return false to let parent policy handle (will go to navbar via GlobalFallback)
+        return false;
+      }
+
+      // Navigate to previous item in row
       if (index > 0) {
         final target = rowNodes[index - 1];
         target.requestFocus();
@@ -414,6 +458,7 @@ class HorizontalRailFocus extends WidgetOrderTraversalPolicy {
       return true;
     }
 
+    // Handle RIGHT navigation within the row
     if (direction == TraversalDirection.right) {
       if (index < rowNodes.length - 1) {
         final target = rowNodes[index + 1];
@@ -423,7 +468,34 @@ class HorizontalRailFocus extends WidgetOrderTraversalPolicy {
       return true;
     }
 
-    parentNode.requestFocus();
+    // Handle UP navigation
+    if (direction == TraversalDirection.up) {
+      // Only go to navbar if this is the FIRST ROW (allow from any item in the row)
+      if (isFirstRow) {
+        lastMainFocus = currentNode;
+        try {
+          if (firstNavButtonNode != null && firstNavButtonNode!.canRequestFocus) {
+            firstNavButtonNode!.requestFocus();
+            return true;
+          }
+        } catch (_) {}
+        
+        try {
+          navBarNode.requestFocus();
+          return true;
+        } catch (_) {}
+      }
+
+      // For non-first rows, allow standard traversal to find the row above
+      return super.inDirection(currentNode, direction);
+    }
+
+    // Handle DOWN navigation - use default to go to next row
+    if (direction == TraversalDirection.down) {
+      return super.inDirection(currentNode, direction);
+    }
+
+    // For any other direction, use default behavior
     return super.inDirection(currentNode, direction);
   }
 }

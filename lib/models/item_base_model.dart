@@ -123,7 +123,7 @@ class ItemBaseModel with ItemBaseModelMappable {
 
   ImagesData? get getPosters => images;
 
-  ImageData? get bannerImage => images?.primary ?? getPosters?.randomBackDrop ?? getPosters?.primary;
+  ImageData? get bannerImage => images?.backDrop?.firstOrNull ?? images?.primary ?? getPosters?.backDrop?.firstOrNull ?? getPosters?.primary;
 
   bool get playAble => false;
 

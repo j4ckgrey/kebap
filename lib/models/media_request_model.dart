@@ -1,0 +1,80 @@
+import 'package:freezed_annotation/freezed_annotation.dart';
+
+part 'media_request_model.freezed.dart';
+part 'media_request_model.g.dart';
+
+/// Converter to strip url("...") wrapper from image URLs
+class ImageUrlConverter implements JsonConverter<String?, String?> {
+  const ImageUrlConverter();
+
+  @override
+  String? fromJson(String? json) {
+    if (json == null) return null;
+    // Strip url("...") wrapper if present
+    if (json.startsWith('url("') && json.endsWith('")')) {
+      return json.substring(5, json.length - 2);
+    }
+    return json;
+  }
+
+  @override
+  String? toJson(String? object) => object;
+}
+
+@Freezed(copyWith: true)
+abstract class MediaRequest with _$MediaRequest {
+  const factory MediaRequest({
+    @JsonKey(name: 'Id') required String id,
+    @JsonKey(name: 'Username') String? username,
+    @JsonKey(name: 'UserId') String? userId,
+    @JsonKey(name: 'Timestamp') @Default(0) int timestamp,
+    @JsonKey(name: 'Title') required String title,
+    @JsonKey(name: 'Year') String? year,
+    @JsonKey(name: 'Img') @ImageUrlConverter() String? img,
+    @JsonKey(name: 'ImdbId') String? imdbId,
+    @JsonKey(name: 'TmdbId') String? tmdbId,
+    @JsonKey(name: 'JellyfinId') String? jellyfinId,
+    @JsonKey(name: 'ItemType') String? itemType,
+    @JsonKey(name: 'TmdbMediaType') String? tmdbMediaType,
+    @JsonKey(name: 'Status') @Default('pending') String status,
+    @JsonKey(name: 'ApprovedBy') String? approvedBy,
+  }) = _MediaRequest;
+
+  factory MediaRequest.fromJson(Map<String, dynamic> json) =>
+      _$MediaRequestFromJson(json);
+}
+
+@Freezed(copyWith: true)
+abstract class RequestsState with _$RequestsState {
+  const RequestsState._();
+
+  const factory RequestsState({
+    @Default([]) List<MediaRequest> requests,
+    @Default(false) bool loading,
+    String? error,
+  }) = _RequestsState;
+
+  int get pendingCount => requests.where((r) => r.status == 'pending').length;
+
+  List<MediaRequest> filterByUser(String username, {bool isAdmin = false}) {
+    if (isAdmin) {
+      return requests;
+    }
+    return requests.where((r) => r.username == username).toList();
+  }
+
+  List<MediaRequest> get movies =>
+      requests.where((r) => r.itemType?.toLowerCase() == 'movie').toList();
+
+  List<MediaRequest> get series =>
+      requests.where((r) => r.itemType?.toLowerCase() == 'series' || r.itemType?.toLowerCase() == 'tv').toList();
+
+  List<MediaRequest> get pending =>
+      requests.where((r) => r.status == 'pending').toList();
+
+  List<MediaRequest> get approved =>
+      requests.where((r) => r.status == 'approved').toList();
+
+  List<MediaRequest> get rejected =>
+      requests.where((r) => r.status == 'rejected').toList();
+}

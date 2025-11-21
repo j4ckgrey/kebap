@@ -2,6 +2,7 @@ import 'package:fladder/providers/search_provider.dart';
 import 'package:fladder/screens/shared/media/poster_grid.dart';
 import 'package:fladder/util/debouncer.dart';
 import 'package:fladder/util/string_extensions.dart';
+import 'package:fladder/widgets/search/search_mode_toggle.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
@@ -30,6 +31,16 @@ class _SearchScreenState extends ConsumerState<SearchScreen> {
     final searchResults = ref.watch(searchProvider);
     return Scaffold(
       appBar: AppBar(
+        actions: [
+          SearchModeToggle(
+            onModeChanged: () {
+              // Trigger search refresh when mode changes
+              if (_controller.text.isNotEmpty) {
+                ref.read(searchProvider.notifier).searchQuery();
+              }
+            },
+          ),
+        ],
         bottom: PreferredSize(
           preferredSize: const Size.fromHeight(0),
           child: Stack(

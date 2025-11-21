@@ -60,6 +60,10 @@ final List<AutoRoute> homeRoutes = [
     path: 'favourites',
   ),
   AutoRoute(
+    page: RequestsRoute.page,
+    path: 'requests',
+  ),
+  AutoRoute(
     page: SyncedRoute.page,
     path: 'synced',
   ),

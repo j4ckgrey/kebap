@@ -1,7 +1,7 @@
 {
     "nativeName": "Magyar",
     "@nativeName": {},
-    "about": "A Fladderről",
+    "about": "A Kebapről",
     "@about": {},
     "actor": "{count, plural, other{Színészek} one{Színész}}",
     "@actor": {

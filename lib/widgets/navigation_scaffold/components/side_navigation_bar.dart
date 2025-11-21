@@ -28,6 +28,22 @@ import 'package:fladder/widgets/shared/modal_bottom_sheet.dart';
 import 'package:fladder/widgets/shared/simple_overflow_widget.dart';
 
 final navBarNode = FocusNode();
+// Holds the focus node for the first navigation button so other policies can
+// request focus into the navigation bar.
+FocusNode? firstNavButtonNode;
+
+void registerFirstNavButtonNode(FocusNode node) {
+  firstNavButtonNode = node;
+}
+
+// Holds a focus node pointing to the first focusable content item (e.g.
+// the first poster in the "up next" row). This allows the top nav to
+// jump directly back into content with a single Down press.
+FocusNode? firstContentNode;
+
+void registerFirstContentNode(FocusNode node) {
+  firstContentNode = node;
+}
 
 class SideNavigationBar extends ConsumerStatefulWidget {
   final int currentIndex;
@@ -81,36 +97,39 @@ class _SideNavigationBarState extends ConsumerState<SideNavigationBar> {
           ),
           child: widget.child,
         ),
-        FocusTraversalGroup(
-          policy: _RailTraversalPolicy(),
-          child: IgnorePointer(
-            ignoring: !hasOverlay || fullScreenChildRoute,
-            child: Padding(
-              padding: EdgeInsets.all(sideBarPadding),
-              child: AnimatedOpacity(
-                duration: const Duration(milliseconds: 250),
-                opacity: !fullScreenChildRoute ? 1 : 0,
-                child: Container(
-                  decoration: BoxDecoration(
-                    color: Theme.of(context).colorScheme.surface.withValues(alpha: 0.65),
-                    borderRadius: isDesktop ? FladderTheme.defaultShape.borderRadius : null,
-                  ),
-                  foregroundDecoration: isDesktop
-                      ? BoxDecoration(
-                          borderRadius: FladderTheme.defaultShape.borderRadius,
-                          border: Border.all(
-                            width: 1.0,
-                            color: Theme.of(context).colorScheme.onSurface.withValues(alpha: 0.12),
-                          ),
-                        )
-                      : null,
-                  width: shouldExpand ? expandedWidth : collapsedWidth,
+        // Only apply the rail traversal policy when sidebar is actually visible (mobile mode)
+        // to prevent it from interfering with desktop top navbar navigation
+        largeBar
+            ? FocusTraversalGroup(
+                policy: _RailTraversalPolicy(),
+                child: IgnorePointer(
+                  ignoring: !hasOverlay || fullScreenChildRoute,
                   child: Padding(
-                    key: const Key('navigation_rail'),
-                    padding: padding.copyWith(right: 0, top: isDesktop ? padding.top : null),
-                    child: Column(
-                      spacing: 2,
-                      children: [
+                    padding: EdgeInsets.all(sideBarPadding),
+                    child: AnimatedOpacity(
+                      duration: const Duration(milliseconds: 250),
+                      opacity: !fullScreenChildRoute ? 1 : 0,
+                      child: Container(
+                        decoration: BoxDecoration(
+                          color: Theme.of(context).colorScheme.surface.withValues(alpha: 0.65),
+                          borderRadius: isDesktop ? FladderTheme.defaultShape.borderRadius : null,
+                        ),
+                        foregroundDecoration: isDesktop
+                            ? BoxDecoration(
+                                borderRadius: FladderTheme.defaultShape.borderRadius,
+                                border: Border.all(
+                                  width: 1.0,
+                                  color: Theme.of(context).colorScheme.onSurface.withValues(alpha: 0.12),
+                                ),
+                              )
+                            : null,
+                        width: shouldExpand ? expandedWidth : collapsedWidth,
+                        child: Padding(
+                          key: const Key('navigation_rail'),
+                          padding: padding.copyWith(right: 0, top: isDesktop ? padding.top : null),
+                          child: Column(
+                            spacing: 2,
+                            children: [
                         Padding(
                           padding: const EdgeInsets.symmetric(horizontal: 14),
                           child: Row(
@@ -344,7 +363,193 @@ class _SideNavigationBarState extends ConsumerState<SideNavigationBar> {
               ),
             ),
           ),
-        ),
+        )
+            : IgnorePointer(
+                ignoring: !hasOverlay || fullScreenChildRoute,
+                child: Padding(
+                  padding: EdgeInsets.all(sideBarPadding),
+                  child: AnimatedOpacity(
+                    duration: const Duration(milliseconds: 250),
+                    opacity: !fullScreenChildRoute ? 1 : 0,
+                    child: Container(
+                      decoration: BoxDecoration(
+                        color: Theme.of(context).colorScheme.surface.withValues(alpha: 0.65),
+                        borderRadius: isDesktop ? FladderTheme.defaultShape.borderRadius : null,
+                      ),
+                      foregroundDecoration: isDesktop
+                          ? BoxDecoration(
+                              borderRadius: FladderTheme.defaultShape.borderRadius,
+                              border: Border.all(
+                                width: 1.0,
+                                color: Theme.of(context).colorScheme.onSurface.withValues(alpha: 0.12),
+                              ),
+                            )
+                          : null,
+                      width: shouldExpand ? expandedWidth : collapsedWidth,
+                      child: Padding(
+                        key: const Key('navigation_rail'),
+                        padding: padding.copyWith(right: 0, top: isDesktop ? padding.top : null),
+                        child: Column(
+                          spacing: 2,
+                          children: [
+                            Padding(
+                              padding: const EdgeInsets.symmetric(horizontal: 14),
+                              child: Row(
+                                mainAxisAlignment: MainAxisAlignment.center,
+                                children: [
+                                  if (expandedSideBar) ...[
+                                    Expanded(child: Text(context.localized.navigation)),
+                                  ],
+                                  IconButton(
+                                    onPressed: !largeBar
+                                        ? () => widget.scaffoldKey.currentState?.openDrawer()
+                                        : () => setState(() => expandedSideBar = !expandedSideBar),
+                                    icon: Icon(
+                                      largeBar && expandedSideBar ? IconsaxPlusLinear.sidebar_left : IconsaxPlusLinear.menu,
+                                    ),
+                                    color: Theme.of(context).colorScheme.onSurface.withValues(
+                                          alpha: largeBar && expandedSideBar ? 0.65 : 1,
+                                        ),
+                                  )
+                                ],
+                              ),
+                            ),
+                            if (largeBar) ...[
+                              Padding(
+                                padding:
+                                    const EdgeInsets.symmetric(horizontal: 4).copyWith(bottom: expandedSideBar ? 10 : 0),
+                                child: AnimatedFadeSize(
+                                  duration: const Duration(milliseconds: 250),
+                                  child: shouldExpand ? actionButton(context).extended : actionButton(context).normal,
+                                ),
+                              ),
+                            ],
+                            Expanded(
+                              child: Column(
+                                mainAxisAlignment: !largeBar ? MainAxisAlignment.center : MainAxisAlignment.start,
+                                children: [
+                                  ...widget.destinations.mapIndexed(
+                                    (index, destination) => CustomTooltip(
+                                      tooltipContent: expandedSideBar
+                                          ? null
+                                          : Card(
+                                              child: Padding(
+                                                padding: const EdgeInsets.all(12),
+                                                child: Text(
+                                                  destination.label,
+                                                  style: Theme.of(context).textTheme.titleSmall,
+                                                ),
+                                              ),
+                                            ),
+                                      position: TooltipPosition.right,
+                                      child: destination.toNavigationButton(
+                                        widget.currentIndex == index,
+                                        true,
+                                        navFocusNode: index == 0,
+                                        shouldExpand,
+                                      ),
+                                    ),
+                                  ),
+                                  if (views.isNotEmpty && largeBar) ...[
+                                    const Divider(
+                                      indent: 32,
+                                      endIndent: 32,
+                                    ),
+                                    Flexible(
+                                      child: SimpleOverflowWidget(
+                                        axis: Axis.vertical,
+                                        overflowBuilder: (remaining) => const SizedBox.shrink(),
+                                        children: views.map(
+                                          (view) {
+                                            final selected = context.router.currentUrl.contains(view.id);
+                                            final actions = [
+                                              ItemActionButton(
+                                                label: Text(context.localized.scanLibrary),
+                                                icon: const Icon(IconsaxPlusLinear.refresh),
+                                                action: () => showRefreshPopup(context, view.id, view.name),
+                                              )
+                                            ];
+                                            return CustomTooltip(
+                                              tooltipContent: expandedSideBar
+                                                  ? null
+                                                  : Card(
+                                                      child: Padding(
+                                                        padding: const EdgeInsets.all(12),
+                                                        child: Text(
+                                                          view.name,
+                                                          style: Theme.of(context).textTheme.titleSmall,
+                                                        ),
+                                                      ),
+                                                    ),
+                                              position: TooltipPosition.right,
+                                              child: view.toNavigationButton(
+                                                selected,
+                                                true,
+                                                shouldExpand,
+                                                () => context.pushRoute(
+                                                  LibrarySearchRoute(
+                                                    viewModelId: view.id,
+                                                  ).withFilter(view.collectionType.defaultFilters),
+                                                ),
+                                                onLongPress: () => showBottomSheetPill(
+                                                  context: context,
+                                                  content: (context, scrollController) => ListView(
+                                                    shrinkWrap: true,
+                                                    controller: scrollController,
+                                                    children: actions.listTileItems(context, useIcons: true),
+                                                  ),
+                                                ),
+                                                customIcon: usePostersForLibrary
+                                                    ? ClipRRect(
+                                                        borderRadius: FladderTheme.smallShape.borderRadius,
+                                                        child: SizedBox.square(
+                                                          dimension: 50,
+                                                          child: FladderImage(
+                                                            image: view.imageData?.primary,
+                                                            placeHolder: Card(
+                                                              child: Icon(
+                                                                selected
+                                                                    ? view.collectionType.icon
+                                                                    : view.collectionType.iconOutlined,
+                                                              ),
+                                                            ),
+                                                            decodeHeight: 64,
+                                                          ),
+                                                        ),
+                                                      )
+                                                    : null,
+                                              ),
+                                            );
+                                          },
+                                        ).toList(),
+                                      ),
+                                    ),
+                                  ],
+                                ],
+                              ),
+                            ),
+                            NavigationButton(
+                              label: context.localized.settings,
+                              selected: widget.currentLocation.contains(const SettingsRoute().routeName),
+                              selectedIcon: const Icon(IconsaxPlusBold.setting_3),
+                              horizontal: true,
+                              expanded: shouldExpand,
+                              icon: const ExcludeFocusTraversal(child: SettingsUserIcon()),
+                              onPressed: () {
+                                if (AdaptiveLayout.layoutModeOf(context) == LayoutMode.single) {
+                                  context.router.push(const SettingsRoute());
+                                } else {
+                                  context.router.push(const ClientSettingsRoute());
+                                }
+                              },
+                            ),
+                          ],
+                        ),
+                      ),
+                    ),
+                  ),
+                ),
+              ),
       ],
     );
   }
