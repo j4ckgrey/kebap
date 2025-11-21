@@ -1,7 +1,7 @@
 
 <h1 align="center">
   <br>
-    <a href="https://github.com/DonutWare/Kebap"><img src="https://raw.githubusercontent.com/DonutWare/Kebap/refs/heads/develop/icons/production/fladder_macos_icon.png" alt="Kebap" width="200"></a>
+    <a href="https://github.com/DonutWare/Kebap"><img src="https://raw.githubusercontent.com/DonutWare/Kebap/refs/heads/develop/icons/production/kebap_icon_desktop.png" alt="Kebap" width="200"></a>
   <br>
   Kebap
   <br>
@@ -22,8 +22,8 @@
 <div align="center">
   
   [![Build](https://github.com/DonutWare/Kebap/actions/workflows/build.yml/badge.svg?branch=develop)](https://github.com/DonutWare/Kebap/actions/workflows/build.yml)
-  [![GitHub Downloads (all assets, all releases)](https://img.shields.io/github/downloads/DonutWare/fladder/total)](https://github.com/DonutWare/Kebap/releases/latest)
-  [![GitHub Release](https://img.shields.io/github/v/release/DonutWare/fladder?display_name=tag)](https://github.com/DonutWare/Kebap/releases/latest)
+  [![GitHub Downloads (all assets, all releases)](https://img.shields.io/github/downloads/DonutWare/kebap/total)](https://github.com/DonutWare/Kebap/releases/latest)
+  [![GitHub Release](https://img.shields.io/github/v/release/DonutWare/kebap?display_name=tag)](https://github.com/DonutWare/Kebap/releases/latest)
   [![Conventional Commits](https://img.shields.io/badge/Conventional%20Commits-1.0.0-%23FE5196?logo=conventionalcommits&logoColor=white)](https://conventionalcommits.org)
   
 </div>
@@ -108,7 +108,7 @@ Web/Desktop [try out the web build!](https://DonutWare.github.io/Kebap)
 
 The latest executables for Windows, macOS, Linux, iOS, Android and Web can be found on the [releases page](https://github.com/DonutWare/Kebap/releases).
 
-You can pull the Docker version using the following tags: ```ghcr.io/donutware/fladder:latest```. or ```ghcr.io/donutware/fladder-rootless:latest```
+You can pull the Docker version using the following tags: ```ghcr.io/donutware/kebap:latest```. or ```ghcr.io/donutware/kebap-rootless:latest```
 
 *Platform-specific installation and usage instructions can be found [here](https://github.com/DonutWare/Kebap/blob/develop/INSTALL.md).*
 
@@ -131,8 +131,9 @@ Interested in contributing? Here are a couple of ways you can help:
 - **Keep pull requests short and focused**: try to avoid fixing multiple issues in a single pull request. This helps make the review process smoother and quicker.
 
 ### 🌐 Translations 
-<a href="https://hosted.weblate.org/engage/fladder/">
-<img src="https://hosted.weblate.org/widget/fladder/fladder/multi-auto.svg" alt="Translation status" />
+</a>
+<a href="https://hosted.weblate.org/engage/kebap/">
+<img src="https://hosted.weblate.org/widget/kebap/kebap/multi-auto.svg" alt="Translation status" />
 </a>
 
 Thank you for helping to make this project better! 🙌
