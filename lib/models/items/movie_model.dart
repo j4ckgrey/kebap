@@ -69,7 +69,7 @@ class MovieModel extends ItemStreamModel with MovieModelMappable {
   bool get identifiable => true;
 
   @override
-  ImageData? get bannerImage => images?.backDrop?.firstOrNull ?? images?.primary ?? getPosters?.primary;
+  ImageData? get bannerImage => images?.backDrop?.firstOrNull ?? images?.primary ?? getPosters?.backDrop?.firstOrNull ?? getPosters?.primary;
 
   @override
   MediaStreamsModel? get streamModel => mediaStreams;

@@ -715,7 +715,7 @@
   "@settingsBlurredPlaceholderTitle": {},
   "settingsClientDesc": "General, Time-out, Layout, Theme",
   "@settingsClientDesc": {},
-  "settingsClientTitle": "Fladder",
+  "settingsClientTitle": "Kebap",
   "@settingsClientTitle": {},
   "settingsContinue": "Continue",
   "@settingsContinue": {},
@@ -1126,7 +1126,7 @@
   "libraryShuffleAndPlayItems": "Shuffle and play items",
   "libraryPlayItems": "Play items",
   "clientSettingsShowAllCollectionsTitle": "Show all collection types",
-  "clientSettingsShowAllCollectionsDesc": "When enabled, show all collection types, including those not supported by Fladder",
+  "clientSettingsShowAllCollectionsDesc": "When enabled, show all collection types, including those not supported by Kebap",
   "stop": "Stop",
   "resumeVideo": "Resume video",
   "closeVideo": "Close video",
@@ -1191,8 +1191,8 @@
   "segmentActionAskToSkip": "Ask to skip",
   "segmentActionSkip": "Skip",
   "loading": "Loading",
-  "exitFladderTitle": "Exit Fladder",
-  "exitFladderDesc": "Are you sure you want to close Fladder?",
+  "exitKebapTitle": "Exit Kebap",
+  "exitKebapDesc": "Are you sure you want to close Kebap?",
   "castAndCrew": "Cast & Crew",
   "guestActor": "{count, plural, other{Guest Actors} one{Guest Actor}}",
   "@guestActor": {
@@ -1376,5 +1376,5 @@
   "playerSettingsScreensaverDesc": "Select screen saver that will be shown after no player activity",
   "settingsLocalUrlTitle": "Local Server URL",
   "settingsLocalUrlSetTitle": "Configure Local URL",
-  "settingsLocalUrlSetDesc": "Specify the local server address. Fladder will automatically use this URL when your device is on the same network."
+  "settingsLocalUrlSetDesc": "Specify the local server address. Kebap will automatically use this URL when your device is on the same network."
 }

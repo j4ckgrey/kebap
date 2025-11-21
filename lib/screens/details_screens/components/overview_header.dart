@@ -20,6 +20,7 @@ class OverviewHeader extends ConsumerWidget {
   final EdgeInsets? padding;
   final String? subTitle;
   final String? originalTitle;
+  final bool showImage;
   final Alignment logoAlignment;
   final Function()? onTitleClicked;
   final int? productionYear;
@@ -37,6 +38,7 @@ class OverviewHeader extends ConsumerWidget {
     this.padding,
     this.subTitle,
     this.originalTitle,
+    this.showImage = true,
     this.logoAlignment = Alignment.bottomCenter,
     this.onTitleClicked,
     this.productionYear,
@@ -76,16 +78,17 @@ class OverviewHeader extends ConsumerWidget {
           mainAxisSize: MainAxisSize.min,
           spacing: 16,
           children: [
-            Flexible(
-              child: ExcludeFocus(
-                child: MediaHeader(
-                  name: name,
-                  logo: image?.logo,
-                  onTap: onTitleClicked,
-                  alignment: logoAlignment,
+            if (showImage)
+              Flexible(
+                child: ExcludeFocus(
+                  child: MediaHeader(
+                    name: name,
+                    logo: image?.logo,
+                    onTap: onTitleClicked,
+                    alignment: logoAlignment,
+                  ),
                 ),
               ),
-            ),
             ExcludeFocus(
               child: Column(
                 mainAxisSize: MainAxisSize.min,

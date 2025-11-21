@@ -43,6 +43,30 @@ class NavigationButton extends ConsumerStatefulWidget {
 
 class _NavigationButtonState extends ConsumerState<NavigationButton> {
   bool showPopupButton = false;
+  late final FocusNode _focusNode;
+
+  @override
+  void initState() {
+    super.initState();
+    _focusNode = FocusNode();
+    if (widget.navFocusNode) {
+      // Mark this button as the initial nav focus target.
+      WidgetsBinding.instance.addPostFrameCallback((_) {
+        if (mounted) _focusNode.requestFocus();
+      });
+      // Register this as the first navigation button for global focus fallback.
+      registerFirstNavButtonNode(_focusNode);
+    }
+  }
+
+  @override
+  void dispose() {
+    if (firstNavButtonNode == _focusNode) {
+      firstNavButtonNode = null;
+    }
+    _focusNode.dispose();
+    super.dispose();
+  }
   @override
   Widget build(BuildContext context) {
     final foreGroundColor = widget.selected
@@ -53,7 +77,7 @@ class _NavigationButtonState extends ConsumerState<NavigationButton> {
     return Padding(
       padding: const EdgeInsets.symmetric(horizontal: 6),
       child: TextButton(
-        focusNode: widget.navFocusNode ? navBarNode : null,
+        focusNode: _focusNode,
         onHover: (value) => setState(() => showPopupButton = value),
         style: ButtonStyle(
             elevation: const WidgetStatePropertyAll(0),

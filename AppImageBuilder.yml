@@ -15,10 +15,10 @@ AppDir:
   path: ./AppDir
   app_info:
     id: nl.jknaapen.fladder
-    name: Fladder
+    name: Kebap
     icon: fladder_icon_desktop
     version: latest
-    exec: Fladder
+    exec: Kebap
     exec_args: $@
   files:
     include:
@@ -27,5 +27,5 @@ AppDir:
       - icons/production/fladder_icon_desktop.png
 AppImage:
   arch: x86_64
-  update-information: gh-releases-zsync|DonutWare|Fladder|latest|Fladder-Linux-*.AppImage.zsync
-  file_name: Fladder_x86_64.AppImage
+  update-information: gh-releases-zsync|DonutWare|Kebap|latest|Kebap-Linux-*.AppImage.zsync
+  file_name: Kebap_x86_64.AppImage

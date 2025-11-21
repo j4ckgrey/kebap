@@ -33,34 +33,57 @@ class ConnectivityStatus extends _$ConnectivityStatus {
   @override
   ConnectionState build() {
     ref.watch(userProvider);
-    Connectivity().onConnectivityChanged.listen(onStateChange);
-    checkConnectivity();
+    // Wrap connectivity plugin initialization in try/catch to avoid unhandled
+    // DBus exceptions on platforms without NetworkManager (WSL, minimal VMs).
+    try {
+      final connectivity = Connectivity();
+      connectivity.onConnectivityChanged.listen((result) => onStateChange(result));
+      checkConnectivity();
+    } catch (e, s) {
+      log('[Connectivity] initialization failed: $e\n$s');
+    }
     return ConnectionState.mobile;
   }
+  // Accept either a single ConnectivityResult or an Iterable/list of them.
+  void onStateChange(dynamic connectivityResult) async {
+    List<ConnectivityResult> results;
+    if (connectivityResult is Iterable<ConnectivityResult>) {
+      results = connectivityResult.cast<ConnectivityResult>().toList();
+    } else if (connectivityResult is ConnectivityResult) {
+      results = [connectivityResult];
+    } else {
+      // Unknown type; log and bail out.
+      log('[Connectivity] onStateChange called with unexpected type: ${connectivityResult.runtimeType}');
+      return;
+    }
 
-  void onStateChange(List<ConnectivityResult> connectivityResult) async {
-    if (connectivityResult.contains(ConnectivityResult.ethernet)) {
+    if (results.contains(ConnectivityResult.ethernet)) {
       state = ConnectionState.ethernet;
-    } else if (connectivityResult.contains(ConnectivityResult.wifi)) {
+    } else if (results.contains(ConnectivityResult.wifi)) {
       state = ConnectionState.wifi;
-    } else if (connectivityResult.contains(ConnectivityResult.mobile)) {
+    } else if (results.contains(ConnectivityResult.mobile)) {
       state = ConnectionState.mobile;
-    } else if (connectivityResult.contains(ConnectivityResult.none)) {
+    } else if (results.contains(ConnectivityResult.none)) {
       state = ConnectionState.offline;
     }
+
     final newUrl = ref.read(userProvider.select((value) => value?.credentials.localUrl));
     if (localUrl == newUrl) return;
     localUrl = newUrl;
     final localConnection =
         localUrl != null && localUrl?.isNotEmpty == true ? await fetchSystemInfoDynamic(normalizeUrl(localUrl!)) : null;
-    final correctServerResponse =
-        localConnection?.id == ref.read(userProvider.select((value) => value?.credentials.serverId));
+    final correctServerResponse = localConnection?.id == ref.read(userProvider.select((value) => value?.credentials.serverId));
     ref.read(localConnectionAvailableProvider.notifier).update((state) => correctServerResponse);
   }
 
   void checkConnectivity() async {
-    final connectivityResult = await Connectivity().checkConnectivity();
-    onStateChange(connectivityResult);
+    try {
+      final connectivityResult = await Connectivity().checkConnectivity();
+      onStateChange(connectivityResult);
+    } catch (e, s) {
+      // Plugin failed (e.g. DBus / NetworkManager not available). Log and keep running.
+      log('[Connectivity] checkConnectivity failed: $e\n$s');
+    }
   }
 }
 

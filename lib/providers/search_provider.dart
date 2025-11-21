@@ -1,6 +1,7 @@
 import 'package:chopper/chopper.dart';
 import 'package:fladder/models/search_model.dart';
 import 'package:fladder/providers/api_provider.dart';
+import 'package:fladder/providers/search_mode_provider.dart';
 import 'package:fladder/providers/service_provider.dart';
 import 'package:fladder/util/item_base_model/item_base_model_extensions.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -19,9 +20,14 @@ class SearchNotifier extends StateNotifier<SearchModel> {
   Future<Response?> searchQuery() async {
     if (state.searchQuery.isEmpty) return null;
     state = state.copyWith(loading: true);
+    
+    // Process search term based on current search mode
+    final searchMode = ref.read(searchModeNotifierProvider.notifier);
+    final processedQuery = searchMode.processSearchTerm(state.searchQuery);
+    
     final response = await api.itemsGet(
       recursive: true,
-      searchTerm: state.searchQuery,
+      searchTerm: processedQuery,
     );
 
     state = state.copyWith(

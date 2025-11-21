@@ -8,11 +8,14 @@ import 'package:collection/collection.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import 'package:fladder/models/items/media_segments_model.dart';
+import 'package:fladder/models/settings/media_stream_view_type.dart';
 import 'package:fladder/models/settings/video_player_settings.dart';
 import 'package:fladder/providers/arguments_provider.dart';
 import 'package:fladder/providers/connectivity_provider.dart';
+import 'package:fladder/providers/settings/media_stream_view_type_provider.dart';
 import 'package:fladder/providers/settings/video_player_settings_provider.dart';
 import 'package:fladder/providers/user_provider.dart';
+import 'package:fladder/screens/details_screens/components/media_stream_information.dart';
 import 'package:fladder/screens/settings/settings_list_tile.dart';
 import 'package:fladder/screens/settings/settings_scaffold.dart';
 import 'package:fladder/screens/settings/widgets/key_listener.dart';
@@ -136,7 +139,9 @@ class _PlayerSettingsPageState extends ConsumerState<PlayerSettingsPage> {
           ],
         ),
         const SizedBox(height: 12),
-        ...settingsListGroup(context, SettingsLabelDivider(label: context.localized.mediaSegmentActions), [
+        ...settingsListGroup(
+          context,
+          SettingsLabelDivider(label: context.localized.mediaSegmentActions), [
           ...videoSettings.segmentSkipSettings.entries.sorted((a, b) => b.key.index.compareTo(a.key.index)).map(
                 (entry) => Padding(
                   padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),

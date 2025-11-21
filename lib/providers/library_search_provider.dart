@@ -23,6 +23,7 @@ import 'package:fladder/models/playlist_model.dart';
 import 'package:fladder/models/view_model.dart';
 import 'package:fladder/providers/api_provider.dart';
 import 'package:fladder/providers/library_filters_provider.dart';
+import 'package:fladder/providers/search_mode_provider.dart';
 import 'package:fladder/providers/service_provider.dart';
 import 'package:fladder/providers/settings/client_settings_provider.dart';
 import 'package:fladder/providers/user_provider.dart';
@@ -268,9 +269,15 @@ class LibrarySearchNotifier extends StateNotifier<LibrarySearchModel> {
       int? startIndex,
       String? searchTerm}) async {
     final searchString = searchTerm ?? (state.searchQuery.isNotEmpty ? state.searchQuery : null);
+    
+    // Process search term based on current search mode
+    final processedSearchString = searchString != null
+        ? ref.read(searchModeNotifierProvider.notifier).processSearchTerm(searchString)
+        : null;
+    
     final response = await api.itemsGet(
       parentId: viewModel?.id ?? id,
-      searchTerm: searchString,
+      searchTerm: processedSearchString,
       genres: state.filters.genres.included,
       tags: state.filters.tags.included,
       recursive: searchString?.isNotEmpty == true ? true : recursive ?? state.filters.recursive,

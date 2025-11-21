@@ -92,7 +92,7 @@ class _MediaBannerState extends ConsumerState<MediaBanner> {
         mainAxisSize: MainAxisSize.min,
         children: [
           ConstrainedBox(
-            constraints: BoxConstraints(maxHeight: widget.maxHeight),
+            constraints: BoxConstraints(maxHeight: widget.maxHeight * 1.2),
             child: Card(
               elevation: 4,
               shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(14)),

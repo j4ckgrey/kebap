@@ -1,9 +1,9 @@
 [Desktop Entry]
-Name=Fladder
-StartupWMClass=nl.jknaapen.fladder
+Name=Kebap
+StartupWMClass=Kebap
 Comment=A Simple Jellyfin Frontend built on top of Flutter.
-Exec=Fladder
-Icon=nl.jknaapen.fladder
+Exec=Kebap
+Icon=Kebap
 Terminal=false
 Type=Application
 Categories=Entertainment;
