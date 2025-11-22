@@ -7,7 +7,7 @@ import 'package:kebap/models/items/item_shared_models.dart';
 import 'package:kebap/screens/details_screens/person_detail_screen.dart';
 import 'package:kebap/theme.dart';
 import 'package:kebap/util/adaptive_layout/adaptive_layout.dart';
-import 'package:kebap/util/fladder_image.dart';
+import 'package:kebap/util/kebap_image.dart';
 import 'package:kebap/util/focus_provider.dart';
 import 'package:kebap/util/localization_helper.dart';
 import 'package:kebap/util/string_extensions.dart';

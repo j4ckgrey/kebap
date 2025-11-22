@@ -1,5 +1,5 @@
 import 'package:kebap/providers/settings/client_settings_provider.dart';
-import 'package:kebap/widgets/shared/fladder_slider.dart';
+import 'package:kebap/widgets/shared/kebap_slider.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 

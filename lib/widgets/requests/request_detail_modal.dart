@@ -11,7 +11,7 @@ import 'package:kebap/providers/baklava_metadata_provider.dart';
 import 'package:kebap/providers/baklava_requests_provider.dart';
 import 'package:kebap/providers/user_provider.dart';
 import 'package:kebap/routes/auto_router.gr.dart';
-import 'package:kebap/screens/shared/fladder_snackbar.dart';
+import 'package:kebap/screens/shared/kebap_snackbar.dart';
 import 'package:kebap/util/adaptive_layout/adaptive_layout.dart';
 import 'package:kebap/widgets/shared/status_card.dart';
 

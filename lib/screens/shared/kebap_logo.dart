@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
-import 'package:kebap/screens/shared/fladder_icon.dart';
+import 'package:kebap/screens/shared/kebap_icon.dart';
 import 'package:kebap/util/application_info.dart';
 import 'package:kebap/util/string_extensions.dart';
 import 'package:kebap/util/theme_extensions.dart';

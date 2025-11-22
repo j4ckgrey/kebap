@@ -9,7 +9,7 @@ import 'package:kebap/screens/shared/flat_button.dart';
 import 'package:kebap/util/list_padding.dart';
 import 'package:kebap/util/localization_helper.dart';
 import 'package:kebap/util/widget_extensions.dart';
-import 'package:kebap/widgets/shared/fladder_slider.dart';
+import 'package:kebap/widgets/shared/kebap_slider.dart';
 
 Future<void> showSubtitleControls({
   required BuildContext context,

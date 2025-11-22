@@ -4,7 +4,7 @@ import 'package:kebap/models/item_base_model.dart';
 import 'package:kebap/providers/edit_item_provider.dart';
 import 'package:kebap/screens/metadata/edit_screens/edit_fields.dart';
 import 'package:kebap/screens/metadata/edit_screens/edit_image_content.dart';
-import 'package:kebap/screens/shared/fladder_snackbar.dart';
+import 'package:kebap/screens/shared/kebap_snackbar.dart';
 import 'package:kebap/util/adaptive_layout/adaptive_layout.dart';
 import 'package:kebap/util/localization_helper.dart';
 import 'package:kebap/util/refresh_state.dart';

@@ -17,7 +17,7 @@ import 'package:kebap/screens/login/login_code_dialog.dart';
 import 'package:kebap/screens/login/login_user_grid.dart';
 import 'package:kebap/screens/login/widgets/discover_servers_widget.dart';
 import 'package:kebap/screens/shared/animated_fade_size.dart';
-import 'package:kebap/screens/shared/fladder_snackbar.dart';
+import 'package:kebap/screens/shared/kebap_snackbar.dart';
 import 'package:kebap/screens/shared/outlined_text_field.dart';
 import 'package:kebap/screens/shared/passcode_input.dart';
 import 'package:kebap/util/auth_service.dart';

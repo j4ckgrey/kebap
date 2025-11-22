@@ -15,8 +15,8 @@ import 'package:kebap/providers/settings/photo_view_settings_provider.dart';
 import 'package:kebap/providers/settings/video_player_settings_provider.dart';
 import 'package:kebap/providers/user_provider.dart';
 import 'package:kebap/util/duration_extensions.dart';
-import 'package:kebap/util/fladder_image.dart';
-import 'package:kebap/widgets/shared/fladder_slider.dart';
+import 'package:kebap/util/kebap_image.dart';
+import 'package:kebap/widgets/shared/kebap_slider.dart';
 import 'package:kebap/wrappers/players/base_player.dart';
 import 'package:kebap/wrappers/players/lib_mdk.dart'
     if (dart.library.html) 'package:kebap/stubs/web/lib_mdk_web.dart';

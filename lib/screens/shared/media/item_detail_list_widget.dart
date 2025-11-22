@@ -1,4 +1,4 @@
-import 'package:kebap/util/fladder_image.dart';
+import 'package:kebap/util/kebap_image.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 

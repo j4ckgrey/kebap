@@ -7,7 +7,7 @@ import 'package:iconsax_plus/iconsax_plus.dart';
 import 'package:kebap/models/settings/key_combinations.dart';
 import 'package:kebap/providers/settings/client_settings_provider.dart';
 import 'package:kebap/providers/settings/video_player_settings_provider.dart';
-import 'package:kebap/screens/shared/fladder_snackbar.dart';
+import 'package:kebap/screens/shared/kebap_snackbar.dart';
 import 'package:kebap/theme.dart';
 import 'package:kebap/util/localization_helper.dart';
 import 'package:kebap/widgets/shared/ensure_visible.dart';

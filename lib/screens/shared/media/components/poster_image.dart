@@ -10,7 +10,7 @@ import 'package:kebap/models/items/photos_model.dart';
 import 'package:kebap/screens/shared/media/components/poster_placeholder.dart';
 import 'package:kebap/theme.dart';
 import 'package:kebap/util/adaptive_layout/adaptive_layout.dart';
-import 'package:kebap/util/fladder_image.dart';
+import 'package:kebap/util/kebap_image.dart';
 import 'package:kebap/util/focus_provider.dart';
 import 'package:kebap/util/humanize_duration.dart';
 import 'package:kebap/util/item_base_model/item_base_model_extensions.dart';

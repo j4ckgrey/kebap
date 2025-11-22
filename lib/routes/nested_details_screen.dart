@@ -7,7 +7,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:kebap/models/item_base_model.dart';
 import 'package:kebap/providers/items/item_details_provider.dart';
 import 'package:kebap/routes/auto_router.gr.dart';
-import 'package:kebap/util/fladder_image.dart';
+import 'package:kebap/util/kebap_image.dart';
 
 @RoutePage()
 class DetailsScreen extends ConsumerStatefulWidget {

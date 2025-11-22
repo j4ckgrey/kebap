@@ -16,7 +16,7 @@ import 'package:kebap/screens/metadata/identifty_screen.dart';
 import 'package:kebap/screens/metadata/info_screen.dart';
 import 'package:kebap/screens/metadata/refresh_metadata.dart';
 import 'package:kebap/screens/playlists/add_to_playlists.dart';
-import 'package:kebap/screens/shared/fladder_snackbar.dart';
+import 'package:kebap/screens/shared/kebap_snackbar.dart';
 import 'package:kebap/screens/syncing/sync_button.dart';
 import 'package:kebap/screens/syncing/sync_item_details.dart';
 import 'package:kebap/util/clipboard_helper.dart';

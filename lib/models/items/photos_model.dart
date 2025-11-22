@@ -12,7 +12,7 @@ import 'package:kebap/models/items/item_shared_models.dart';
 import 'package:kebap/models/items/overview_model.dart';
 import 'package:kebap/providers/api_provider.dart';
 import 'package:kebap/providers/user_provider.dart';
-import 'package:kebap/screens/shared/fladder_snackbar.dart';
+import 'package:kebap/screens/shared/kebap_snackbar.dart';
 import 'package:kebap/util/localization_helper.dart';
 import 'package:kebap/util/refresh_state.dart';
 

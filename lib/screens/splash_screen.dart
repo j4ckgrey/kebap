@@ -8,7 +8,7 @@ import 'package:kebap/providers/arguments_provider.dart';
 import 'package:kebap/providers/shared_provider.dart';
 import 'package:kebap/providers/user_provider.dart';
 import 'package:kebap/routes/auto_router.gr.dart';
-import 'package:kebap/screens/shared/fladder_logo.dart';
+import 'package:kebap/screens/shared/kebap_logo.dart';
 
 @RoutePage()
 class SplashScreen extends ConsumerStatefulWidget {

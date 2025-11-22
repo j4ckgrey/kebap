@@ -17,7 +17,7 @@ import 'package:kebap/providers/video_player_provider.dart';
 import 'package:kebap/screens/shared/animated_fade_size.dart';
 import 'package:kebap/screens/shared/default_title_bar.dart';
 import 'package:kebap/util/adaptive_layout/adaptive_layout.dart';
-import 'package:kebap/util/fladder_image.dart';
+import 'package:kebap/util/kebap_image.dart';
 import 'package:kebap/util/list_padding.dart';
 import 'package:kebap/util/localization_helper.dart';
 import 'package:kebap/widgets/full_screen_helpers/full_screen_wrapper.dart';

@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 
 import 'package:kebap/models/item_base_model.dart';
-import 'package:kebap/util/fladder_image.dart';
+import 'package:kebap/util/kebap_image.dart';
 
 class ItemLogo extends StatelessWidget {
   final ItemBaseModel item;

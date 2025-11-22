@@ -7,7 +7,7 @@ import 'package:kebap/models/item_base_model.dart';
 import 'package:kebap/screens/shared/detail_scaffold.dart';
 import 'package:kebap/screens/shared/media/components/poster_placeholder.dart';
 import 'package:kebap/theme.dart';
-import 'package:kebap/util/fladder_image.dart';
+import 'package:kebap/util/kebap_image.dart';
 import 'package:kebap/util/item_base_model/item_base_model_extensions.dart';
 import 'package:kebap/util/list_padding.dart';
 import 'package:kebap/util/router_extension.dart';

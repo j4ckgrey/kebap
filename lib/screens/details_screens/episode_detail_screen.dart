@@ -10,7 +10,7 @@ import 'package:kebap/providers/user_provider.dart';
 import 'package:kebap/screens/details_screens/components/media_stream_information.dart';
 import 'package:kebap/screens/details_screens/components/overview_header.dart';
 import 'package:kebap/screens/shared/detail_scaffold.dart';
-import 'package:kebap/screens/shared/fladder_snackbar.dart';
+import 'package:kebap/screens/shared/kebap_snackbar.dart';
 import 'package:kebap/screens/shared/media/chapter_row.dart';
 import 'package:kebap/screens/shared/media/components/media_play_button.dart';
 import 'package:kebap/screens/shared/media/episode_posters.dart';

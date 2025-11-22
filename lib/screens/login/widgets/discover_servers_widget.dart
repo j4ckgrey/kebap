@@ -6,7 +6,7 @@ import 'package:iconsax_plus/iconsax_plus.dart';
 
 import 'package:kebap/models/credentials_model.dart';
 import 'package:kebap/providers/discovery_provider.dart';
-import 'package:kebap/util/fladder_config.dart';
+import 'package:kebap/util/kebap_config.dart';
 import 'package:kebap/util/list_padding.dart';
 import 'package:kebap/util/localization_helper.dart';
 import 'package:kebap/util/theme_extensions.dart';

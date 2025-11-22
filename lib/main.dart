@@ -37,7 +37,7 @@ import 'package:kebap/src/video_player_helper.g.dart';
 import 'package:kebap/theme.dart';
 import 'package:kebap/util/adaptive_layout/adaptive_layout.dart';
 import 'package:kebap/util/application_info.dart';
-import 'package:kebap/util/fladder_config.dart';
+import 'package:kebap/util/kebap_config.dart';
 import 'package:kebap/util/localization_helper.dart';
 import 'package:kebap/util/macos_window_helpers.dart';
 import 'package:kebap/util/string_extensions.dart';

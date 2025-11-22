@@ -2,8 +2,8 @@ import 'package:flutter_svg/flutter_svg.dart';
 
 class SvgUtils {
   static List<String> allSvgs = [
-    'icons/fladder_icon.svg',
-    'icons/fladder_icon_outline.svg',
+    'icons/kebap_icon.svg',
+    'icons/kebap_icon_outline.svg',
   ];
 
   static Future<void> preCacheSVGs() async {

@@ -11,7 +11,7 @@ import 'package:kebap/providers/search_mode_provider.dart';
 import 'package:kebap/screens/shared/outlined_text_field.dart';
 import 'package:kebap/theme.dart';
 import 'package:kebap/util/debouncer.dart';
-import 'package:kebap/util/fladder_image.dart';
+import 'package:kebap/util/kebap_image.dart';
 import 'package:kebap/util/localization_helper.dart';
 import 'package:kebap/widgets/search/search_result_modal.dart';
 
