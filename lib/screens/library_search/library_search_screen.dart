@@ -37,7 +37,7 @@ import 'package:kebap/util/router_extension.dart';
 import 'package:kebap/widgets/navigation_scaffold/components/background_image.dart';
 import 'package:kebap/widgets/navigation_scaffold/components/settings_user_icon.dart';
 import 'package:kebap/widgets/search/search_mode_toggle.dart';
-import 'package:kebap/widgets/shared/fladder_scrollbar.dart';
+import 'package:kebap/widgets/shared/kebap_scrollbar.dart';
 import 'package:kebap/widgets/shared/hide_on_scroll.dart';
 import 'package:kebap/widgets/shared/item_actions.dart';
 import 'package:kebap/widgets/shared/modal_bottom_sheet.dart';

@@ -23,7 +23,7 @@ import 'package:kebap/util/item_base_model/item_base_model_extensions.dart';
 import 'package:kebap/util/list_padding.dart';
 import 'package:kebap/util/localization_helper.dart';
 import 'package:kebap/util/themes_data.dart';
-import 'package:kebap/widgets/navigation_scaffold/components/fladder_app_bar.dart';
+import 'package:kebap/widgets/navigation_scaffold/components/kebap_app_bar.dart';
 import 'package:kebap/widgets/shared/animated_icon.dart';
 import 'package:kebap/widgets/shared/elevated_icon.dart';
 import 'package:kebap/widgets/shared/hover_widget.dart';

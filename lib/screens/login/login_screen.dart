@@ -10,7 +10,7 @@ import 'package:kebap/screens/shared/kebap_logo.dart';
 import 'package:kebap/util/adaptive_layout/adaptive_layout.dart';
 import 'package:kebap/widgets/keyboard/slide_in_keyboard.dart';
 import 'package:kebap/widgets/navigation_scaffold/components/adaptive_fab.dart';
-import 'package:kebap/widgets/navigation_scaffold/components/fladder_app_bar.dart';
+import 'package:kebap/widgets/navigation_scaffold/components/kebap_app_bar.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:iconsax_plus/iconsax_plus.dart';
