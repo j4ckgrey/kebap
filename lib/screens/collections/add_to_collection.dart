@@ -6,7 +6,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:kebap/models/item_base_model.dart';
 import 'package:kebap/providers/collections_provider.dart';
 import 'package:kebap/screens/shared/adaptive_dialog.dart';
-import 'package:kebap/screens/shared/fladder_snackbar.dart';
+import 'package:kebap/screens/shared/kebap_snackbar.dart';
 import 'package:kebap/screens/shared/outlined_text_field.dart';
 import 'package:kebap/util/localization_helper.dart';
 import 'package:kebap/widgets/shared/alert_content.dart';

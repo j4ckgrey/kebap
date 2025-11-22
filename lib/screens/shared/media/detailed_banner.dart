@@ -6,7 +6,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:kebap/models/item_base_model.dart';
 import 'package:kebap/screens/details_screens/components/overview_header.dart';
 import 'package:kebap/util/adaptive_layout/adaptive_layout.dart';
-import 'package:kebap/util/fladder_image.dart';
+import 'package:kebap/util/kebap_image.dart';
 import 'package:kebap/util/localization_helper.dart';
 import 'package:kebap/widgets/shared/custom_shader_mask.dart';
 

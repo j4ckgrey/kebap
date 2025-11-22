@@ -13,7 +13,7 @@ import 'package:kebap/screens/syncing/sync_widgets.dart';
 import 'package:kebap/screens/syncing/widgets/sync_progress_builder.dart';
 import 'package:kebap/theme.dart';
 import 'package:kebap/util/adaptive_layout/adaptive_layout.dart';
-import 'package:kebap/util/fladder_image.dart';
+import 'package:kebap/util/kebap_image.dart';
 import 'package:kebap/util/focus_provider.dart';
 import 'package:kebap/util/localization_helper.dart';
 import 'package:kebap/util/size_formatting.dart';

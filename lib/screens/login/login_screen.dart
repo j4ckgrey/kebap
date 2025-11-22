@@ -6,7 +6,7 @@ import 'package:kebap/screens/login/login_edit_user.dart';
 import 'package:kebap/screens/login/login_screen_credentials.dart';
 import 'package:kebap/screens/login/login_user_grid.dart';
 import 'package:kebap/screens/shared/animated_fade_size.dart';
-import 'package:kebap/screens/shared/fladder_logo.dart';
+import 'package:kebap/screens/shared/kebap_logo.dart';
 import 'package:kebap/util/adaptive_layout/adaptive_layout.dart';
 import 'package:kebap/widgets/keyboard/slide_in_keyboard.dart';
 import 'package:kebap/widgets/navigation_scaffold/components/adaptive_fab.dart';

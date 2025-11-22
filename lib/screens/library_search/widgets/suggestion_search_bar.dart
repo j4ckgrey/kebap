@@ -10,7 +10,7 @@ import 'package:kebap/providers/library_search_provider.dart';
 import 'package:kebap/screens/shared/outlined_text_field.dart';
 import 'package:kebap/theme.dart';
 import 'package:kebap/util/debouncer.dart';
-import 'package:kebap/util/fladder_image.dart';
+import 'package:kebap/util/kebap_image.dart';
 import 'package:kebap/util/localization_helper.dart';
 
 class SuggestionSearchBar extends ConsumerStatefulWidget {

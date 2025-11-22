@@ -9,14 +9,14 @@ import 'package:window_manager/window_manager.dart';
 import 'package:kebap/models/media_playback_model.dart';
 import 'package:kebap/providers/user_provider.dart';
 import 'package:kebap/providers/video_player_provider.dart';
-import 'package:kebap/screens/shared/fladder_snackbar.dart';
+import 'package:kebap/screens/shared/kebap_snackbar.dart';
 import 'package:kebap/screens/shared/flat_button.dart';
 import 'package:kebap/screens/video_player/video_player.dart';
 import 'package:kebap/util/adaptive_layout/adaptive_layout.dart';
 import 'package:kebap/util/duration_extensions.dart';
 import 'package:kebap/util/localization_helper.dart';
 import 'package:kebap/util/refresh_state.dart';
-import 'package:kebap/widgets/shared/fladder_slider.dart';
+import 'package:kebap/widgets/shared/kebap_slider.dart';
 import 'package:kebap/widgets/shared/item_actions.dart';
 
 const videoPlayerHeroTag = "HeroPlayer";

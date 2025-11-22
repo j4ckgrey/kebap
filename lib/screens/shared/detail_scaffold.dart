@@ -17,7 +17,7 @@ import 'package:kebap/screens/syncing/sync_item_details.dart';
 import 'package:kebap/shaders/fade_edges.dart';
 import 'package:kebap/theme.dart';
 import 'package:kebap/util/adaptive_layout/adaptive_layout.dart';
-import 'package:kebap/util/fladder_image.dart';
+import 'package:kebap/util/kebap_image.dart';
 import 'package:kebap/util/localization_helper.dart';
 import 'package:kebap/util/refresh_state.dart';
 import 'package:kebap/util/router_extension.dart';

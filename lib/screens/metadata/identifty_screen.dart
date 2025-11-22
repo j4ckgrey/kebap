@@ -7,7 +7,7 @@ import 'package:iconsax_plus/iconsax_plus.dart';
 import 'package:kebap/models/item_base_model.dart';
 import 'package:kebap/providers/items/identify_provider.dart';
 import 'package:kebap/screens/shared/adaptive_dialog.dart';
-import 'package:kebap/screens/shared/fladder_snackbar.dart';
+import 'package:kebap/screens/shared/kebap_snackbar.dart';
 import 'package:kebap/screens/shared/focused_outlined_text_field.dart';
 import 'package:kebap/util/localization_helper.dart';
 import 'package:kebap/util/string_extensions.dart';

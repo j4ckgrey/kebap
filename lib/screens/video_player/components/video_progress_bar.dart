@@ -11,7 +11,7 @@ import 'package:kebap/util/duration_extensions.dart';
 import 'package:kebap/util/list_padding.dart';
 import 'package:kebap/util/string_extensions.dart';
 import 'package:kebap/widgets/gapped_container_shape.dart';
-import 'package:kebap/widgets/shared/fladder_slider.dart';
+import 'package:kebap/widgets/shared/kebap_slider.dart';
 import 'package:kebap/widgets/shared/trick_play_image.dart';
 
 class VideoProgressBar extends ConsumerStatefulWidget {

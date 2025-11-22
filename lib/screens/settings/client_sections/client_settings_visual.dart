@@ -12,7 +12,7 @@ import 'package:kebap/screens/shared/input_fields.dart';
 import 'package:kebap/util/adaptive_layout/adaptive_layout.dart';
 import 'package:kebap/util/localization_helper.dart';
 import 'package:kebap/widgets/shared/enum_selection.dart';
-import 'package:kebap/widgets/shared/fladder_slider.dart';
+import 'package:kebap/widgets/shared/kebap_slider.dart';
 import 'package:kebap/widgets/shared/item_actions.dart';
 
 List<Widget> buildClientSettingsVisual(

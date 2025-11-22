@@ -14,12 +14,12 @@ import 'package:kebap/providers/settings/book_viewer_settings_provider.dart';
 import 'package:kebap/screens/book_viewer/book_viewer_chapters.dart';
 import 'package:kebap/screens/book_viewer/book_viewer_settings.dart';
 import 'package:kebap/screens/shared/default_title_bar.dart';
-import 'package:kebap/screens/shared/fladder_snackbar.dart';
+import 'package:kebap/screens/shared/kebap_snackbar.dart';
 import 'package:kebap/util/adaptive_layout/adaptive_layout.dart';
 import 'package:kebap/util/input_handler.dart';
 import 'package:kebap/util/localization_helper.dart';
 import 'package:kebap/util/throttler.dart';
-import 'package:kebap/widgets/shared/fladder_slider.dart';
+import 'package:kebap/widgets/shared/kebap_slider.dart';
 
 class BookViewController {
   bool controlsVisible = true;

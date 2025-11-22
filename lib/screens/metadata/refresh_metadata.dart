@@ -5,7 +5,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:kebap/jellyfin/enum_models.dart';
 import 'package:kebap/providers/user_provider.dart';
 import 'package:kebap/screens/settings/settings_list_tile.dart';
-import 'package:kebap/screens/shared/fladder_snackbar.dart';
+import 'package:kebap/screens/shared/kebap_snackbar.dart';
 import 'package:kebap/util/adaptive_layout/adaptive_layout.dart';
 import 'package:kebap/util/localization_helper.dart';
 import 'package:kebap/widgets/shared/enum_selection.dart';

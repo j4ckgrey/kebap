@@ -28,7 +28,7 @@ import 'package:kebap/providers/service_provider.dart';
 import 'package:kebap/providers/settings/client_settings_provider.dart';
 import 'package:kebap/providers/user_provider.dart';
 import 'package:kebap/routes/auto_router.gr.dart';
-import 'package:kebap/screens/shared/fladder_snackbar.dart';
+import 'package:kebap/screens/shared/kebap_snackbar.dart';
 import 'package:kebap/util/item_base_model/play_item_helpers.dart';
 import 'package:kebap/util/list_extensions.dart';
 import 'package:kebap/util/localization_helper.dart';

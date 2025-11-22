@@ -38,7 +38,7 @@ import 'package:kebap/providers/service_provider.dart';
 import 'package:kebap/providers/settings/client_settings_provider.dart';
 import 'package:kebap/providers/sync/background_download_provider.dart';
 import 'package:kebap/providers/user_provider.dart';
-import 'package:kebap/screens/shared/fladder_snackbar.dart';
+import 'package:kebap/screens/shared/kebap_snackbar.dart';
 import 'package:kebap/util/duration_extensions.dart';
 import 'package:kebap/util/localization_helper.dart';
 import 'package:kebap/util/string_extensions.dart';

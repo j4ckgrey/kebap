@@ -28,7 +28,7 @@ class FladderIcon extends StatelessWidget {
             );
           },
           child: SvgPicture.asset(
-            "icons/fladder_icon.svg",
+            "icons/kebap_icon.svg",
             width: size,
             colorFilter: const ColorFilter.mode(Colors.white, BlendMode.srcIn),
           ),
@@ -46,7 +46,7 @@ class FladderIconOutlined extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return SvgPicture.asset(
-      "icons/fladder_icon_outline.svg",
+      "icons/kebap_icon_outline.svg",
       width: size,
       colorFilter: ColorFilter.mode(color ?? context.colors.onSurfaceVariant, BlendMode.srcATop),
     );

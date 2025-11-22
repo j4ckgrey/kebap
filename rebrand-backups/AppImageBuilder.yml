@@ -10,13 +10,13 @@ script:
   - rm -rf AppDir || true
   - cp -r build/linux/x64/release/bundle AppDir
   - mkdir -p AppDir/usr/share/icons/
-  - cp icons/production/fladder_icon_desktop.png AppDir/usr/share/icons/
+  - cp icons/production/kebap_icon_desktop.png AppDir/usr/share/icons/
 AppDir:
   path: ./AppDir
   app_info:
     id: nl.jknaapen.fladder
     name: Fladder
-    icon: fladder_icon_desktop
+    icon: kebap_icon_desktop
     version: latest
     exec: Fladder
     exec_args: $@
@@ -24,7 +24,7 @@ AppDir:
     include:
       - assets/fonts/rubik/Rubik-Italic-VariableFont_wght.ttf
       - assets/fonts/rubik/Rubik-VariableFont_wght.ttf
-      - icons/production/fladder_icon_desktop.png
+      - icons/production/kebap_icon_desktop.png
 AppImage:
   arch: x86_64
   update-information: gh-releases-zsync|DonutWare|Fladder|latest|Fladder-Linux-*.AppImage.zsync

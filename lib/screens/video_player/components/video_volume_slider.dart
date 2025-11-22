@@ -5,7 +5,7 @@ import 'package:iconsax_plus/iconsax_plus.dart';
 
 import 'package:kebap/providers/settings/video_player_settings_provider.dart';
 import 'package:kebap/util/list_padding.dart';
-import 'package:kebap/widgets/shared/fladder_slider.dart';
+import 'package:kebap/widgets/shared/kebap_slider.dart';
 
 class VideoVolumeSlider extends ConsumerStatefulWidget {
   final double? width;

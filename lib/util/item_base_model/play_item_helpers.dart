@@ -18,7 +18,7 @@ import 'package:kebap/providers/items/book_details_provider.dart';
 import 'package:kebap/providers/video_player_provider.dart';
 import 'package:kebap/routes/auto_router.gr.dart';
 import 'package:kebap/screens/book_viewer/book_viewer_screen.dart';
-import 'package:kebap/screens/shared/fladder_snackbar.dart';
+import 'package:kebap/screens/shared/kebap_snackbar.dart';
 import 'package:kebap/util/adaptive_layout/adaptive_layout.dart';
 import 'package:kebap/util/list_extensions.dart';
 import 'package:kebap/util/localization_helper.dart';

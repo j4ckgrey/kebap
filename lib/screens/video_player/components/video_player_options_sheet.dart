@@ -30,7 +30,7 @@ import 'package:kebap/util/map_bool_helper.dart';
 import 'package:kebap/util/refresh_state.dart';
 import 'package:kebap/util/string_extensions.dart';
 import 'package:kebap/widgets/shared/enum_selection.dart';
-import 'package:kebap/widgets/shared/fladder_slider.dart';
+import 'package:kebap/widgets/shared/kebap_slider.dart';
 import 'package:kebap/widgets/shared/item_actions.dart';
 import 'package:kebap/widgets/shared/modal_bottom_sheet.dart';
 import 'package:kebap/widgets/shared/spaced_list_tile.dart';

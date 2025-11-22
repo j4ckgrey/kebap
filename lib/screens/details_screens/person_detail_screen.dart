@@ -11,7 +11,7 @@ import 'package:kebap/screens/shared/detail_scaffold.dart';
 import 'package:kebap/screens/shared/media/external_urls.dart';
 import 'package:kebap/screens/shared/media/poster_row.dart';
 import 'package:kebap/util/adaptive_layout/adaptive_layout.dart';
-import 'package:kebap/util/fladder_image.dart';
+import 'package:kebap/util/kebap_image.dart';
 import 'package:kebap/util/list_extensions.dart';
 import 'package:kebap/util/string_extensions.dart';
 import 'package:kebap/util/widget_extensions.dart';

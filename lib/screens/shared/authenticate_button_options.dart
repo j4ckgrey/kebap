@@ -1,6 +1,6 @@
 import 'package:iconsax_plus/iconsax_plus.dart';
 import 'package:kebap/models/account_model.dart';
-import 'package:kebap/screens/shared/fladder_snackbar.dart';
+import 'package:kebap/screens/shared/kebap_snackbar.dart';
 import 'package:kebap/screens/shared/passcode_input.dart';
 import 'package:kebap/util/auth_service.dart';
 import 'package:kebap/util/list_padding.dart';

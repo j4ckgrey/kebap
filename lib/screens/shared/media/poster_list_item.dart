@@ -8,7 +8,7 @@ import 'package:kebap/models/item_base_model.dart';
 import 'package:kebap/models/items/item_shared_models.dart';
 import 'package:kebap/providers/settings/client_settings_provider.dart';
 import 'package:kebap/util/adaptive_layout/adaptive_layout.dart';
-import 'package:kebap/util/fladder_image.dart';
+import 'package:kebap/util/kebap_image.dart';
 import 'package:kebap/util/focus_provider.dart';
 import 'package:kebap/util/item_base_model/item_base_model_extensions.dart';
 import 'package:kebap/util/list_padding.dart';

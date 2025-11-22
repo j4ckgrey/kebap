@@ -17,8 +17,8 @@ import 'package:kebap/providers/shared_provider.dart';
 import 'package:kebap/providers/user_provider.dart';
 import 'package:kebap/providers/views_provider.dart';
 import 'package:kebap/screens/login/lock_screen.dart';
-import 'package:kebap/screens/shared/fladder_snackbar.dart';
-import 'package:kebap/util/fladder_config.dart';
+import 'package:kebap/screens/shared/kebap_snackbar.dart';
+import 'package:kebap/util/kebap_config.dart';
 import 'package:kebap/util/localization_helper.dart';
 
 final authProvider = StateNotifierProvider<AuthNotifier, LoginScreenModel>((ref) {

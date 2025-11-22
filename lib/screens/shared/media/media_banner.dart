@@ -7,12 +7,12 @@ import 'package:iconsax_plus/iconsax_plus.dart';
 import 'package:kebap/models/item_base_model.dart';
 import 'package:kebap/screens/shared/media/banner_play_button.dart';
 import 'package:kebap/util/adaptive_layout/adaptive_layout.dart';
-import 'package:kebap/util/fladder_image.dart';
+import 'package:kebap/util/kebap_image.dart';
 import 'package:kebap/util/focus_provider.dart';
 import 'package:kebap/util/item_base_model/item_base_model_extensions.dart';
 import 'package:kebap/util/list_padding.dart';
 import 'package:kebap/util/themes_data.dart';
-import 'package:kebap/widgets/shared/fladder_slider.dart';
+import 'package:kebap/widgets/shared/kebap_slider.dart';
 import 'package:kebap/widgets/shared/item_actions.dart';
 import 'package:kebap/widgets/shared/modal_bottom_sheet.dart';
 
