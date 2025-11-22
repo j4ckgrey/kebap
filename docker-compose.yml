@@ -1,7 +1,9 @@
 services:
-  fladder:
-    image: ghcr.io/donutware/fladder:latest
+  kebap:
+    # Use the Kebap image from your GitHub Container Registry when available.
+    # For local development you can replace `image:` with `build: .` to build locally.
+    image: ghcr.io/j4ckgrey/kebap:latest
     ports:
       - 80:80
     environment:
-      - BASE_URL=https://server-url #OPTIONAL: Locks the Fladder front-end to a certain jellyfin server
+      - BASE_URL=https://server-url # OPTIONAL: Locks the Kebap front-end to a certain jellyfin server
