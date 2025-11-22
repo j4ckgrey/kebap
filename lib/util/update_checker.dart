@@ -68,7 +68,7 @@ extension DownloadLabelFormatter on String {
 }
 
 class UpdateChecker {
-  final String owner = 'DonutWare';
+  final String owner = 'j4ckgrey';
   final String repo = 'Fladder';
 
   Future<List<ReleaseInfo>> fetchRecentReleases({int count = 5}) async {

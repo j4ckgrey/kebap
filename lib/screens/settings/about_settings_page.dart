@@ -26,7 +26,7 @@ class _Socials {
 const socials = [
   _Socials(
     'Github',
-    'https://github.com/DonutWare/Fladder',
+    'https://github.com/j4ckgrey/Fladder',
     FontAwesomeIcons.githubAlt,
   ),
   _Socials(
@@ -98,7 +98,7 @@ class AboutSettingsPage extends ConsumerWidget {
                 context: context,
                 applicationIcon: const FladderIcon(size: 55),
                 applicationVersion: applicationInfo.versionPlatformBuild,
-                applicationLegalese: "DonutWare",
+                applicationLegalese: "j4ckgrey",
                 useRootNavigator: true,
               ),
               child: Text(context.localized.aboutLicenses),

@@ -1227,7 +1227,7 @@ packages:
       path: media_kit
       ref: main
       resolved-ref: "800d95ee63cee2a31d979e1e47c92a0ddb8b84e2"
-      url: "https://github.com/DonutWare/media-kit.git"
+      url: "https://github.com/j4ckgrey/media-kit.git"
     source: git
     version: "1.2.2"
   media_kit_libs_android_video:
@@ -1236,7 +1236,7 @@ packages:
       path: "libs/android/media_kit_libs_android_video"
       ref: HEAD
       resolved-ref: "800d95ee63cee2a31d979e1e47c92a0ddb8b84e2"
-      url: "https://github.com/DonutWare/media-kit.git"
+      url: "https://github.com/j4ckgrey/media-kit.git"
     source: git
     version: "1.3.8"
   media_kit_libs_ios_video:
@@ -1245,7 +1245,7 @@ packages:
       path: "libs/ios/media_kit_libs_ios_video"
       ref: HEAD
       resolved-ref: "800d95ee63cee2a31d979e1e47c92a0ddb8b84e2"
-      url: "https://github.com/DonutWare/media-kit.git"
+      url: "https://github.com/j4ckgrey/media-kit.git"
     source: git
     version: "1.1.4"
   media_kit_libs_linux:
@@ -1254,7 +1254,7 @@ packages:
       path: "libs/linux/media_kit_libs_linux"
       ref: HEAD
       resolved-ref: "800d95ee63cee2a31d979e1e47c92a0ddb8b84e2"
-      url: "https://github.com/DonutWare/media-kit.git"
+      url: "https://github.com/j4ckgrey/media-kit.git"
     source: git
     version: "1.2.1"
   media_kit_libs_macos_video:
@@ -1263,7 +1263,7 @@ packages:
       path: "libs/macos/media_kit_libs_macos_video"
       ref: HEAD
       resolved-ref: "800d95ee63cee2a31d979e1e47c92a0ddb8b84e2"
-      url: "https://github.com/DonutWare/media-kit.git"
+      url: "https://github.com/j4ckgrey/media-kit.git"
     source: git
     version: "1.1.4"
   media_kit_libs_video:
@@ -1272,7 +1272,7 @@ packages:
       path: "libs/universal/media_kit_libs_video"
       ref: main
       resolved-ref: "800d95ee63cee2a31d979e1e47c92a0ddb8b84e2"
-      url: "https://github.com/DonutWare/media-kit.git"
+      url: "https://github.com/j4ckgrey/media-kit.git"
     source: git
     version: "1.0.7"
   media_kit_libs_windows_video:
@@ -1281,7 +1281,7 @@ packages:
       path: "libs/windows/media_kit_libs_windows_video"
       ref: HEAD
       resolved-ref: "800d95ee63cee2a31d979e1e47c92a0ddb8b84e2"
-      url: "https://github.com/DonutWare/media-kit.git"
+      url: "https://github.com/j4ckgrey/media-kit.git"
     source: git
     version: "1.0.11"
   media_kit_video:
@@ -1290,7 +1290,7 @@ packages:
       path: media_kit_video
       ref: main
       resolved-ref: "800d95ee63cee2a31d979e1e47c92a0ddb8b84e2"
-      url: "https://github.com/DonutWare/media-kit.git"
+      url: "https://github.com/j4ckgrey/media-kit.git"
     source: git
     version: "2.0.0"
   meta:

@@ -20,7 +20,7 @@ flutter doctor
 
 ```bash
 # Clone the repository
-git clone https://github.com/DonutWare/Fladder.git
+git clone https://github.com/j4ckgrey/Fladder.git
 cd Fladder
 
 # Install dependencies
