@@ -22,7 +22,7 @@ class DiscoverServersWidget extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    if (FladderConfig.baseUrl?.isNotEmpty == true) return const SizedBox.shrink();
+    if (KebapConfig.baseUrl?.isNotEmpty == true) return const SizedBox.shrink();
     final existingServers = serverCredentials
         .map(
           (credentials) => DiscoveryInfo(

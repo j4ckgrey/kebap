@@ -14,7 +14,7 @@ script:
 AppDir:
   path: ./AppDir
   app_info:
-    id: nl.jknaapen.fladder
+    id: nl.jknaapen.kebap
     name: Kebap
     icon: kebap_icon_desktop
     version: latest
@@ -27,5 +27,5 @@ AppDir:
       - icons/production/kebap_icon_desktop.png
 AppImage:
   arch: x86_64
-  update-information: gh-releases-zsync|DonutWare|Kebap|latest|Kebap-Linux-*.AppImage.zsync
+  update-information: gh-releases-zsync|j4ckgrey|Kebap|latest|Kebap-Linux-*.AppImage.zsync
   file_name: Kebap_x86_64.AppImage

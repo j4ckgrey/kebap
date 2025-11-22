@@ -1,4 +1,4 @@
-id: nl.jknaapen.fladder
+id: nl.jknaapen.kebap
 runtime: org.gnome.Platform
 runtime-version: '48'
 sdk: org.gnome.Sdk
@@ -145,7 +145,7 @@ modules:
       - chmod +x /app/bin/Kebap
       - mkdir -p /app/share/applications
       - mkdir -p /app/share/icons/hicolor/scalable/apps
-      - install -Dm644 flatpak/Fladder.desktop /app/share/applications/${FLATPAK_ID}.desktop
+      - install -Dm644 flatpak/Kebap.desktop /app/share/applications/${FLATPAK_ID}.desktop
       - install -Dm644 icons/kebap_icon.svg /app/share/icons/hicolor/scalable/apps/${FLATPAK_ID}.svg
     sources:
       - type: dir

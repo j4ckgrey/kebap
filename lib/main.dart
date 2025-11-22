@@ -74,10 +74,10 @@ void main(List<String> args) async {
     await SMTCWindows.initialize();
   }
 
-  if (kIsWeb) {
+    if (kIsWeb) {
     html.document.onContextMenu.listen((event) => event.preventDefault());
     final result = await loadConfig();
-    FladderConfig.fromJson(result);
+    KebapConfig.fromJson(result);
   }
 
   String windowArguments = "";
@@ -326,7 +326,7 @@ class _MainState extends ConsumerState<Main> with WindowListener, WidgetsBinding
                 mouseDrag ? PointerDeviceKind.mouse : null,
               }.nonNulls.toSet(),
             ),
-            localizationsDelegates: FladderLocalizations.localizationsDelegates,
+            localizationsDelegates: KebapLocalizations.localizationsDelegates,
             supportedLocales: AppLocalizations.supportedLocales,
             locale: language,
             localeResolutionCallback: (locale, supportedLocales) {
@@ -369,4 +369,4 @@ class _MainState extends ConsumerState<Main> with WindowListener, WidgetsBinding
   }
 }
 
-final currentTitleProvider = StateProvider<String>((ref) => "Fladder");
+final currentTitleProvider = StateProvider<String>((ref) => "Kebap");
