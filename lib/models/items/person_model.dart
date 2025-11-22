@@ -1,13 +1,13 @@
 import 'package:dart_mappable/dart_mappable.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
-import 'package:fladder/jellyfin/jellyfin_open_api.swagger.dart';
-import 'package:fladder/models/item_base_model.dart';
-import 'package:fladder/models/items/images_models.dart';
-import 'package:fladder/models/items/item_shared_models.dart';
-import 'package:fladder/models/items/movie_model.dart';
-import 'package:fladder/models/items/overview_model.dart';
-import 'package:fladder/models/items/series_model.dart';
+import 'package:kebap/jellyfin/jellyfin_open_api.swagger.dart';
+import 'package:kebap/models/item_base_model.dart';
+import 'package:kebap/models/items/images_models.dart';
+import 'package:kebap/models/items/item_shared_models.dart';
+import 'package:kebap/models/items/movie_model.dart';
+import 'package:kebap/models/items/overview_model.dart';
+import 'package:kebap/models/items/series_model.dart';
 
 part 'person_model.mapper.dart';
 

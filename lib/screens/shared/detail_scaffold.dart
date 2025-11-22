@@ -5,26 +5,26 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:iconsax_plus/iconsax_plus.dart';
 import 'package:palette_generator_master/palette_generator_master.dart';
 
-import 'package:fladder/models/item_base_model.dart';
-import 'package:fladder/models/items/images_models.dart';
-import 'package:fladder/providers/settings/client_settings_provider.dart';
-import 'package:fladder/providers/sync/sync_provider_helpers.dart';
-import 'package:fladder/providers/sync_provider.dart';
-import 'package:fladder/providers/user_provider.dart';
-import 'package:fladder/routes/auto_router.gr.dart';
-import 'package:fladder/screens/syncing/sync_button.dart';
-import 'package:fladder/screens/syncing/sync_item_details.dart';
-import 'package:fladder/shaders/fade_edges.dart';
-import 'package:fladder/theme.dart';
-import 'package:fladder/util/adaptive_layout/adaptive_layout.dart';
-import 'package:fladder/util/fladder_image.dart';
-import 'package:fladder/util/localization_helper.dart';
-import 'package:fladder/util/refresh_state.dart';
-import 'package:fladder/util/router_extension.dart';
-import 'package:fladder/widgets/navigation_scaffold/components/settings_user_icon.dart';
-import 'package:fladder/widgets/shared/item_actions.dart';
-import 'package:fladder/widgets/shared/modal_bottom_sheet.dart';
-import 'package:fladder/widgets/shared/pull_to_refresh.dart';
+import 'package:kebap/models/item_base_model.dart';
+import 'package:kebap/models/items/images_models.dart';
+import 'package:kebap/providers/settings/client_settings_provider.dart';
+import 'package:kebap/providers/sync/sync_provider_helpers.dart';
+import 'package:kebap/providers/sync_provider.dart';
+import 'package:kebap/providers/user_provider.dart';
+import 'package:kebap/routes/auto_router.gr.dart';
+import 'package:kebap/screens/syncing/sync_button.dart';
+import 'package:kebap/screens/syncing/sync_item_details.dart';
+import 'package:kebap/shaders/fade_edges.dart';
+import 'package:kebap/theme.dart';
+import 'package:kebap/util/adaptive_layout/adaptive_layout.dart';
+import 'package:kebap/util/fladder_image.dart';
+import 'package:kebap/util/localization_helper.dart';
+import 'package:kebap/util/refresh_state.dart';
+import 'package:kebap/util/router_extension.dart';
+import 'package:kebap/widgets/navigation_scaffold/components/settings_user_icon.dart';
+import 'package:kebap/widgets/shared/item_actions.dart';
+import 'package:kebap/widgets/shared/modal_bottom_sheet.dart';
+import 'package:kebap/widgets/shared/pull_to_refresh.dart';
 
 Future<Color?> getDominantColor(ImageProvider imageProvider) async {
   final paletteGenerator = await PaletteGeneratorMaster.fromImageProvider(

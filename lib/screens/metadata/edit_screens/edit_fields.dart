@@ -6,19 +6,19 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:iconsax_plus/iconsax_plus.dart';
 import 'package:intl/intl.dart';
 
-import 'package:fladder/jellyfin/jellyfin_open_api.swagger.dart';
-import 'package:fladder/models/items/item_shared_models.dart';
-import 'package:fladder/providers/edit_item_provider.dart';
-import 'package:fladder/screens/settings/settings_list_tile.dart';
-import 'package:fladder/screens/shared/focused_outlined_text_field.dart';
-import 'package:fladder/screens/shared/media/external_urls.dart';
-import 'package:fladder/screens/shared/outlined_text_field.dart';
-import 'package:fladder/util/jelly_id.dart';
-import 'package:fladder/util/list_extensions.dart';
-import 'package:fladder/util/string_extensions.dart';
-import 'package:fladder/widgets/shared/adaptive_date_picker.dart';
-import 'package:fladder/widgets/shared/enum_selection.dart';
-import 'package:fladder/widgets/shared/item_actions.dart';
+import 'package:kebap/jellyfin/jellyfin_open_api.swagger.dart';
+import 'package:kebap/models/items/item_shared_models.dart';
+import 'package:kebap/providers/edit_item_provider.dart';
+import 'package:kebap/screens/settings/settings_list_tile.dart';
+import 'package:kebap/screens/shared/focused_outlined_text_field.dart';
+import 'package:kebap/screens/shared/media/external_urls.dart';
+import 'package:kebap/screens/shared/outlined_text_field.dart';
+import 'package:kebap/util/jelly_id.dart';
+import 'package:kebap/util/list_extensions.dart';
+import 'package:kebap/util/string_extensions.dart';
+import 'package:kebap/widgets/shared/adaptive_date_picker.dart';
+import 'package:kebap/widgets/shared/enum_selection.dart';
+import 'package:kebap/widgets/shared/item_actions.dart';
 
 class EditFields extends ConsumerStatefulWidget {
   final Map<String, dynamic> fields;

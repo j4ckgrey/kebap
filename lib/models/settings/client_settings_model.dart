@@ -8,12 +8,12 @@ import 'package:flutter/services.dart';
 
 import 'package:freezed_annotation/freezed_annotation.dart';
 
-import 'package:fladder/models/settings/arguments_model.dart';
-import 'package:fladder/models/settings/key_combinations.dart';
-import 'package:fladder/providers/sync_provider.dart';
-import 'package:fladder/src/directory_bookmark.g.dart';
-import 'package:fladder/util/custom_color_themes.dart';
-import 'package:fladder/util/localization_helper.dart';
+import 'package:kebap/models/settings/arguments_model.dart';
+import 'package:kebap/models/settings/key_combinations.dart';
+import 'package:kebap/providers/sync_provider.dart';
+import 'package:kebap/src/directory_bookmark.g.dart';
+import 'package:kebap/util/custom_color_themes.dart';
+import 'package:kebap/util/localization_helper.dart';
 
 part 'client_settings_model.freezed.dart';
 part 'client_settings_model.g.dart';

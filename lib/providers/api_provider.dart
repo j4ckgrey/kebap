@@ -6,11 +6,11 @@ import 'package:connectivity_plus/connectivity_plus.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
 
-import 'package:fladder/jellyfin/jellyfin_open_api.swagger.dart';
-import 'package:fladder/providers/auth_provider.dart';
-import 'package:fladder/providers/connectivity_provider.dart';
-import 'package:fladder/providers/service_provider.dart';
-import 'package:fladder/providers/user_provider.dart';
+import 'package:kebap/jellyfin/jellyfin_open_api.swagger.dart';
+import 'package:kebap/providers/auth_provider.dart';
+import 'package:kebap/providers/connectivity_provider.dart';
+import 'package:kebap/providers/service_provider.dart';
+import 'package:kebap/providers/user_provider.dart';
 
 part 'api_provider.g.dart';
 

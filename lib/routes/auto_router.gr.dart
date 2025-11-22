@@ -13,30 +13,30 @@ import 'dart:async' as _i25;
 
 import 'package:auto_route/auto_route.dart' as _i19;
 import 'package:collection/collection.dart' as _i23;
-import 'package:fladder/models/item_base_model.dart' as _i20;
-import 'package:fladder/models/items/photos_model.dart' as _i24;
-import 'package:fladder/models/library_search/library_search_options.dart'
+import 'package:kebap/models/item_base_model.dart' as _i20;
+import 'package:kebap/models/items/photos_model.dart' as _i24;
+import 'package:kebap/models/library_search/library_search_options.dart'
     as _i22;
-import 'package:fladder/routes/nested_details_screen.dart' as _i4;
-import 'package:fladder/screens/dashboard/dashboard_screen.dart' as _i3;
-import 'package:fladder/screens/favourites/favourites_screen.dart' as _i5;
-import 'package:fladder/screens/home_screen.dart' as _i6;
-import 'package:fladder/screens/library/library_screen.dart' as _i7;
-import 'package:fladder/screens/library_search/library_search_screen.dart'
+import 'package:kebap/routes/nested_details_screen.dart' as _i4;
+import 'package:kebap/screens/dashboard/dashboard_screen.dart' as _i3;
+import 'package:kebap/screens/favourites/favourites_screen.dart' as _i5;
+import 'package:kebap/screens/home_screen.dart' as _i6;
+import 'package:kebap/screens/library/library_screen.dart' as _i7;
+import 'package:kebap/screens/library_search/library_search_screen.dart'
     as _i8;
-import 'package:fladder/screens/login/lock_screen.dart' as _i9;
-import 'package:fladder/screens/login/login_screen.dart' as _i10;
-import 'package:fladder/screens/photo_viewer/photo_viewer_screen.dart' as _i11;
-import 'package:fladder/screens/requests_screen.dart' as _i14;
-import 'package:fladder/screens/settings/about_settings_page.dart' as _i1;
-import 'package:fladder/screens/settings/client_settings_page.dart' as _i2;
-import 'package:fladder/screens/settings/player_settings_page.dart' as _i12;
-import 'package:fladder/screens/settings/profile_settings_page.dart' as _i13;
-import 'package:fladder/screens/settings/settings_screen.dart' as _i15;
-import 'package:fladder/screens/settings/settings_selection_screen.dart'
+import 'package:kebap/screens/login/lock_screen.dart' as _i9;
+import 'package:kebap/screens/login/login_screen.dart' as _i10;
+import 'package:kebap/screens/photo_viewer/photo_viewer_screen.dart' as _i11;
+import 'package:kebap/screens/requests_screen.dart' as _i14;
+import 'package:kebap/screens/settings/about_settings_page.dart' as _i1;
+import 'package:kebap/screens/settings/client_settings_page.dart' as _i2;
+import 'package:kebap/screens/settings/player_settings_page.dart' as _i12;
+import 'package:kebap/screens/settings/profile_settings_page.dart' as _i13;
+import 'package:kebap/screens/settings/settings_screen.dart' as _i15;
+import 'package:kebap/screens/settings/settings_selection_screen.dart'
     as _i16;
-import 'package:fladder/screens/splash_screen.dart' as _i17;
-import 'package:fladder/screens/syncing/synced_screen.dart' as _i18;
+import 'package:kebap/screens/splash_screen.dart' as _i17;
+import 'package:kebap/screens/syncing/synced_screen.dart' as _i18;
 import 'package:flutter/foundation.dart' as _i21;
 import 'package:flutter/material.dart' as _i26;
 

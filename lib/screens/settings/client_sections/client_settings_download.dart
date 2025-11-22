@@ -5,18 +5,18 @@ import 'package:file_picker/file_picker.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:iconsax_plus/iconsax_plus.dart';
 
-import 'package:fladder/providers/settings/client_settings_provider.dart';
-import 'package:fladder/providers/sync/background_download_provider.dart';
-import 'package:fladder/providers/sync_provider.dart';
-import 'package:fladder/providers/user_provider.dart';
-import 'package:fladder/screens/settings/settings_list_tile.dart';
-import 'package:fladder/screens/settings/widgets/settings_label_divider.dart';
-import 'package:fladder/screens/settings/widgets/settings_list_group.dart';
-import 'package:fladder/screens/shared/default_alert_dialog.dart';
-import 'package:fladder/screens/shared/input_fields.dart';
-import 'package:fladder/util/adaptive_layout/adaptive_layout.dart';
-import 'package:fladder/util/localization_helper.dart';
-import 'package:fladder/util/size_formatting.dart';
+import 'package:kebap/providers/settings/client_settings_provider.dart';
+import 'package:kebap/providers/sync/background_download_provider.dart';
+import 'package:kebap/providers/sync_provider.dart';
+import 'package:kebap/providers/user_provider.dart';
+import 'package:kebap/screens/settings/settings_list_tile.dart';
+import 'package:kebap/screens/settings/widgets/settings_label_divider.dart';
+import 'package:kebap/screens/settings/widgets/settings_list_group.dart';
+import 'package:kebap/screens/shared/default_alert_dialog.dart';
+import 'package:kebap/screens/shared/input_fields.dart';
+import 'package:kebap/util/adaptive_layout/adaptive_layout.dart';
+import 'package:kebap/util/localization_helper.dart';
+import 'package:kebap/util/size_formatting.dart';
 
 List<Widget> buildClientSettingsDownload(BuildContext context, WidgetRef ref, Function setState) {
   final clientSettings = ref.watch(clientSettingsProvider);

@@ -1,7 +1,7 @@
 import 'dart:async';
 import 'dart:developer';
 
-import 'package:fladder/screens/shared/animated_fade_size.dart';
+import 'package:kebap/screens/shared/animated_fade_size.dart';
 import 'package:flutter/material.dart';
 
 class FilledButtonAwait extends StatefulWidget {

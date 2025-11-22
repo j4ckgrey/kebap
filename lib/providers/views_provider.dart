@@ -1,13 +1,13 @@
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
-import 'package:fladder/jellyfin/jellyfin_open_api.swagger.dart';
-import 'package:fladder/models/item_base_model.dart';
-import 'package:fladder/models/view_model.dart';
-import 'package:fladder/models/views_model.dart';
-import 'package:fladder/providers/api_provider.dart';
-import 'package:fladder/providers/service_provider.dart';
-import 'package:fladder/providers/settings/client_settings_provider.dart';
-import 'package:fladder/providers/user_provider.dart';
+import 'package:kebap/jellyfin/jellyfin_open_api.swagger.dart';
+import 'package:kebap/models/item_base_model.dart';
+import 'package:kebap/models/view_model.dart';
+import 'package:kebap/models/views_model.dart';
+import 'package:kebap/providers/api_provider.dart';
+import 'package:kebap/providers/service_provider.dart';
+import 'package:kebap/providers/settings/client_settings_provider.dart';
+import 'package:kebap/providers/user_provider.dart';
 
 //Known supported collection types
 const enableCollectionTypes = {

@@ -1,10 +1,10 @@
 import 'package:chopper/chopper.dart';
-import 'package:fladder/providers/service_provider.dart';
+import 'package:kebap/providers/service_provider.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
-import 'package:fladder/models/information_model.dart';
-import 'package:fladder/models/item_base_model.dart';
-import 'package:fladder/providers/api_provider.dart';
+import 'package:kebap/models/information_model.dart';
+import 'package:kebap/models/item_base_model.dart';
+import 'package:kebap/providers/api_provider.dart';
 
 class InformationProviderModel {
   final InformationModel? model;

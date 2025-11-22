@@ -1,12 +1,12 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
-import 'package:fladder/models/item_base_model.dart';
-import 'package:fladder/models/tmdb_metadata_model.dart';
-import 'package:fladder/providers/baklava_config_provider.dart';
-import 'package:fladder/providers/baklava_metadata_provider.dart';
-import 'package:fladder/util/adaptive_layout/adaptive_layout.dart';
-import 'package:fladder/util/list_padding.dart';
+import 'package:kebap/models/item_base_model.dart';
+import 'package:kebap/models/tmdb_metadata_model.dart';
+import 'package:kebap/providers/baklava_config_provider.dart';
+import 'package:kebap/providers/baklava_metadata_provider.dart';
+import 'package:kebap/util/adaptive_layout/adaptive_layout.dart';
+import 'package:kebap/util/list_padding.dart';
 
 class ItemDetailsReviewsCarousel extends ConsumerStatefulWidget {
   final ItemBaseModel item;

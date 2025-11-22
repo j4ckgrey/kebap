@@ -1,9 +1,9 @@
 import 'package:freezed_annotation/freezed_annotation.dart';
 import 'package:xid/xid.dart';
 
-import 'package:fladder/models/library_filter_model.dart';
-import 'package:fladder/models/library_search/library_search_model.dart';
-import 'package:fladder/util/map_bool_helper.dart';
+import 'package:kebap/models/library_filter_model.dart';
+import 'package:kebap/models/library_search/library_search_model.dart';
+import 'package:kebap/util/map_bool_helper.dart';
 
 part 'library_filters_model.freezed.dart';
 part 'library_filters_model.g.dart';

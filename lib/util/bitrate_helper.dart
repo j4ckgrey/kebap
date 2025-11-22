@@ -4,8 +4,8 @@ import 'package:flutter/widgets.dart';
 
 import 'package:collection/collection.dart';
 
-import 'package:fladder/util/localization_helper.dart';
-import 'package:fladder/util/string_extensions.dart';
+import 'package:kebap/util/localization_helper.dart';
+import 'package:kebap/util/string_extensions.dart';
 
 enum Bitrate {
   original(null),

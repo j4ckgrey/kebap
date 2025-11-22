@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
-import 'package:fladder/providers/settings/client_settings_provider.dart';
+import 'package:kebap/providers/settings/client_settings_provider.dart';
 
 class NestedScaffold extends ConsumerWidget {
   final Widget body;

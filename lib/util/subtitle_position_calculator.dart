@@ -1,6 +1,6 @@
 import 'dart:math' as math;
 
-import 'package:fladder/models/settings/subtitle_settings_model.dart';
+import 'package:kebap/models/settings/subtitle_settings_model.dart';
 
 class SubtitlePositionCalculator {
   static const double _fallbackMenuHeightPercentage = 0.15;

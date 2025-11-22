@@ -1,4 +1,4 @@
-import 'package:fladder/l10n/generated/app_localizations.dart';
+import 'package:kebap/l10n/generated/app_localizations.dart';
 
 // Compatibility shims for old localization getter names left over from
 // the original 'Fladder' branding. These delegate to the new generated

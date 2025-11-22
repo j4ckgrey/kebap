@@ -4,8 +4,8 @@ import 'package:flutter_blurhash/flutter_blurhash.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:transparent_image/transparent_image.dart';
 
-import 'package:fladder/models/items/images_models.dart';
-import 'package:fladder/providers/settings/client_settings_provider.dart';
+import 'package:kebap/models/items/images_models.dart';
+import 'package:kebap/providers/settings/client_settings_provider.dart';
 
 class FladderImage extends ConsumerWidget {
   final ImageData? image;

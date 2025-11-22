@@ -1,15 +1,15 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
-import 'package:fladder/widgets/navigation_scaffold/components/destination_model.dart';
-import 'package:fladder/widgets/navigation_scaffold/components/navigation_button.dart';
-import 'package:fladder/widgets/navigation_scaffold/components/side_navigation_bar.dart';
-import 'package:fladder/widgets/navigation_scaffold/components/adaptive_fab.dart';
-import 'package:fladder/widgets/navigation_scaffold/components/settings_user_icon.dart';
+import 'package:kebap/widgets/navigation_scaffold/components/destination_model.dart';
+import 'package:kebap/widgets/navigation_scaffold/components/navigation_button.dart';
+import 'package:kebap/widgets/navigation_scaffold/components/side_navigation_bar.dart';
+import 'package:kebap/widgets/navigation_scaffold/components/adaptive_fab.dart';
+import 'package:kebap/widgets/navigation_scaffold/components/settings_user_icon.dart';
 import 'package:auto_route/auto_route.dart';
-import 'package:fladder/routes/auto_router.gr.dart';
-import 'package:fladder/util/adaptive_layout/adaptive_layout.dart';
-import 'package:fladder/util/localization_helper.dart';
+import 'package:kebap/routes/auto_router.gr.dart';
+import 'package:kebap/util/adaptive_layout/adaptive_layout.dart';
+import 'package:kebap/util/localization_helper.dart';
 import 'package:iconsax_plus/iconsax_plus.dart';
 
 // Custom focus policy for navbar that allows continuous left/right navigation in a loop

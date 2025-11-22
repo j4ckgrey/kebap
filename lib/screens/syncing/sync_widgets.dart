@@ -4,15 +4,15 @@ import 'package:background_downloader/background_downloader.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:iconsax_plus/iconsax_plus.dart';
 
-import 'package:fladder/models/items/episode_model.dart';
-import 'package:fladder/models/items/season_model.dart';
-import 'package:fladder/models/items/series_model.dart';
-import 'package:fladder/models/syncing/download_stream.dart';
-import 'package:fladder/models/syncing/sync_item.dart';
-import 'package:fladder/providers/sync/background_download_provider.dart';
-import 'package:fladder/providers/sync/sync_provider_helpers.dart';
-import 'package:fladder/providers/sync_provider.dart';
-import 'package:fladder/util/localization_helper.dart';
+import 'package:kebap/models/items/episode_model.dart';
+import 'package:kebap/models/items/season_model.dart';
+import 'package:kebap/models/items/series_model.dart';
+import 'package:kebap/models/syncing/download_stream.dart';
+import 'package:kebap/models/syncing/sync_item.dart';
+import 'package:kebap/providers/sync/background_download_provider.dart';
+import 'package:kebap/providers/sync/sync_provider_helpers.dart';
+import 'package:kebap/providers/sync_provider.dart';
+import 'package:kebap/util/localization_helper.dart';
 
 const _cancellableStatuses = {
   TaskStatus.canceled,

@@ -5,18 +5,18 @@ import 'package:background_downloader/background_downloader.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:iconsax_plus/iconsax_plus.dart';
 
-import 'package:fladder/models/items/episode_model.dart';
-import 'package:fladder/models/syncing/sync_item.dart';
-import 'package:fladder/providers/sync/sync_provider_helpers.dart';
-import 'package:fladder/providers/sync_provider.dart';
-import 'package:fladder/screens/shared/default_alert_dialog.dart';
-import 'package:fladder/screens/shared/flat_button.dart';
-import 'package:fladder/screens/shared/media/episode_posters.dart';
-import 'package:fladder/screens/syncing/sync_widgets.dart';
-import 'package:fladder/util/list_padding.dart';
-import 'package:fladder/util/localization_helper.dart';
-import 'package:fladder/util/size_formatting.dart';
-import 'package:fladder/widgets/shared/icon_button_await.dart';
+import 'package:kebap/models/items/episode_model.dart';
+import 'package:kebap/models/syncing/sync_item.dart';
+import 'package:kebap/providers/sync/sync_provider_helpers.dart';
+import 'package:kebap/providers/sync_provider.dart';
+import 'package:kebap/screens/shared/default_alert_dialog.dart';
+import 'package:kebap/screens/shared/flat_button.dart';
+import 'package:kebap/screens/shared/media/episode_posters.dart';
+import 'package:kebap/screens/syncing/sync_widgets.dart';
+import 'package:kebap/util/list_padding.dart';
+import 'package:kebap/util/localization_helper.dart';
+import 'package:kebap/util/size_formatting.dart';
+import 'package:kebap/widgets/shared/icon_button_await.dart';
 
 class SyncedEpisodeItem extends ConsumerStatefulWidget {
   const SyncedEpisodeItem({

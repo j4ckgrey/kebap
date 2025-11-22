@@ -4,17 +4,17 @@ import 'package:collection/collection.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:iconsax_plus/iconsax_plus.dart';
 
-import 'package:fladder/jellyfin/jellyfin_open_api.enums.swagger.dart';
-import 'package:fladder/models/item_base_model.dart';
-import 'package:fladder/models/items/item_shared_models.dart';
-import 'package:fladder/models/library_search/library_search_options.dart';
-import 'package:fladder/providers/library_search_provider.dart';
-import 'package:fladder/screens/shared/chips/category_chip.dart';
-import 'package:fladder/util/localization_helper.dart';
-import 'package:fladder/util/map_bool_helper.dart';
-import 'package:fladder/util/position_provider.dart';
-import 'package:fladder/util/refresh_state.dart';
-import 'package:fladder/widgets/shared/button_group.dart';
+import 'package:kebap/jellyfin/jellyfin_open_api.enums.swagger.dart';
+import 'package:kebap/models/item_base_model.dart';
+import 'package:kebap/models/items/item_shared_models.dart';
+import 'package:kebap/models/library_search/library_search_options.dart';
+import 'package:kebap/providers/library_search_provider.dart';
+import 'package:kebap/screens/shared/chips/category_chip.dart';
+import 'package:kebap/util/localization_helper.dart';
+import 'package:kebap/util/map_bool_helper.dart';
+import 'package:kebap/util/position_provider.dart';
+import 'package:kebap/util/refresh_state.dart';
+import 'package:kebap/widgets/shared/button_group.dart';
 
 class LibraryFilterChips extends ConsumerStatefulWidget {
   const LibraryFilterChips({super.key});

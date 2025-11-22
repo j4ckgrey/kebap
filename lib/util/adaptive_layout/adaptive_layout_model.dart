@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
 
-import 'package:fladder/screens/home_screen.dart';
-import 'package:fladder/util/adaptive_layout/adaptive_layout.dart';
-import 'package:fladder/util/poster_defaults.dart';
+import 'package:kebap/screens/home_screen.dart';
+import 'package:kebap/util/adaptive_layout/adaptive_layout.dart';
+import 'package:kebap/util/poster_defaults.dart';
 
 class LayoutPoints {
   final double start;

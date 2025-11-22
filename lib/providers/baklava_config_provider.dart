@@ -1,7 +1,7 @@
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
-import 'package:fladder/models/baklava_config_model.dart';
-import 'package:fladder/providers/baklava_api_service.dart';
+import 'package:kebap/models/baklava_config_model.dart';
+import 'package:kebap/providers/baklava_api_service.dart';
 
 // Provider for Baklava API service
 final baklavaServiceProvider = Provider<BaklavaService>((ref) {

@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
-import 'package:fladder/models/media_request_model.dart';
+import 'package:kebap/models/media_request_model.dart';
 
 class RequestCard extends ConsumerWidget {
   const RequestCard({

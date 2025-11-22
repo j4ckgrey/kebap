@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
-import 'package:fladder/providers/search_mode_provider.dart';
+import 'package:kebap/providers/search_mode_provider.dart';
 
 class SearchModeToggle extends ConsumerWidget {
   const SearchModeToggle({

@@ -6,20 +6,20 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:iconsax_plus/iconsax_plus.dart';
 import 'package:window_manager/window_manager.dart';
 
-import 'package:fladder/models/settings/client_settings_model.dart';
-import 'package:fladder/providers/baklava_requests_provider.dart';
-import 'package:fladder/providers/settings/client_settings_provider.dart';
-import 'package:fladder/providers/sync_provider.dart';
-import 'package:fladder/providers/user_provider.dart';
-import 'package:fladder/routes/auto_router.gr.dart';
-import 'package:fladder/screens/shared/fladder_snackbar.dart';
-import 'package:fladder/util/input_handler.dart';
-import 'package:fladder/util/localization_helper.dart';
-import 'package:fladder/util/string_extensions.dart';
-import 'package:fladder/widgets/keyboard/slide_in_keyboard.dart';
-import 'package:fladder/widgets/navigation_scaffold/components/adaptive_fab.dart';
-import 'package:fladder/widgets/navigation_scaffold/components/destination_model.dart';
-import 'package:fladder/widgets/navigation_scaffold/navigation_scaffold.dart';
+import 'package:kebap/models/settings/client_settings_model.dart';
+import 'package:kebap/providers/baklava_requests_provider.dart';
+import 'package:kebap/providers/settings/client_settings_provider.dart';
+import 'package:kebap/providers/sync_provider.dart';
+import 'package:kebap/providers/user_provider.dart';
+import 'package:kebap/routes/auto_router.gr.dart';
+import 'package:kebap/screens/shared/fladder_snackbar.dart';
+import 'package:kebap/util/input_handler.dart';
+import 'package:kebap/util/localization_helper.dart';
+import 'package:kebap/util/string_extensions.dart';
+import 'package:kebap/widgets/keyboard/slide_in_keyboard.dart';
+import 'package:kebap/widgets/navigation_scaffold/components/adaptive_fab.dart';
+import 'package:kebap/widgets/navigation_scaffold/components/destination_model.dart';
+import 'package:kebap/widgets/navigation_scaffold/navigation_scaffold.dart';
 
 enum HomeTabs {
   dashboard,

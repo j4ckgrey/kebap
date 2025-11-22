@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
-import 'package:fladder/providers/baklava_requests_provider.dart';
-import 'package:fladder/providers/user_provider.dart';
+import 'package:kebap/providers/baklava_requests_provider.dart';
+import 'package:kebap/providers/user_provider.dart';
 
 class RequestsButton extends ConsumerWidget {
   const RequestsButton({

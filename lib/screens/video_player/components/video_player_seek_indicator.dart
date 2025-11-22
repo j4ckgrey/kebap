@@ -3,13 +3,13 @@ import 'package:flutter/material.dart';
 import 'package:async/async.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
-import 'package:fladder/models/account_model.dart';
-import 'package:fladder/models/settings/video_player_settings.dart';
-import 'package:fladder/providers/settings/video_player_settings_provider.dart';
-import 'package:fladder/providers/user_provider.dart';
-import 'package:fladder/providers/video_player_provider.dart';
-import 'package:fladder/util/input_handler.dart';
-import 'package:fladder/util/localization_helper.dart';
+import 'package:kebap/models/account_model.dart';
+import 'package:kebap/models/settings/video_player_settings.dart';
+import 'package:kebap/providers/settings/video_player_settings_provider.dart';
+import 'package:kebap/providers/user_provider.dart';
+import 'package:kebap/providers/video_player_provider.dart';
+import 'package:kebap/util/input_handler.dart';
+import 'package:kebap/util/localization_helper.dart';
 
 class VideoPlayerSeekIndicator extends ConsumerStatefulWidget {
   const VideoPlayerSeekIndicator({super.key});

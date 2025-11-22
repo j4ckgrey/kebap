@@ -2,10 +2,10 @@ import 'package:flutter/material.dart';
 
 import 'package:iconsax_plus/iconsax_plus.dart';
 
-import 'package:fladder/jellyfin/jellyfin_open_api.enums.swagger.dart';
-import 'package:fladder/jellyfin/jellyfin_open_api.swagger.dart';
-import 'package:fladder/models/item_base_model.dart';
-import 'package:fladder/models/library_filter_model.dart';
+import 'package:kebap/jellyfin/jellyfin_open_api.enums.swagger.dart';
+import 'package:kebap/jellyfin/jellyfin_open_api.swagger.dart';
+import 'package:kebap/models/item_base_model.dart';
+import 'package:kebap/models/library_filter_model.dart';
 
 extension CollectionTypeExtension on CollectionType {
   IconData get iconOutlined {

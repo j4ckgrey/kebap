@@ -4,12 +4,12 @@ import 'package:auto_route/auto_route.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:iconsax_plus/iconsax_plus.dart';
 
-import 'package:fladder/providers/settings/subtitle_settings_provider.dart';
-import 'package:fladder/screens/shared/flat_button.dart';
-import 'package:fladder/util/list_padding.dart';
-import 'package:fladder/util/localization_helper.dart';
-import 'package:fladder/util/widget_extensions.dart';
-import 'package:fladder/widgets/shared/fladder_slider.dart';
+import 'package:kebap/providers/settings/subtitle_settings_provider.dart';
+import 'package:kebap/screens/shared/flat_button.dart';
+import 'package:kebap/util/list_padding.dart';
+import 'package:kebap/util/localization_helper.dart';
+import 'package:kebap/util/widget_extensions.dart';
+import 'package:kebap/widgets/shared/fladder_slider.dart';
 
 Future<void> showSubtitleControls({
   required BuildContext context,

@@ -6,8 +6,8 @@ import 'package:collection/collection.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:screen_brightness/screen_brightness.dart';
 
-import 'package:fladder/providers/shared_provider.dart';
-import 'package:fladder/util/debouncer.dart';
+import 'package:kebap/providers/shared_provider.dart';
+import 'package:kebap/util/debouncer.dart';
 
 enum ReadDirection {
   leftToRight,

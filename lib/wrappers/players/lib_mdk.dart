@@ -7,12 +7,12 @@ import 'package:fvp/fvp.dart' as fvp;
 import 'package:fvp/mdk.dart';
 import 'package:video_player/video_player.dart';
 
-import 'package:fladder/models/items/media_streams_model.dart';
-import 'package:fladder/models/playback/playback_model.dart';
-import 'package:fladder/models/settings/video_player_settings.dart';
-import 'package:fladder/screens/video_player/video_player.dart' as video_screen;
-import 'package:fladder/wrappers/players/base_player.dart';
-import 'package:fladder/wrappers/players/player_states.dart';
+import 'package:kebap/models/items/media_streams_model.dart';
+import 'package:kebap/models/playback/playback_model.dart';
+import 'package:kebap/models/settings/video_player_settings.dart';
+import 'package:kebap/screens/video_player/video_player.dart' as video_screen;
+import 'package:kebap/wrappers/players/base_player.dart';
+import 'package:kebap/wrappers/players/player_states.dart';
 
 class LibMDK extends BasePlayer {
   VideoPlayerController? _controller;

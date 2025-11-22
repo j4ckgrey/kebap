@@ -3,10 +3,10 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:iconsax_plus/iconsax_plus.dart';
 
-import 'package:fladder/providers/library_search_provider.dart';
-import 'package:fladder/screens/shared/default_alert_dialog.dart';
-import 'package:fladder/screens/shared/outlined_text_field.dart';
-import 'package:fladder/util/localization_helper.dart';
+import 'package:kebap/providers/library_search_provider.dart';
+import 'package:kebap/screens/shared/default_alert_dialog.dart';
+import 'package:kebap/screens/shared/outlined_text_field.dart';
+import 'package:kebap/util/localization_helper.dart';
 
 Future<void> showSavedFilters(
   BuildContext context,

@@ -5,15 +5,15 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:iconsax_plus/iconsax_plus.dart';
 
-import 'package:fladder/providers/settings/client_settings_provider.dart';
-import 'package:fladder/screens/shared/media/poster_widget.dart';
-import 'package:fladder/util/adaptive_layout/adaptive_layout.dart';
-import 'package:fladder/util/focus_provider.dart';
-import 'package:fladder/util/list_padding.dart';
-import 'package:fladder/util/sticky_header_text.dart';
-import 'package:fladder/widgets/navigation_scaffold/components/navigation_body.dart';
-import 'package:fladder/widgets/navigation_scaffold/components/side_navigation_bar.dart';
-import 'package:fladder/widgets/shared/ensure_visible.dart';
+import 'package:kebap/providers/settings/client_settings_provider.dart';
+import 'package:kebap/screens/shared/media/poster_widget.dart';
+import 'package:kebap/util/adaptive_layout/adaptive_layout.dart';
+import 'package:kebap/util/focus_provider.dart';
+import 'package:kebap/util/list_padding.dart';
+import 'package:kebap/util/sticky_header_text.dart';
+import 'package:kebap/widgets/navigation_scaffold/components/navigation_body.dart';
+import 'package:kebap/widgets/navigation_scaffold/components/side_navigation_bar.dart';
+import 'package:kebap/widgets/shared/ensure_visible.dart';
 
 class HorizontalList<T> extends ConsumerStatefulWidget {
   final bool autoFocus;

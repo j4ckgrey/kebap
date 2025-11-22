@@ -2,10 +2,10 @@ import 'package:flutter/foundation.dart';
 
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
-import 'package:fladder/jellyfin/jellyfin_open_api.swagger.dart';
-import 'package:fladder/models/settings/video_player_settings.dart';
-import 'package:fladder/profiles/web_profile.dart';
-import 'package:fladder/providers/video_player_provider.dart';
+import 'package:kebap/jellyfin/jellyfin_open_api.swagger.dart';
+import 'package:kebap/models/settings/video_player_settings.dart';
+import 'package:kebap/profiles/web_profile.dart';
+import 'package:kebap/providers/video_player_provider.dart';
 
 final videoProfileProvider = StateProvider.autoDispose<DeviceProfile>((ref) =>
     defaultProfile(ref.read(videoPlayerProvider.select((value) => value.backend)) ?? PlayerOptions.platformDefaults));

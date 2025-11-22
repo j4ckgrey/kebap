@@ -6,7 +6,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:freezed_annotation/freezed_annotation.dart';
 import 'package:xid/xid.dart';
 
-import 'package:fladder/util/application_info.dart';
+import 'package:kebap/util/application_info.dart';
 
 part 'credentials_model.freezed.dart';
 part 'credentials_model.g.dart';

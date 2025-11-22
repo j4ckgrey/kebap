@@ -4,9 +4,9 @@ import 'dart:ui' as ui;
 import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
 
-import 'package:fladder/util/adaptive_layout/adaptive_layout.dart';
-import 'package:fladder/util/adaptive_layout/adaptive_layout_model.dart';
-import 'package:fladder/util/poster_defaults.dart';
+import 'package:kebap/util/adaptive_layout/adaptive_layout.dart';
+import 'package:kebap/util/adaptive_layout/adaptive_layout_model.dart';
+import 'package:kebap/util/poster_defaults.dart';
 
 class _DeviceProfile {
   final String name;

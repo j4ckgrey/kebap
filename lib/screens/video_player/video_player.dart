@@ -6,14 +6,14 @@ import 'package:flutter/services.dart';
 
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
-import 'package:fladder/models/media_playback_model.dart';
-import 'package:fladder/providers/settings/video_player_settings_provider.dart';
-import 'package:fladder/providers/video_player_provider.dart';
-import 'package:fladder/screens/video_player/components/video_player_next_wrapper.dart';
-import 'package:fladder/screens/video_player/video_player_controls.dart';
-import 'package:fladder/util/adaptive_layout/adaptive_layout.dart';
-import 'package:fladder/util/themes_data.dart';
-import 'package:fladder/widgets/shared/back_intent_dpad.dart';
+import 'package:kebap/models/media_playback_model.dart';
+import 'package:kebap/providers/settings/video_player_settings_provider.dart';
+import 'package:kebap/providers/video_player_provider.dart';
+import 'package:kebap/screens/video_player/components/video_player_next_wrapper.dart';
+import 'package:kebap/screens/video_player/video_player_controls.dart';
+import 'package:kebap/util/adaptive_layout/adaptive_layout.dart';
+import 'package:kebap/util/themes_data.dart';
+import 'package:kebap/widgets/shared/back_intent_dpad.dart';
 
 class VideoPlayer extends ConsumerStatefulWidget {
   const VideoPlayer({super.key});

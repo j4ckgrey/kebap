@@ -3,7 +3,7 @@ import 'dart:convert';
 
 import 'package:flutter/foundation.dart';
 
-import 'package:fladder/models/items/chapters_model.dart';
+import 'package:kebap/models/items/chapters_model.dart';
 
 class Bif {
   final String version;

@@ -5,7 +5,7 @@ import 'package:flutter/material.dart';
 
 import 'package:collection/collection.dart';
 
-import 'package:fladder/util/adaptive_layout/adaptive_layout.dart';
+import 'package:kebap/util/adaptive_layout/adaptive_layout.dart';
 
 abstract class ItemAction {
   Widget toMenuItemButton();

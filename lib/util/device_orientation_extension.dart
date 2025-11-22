@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 
-import 'package:fladder/util/localization_helper.dart';
+import 'package:kebap/util/localization_helper.dart';
 
 extension DeviceOrientationExtension on DeviceOrientation {
   String label(BuildContext context) => switch (this) {

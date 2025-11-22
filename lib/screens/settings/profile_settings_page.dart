@@ -3,15 +3,15 @@ import 'package:flutter/material.dart';
 import 'package:auto_route/auto_route.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
-import 'package:fladder/providers/connectivity_provider.dart';
-import 'package:fladder/providers/user_provider.dart';
-import 'package:fladder/screens/settings/settings_list_tile.dart';
-import 'package:fladder/screens/settings/settings_scaffold.dart';
-import 'package:fladder/screens/settings/widgets/settings_label_divider.dart';
-import 'package:fladder/screens/settings/widgets/settings_list_group.dart';
-import 'package:fladder/screens/shared/authenticate_button_options.dart';
-import 'package:fladder/screens/shared/input_fields.dart';
-import 'package:fladder/util/localization_helper.dart';
+import 'package:kebap/providers/connectivity_provider.dart';
+import 'package:kebap/providers/user_provider.dart';
+import 'package:kebap/screens/settings/settings_list_tile.dart';
+import 'package:kebap/screens/settings/settings_scaffold.dart';
+import 'package:kebap/screens/settings/widgets/settings_label_divider.dart';
+import 'package:kebap/screens/settings/widgets/settings_list_group.dart';
+import 'package:kebap/screens/shared/authenticate_button_options.dart';
+import 'package:kebap/screens/shared/input_fields.dart';
+import 'package:kebap/util/localization_helper.dart';
 
 @RoutePage()
 class ProfileSettingsPage extends ConsumerStatefulWidget {

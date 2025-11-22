@@ -4,10 +4,10 @@ import 'package:flutter/material.dart';
 import 'package:auto_route/auto_route.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
-import 'package:fladder/models/item_base_model.dart';
-import 'package:fladder/providers/items/item_details_provider.dart';
-import 'package:fladder/routes/auto_router.gr.dart';
-import 'package:fladder/util/fladder_image.dart';
+import 'package:kebap/models/item_base_model.dart';
+import 'package:kebap/providers/items/item_details_provider.dart';
+import 'package:kebap/routes/auto_router.gr.dart';
+import 'package:kebap/util/fladder_image.dart';
 
 @RoutePage()
 class DetailsScreen extends ConsumerStatefulWidget {

@@ -1,4 +1,4 @@
-import 'package:fladder/jellyfin/jellyfin_open_api.swagger.dart' as dto;
+import 'package:kebap/jellyfin/jellyfin_open_api.swagger.dart' as dto;
 
 extension DurationExtensions on Duration {
   int get toRuntimeTicks => inMilliseconds * 10000;

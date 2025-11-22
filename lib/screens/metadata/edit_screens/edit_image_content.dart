@@ -3,13 +3,13 @@ import 'package:flutter/material.dart';
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
-import 'package:fladder/jellyfin/jellyfin_open_api.enums.swagger.dart';
-import 'package:fladder/models/item_editing_model.dart';
-import 'package:fladder/providers/edit_item_provider.dart';
-import 'package:fladder/providers/settings/client_settings_provider.dart';
-import 'package:fladder/screens/settings/settings_list_tile.dart';
-import 'package:fladder/screens/shared/file_picker.dart';
-import 'package:fladder/util/adaptive_layout/adaptive_layout.dart';
+import 'package:kebap/jellyfin/jellyfin_open_api.enums.swagger.dart';
+import 'package:kebap/models/item_editing_model.dart';
+import 'package:kebap/providers/edit_item_provider.dart';
+import 'package:kebap/providers/settings/client_settings_provider.dart';
+import 'package:kebap/screens/settings/settings_list_tile.dart';
+import 'package:kebap/screens/shared/file_picker.dart';
+import 'package:kebap/util/adaptive_layout/adaptive_layout.dart';
 
 class EditImageContent extends ConsumerStatefulWidget {
   final ImageType type;

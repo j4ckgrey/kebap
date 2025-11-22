@@ -4,9 +4,9 @@ import 'package:chopper/chopper.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:http/http.dart' as http;
 
-import 'package:fladder/models/baklava_config_model.dart';
-import 'package:fladder/models/media_request_model.dart';
-import 'package:fladder/providers/api_provider.dart';
+import 'package:kebap/models/baklava_config_model.dart';
+import 'package:kebap/models/media_request_model.dart';
+import 'package:kebap/providers/api_provider.dart';
 
 class BaklavaService {
   BaklavaService(this.ref);

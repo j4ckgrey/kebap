@@ -4,15 +4,15 @@ import 'package:auto_route/auto_route.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:iconsax_plus/iconsax_plus.dart';
 
-import 'package:fladder/models/media_request_model.dart';
-import 'package:fladder/providers/baklava_requests_provider.dart';
-import 'package:fladder/providers/user_provider.dart';
-import 'package:fladder/screens/shared/nested_scaffold.dart';
-import 'package:fladder/theme.dart';
+import 'package:kebap/models/media_request_model.dart';
+import 'package:kebap/providers/baklava_requests_provider.dart';
+import 'package:kebap/providers/user_provider.dart';
+import 'package:kebap/screens/shared/nested_scaffold.dart';
+import 'package:kebap/theme.dart';
 
-import 'package:fladder/widgets/requests/request_card.dart';
-import 'package:fladder/widgets/requests/request_detail_modal.dart';
-import 'package:fladder/widgets/shared/status_card.dart';
+import 'package:kebap/widgets/requests/request_card.dart';
+import 'package:kebap/widgets/requests/request_detail_modal.dart';
+import 'package:kebap/widgets/shared/status_card.dart';
 
 @RoutePage()
 class RequestsScreen extends ConsumerStatefulWidget {

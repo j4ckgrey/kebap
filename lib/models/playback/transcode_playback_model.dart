@@ -3,19 +3,19 @@ import 'package:flutter/widgets.dart';
 import 'package:collection/collection.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
-import 'package:fladder/jellyfin/jellyfin_open_api.swagger.dart';
-import 'package:fladder/models/item_base_model.dart';
-import 'package:fladder/models/items/chapters_model.dart';
-import 'package:fladder/models/items/item_shared_models.dart';
-import 'package:fladder/models/items/media_segments_model.dart';
-import 'package:fladder/models/items/media_streams_model.dart';
-import 'package:fladder/models/items/trick_play_model.dart';
-import 'package:fladder/models/playback/playback_model.dart';
-import 'package:fladder/providers/api_provider.dart';
-import 'package:fladder/providers/video_player_provider.dart';
-import 'package:fladder/util/bitrate_helper.dart';
-import 'package:fladder/util/duration_extensions.dart';
-import 'package:fladder/wrappers/media_control_wrapper.dart';
+import 'package:kebap/jellyfin/jellyfin_open_api.swagger.dart';
+import 'package:kebap/models/item_base_model.dart';
+import 'package:kebap/models/items/chapters_model.dart';
+import 'package:kebap/models/items/item_shared_models.dart';
+import 'package:kebap/models/items/media_segments_model.dart';
+import 'package:kebap/models/items/media_streams_model.dart';
+import 'package:kebap/models/items/trick_play_model.dart';
+import 'package:kebap/models/playback/playback_model.dart';
+import 'package:kebap/providers/api_provider.dart';
+import 'package:kebap/providers/video_player_provider.dart';
+import 'package:kebap/util/bitrate_helper.dart';
+import 'package:kebap/util/duration_extensions.dart';
+import 'package:kebap/wrappers/media_control_wrapper.dart';
 
 class TranscodePlaybackModel extends PlaybackModel {
   TranscodePlaybackModel({

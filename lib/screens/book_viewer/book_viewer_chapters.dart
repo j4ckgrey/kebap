@@ -1,9 +1,9 @@
-import 'package:fladder/models/book_model.dart';
-import 'package:fladder/providers/book_viewer_provider.dart';
-import 'package:fladder/providers/items/book_details_provider.dart';
-import 'package:fladder/util/adaptive_layout/adaptive_layout.dart';
-import 'package:fladder/util/fladder_image.dart';
-import 'package:fladder/widgets/shared/modal_side_sheet.dart';
+import 'package:kebap/models/book_model.dart';
+import 'package:kebap/providers/book_viewer_provider.dart';
+import 'package:kebap/providers/items/book_details_provider.dart';
+import 'package:kebap/util/adaptive_layout/adaptive_layout.dart';
+import 'package:kebap/util/fladder_image.dart';
+import 'package:kebap/widgets/shared/modal_side_sheet.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 

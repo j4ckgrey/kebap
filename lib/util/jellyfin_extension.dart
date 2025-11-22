@@ -2,7 +2,7 @@ import 'dart:convert';
 import 'dart:typed_data';
 
 import 'package:chopper/chopper.dart';
-import 'package:fladder/jellyfin/jellyfin_open_api.swagger.dart';
+import 'package:kebap/jellyfin/jellyfin_open_api.swagger.dart';
 
 extension JellyApiExtension on JellyfinOpenApi {
   Future<Response<dynamic>?> itemIdImagesImageTypePost(

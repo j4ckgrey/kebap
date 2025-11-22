@@ -3,17 +3,17 @@ import 'package:flutter/material.dart';
 
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
-import 'package:fladder/models/settings/home_settings_model.dart';
-import 'package:fladder/providers/arguments_provider.dart';
-import 'package:fladder/providers/settings/home_settings_provider.dart';
-import 'package:fladder/screens/home_screen.dart';
-import 'package:fladder/util/adaptive_layout/adaptive_layout_model.dart';
-import 'package:fladder/util/debug_banner.dart';
-import 'package:fladder/util/input_detector.dart';
-import 'package:fladder/util/localization_helper.dart';
-import 'package:fladder/util/poster_defaults.dart';
-import 'package:fladder/util/resolution_checker.dart';
-import 'package:fladder/widgets/keyboard/slide_in_keyboard.dart';
+import 'package:kebap/models/settings/home_settings_model.dart';
+import 'package:kebap/providers/arguments_provider.dart';
+import 'package:kebap/providers/settings/home_settings_provider.dart';
+import 'package:kebap/screens/home_screen.dart';
+import 'package:kebap/util/adaptive_layout/adaptive_layout_model.dart';
+import 'package:kebap/util/debug_banner.dart';
+import 'package:kebap/util/input_detector.dart';
+import 'package:kebap/util/localization_helper.dart';
+import 'package:kebap/util/poster_defaults.dart';
+import 'package:kebap/util/resolution_checker.dart';
+import 'package:kebap/widgets/keyboard/slide_in_keyboard.dart';
 
 enum InputDevice {
   touch,

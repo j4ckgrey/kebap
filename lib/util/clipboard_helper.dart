@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 
-import 'package:fladder/screens/shared/fladder_snackbar.dart';
-import 'package:fladder/util/localization_helper.dart';
+import 'package:kebap/screens/shared/fladder_snackbar.dart';
+import 'package:kebap/util/localization_helper.dart';
 
 extension ClipboardHelper on BuildContext {
   Future<void> copyToClipboard(String value, {String? customMessage}) async {

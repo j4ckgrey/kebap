@@ -3,13 +3,13 @@ import 'package:flutter/material.dart';
 import 'package:collection/collection.dart';
 import 'package:iconsax_plus/iconsax_plus.dart';
 
-import 'package:fladder/util/adaptive_layout/adaptive_layout.dart';
-import 'package:fladder/util/list_padding.dart';
-import 'package:fladder/util/localization_helper.dart';
-import 'package:fladder/util/map_bool_helper.dart';
-import 'package:fladder/widgets/shared/button_group.dart';
-import 'package:fladder/widgets/shared/modal_bottom_sheet.dart';
-import 'package:fladder/widgets/shared/modal_side_sheet.dart';
+import 'package:kebap/util/adaptive_layout/adaptive_layout.dart';
+import 'package:kebap/util/list_padding.dart';
+import 'package:kebap/util/localization_helper.dart';
+import 'package:kebap/util/map_bool_helper.dart';
+import 'package:kebap/widgets/shared/button_group.dart';
+import 'package:kebap/widgets/shared/modal_bottom_sheet.dart';
+import 'package:kebap/widgets/shared/modal_side_sheet.dart';
 
 class CategoryChip<T> extends StatelessWidget {
   final Map<T, bool> items;

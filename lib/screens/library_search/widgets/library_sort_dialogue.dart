@@ -1,9 +1,9 @@
 import 'package:flutter/material.dart';
 
-import 'package:fladder/models/library_search/library_search_options.dart';
-import 'package:fladder/providers/library_search_provider.dart';
-import 'package:fladder/util/localization_helper.dart';
-import 'package:fladder/widgets/shared/ensure_visible.dart';
+import 'package:kebap/models/library_search/library_search_options.dart';
+import 'package:kebap/providers/library_search_provider.dart';
+import 'package:kebap/util/localization_helper.dart';
+import 'package:kebap/widgets/shared/ensure_visible.dart';
 
 Future<(SortingOptions? sortOptions, SortingOrder? sortingOrder)?> openSortByDialogue(
   BuildContext context, {

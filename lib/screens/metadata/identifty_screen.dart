@@ -4,14 +4,14 @@ import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:iconsax_plus/iconsax_plus.dart';
 
-import 'package:fladder/models/item_base_model.dart';
-import 'package:fladder/providers/items/identify_provider.dart';
-import 'package:fladder/screens/shared/adaptive_dialog.dart';
-import 'package:fladder/screens/shared/fladder_snackbar.dart';
-import 'package:fladder/screens/shared/focused_outlined_text_field.dart';
-import 'package:fladder/util/localization_helper.dart';
-import 'package:fladder/util/string_extensions.dart';
-import 'package:fladder/widgets/shared/alert_content.dart';
+import 'package:kebap/models/item_base_model.dart';
+import 'package:kebap/providers/items/identify_provider.dart';
+import 'package:kebap/screens/shared/adaptive_dialog.dart';
+import 'package:kebap/screens/shared/fladder_snackbar.dart';
+import 'package:kebap/screens/shared/focused_outlined_text_field.dart';
+import 'package:kebap/util/localization_helper.dart';
+import 'package:kebap/util/string_extensions.dart';
+import 'package:kebap/widgets/shared/alert_content.dart';
 
 Future<void> showIdentifyScreen(BuildContext context, ItemBaseModel item) async {
   return showDialogAdaptive(

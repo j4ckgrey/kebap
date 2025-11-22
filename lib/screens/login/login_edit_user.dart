@@ -4,10 +4,10 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:iconsax_plus/iconsax_plus.dart';
 import 'package:intl/intl.dart';
 
-import 'package:fladder/models/account_model.dart';
-import 'package:fladder/providers/auth_provider.dart';
-import 'package:fladder/providers/shared_provider.dart';
-import 'package:fladder/util/list_padding.dart';
+import 'package:kebap/models/account_model.dart';
+import 'package:kebap/providers/auth_provider.dart';
+import 'package:kebap/providers/shared_provider.dart';
+import 'package:kebap/util/list_padding.dart';
 
 class LoginEditUser extends ConsumerWidget {
   final AccountModel user;

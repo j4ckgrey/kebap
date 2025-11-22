@@ -7,13 +7,13 @@ import 'package:background_downloader/background_downloader.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:iconsax_plus/iconsax_plus.dart';
 
-import 'package:fladder/models/syncing/sync_item.dart';
-import 'package:fladder/providers/sync/background_download_provider.dart';
-import 'package:fladder/providers/sync/sync_provider_helpers.dart';
-import 'package:fladder/providers/sync_provider.dart';
-import 'package:fladder/util/localization_helper.dart';
-import 'package:fladder/util/refresh_state.dart';
-import 'package:fladder/widgets/shared/filled_button_await.dart';
+import 'package:kebap/models/syncing/sync_item.dart';
+import 'package:kebap/providers/sync/background_download_provider.dart';
+import 'package:kebap/providers/sync/sync_provider_helpers.dart';
+import 'package:kebap/providers/sync_provider.dart';
+import 'package:kebap/util/localization_helper.dart';
+import 'package:kebap/util/refresh_state.dart';
+import 'package:kebap/widgets/shared/filled_button_await.dart';
 
 class SyncOptionsButton extends ConsumerWidget {
   final SyncedItem syncedItem;

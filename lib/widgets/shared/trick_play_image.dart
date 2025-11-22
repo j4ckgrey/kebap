@@ -8,7 +8,7 @@ import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:http/http.dart' as http;
 
-import 'package:fladder/models/items/trick_play_model.dart';
+import 'package:kebap/models/items/trick_play_model.dart';
 
 class TrickPlayImage extends ConsumerStatefulWidget {
   final TrickPlayModel trickPlay;

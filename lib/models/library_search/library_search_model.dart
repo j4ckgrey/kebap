@@ -4,12 +4,12 @@ import 'package:flutter/material.dart';
 import 'package:collection/collection.dart';
 import 'package:freezed_annotation/freezed_annotation.dart';
 
-import 'package:fladder/models/item_base_model.dart';
-import 'package:fladder/models/library_filter_model.dart';
-import 'package:fladder/models/view_model.dart';
-import 'package:fladder/util/list_extensions.dart';
-import 'package:fladder/util/localization_helper.dart';
-import 'package:fladder/util/map_bool_helper.dart';
+import 'package:kebap/models/item_base_model.dart';
+import 'package:kebap/models/library_filter_model.dart';
+import 'package:kebap/models/view_model.dart';
+import 'package:kebap/util/list_extensions.dart';
+import 'package:kebap/util/localization_helper.dart';
+import 'package:kebap/util/map_bool_helper.dart';
 
 part 'library_search_model.freezed.dart';
 

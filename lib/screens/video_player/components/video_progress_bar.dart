@@ -4,15 +4,15 @@ import 'package:flutter/material.dart';
 
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
-import 'package:fladder/models/items/chapters_model.dart';
-import 'package:fladder/models/items/media_segments_model.dart';
-import 'package:fladder/providers/video_player_provider.dart';
-import 'package:fladder/util/duration_extensions.dart';
-import 'package:fladder/util/list_padding.dart';
-import 'package:fladder/util/string_extensions.dart';
-import 'package:fladder/widgets/gapped_container_shape.dart';
-import 'package:fladder/widgets/shared/fladder_slider.dart';
-import 'package:fladder/widgets/shared/trick_play_image.dart';
+import 'package:kebap/models/items/chapters_model.dart';
+import 'package:kebap/models/items/media_segments_model.dart';
+import 'package:kebap/providers/video_player_provider.dart';
+import 'package:kebap/util/duration_extensions.dart';
+import 'package:kebap/util/list_padding.dart';
+import 'package:kebap/util/string_extensions.dart';
+import 'package:kebap/widgets/gapped_container_shape.dart';
+import 'package:kebap/widgets/shared/fladder_slider.dart';
+import 'package:kebap/widgets/shared/trick_play_image.dart';
 
 class VideoProgressBar extends ConsumerStatefulWidget {
   final Function(bool value) wasPlayingChanged;

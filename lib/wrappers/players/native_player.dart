@@ -2,16 +2,16 @@ import 'dart:async';
 
 import 'package:flutter/material.dart';
 
-import 'package:fladder/main.dart';
-import 'package:fladder/models/items/media_streams_model.dart';
-import 'package:fladder/models/playback/direct_playback_model.dart';
-import 'package:fladder/models/playback/offline_playback_model.dart';
-import 'package:fladder/models/playback/playback_model.dart';
-import 'package:fladder/models/playback/transcode_playback_model.dart';
-import 'package:fladder/models/settings/video_player_settings.dart';
-import 'package:fladder/src/video_player_helper.g.dart';
-import 'package:fladder/wrappers/players/base_player.dart';
-import 'package:fladder/wrappers/players/player_states.dart';
+import 'package:kebap/main.dart';
+import 'package:kebap/models/items/media_streams_model.dart';
+import 'package:kebap/models/playback/direct_playback_model.dart';
+import 'package:kebap/models/playback/offline_playback_model.dart';
+import 'package:kebap/models/playback/playback_model.dart';
+import 'package:kebap/models/playback/transcode_playback_model.dart';
+import 'package:kebap/models/settings/video_player_settings.dart';
+import 'package:kebap/src/video_player_helper.g.dart';
+import 'package:kebap/wrappers/players/base_player.dart';
+import 'package:kebap/wrappers/players/player_states.dart';
 
 class NativePlayer extends BasePlayer implements VideoPlayerListenerCallback {
   final player = VideoPlayerApi();

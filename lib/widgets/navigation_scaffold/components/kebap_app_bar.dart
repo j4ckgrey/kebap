@@ -4,8 +4,8 @@ import 'package:flutter/services.dart';
 
 import 'package:auto_route/auto_route.dart';
 
-import 'package:fladder/screens/shared/default_title_bar.dart';
-import 'package:fladder/util/adaptive_layout/adaptive_layout.dart';
+import 'package:kebap/screens/shared/default_title_bar.dart';
+import 'package:kebap/util/adaptive_layout/adaptive_layout.dart';
 
 bool get _isDesktop {
   if (kIsWeb) return false;

@@ -1,13 +1,13 @@
 import 'package:chopper/chopper.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
 
-import 'package:fladder/jellyfin/jellyfin_open_api.swagger.dart';
-import 'package:fladder/models/item_base_model.dart';
-import 'package:fladder/models/items/media_streams_model.dart';
-import 'package:fladder/models/items/movie_model.dart';
-import 'package:fladder/providers/api_provider.dart';
-import 'package:fladder/providers/related_provider.dart';
-import 'package:fladder/providers/service_provider.dart';
+import 'package:kebap/jellyfin/jellyfin_open_api.swagger.dart';
+import 'package:kebap/models/item_base_model.dart';
+import 'package:kebap/models/items/media_streams_model.dart';
+import 'package:kebap/models/items/movie_model.dart';
+import 'package:kebap/providers/api_provider.dart';
+import 'package:kebap/providers/related_provider.dart';
+import 'package:kebap/providers/service_provider.dart';
 
 part 'movies_details_provider.g.dart';
 

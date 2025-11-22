@@ -4,17 +4,17 @@ import 'package:async/async.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:iconsax_plus/iconsax_plus.dart';
 
-import 'package:fladder/models/item_base_model.dart';
-import 'package:fladder/screens/shared/media/banner_play_button.dart';
-import 'package:fladder/util/adaptive_layout/adaptive_layout.dart';
-import 'package:fladder/util/fladder_image.dart';
-import 'package:fladder/util/focus_provider.dart';
-import 'package:fladder/util/item_base_model/item_base_model_extensions.dart';
-import 'package:fladder/util/list_padding.dart';
-import 'package:fladder/util/themes_data.dart';
-import 'package:fladder/widgets/shared/fladder_slider.dart';
-import 'package:fladder/widgets/shared/item_actions.dart';
-import 'package:fladder/widgets/shared/modal_bottom_sheet.dart';
+import 'package:kebap/models/item_base_model.dart';
+import 'package:kebap/screens/shared/media/banner_play_button.dart';
+import 'package:kebap/util/adaptive_layout/adaptive_layout.dart';
+import 'package:kebap/util/fladder_image.dart';
+import 'package:kebap/util/focus_provider.dart';
+import 'package:kebap/util/item_base_model/item_base_model_extensions.dart';
+import 'package:kebap/util/list_padding.dart';
+import 'package:kebap/util/themes_data.dart';
+import 'package:kebap/widgets/shared/fladder_slider.dart';
+import 'package:kebap/widgets/shared/item_actions.dart';
+import 'package:kebap/widgets/shared/modal_bottom_sheet.dart';
 
 class MediaBanner extends ConsumerStatefulWidget {
   final PageController? controller;

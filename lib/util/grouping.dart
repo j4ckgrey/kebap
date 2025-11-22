@@ -1,4 +1,4 @@
-import 'package:fladder/models/item_base_model.dart';
+import 'package:kebap/models/item_base_model.dart';
 
 Map<String, List<ItemBaseModel>> groupByName(List<ItemBaseModel> items) {
   Map<String, List<ItemBaseModel>> groupedItems = {};

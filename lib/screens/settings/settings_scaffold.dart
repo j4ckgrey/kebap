@@ -4,11 +4,11 @@ import 'package:flutter/material.dart';
 import 'package:auto_route/auto_route.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
-import 'package:fladder/providers/arguments_provider.dart';
-import 'package:fladder/providers/user_provider.dart';
-import 'package:fladder/screens/shared/user_icon.dart';
-import 'package:fladder/util/adaptive_layout/adaptive_layout.dart';
-import 'package:fladder/util/router_extension.dart';
+import 'package:kebap/providers/arguments_provider.dart';
+import 'package:kebap/providers/user_provider.dart';
+import 'package:kebap/screens/shared/user_icon.dart';
+import 'package:kebap/util/adaptive_layout/adaptive_layout.dart';
+import 'package:kebap/util/router_extension.dart';
 
 class SettingsScaffold extends ConsumerWidget {
   final String label;

@@ -5,15 +5,15 @@ import 'package:flutter_typeahead/flutter_typeahead.dart';
 import 'package:iconsax_plus/iconsax_plus.dart';
 import 'package:page_transition/page_transition.dart';
 
-import 'package:fladder/models/item_base_model.dart';
-import 'package:fladder/providers/library_search_provider.dart';
-import 'package:fladder/providers/search_mode_provider.dart';
-import 'package:fladder/screens/shared/outlined_text_field.dart';
-import 'package:fladder/theme.dart';
-import 'package:fladder/util/debouncer.dart';
-import 'package:fladder/util/fladder_image.dart';
-import 'package:fladder/util/localization_helper.dart';
-import 'package:fladder/widgets/search/search_result_modal.dart';
+import 'package:kebap/models/item_base_model.dart';
+import 'package:kebap/providers/library_search_provider.dart';
+import 'package:kebap/providers/search_mode_provider.dart';
+import 'package:kebap/screens/shared/outlined_text_field.dart';
+import 'package:kebap/theme.dart';
+import 'package:kebap/util/debouncer.dart';
+import 'package:kebap/util/fladder_image.dart';
+import 'package:kebap/util/localization_helper.dart';
+import 'package:kebap/widgets/search/search_result_modal.dart';
 
 class SuggestionSearchBar extends ConsumerStatefulWidget {
   final String? title;

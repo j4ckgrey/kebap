@@ -4,18 +4,18 @@ import 'package:collection/collection.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:intl/intl.dart';
 
-import 'package:fladder/models/items/item_shared_models.dart';
-import 'package:fladder/providers/items/person_details_provider.dart';
-import 'package:fladder/providers/user_provider.dart';
-import 'package:fladder/screens/shared/detail_scaffold.dart';
-import 'package:fladder/screens/shared/media/external_urls.dart';
-import 'package:fladder/screens/shared/media/poster_row.dart';
-import 'package:fladder/util/adaptive_layout/adaptive_layout.dart';
-import 'package:fladder/util/fladder_image.dart';
-import 'package:fladder/util/list_extensions.dart';
-import 'package:fladder/util/string_extensions.dart';
-import 'package:fladder/util/widget_extensions.dart';
-import 'package:fladder/widgets/shared/selectable_icon_button.dart';
+import 'package:kebap/models/items/item_shared_models.dart';
+import 'package:kebap/providers/items/person_details_provider.dart';
+import 'package:kebap/providers/user_provider.dart';
+import 'package:kebap/screens/shared/detail_scaffold.dart';
+import 'package:kebap/screens/shared/media/external_urls.dart';
+import 'package:kebap/screens/shared/media/poster_row.dart';
+import 'package:kebap/util/adaptive_layout/adaptive_layout.dart';
+import 'package:kebap/util/fladder_image.dart';
+import 'package:kebap/util/list_extensions.dart';
+import 'package:kebap/util/string_extensions.dart';
+import 'package:kebap/util/widget_extensions.dart';
+import 'package:kebap/widgets/shared/selectable_icon_button.dart';
 
 class PersonDetailScreen extends ConsumerStatefulWidget {
   final Person person;

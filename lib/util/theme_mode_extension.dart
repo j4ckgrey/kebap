@@ -1,4 +1,4 @@
-import 'package:fladder/util/localization_helper.dart';
+import 'package:kebap/util/localization_helper.dart';
 import 'package:flutter/material.dart';
 
 extension ThemeModeExtension on ThemeMode {

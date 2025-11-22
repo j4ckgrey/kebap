@@ -1,5 +1,5 @@
-import 'package:fladder/providers/settings/book_viewer_settings_provider.dart';
-import 'package:fladder/screens/book_viewer/book_viewer_controls.dart';
+import 'package:kebap/providers/settings/book_viewer_settings_provider.dart';
+import 'package:kebap/screens/book_viewer/book_viewer_controls.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 

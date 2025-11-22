@@ -2,9 +2,9 @@ import 'package:flutter/material.dart';
 
 import 'package:freezed_annotation/freezed_annotation.dart';
 
-import 'package:fladder/models/settings/arguments_model.dart';
-import 'package:fladder/util/adaptive_layout/adaptive_layout.dart';
-import 'package:fladder/util/localization_helper.dart';
+import 'package:kebap/models/settings/arguments_model.dart';
+import 'package:kebap/util/adaptive_layout/adaptive_layout.dart';
+import 'package:kebap/util/localization_helper.dart';
 
 part 'home_settings_model.freezed.dart';
 part 'home_settings_model.g.dart';

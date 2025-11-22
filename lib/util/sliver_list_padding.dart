@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 
-import 'package:fladder/util/adaptive_layout/adaptive_layout.dart';
+import 'package:kebap/util/adaptive_layout/adaptive_layout.dart';
 
 class DefautlSliverBottomPadding extends StatelessWidget {
   const DefautlSliverBottomPadding({super.key});
