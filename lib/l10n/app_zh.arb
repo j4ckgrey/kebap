@@ -1044,7 +1044,7 @@
             }
         }
     },
-    "aboutCreatedBy": "由 j4ckgrey 创建",
+    "aboutCreatedBy": "Created by DonutWare - rebranded by j4ckgrey",
     "@aboutCreatedBy": {},
     "addedToPlaylist": "已添加到 {playlistName} 播放列表",
     "@addedToPlaylist": {
