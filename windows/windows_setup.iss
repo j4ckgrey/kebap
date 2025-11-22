@@ -1,35 +1,35 @@
 #define SourcePath ".."
 
-#ifndef FLADDER_VERSION
-  #define FLADDER_VERSION "latest"
+#ifndef KEBAP_VERSION
+  #define KEBAP_VERSION "latest"
 #endif
 
 [Setup]
 AppId={{D573EDD5-117A-47AD-88AC-62C8EBD11DC7}
-AppName="Fladder"
-AppVersion={#FLADDER_VERSION}
+AppName="Kebap"
+AppVersion={#KEBAP_VERSION}
 AppPublisher="j4ckgrey"
-AppPublisherURL="https://github.com/j4ckgrey/Fladder"
-AppSupportURL="https://github.com/j4ckgrey/Fladder"
-AppUpdatesURL="https://github.com/j4ckgrey/Fladder"
-DefaultDirName={localappdata}\Programs\Fladder
+AppPublisherURL="https://github.com/j4ckgrey/Kebap"
+AppSupportURL="https://github.com/j4ckgrey/Kebap"
+AppUpdatesURL="https://github.com/j4ckgrey/Kebap"
+DefaultDirName={localappdata}\Programs\Kebap
 ArchitecturesAllowed=x64compatible
 ArchitecturesInstallIn64BitMode=x64compatible
 DisableProgramGroupPage=yes
 PrivilegesRequired=lowest
 PrivilegesRequiredOverridesAllowed=dialog
-OutputBaseFilename=fladder_setup
+OutputBaseFilename=kebap_setup
 Compression=lzma
 SolidCompression=yes
 WizardStyle=modern
 
 SetupLogging=yes
 UninstallLogging=yes
-UninstallDisplayName="Fladder"
-UninstallDisplayIcon={app}\fladder.exe
+UninstallDisplayName="Kebap"
+UninstallDisplayIcon={app}\kebap.exe
 SetupIconFile="{#SourcePath}\icons\production\kebap_icon.ico"
 LicenseFile="{#SourcePath}\LICENSE"
-WizardImageFile={#SourcePath}\assets\windows-installer\fladder-installer-100.bmp,{#SourcePath}\assets\windows-installer\fladder-installer-125.bmp,{#SourcePath}\assets\windows-installer\fladder-installer-150.bmp
+WizardImageFile={#SourcePath}\assets\windows-installer\kebap-installer-100.bmp,{#SourcePath}\assets\windows-installer\kebap-installer-125.bmp,{#SourcePath}\assets\windows-installer\kebap-installer-150.bmp
 
 [Languages]
 Name: "english"; MessagesFile: "compiler:Default.isl"
@@ -41,11 +41,11 @@ Name: "desktopicon"; Description: "{cm:CreateDesktopIcon}"; GroupDescription: "{
 Source: "{#SourcePath}\build\windows\x64\runner\Release\*"; DestDir: "{app}"; Flags: ignoreversion recursesubdirs createallsubdirs
 
 [Icons]
-Name: "{autoprograms}\Fladder"; Filename: "{app}\fladder.exe"
-Name: "{autodesktop}\Fladder"; Filename: "{app}\fladder.exe"; Tasks: desktopicon
+Name: "{autoprograms}\Kebap"; Filename: "{app}\kebap.exe"
+Name: "{autodesktop}\Kebap"; Filename: "{app}\kebap.exe"; Tasks: desktopicon
 
 [Run]
-Filename: "{app}\fladder.exe"; Description: "{cm:LaunchProgram,Fladder}"; Flags: nowait postinstall skipifsilent
+Filename: "{app}\kebap.exe"; Description: "{cm:LaunchProgram,Kebap}"; Flags: nowait postinstall skipifsilent
 
 [Code]
 procedure CurUninstallStepChanged(CurUninstallStep: TUninstallStep);
