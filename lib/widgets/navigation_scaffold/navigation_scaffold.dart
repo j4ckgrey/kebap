@@ -14,7 +14,7 @@ import 'package:kebap/screens/shared/animated_fade_size.dart';
 import 'package:kebap/screens/shared/nested_bottom_appbar.dart';
 import 'package:kebap/util/adaptive_layout/adaptive_layout.dart';
 import 'package:kebap/widgets/navigation_scaffold/components/destination_model.dart';
-import 'package:kebap/widgets/navigation_scaffold/components/fladder_app_bar.dart';
+import 'package:kebap/widgets/navigation_scaffold/components/kebap_app_bar.dart';
 import 'package:kebap/widgets/navigation_scaffold/components/floating_player_bar.dart';
 import 'package:kebap/widgets/navigation_scaffold/components/navigation_body.dart';
 import 'package:kebap/widgets/navigation_scaffold/components/navigation_drawer.dart';

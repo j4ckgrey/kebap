@@ -1,7 +1,7 @@
 import 'package:kebap/models/item_base_model.dart';
 import 'package:kebap/screens/shared/media/item_detail_list_widget.dart';
 import 'package:kebap/util/widget_extensions.dart';
-import 'package:kebap/widgets/navigation_scaffold/components/fladder_app_bar.dart';
+import 'package:kebap/widgets/navigation_scaffold/components/kebap_app_bar.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
