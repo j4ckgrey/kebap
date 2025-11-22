@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 
-import 'package:fladder/util/num_extension.dart';
-import 'package:fladder/widgets/gapped_container_shape.dart';
+import 'package:kebap/util/num_extension.dart';
+import 'package:kebap/widgets/gapped_container_shape.dart';
 
 double normalize(double min, double max, double value) {
   return (value - min) / (max - min);

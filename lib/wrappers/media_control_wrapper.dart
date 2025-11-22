@@ -6,25 +6,25 @@ import 'package:flutter/material.dart';
 
 import 'package:audio_service/audio_service.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:smtc_windows/smtc_windows.dart' if (dart.library.html) 'package:fladder/stubs/web/smtc_web.dart';
+import 'package:smtc_windows/smtc_windows.dart' if (dart.library.html) 'package:kebap/stubs/web/smtc_web.dart';
 import 'package:wakelock_plus/wakelock_plus.dart';
 
-import 'package:fladder/models/item_base_model.dart';
-import 'package:fladder/models/items/media_streams_model.dart';
-import 'package:fladder/models/media_playback_model.dart';
-import 'package:fladder/models/playback/playback_model.dart';
-import 'package:fladder/models/settings/video_player_settings.dart';
-import 'package:fladder/providers/settings/client_settings_provider.dart';
-import 'package:fladder/providers/settings/video_player_settings_provider.dart';
-import 'package:fladder/providers/video_player_provider.dart';
-import 'package:fladder/src/video_player_helper.g.dart' hide PlaybackState;
-import 'package:fladder/util/localization_helper.dart';
-import 'package:fladder/wrappers/players/base_player.dart';
-import 'package:fladder/wrappers/players/lib_mdk.dart'
-    if (dart.library.html) 'package:fladder/stubs/web/lib_mdk_web.dart';
-import 'package:fladder/wrappers/players/lib_mpv.dart';
-import 'package:fladder/wrappers/players/native_player.dart';
-import 'package:fladder/wrappers/players/player_states.dart';
+import 'package:kebap/models/item_base_model.dart';
+import 'package:kebap/models/items/media_streams_model.dart';
+import 'package:kebap/models/media_playback_model.dart';
+import 'package:kebap/models/playback/playback_model.dart';
+import 'package:kebap/models/settings/video_player_settings.dart';
+import 'package:kebap/providers/settings/client_settings_provider.dart';
+import 'package:kebap/providers/settings/video_player_settings_provider.dart';
+import 'package:kebap/providers/video_player_provider.dart';
+import 'package:kebap/src/video_player_helper.g.dart' hide PlaybackState;
+import 'package:kebap/util/localization_helper.dart';
+import 'package:kebap/wrappers/players/base_player.dart';
+import 'package:kebap/wrappers/players/lib_mdk.dart'
+    if (dart.library.html) 'package:kebap/stubs/web/lib_mdk_web.dart';
+import 'package:kebap/wrappers/players/lib_mpv.dart';
+import 'package:kebap/wrappers/players/native_player.dart';
+import 'package:kebap/wrappers/players/player_states.dart';
 
 class MediaControlsWrapper extends BaseAudioHandler implements VideoPlayerControlsCallback {
   MediaControlsWrapper({required this.ref});

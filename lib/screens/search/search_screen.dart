@@ -1,8 +1,8 @@
-import 'package:fladder/providers/search_provider.dart';
-import 'package:fladder/screens/shared/media/poster_grid.dart';
-import 'package:fladder/util/debouncer.dart';
-import 'package:fladder/util/string_extensions.dart';
-import 'package:fladder/widgets/search/search_mode_toggle.dart';
+import 'package:kebap/providers/search_provider.dart';
+import 'package:kebap/screens/shared/media/poster_grid.dart';
+import 'package:kebap/util/debouncer.dart';
+import 'package:kebap/util/string_extensions.dart';
+import 'package:kebap/widgets/search/search_mode_toggle.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 

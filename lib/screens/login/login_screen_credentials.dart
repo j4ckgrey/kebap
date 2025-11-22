@@ -6,22 +6,22 @@ import 'package:auto_route/auto_route.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:iconsax_plus/iconsax_plus.dart';
 
-import 'package:fladder/models/account_model.dart';
-import 'package:fladder/providers/api_provider.dart';
-import 'package:fladder/providers/auth_provider.dart';
-import 'package:fladder/providers/shared_provider.dart';
-import 'package:fladder/providers/user_provider.dart';
-import 'package:fladder/routes/auto_router.gr.dart';
-import 'package:fladder/screens/login/lock_screen.dart';
-import 'package:fladder/screens/login/login_code_dialog.dart';
-import 'package:fladder/screens/login/login_user_grid.dart';
-import 'package:fladder/screens/login/widgets/discover_servers_widget.dart';
-import 'package:fladder/screens/shared/animated_fade_size.dart';
-import 'package:fladder/screens/shared/fladder_snackbar.dart';
-import 'package:fladder/screens/shared/outlined_text_field.dart';
-import 'package:fladder/screens/shared/passcode_input.dart';
-import 'package:fladder/util/auth_service.dart';
-import 'package:fladder/util/localization_helper.dart';
+import 'package:kebap/models/account_model.dart';
+import 'package:kebap/providers/api_provider.dart';
+import 'package:kebap/providers/auth_provider.dart';
+import 'package:kebap/providers/shared_provider.dart';
+import 'package:kebap/providers/user_provider.dart';
+import 'package:kebap/routes/auto_router.gr.dart';
+import 'package:kebap/screens/login/lock_screen.dart';
+import 'package:kebap/screens/login/login_code_dialog.dart';
+import 'package:kebap/screens/login/login_user_grid.dart';
+import 'package:kebap/screens/login/widgets/discover_servers_widget.dart';
+import 'package:kebap/screens/shared/animated_fade_size.dart';
+import 'package:kebap/screens/shared/fladder_snackbar.dart';
+import 'package:kebap/screens/shared/outlined_text_field.dart';
+import 'package:kebap/screens/shared/passcode_input.dart';
+import 'package:kebap/util/auth_service.dart';
+import 'package:kebap/util/localization_helper.dart';
 
 class LoginScreenCredentials extends ConsumerStatefulWidget {
   const LoginScreenCredentials({super.key});

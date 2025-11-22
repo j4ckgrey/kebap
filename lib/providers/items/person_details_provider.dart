@@ -1,11 +1,11 @@
 import 'package:chopper/chopper.dart';
-import 'package:fladder/jellyfin/jellyfin_open_api.swagger.dart';
-import 'package:fladder/models/items/item_shared_models.dart';
-import 'package:fladder/models/items/movie_model.dart';
-import 'package:fladder/models/items/person_model.dart';
-import 'package:fladder/models/items/series_model.dart';
-import 'package:fladder/providers/api_provider.dart';
-import 'package:fladder/providers/service_provider.dart';
+import 'package:kebap/jellyfin/jellyfin_open_api.swagger.dart';
+import 'package:kebap/models/items/item_shared_models.dart';
+import 'package:kebap/models/items/movie_model.dart';
+import 'package:kebap/models/items/person_model.dart';
+import 'package:kebap/models/items/series_model.dart';
+import 'package:kebap/providers/api_provider.dart';
+import 'package:kebap/providers/service_provider.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 final personDetailsProvider =

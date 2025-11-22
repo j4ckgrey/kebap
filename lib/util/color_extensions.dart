@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 
-import 'package:fladder/util/localization_helper.dart';
+import 'package:kebap/util/localization_helper.dart';
 
 Color? colorFromJson(dynamic color) {
   if (color == null) return null;

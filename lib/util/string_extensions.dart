@@ -1,4 +1,4 @@
-import 'package:fladder/models/items/item_shared_models.dart';
+import 'package:kebap/models/items/item_shared_models.dart';
 import 'package:path/path.dart' as path;
 
 extension StringExtensions on String {

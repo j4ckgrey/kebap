@@ -1,13 +1,13 @@
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
-import 'package:fladder/jellyfin/jellyfin_open_api.enums.swagger.dart';
-import 'package:fladder/models/home_model.dart';
-import 'package:fladder/models/item_base_model.dart';
-import 'package:fladder/providers/api_provider.dart';
-import 'package:fladder/providers/service_provider.dart';
-import 'package:fladder/providers/settings/client_settings_provider.dart';
-import 'package:fladder/providers/views_provider.dart';
-import 'package:fladder/util/list_extensions.dart';
+import 'package:kebap/jellyfin/jellyfin_open_api.enums.swagger.dart';
+import 'package:kebap/models/home_model.dart';
+import 'package:kebap/models/item_base_model.dart';
+import 'package:kebap/providers/api_provider.dart';
+import 'package:kebap/providers/service_provider.dart';
+import 'package:kebap/providers/settings/client_settings_provider.dart';
+import 'package:kebap/providers/views_provider.dart';
+import 'package:kebap/util/list_extensions.dart';
 
 final dashboardProvider = StateNotifierProvider<DashboardNotifier, HomeModel>((ref) {
   return DashboardNotifier(ref);

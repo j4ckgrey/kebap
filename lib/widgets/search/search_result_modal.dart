@@ -4,13 +4,13 @@ import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:iconsax_plus/iconsax_plus.dart';
 
-import 'package:fladder/models/item_base_model.dart';
-import 'package:fladder/models/tmdb_metadata_model.dart';
-import 'package:fladder/providers/baklava_metadata_provider.dart';
-import 'package:fladder/providers/baklava_requests_provider.dart';
-import 'package:fladder/providers/user_provider.dart';
-import 'package:fladder/screens/shared/fladder_snackbar.dart';
-import 'package:fladder/util/adaptive_layout/adaptive_layout.dart';
+import 'package:kebap/models/item_base_model.dart';
+import 'package:kebap/models/tmdb_metadata_model.dart';
+import 'package:kebap/providers/baklava_metadata_provider.dart';
+import 'package:kebap/providers/baklava_requests_provider.dart';
+import 'package:kebap/providers/user_provider.dart';
+import 'package:kebap/screens/shared/fladder_snackbar.dart';
+import 'package:kebap/util/adaptive_layout/adaptive_layout.dart';
 
 class SearchResultModal extends ConsumerStatefulWidget {
   final ItemBaseModel item;

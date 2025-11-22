@@ -5,10 +5,10 @@ import 'package:auto_route/auto_route.dart';
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
-import 'package:fladder/providers/user_provider.dart';
-import 'package:fladder/routes/auto_router.gr.dart';
-import 'package:fladder/screens/search/search_screen.dart';
-import 'package:fladder/util/string_extensions.dart';
+import 'package:kebap/providers/user_provider.dart';
+import 'package:kebap/routes/auto_router.gr.dart';
+import 'package:kebap/screens/search/search_screen.dart';
+import 'package:kebap/util/string_extensions.dart';
 
 class FloatingSearchBar extends ConsumerStatefulWidget {
   final List<Widget> trailing;

@@ -3,11 +3,11 @@ import 'package:flutter/material.dart';
 import 'package:flutter_blurhash/flutter_blurhash.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
-import 'package:fladder/models/settings/subtitle_settings_model.dart';
-import 'package:fladder/providers/settings/subtitle_settings_provider.dart';
-import 'package:fladder/providers/settings/video_player_settings_provider.dart';
-import 'package:fladder/screens/video_player/components/video_subtitle_controls.dart';
-import 'package:fladder/util/localization_helper.dart';
+import 'package:kebap/models/settings/subtitle_settings_model.dart';
+import 'package:kebap/providers/settings/subtitle_settings_provider.dart';
+import 'package:kebap/providers/settings/video_player_settings_provider.dart';
+import 'package:kebap/screens/video_player/components/video_subtitle_controls.dart';
+import 'package:kebap/util/localization_helper.dart';
 
 class SubtitleEditor extends ConsumerStatefulWidget {
   const SubtitleEditor({super.key});

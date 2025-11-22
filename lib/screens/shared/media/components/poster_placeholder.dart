@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 
-import 'package:fladder/models/item_base_model.dart';
+import 'package:kebap/models/item_base_model.dart';
 
 class PosterPlaceholder extends StatelessWidget {
   final ItemBaseModel item;

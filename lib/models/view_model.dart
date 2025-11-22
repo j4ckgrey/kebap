@@ -5,13 +5,13 @@ import 'package:flutter/material.dart';
 import 'package:collection/collection.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
-import 'package:fladder/jellyfin/jellyfin_open_api.enums.swagger.dart';
-import 'package:fladder/jellyfin/jellyfin_open_api.swagger.dart' as dto;
-import 'package:fladder/models/collection_types.dart';
-import 'package:fladder/models/item_base_model.dart';
-import 'package:fladder/models/items/images_models.dart';
-import 'package:fladder/widgets/navigation_scaffold/components/navigation_button.dart';
-import 'package:fladder/widgets/shared/item_actions.dart';
+import 'package:kebap/jellyfin/jellyfin_open_api.enums.swagger.dart';
+import 'package:kebap/jellyfin/jellyfin_open_api.swagger.dart' as dto;
+import 'package:kebap/models/collection_types.dart';
+import 'package:kebap/models/item_base_model.dart';
+import 'package:kebap/models/items/images_models.dart';
+import 'package:kebap/widgets/navigation_scaffold/components/navigation_button.dart';
+import 'package:kebap/widgets/shared/item_actions.dart';
 
 class ViewModel {
   final String name;

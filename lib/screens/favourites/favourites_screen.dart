@@ -4,22 +4,22 @@ import 'package:auto_route/auto_route.dart';
 import 'package:collection/collection.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
-import 'package:fladder/models/library_filter_model.dart';
-import 'package:fladder/providers/favourites_provider.dart';
-import 'package:fladder/providers/settings/client_settings_provider.dart';
-import 'package:fladder/routes/auto_router.gr.dart';
-import 'package:fladder/screens/home_screen.dart';
-import 'package:fladder/screens/shared/media/poster_row.dart';
-import 'package:fladder/screens/shared/nested_scaffold.dart';
-import 'package:fladder/screens/shared/nested_sliver_appbar.dart';
-import 'package:fladder/util/adaptive_layout/adaptive_layout.dart';
-import 'package:fladder/util/focus_provider.dart';
-import 'package:fladder/util/localization_helper.dart';
-import 'package:fladder/util/sliver_list_padding.dart';
-import 'package:fladder/widgets/navigation_scaffold/components/background_image.dart';
-import 'package:fladder/widgets/shared/pinch_poster_zoom.dart';
-import 'package:fladder/widgets/shared/poster_size_slider.dart';
-import 'package:fladder/widgets/shared/pull_to_refresh.dart';
+import 'package:kebap/models/library_filter_model.dart';
+import 'package:kebap/providers/favourites_provider.dart';
+import 'package:kebap/providers/settings/client_settings_provider.dart';
+import 'package:kebap/routes/auto_router.gr.dart';
+import 'package:kebap/screens/home_screen.dart';
+import 'package:kebap/screens/shared/media/poster_row.dart';
+import 'package:kebap/screens/shared/nested_scaffold.dart';
+import 'package:kebap/screens/shared/nested_sliver_appbar.dart';
+import 'package:kebap/util/adaptive_layout/adaptive_layout.dart';
+import 'package:kebap/util/focus_provider.dart';
+import 'package:kebap/util/localization_helper.dart';
+import 'package:kebap/util/sliver_list_padding.dart';
+import 'package:kebap/widgets/navigation_scaffold/components/background_image.dart';
+import 'package:kebap/widgets/shared/pinch_poster_zoom.dart';
+import 'package:kebap/widgets/shared/poster_size_slider.dart';
+import 'package:kebap/widgets/shared/pull_to_refresh.dart';
 
 @RoutePage()
 class FavouritesScreen extends ConsumerWidget {

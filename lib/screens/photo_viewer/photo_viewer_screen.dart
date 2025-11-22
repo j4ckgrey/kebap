@@ -10,25 +10,25 @@ import 'package:flutter_blurhash/flutter_blurhash.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:iconsax_plus/iconsax_plus.dart';
 
-import 'package:fladder/models/item_base_model.dart';
-import 'package:fladder/models/items/photos_model.dart';
-import 'package:fladder/providers/settings/photo_view_settings_provider.dart';
-import 'package:fladder/providers/user_provider.dart';
-import 'package:fladder/screens/photo_viewer/photo_viewer_controls.dart';
-import 'package:fladder/screens/photo_viewer/simple_video_player.dart';
-import 'package:fladder/screens/shared/default_title_bar.dart';
-import 'package:fladder/util/adaptive_layout/adaptive_layout.dart';
-import 'package:fladder/util/custom_cache_manager.dart';
-import 'package:fladder/util/item_base_model/item_base_model_extensions.dart';
-import 'package:fladder/util/list_padding.dart';
-import 'package:fladder/util/localization_helper.dart';
-import 'package:fladder/util/themes_data.dart';
-import 'package:fladder/widgets/navigation_scaffold/components/fladder_app_bar.dart';
-import 'package:fladder/widgets/shared/animated_icon.dart';
-import 'package:fladder/widgets/shared/elevated_icon.dart';
-import 'package:fladder/widgets/shared/hover_widget.dart';
-import 'package:fladder/widgets/shared/item_actions.dart';
-import 'package:fladder/widgets/shared/modal_bottom_sheet.dart';
+import 'package:kebap/models/item_base_model.dart';
+import 'package:kebap/models/items/photos_model.dart';
+import 'package:kebap/providers/settings/photo_view_settings_provider.dart';
+import 'package:kebap/providers/user_provider.dart';
+import 'package:kebap/screens/photo_viewer/photo_viewer_controls.dart';
+import 'package:kebap/screens/photo_viewer/simple_video_player.dart';
+import 'package:kebap/screens/shared/default_title_bar.dart';
+import 'package:kebap/util/adaptive_layout/adaptive_layout.dart';
+import 'package:kebap/util/custom_cache_manager.dart';
+import 'package:kebap/util/item_base_model/item_base_model_extensions.dart';
+import 'package:kebap/util/list_padding.dart';
+import 'package:kebap/util/localization_helper.dart';
+import 'package:kebap/util/themes_data.dart';
+import 'package:kebap/widgets/navigation_scaffold/components/fladder_app_bar.dart';
+import 'package:kebap/widgets/shared/animated_icon.dart';
+import 'package:kebap/widgets/shared/elevated_icon.dart';
+import 'package:kebap/widgets/shared/hover_widget.dart';
+import 'package:kebap/widgets/shared/item_actions.dart';
+import 'package:kebap/widgets/shared/modal_bottom_sheet.dart';
 
 @RoutePage()
 class PhotoViewerScreen extends ConsumerStatefulWidget {

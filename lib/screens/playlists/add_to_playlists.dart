@@ -3,14 +3,14 @@ import 'package:flutter/material.dart';
 import 'package:iconsax_plus/iconsax_plus.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
-import 'package:fladder/models/item_base_model.dart';
-import 'package:fladder/providers/playlist_provider.dart';
-import 'package:fladder/screens/shared/adaptive_dialog.dart';
-import 'package:fladder/screens/shared/fladder_snackbar.dart';
-import 'package:fladder/screens/shared/outlined_text_field.dart';
-import 'package:fladder/util/localization_helper.dart';
-import 'package:fladder/widgets/shared/alert_content.dart';
-import 'package:fladder/widgets/shared/modal_bottom_sheet.dart';
+import 'package:kebap/models/item_base_model.dart';
+import 'package:kebap/providers/playlist_provider.dart';
+import 'package:kebap/screens/shared/adaptive_dialog.dart';
+import 'package:kebap/screens/shared/fladder_snackbar.dart';
+import 'package:kebap/screens/shared/outlined_text_field.dart';
+import 'package:kebap/util/localization_helper.dart';
+import 'package:kebap/widgets/shared/alert_content.dart';
+import 'package:kebap/widgets/shared/modal_bottom_sheet.dart';
 
 Future<void> addItemToPlaylist(BuildContext context, List<ItemBaseModel> item) {
   return showDialogAdaptive(context: context, builder: (context) => AddToPlaylist(items: item));

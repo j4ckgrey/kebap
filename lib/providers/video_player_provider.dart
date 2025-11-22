@@ -4,11 +4,11 @@ import 'package:flutter/material.dart';
 
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
-import 'package:fladder/models/media_playback_model.dart';
-import 'package:fladder/models/playback/playback_model.dart';
-import 'package:fladder/providers/settings/video_player_settings_provider.dart';
-import 'package:fladder/util/debouncer.dart';
-import 'package:fladder/wrappers/media_control_wrapper.dart';
+import 'package:kebap/models/media_playback_model.dart';
+import 'package:kebap/models/playback/playback_model.dart';
+import 'package:kebap/providers/settings/video_player_settings_provider.dart';
+import 'package:kebap/util/debouncer.dart';
+import 'package:kebap/wrappers/media_control_wrapper.dart';
 
 final mediaPlaybackProvider = StateProvider<MediaPlaybackModel>((ref) => MediaPlaybackModel());
 

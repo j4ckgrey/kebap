@@ -3,12 +3,12 @@ import 'package:flutter/material.dart';
 import 'package:auto_route/auto_route.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
-import 'package:fladder/models/item_base_model.dart';
-import 'package:fladder/models/items/photos_model.dart';
-import 'package:fladder/providers/items/folder_details_provider.dart';
-import 'package:fladder/routes/auto_router.gr.dart';
-import 'package:fladder/screens/shared/media/poster_grid.dart';
-import 'package:fladder/widgets/shared/pull_to_refresh.dart';
+import 'package:kebap/models/item_base_model.dart';
+import 'package:kebap/models/items/photos_model.dart';
+import 'package:kebap/providers/items/folder_details_provider.dart';
+import 'package:kebap/routes/auto_router.gr.dart';
+import 'package:kebap/screens/shared/media/poster_grid.dart';
+import 'package:kebap/widgets/shared/pull_to_refresh.dart';
 
 class FolderDetailScreen extends ConsumerWidget {
   final ItemBaseModel item;

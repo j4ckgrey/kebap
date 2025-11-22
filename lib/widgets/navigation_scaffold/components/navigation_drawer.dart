@@ -5,22 +5,22 @@ import 'package:auto_route/auto_route.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:iconsax_plus/iconsax_plus.dart';
 
-import 'package:fladder/models/collection_types.dart';
-import 'package:fladder/models/view_model.dart';
-import 'package:fladder/providers/settings/client_settings_provider.dart';
-import 'package:fladder/routes/auto_router.gr.dart';
-import 'package:fladder/screens/metadata/refresh_metadata.dart';
-import 'package:fladder/screens/shared/animated_fade_size.dart';
-import 'package:fladder/theme.dart';
-import 'package:fladder/util/adaptive_layout/adaptive_layout.dart';
-import 'package:fladder/util/fladder_image.dart';
-import 'package:fladder/util/localization_helper.dart';
-import 'package:fladder/widgets/navigation_scaffold/components/adaptive_fab.dart';
-import 'package:fladder/widgets/navigation_scaffold/components/destination_model.dart';
-import 'package:fladder/widgets/navigation_scaffold/components/drawer_list_button.dart';
-import 'package:fladder/widgets/navigation_scaffold/components/settings_user_icon.dart';
-import 'package:fladder/widgets/requests/requests_sheet.dart';
-import 'package:fladder/widgets/shared/item_actions.dart';
+import 'package:kebap/models/collection_types.dart';
+import 'package:kebap/models/view_model.dart';
+import 'package:kebap/providers/settings/client_settings_provider.dart';
+import 'package:kebap/routes/auto_router.gr.dart';
+import 'package:kebap/screens/metadata/refresh_metadata.dart';
+import 'package:kebap/screens/shared/animated_fade_size.dart';
+import 'package:kebap/theme.dart';
+import 'package:kebap/util/adaptive_layout/adaptive_layout.dart';
+import 'package:kebap/util/fladder_image.dart';
+import 'package:kebap/util/localization_helper.dart';
+import 'package:kebap/widgets/navigation_scaffold/components/adaptive_fab.dart';
+import 'package:kebap/widgets/navigation_scaffold/components/destination_model.dart';
+import 'package:kebap/widgets/navigation_scaffold/components/drawer_list_button.dart';
+import 'package:kebap/widgets/navigation_scaffold/components/settings_user_icon.dart';
+import 'package:kebap/widgets/requests/requests_sheet.dart';
+import 'package:kebap/widgets/shared/item_actions.dart';
 
 class NestedNavigationDrawer extends ConsumerWidget {
   final bool isExpanded;

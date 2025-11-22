@@ -2,9 +2,9 @@ import 'package:flutter/material.dart';
 
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
-import 'package:fladder/jellyfin/jellyfin_open_api.swagger.dart';
-import 'package:fladder/models/item_base_model.dart';
-import 'package:fladder/util/localization_helper.dart';
+import 'package:kebap/jellyfin/jellyfin_open_api.swagger.dart';
+import 'package:kebap/models/item_base_model.dart';
+import 'package:kebap/util/localization_helper.dart';
 
 sealed class NameSwitch {
   const NameSwitch();

@@ -3,9 +3,9 @@ import 'package:flutter/material.dart';
 import 'package:auto_route/auto_route.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
-import 'package:fladder/models/playback/playback_model.dart';
-import 'package:fladder/providers/video_player_provider.dart';
-import 'package:fladder/util/localization_helper.dart';
+import 'package:kebap/models/playback/playback_model.dart';
+import 'package:kebap/providers/video_player_provider.dart';
+import 'package:kebap/util/localization_helper.dart';
 
 Future<void> openQualityOptions(BuildContext context) async {
   return showDialog(

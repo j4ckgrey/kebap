@@ -2,12 +2,12 @@ import 'package:flutter/material.dart';
 
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
-import 'package:fladder/models/items/media_segments_model.dart';
-import 'package:fladder/providers/video_player_provider.dart';
-import 'package:fladder/screens/shared/animated_fade_size.dart';
-import 'package:fladder/screens/video_player/components/video_player_chapters.dart';
-import 'package:fladder/screens/video_player/components/video_player_queue.dart';
-import 'package:fladder/util/localization_helper.dart';
+import 'package:kebap/models/items/media_segments_model.dart';
+import 'package:kebap/providers/video_player_provider.dart';
+import 'package:kebap/screens/shared/animated_fade_size.dart';
+import 'package:kebap/screens/video_player/components/video_player_chapters.dart';
+import 'package:kebap/screens/video_player/components/video_player_queue.dart';
+import 'package:kebap/util/localization_helper.dart';
 
 class ChapterButton extends ConsumerWidget {
   final Duration position;

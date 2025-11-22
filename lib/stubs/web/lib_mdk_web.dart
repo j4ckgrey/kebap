@@ -2,11 +2,11 @@ import 'dart:async';
 
 import 'package:flutter/material.dart';
 
-import 'package:fladder/models/items/media_streams_model.dart';
-import 'package:fladder/models/playback/playback_model.dart';
-import 'package:fladder/models/settings/video_player_settings.dart';
-import 'package:fladder/wrappers/players/base_player.dart';
-import 'package:fladder/wrappers/players/player_states.dart';
+import 'package:kebap/models/items/media_streams_model.dart';
+import 'package:kebap/models/playback/playback_model.dart';
+import 'package:kebap/models/settings/video_player_settings.dart';
+import 'package:kebap/wrappers/players/base_player.dart';
+import 'package:kebap/wrappers/players/player_states.dart';
 
 // This is a stub class that provides the same method signatures as the original
 // implementation, ensuring web builds compile without requiring changes elsewhere.

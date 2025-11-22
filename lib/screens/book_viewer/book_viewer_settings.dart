@@ -2,13 +2,13 @@ import 'package:flutter/material.dart';
 
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
-import 'package:fladder/providers/settings/book_viewer_settings_provider.dart';
-import 'package:fladder/util/adaptive_layout/adaptive_layout.dart';
-import 'package:fladder/util/string_extensions.dart';
-import 'package:fladder/widgets/shared/enum_selection.dart';
-import 'package:fladder/widgets/shared/fladder_slider.dart';
-import 'package:fladder/widgets/shared/item_actions.dart';
-import 'package:fladder/widgets/shared/modal_side_sheet.dart';
+import 'package:kebap/providers/settings/book_viewer_settings_provider.dart';
+import 'package:kebap/util/adaptive_layout/adaptive_layout.dart';
+import 'package:kebap/util/string_extensions.dart';
+import 'package:kebap/widgets/shared/enum_selection.dart';
+import 'package:kebap/widgets/shared/fladder_slider.dart';
+import 'package:kebap/widgets/shared/item_actions.dart';
+import 'package:kebap/widgets/shared/modal_side_sheet.dart';
 
 Future<void> showBookViewerSettings(
   BuildContext context,

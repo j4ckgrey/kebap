@@ -1,8 +1,8 @@
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:window_manager/window_manager.dart';
 
-import 'package:fladder/providers/arguments_provider.dart';
-import 'package:fladder/widgets/full_screen_helpers/full_screen_wrapper.dart';
+import 'package:kebap/providers/arguments_provider.dart';
+import 'package:kebap/widgets/full_screen_helpers/full_screen_wrapper.dart';
 
 class FullScreenHelper implements FullScreenWrapper {
   const FullScreenHelper._();

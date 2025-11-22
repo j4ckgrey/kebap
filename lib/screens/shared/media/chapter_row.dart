@@ -4,15 +4,15 @@ import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:iconsax_plus/iconsax_plus.dart';
 
-import 'package:fladder/models/items/chapters_model.dart';
-import 'package:fladder/theme.dart';
-import 'package:fladder/util/adaptive_layout/adaptive_layout.dart';
-import 'package:fladder/util/focus_provider.dart';
-import 'package:fladder/util/humanize_duration.dart';
-import 'package:fladder/util/localization_helper.dart';
-import 'package:fladder/widgets/shared/horizontal_list.dart';
-import 'package:fladder/widgets/shared/item_actions.dart';
-import 'package:fladder/widgets/shared/modal_bottom_sheet.dart';
+import 'package:kebap/models/items/chapters_model.dart';
+import 'package:kebap/theme.dart';
+import 'package:kebap/util/adaptive_layout/adaptive_layout.dart';
+import 'package:kebap/util/focus_provider.dart';
+import 'package:kebap/util/humanize_duration.dart';
+import 'package:kebap/util/localization_helper.dart';
+import 'package:kebap/widgets/shared/horizontal_list.dart';
+import 'package:kebap/widgets/shared/item_actions.dart';
+import 'package:kebap/widgets/shared/modal_bottom_sheet.dart';
 
 class ChapterRow extends ConsumerWidget {
   final List<Chapter> chapters;

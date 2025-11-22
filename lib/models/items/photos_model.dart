@@ -4,17 +4,17 @@ import 'package:dart_mappable/dart_mappable.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 // ignore_for_file: public_member_api_docs, sort_constructors_first
-import 'package:fladder/jellyfin/jellyfin_open_api.enums.swagger.dart';
-import 'package:fladder/jellyfin/jellyfin_open_api.swagger.dart' as dto;
-import 'package:fladder/models/item_base_model.dart';
-import 'package:fladder/models/items/images_models.dart';
-import 'package:fladder/models/items/item_shared_models.dart';
-import 'package:fladder/models/items/overview_model.dart';
-import 'package:fladder/providers/api_provider.dart';
-import 'package:fladder/providers/user_provider.dart';
-import 'package:fladder/screens/shared/fladder_snackbar.dart';
-import 'package:fladder/util/localization_helper.dart';
-import 'package:fladder/util/refresh_state.dart';
+import 'package:kebap/jellyfin/jellyfin_open_api.enums.swagger.dart';
+import 'package:kebap/jellyfin/jellyfin_open_api.swagger.dart' as dto;
+import 'package:kebap/models/item_base_model.dart';
+import 'package:kebap/models/items/images_models.dart';
+import 'package:kebap/models/items/item_shared_models.dart';
+import 'package:kebap/models/items/overview_model.dart';
+import 'package:kebap/providers/api_provider.dart';
+import 'package:kebap/providers/user_provider.dart';
+import 'package:kebap/screens/shared/fladder_snackbar.dart';
+import 'package:kebap/util/localization_helper.dart';
+import 'package:kebap/util/refresh_state.dart';
 
 part 'photos_model.mapper.dart';
 

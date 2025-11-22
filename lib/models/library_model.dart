@@ -1,8 +1,8 @@
 // ignore_for_file: public_member_api_docs, sort_constructors_first
-import 'package:fladder/jellyfin/jellyfin_open_api.enums.swagger.dart' as enums;
-import 'package:fladder/models/item_base_model.dart';
-import 'package:fladder/models/items/photos_model.dart';
-import 'package:fladder/models/recommended_model.dart';
+import 'package:kebap/jellyfin/jellyfin_open_api.enums.swagger.dart' as enums;
+import 'package:kebap/models/item_base_model.dart';
+import 'package:kebap/models/items/photos_model.dart';
+import 'package:kebap/models/recommended_model.dart';
 
 class LibraryModel {
   final bool loading;

@@ -7,23 +7,23 @@ import 'package:auto_route/auto_route.dart';
 import 'package:collection/collection.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
-import 'package:fladder/models/book_model.dart';
-import 'package:fladder/models/item_base_model.dart';
-import 'package:fladder/models/items/photos_model.dart';
-import 'package:fladder/models/media_playback_model.dart';
-import 'package:fladder/models/playback/playback_model.dart';
-import 'package:fladder/providers/api_provider.dart';
-import 'package:fladder/providers/book_viewer_provider.dart';
-import 'package:fladder/providers/items/book_details_provider.dart';
-import 'package:fladder/providers/video_player_provider.dart';
-import 'package:fladder/routes/auto_router.gr.dart';
-import 'package:fladder/screens/book_viewer/book_viewer_screen.dart';
-import 'package:fladder/screens/shared/fladder_snackbar.dart';
-import 'package:fladder/util/adaptive_layout/adaptive_layout.dart';
-import 'package:fladder/util/list_extensions.dart';
-import 'package:fladder/util/localization_helper.dart';
-import 'package:fladder/util/refresh_state.dart';
-import 'package:fladder/widgets/full_screen_helpers/full_screen_wrapper.dart';
+import 'package:kebap/models/book_model.dart';
+import 'package:kebap/models/item_base_model.dart';
+import 'package:kebap/models/items/photos_model.dart';
+import 'package:kebap/models/media_playback_model.dart';
+import 'package:kebap/models/playback/playback_model.dart';
+import 'package:kebap/providers/api_provider.dart';
+import 'package:kebap/providers/book_viewer_provider.dart';
+import 'package:kebap/providers/items/book_details_provider.dart';
+import 'package:kebap/providers/video_player_provider.dart';
+import 'package:kebap/routes/auto_router.gr.dart';
+import 'package:kebap/screens/book_viewer/book_viewer_screen.dart';
+import 'package:kebap/screens/shared/fladder_snackbar.dart';
+import 'package:kebap/util/adaptive_layout/adaptive_layout.dart';
+import 'package:kebap/util/list_extensions.dart';
+import 'package:kebap/util/localization_helper.dart';
+import 'package:kebap/util/refresh_state.dart';
+import 'package:kebap/widgets/full_screen_helpers/full_screen_wrapper.dart';
 
 Future<void> _showLoadingIndicator(BuildContext context) async {
   return showDialog(

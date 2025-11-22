@@ -3,7 +3,7 @@ import 'package:flutter/material.dart';
 
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
-import 'package:fladder/providers/video_player_provider.dart';
+import 'package:kebap/providers/video_player_provider.dart';
 
 class DebugBanner extends ConsumerWidget {
   final Widget child;

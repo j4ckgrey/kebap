@@ -2,7 +2,7 @@
 
 import 'package:freezed_annotation/freezed_annotation.dart';
 
-import 'package:fladder/models/syncing/sync_item.dart';
+import 'package:kebap/models/syncing/sync_item.dart';
 
 part 'sync_settings_model.freezed.dart';
 

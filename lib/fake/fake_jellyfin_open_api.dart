@@ -4,8 +4,8 @@ import 'package:chopper/chopper.dart' as chopper;
 import 'package:collection/collection.dart';
 import 'package:http/http.dart' as http;
 
-import 'package:fladder/jellyfin/jellyfin_open_api.enums.swagger.dart' as enums;
-import 'package:fladder/jellyfin/jellyfin_open_api.swagger.dart';
+import 'package:kebap/jellyfin/jellyfin_open_api.enums.swagger.dart' as enums;
+import 'package:kebap/jellyfin/jellyfin_open_api.swagger.dart';
 
 List<BaseItemDto> _baseItems = [
   BaseItemDto(

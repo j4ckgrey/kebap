@@ -1,7 +1,7 @@
 import 'package:freezed_annotation/freezed_annotation.dart';
 
-import 'package:fladder/models/account_model.dart';
-import 'package:fladder/models/credentials_model.dart';
+import 'package:kebap/models/account_model.dart';
+import 'package:kebap/models/credentials_model.dart';
 
 part 'login_screen_model.freezed.dart';
 

@@ -9,7 +9,7 @@ import 'package:iconsax_plus/iconsax_plus.dart';
 import 'package:square_progress_indicator/square_progress_indicator.dart';
 import 'package:wakelock_plus/wakelock_plus.dart';
 
-import 'package:fladder/util/simple_duration_picker.dart';
+import 'package:kebap/util/simple_duration_picker.dart';
 
 class RestartableTimerController {
   late Duration _steps = const Duration(milliseconds: 32);

@@ -5,18 +5,18 @@ import 'package:auto_route/auto_route.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:iconsax_plus/iconsax_plus.dart';
 
-import 'package:fladder/providers/sync_provider.dart';
-import 'package:fladder/routes/auto_router.gr.dart';
-import 'package:fladder/screens/home_screen.dart';
-import 'package:fladder/screens/shared/nested_scaffold.dart';
-import 'package:fladder/screens/shared/nested_sliver_appbar.dart';
-import 'package:fladder/screens/syncing/sync_list_item.dart';
-import 'package:fladder/util/adaptive_layout/adaptive_layout.dart';
-import 'package:fladder/util/focus_provider.dart';
-import 'package:fladder/util/localization_helper.dart';
-import 'package:fladder/util/sliver_list_padding.dart';
-import 'package:fladder/widgets/navigation_scaffold/components/background_image.dart';
-import 'package:fladder/widgets/shared/pull_to_refresh.dart';
+import 'package:kebap/providers/sync_provider.dart';
+import 'package:kebap/routes/auto_router.gr.dart';
+import 'package:kebap/screens/home_screen.dart';
+import 'package:kebap/screens/shared/nested_scaffold.dart';
+import 'package:kebap/screens/shared/nested_sliver_appbar.dart';
+import 'package:kebap/screens/syncing/sync_list_item.dart';
+import 'package:kebap/util/adaptive_layout/adaptive_layout.dart';
+import 'package:kebap/util/focus_provider.dart';
+import 'package:kebap/util/localization_helper.dart';
+import 'package:kebap/util/sliver_list_padding.dart';
+import 'package:kebap/widgets/navigation_scaffold/components/background_image.dart';
+import 'package:kebap/widgets/shared/pull_to_refresh.dart';
 
 @RoutePage()
 class SyncedScreen extends ConsumerStatefulWidget {

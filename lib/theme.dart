@@ -2,8 +2,8 @@ import 'package:flutter/material.dart';
 
 import 'package:dynamic_color/dynamic_color.dart';
 
-import 'package:fladder/theme/fonts.dart';
-import 'package:fladder/util/custom_color_themes.dart';
+import 'package:kebap/theme/fonts.dart';
+import 'package:kebap/util/custom_color_themes.dart';
 
 ColorScheme? generateDynamicColourSchemes(ColorScheme? theme, DynamicSchemeVariant dynamicSchemeVariant) {
   if (theme == null) return null;

@@ -1,9 +1,9 @@
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
 
-import 'package:fladder/models/media_request_model.dart';
-import 'package:fladder/providers/baklava_api_service.dart';
-import 'package:fladder/providers/user_provider.dart';
+import 'package:kebap/models/media_request_model.dart';
+import 'package:kebap/providers/baklava_api_service.dart';
+import 'package:kebap/providers/user_provider.dart';
 
 part 'baklava_requests_provider.g.dart';
 

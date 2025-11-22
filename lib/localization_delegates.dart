@@ -7,7 +7,7 @@ import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:flutter_localizations/src/utils/date_localizations.dart' as util;
 import 'package:intl/intl.dart' as intl;
 
-import 'package:fladder/l10n/generated/app_localizations.dart';
+import 'package:kebap/l10n/generated/app_localizations.dart';
 
 class FladderLocalizations {
   static const List<LocalizationsDelegate<dynamic>> localizationsDelegates = <LocalizationsDelegate<dynamic>>[

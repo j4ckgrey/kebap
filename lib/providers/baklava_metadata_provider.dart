@@ -1,8 +1,8 @@
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
-import 'package:fladder/models/tmdb_metadata_model.dart';
-import 'package:fladder/providers/api_provider.dart';
-import 'package:fladder/providers/baklava_requests_provider.dart';
+import 'package:kebap/models/tmdb_metadata_model.dart';
+import 'package:kebap/providers/api_provider.dart';
+import 'package:kebap/providers/baklava_requests_provider.dart';
 
 final baklavaMetadataProvider =
     StateNotifierProvider<BaklavaMetadataNotifier, BaklavaMetadataState>((ref) {

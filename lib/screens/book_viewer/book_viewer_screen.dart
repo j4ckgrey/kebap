@@ -1,13 +1,13 @@
 import 'package:extended_image/extended_image.dart';
-import 'package:fladder/models/book_model.dart';
-import 'package:fladder/providers/book_viewer_provider.dart';
-import 'package:fladder/providers/items/book_details_provider.dart';
-import 'package:fladder/providers/settings/book_viewer_settings_provider.dart';
-import 'package:fladder/screens/book_viewer/book_viewer_controls.dart';
-import 'package:fladder/screens/book_viewer/book_viewer_reader.dart'
-    if (dart.library.html) 'package:fladder/screens/book_viewer/book_viewer_reader_web.dart';
-import 'package:fladder/util/themes_data.dart';
-import 'package:fladder/util/throttler.dart';
+import 'package:kebap/models/book_model.dart';
+import 'package:kebap/providers/book_viewer_provider.dart';
+import 'package:kebap/providers/items/book_details_provider.dart';
+import 'package:kebap/providers/settings/book_viewer_settings_provider.dart';
+import 'package:kebap/screens/book_viewer/book_viewer_controls.dart';
+import 'package:kebap/screens/book_viewer/book_viewer_reader.dart'
+    if (dart.library.html) 'package:kebap/screens/book_viewer/book_viewer_reader_web.dart';
+import 'package:kebap/util/themes_data.dart';
+import 'package:kebap/util/throttler.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 

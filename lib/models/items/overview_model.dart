@@ -1,11 +1,11 @@
 import 'package:dart_mappable/dart_mappable.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
-import 'package:fladder/jellyfin/jellyfin_open_api.swagger.dart';
-import 'package:fladder/models/items/chapters_model.dart';
-import 'package:fladder/models/items/item_shared_models.dart';
-import 'package:fladder/models/items/trick_play_model.dart';
-import 'package:fladder/util/duration_extensions.dart';
+import 'package:kebap/jellyfin/jellyfin_open_api.swagger.dart';
+import 'package:kebap/models/items/chapters_model.dart';
+import 'package:kebap/models/items/item_shared_models.dart';
+import 'package:kebap/models/items/trick_play_model.dart';
+import 'package:kebap/util/duration_extensions.dart';
 
 part 'overview_model.mapper.dart';
 

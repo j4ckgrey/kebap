@@ -6,9 +6,9 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:http/http.dart' as http;
 import 'package:riverpod_annotation/riverpod_annotation.dart';
 
-import 'package:fladder/jellyfin/jellyfin_open_api.swagger.dart';
-import 'package:fladder/providers/api_provider.dart';
-import 'package:fladder/providers/user_provider.dart';
+import 'package:kebap/jellyfin/jellyfin_open_api.swagger.dart';
+import 'package:kebap/providers/api_provider.dart';
+import 'package:kebap/providers/user_provider.dart';
 
 part 'connectivity_provider.g.dart';
 

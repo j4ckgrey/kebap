@@ -1,6 +1,6 @@
 import 'package:freezed_annotation/freezed_annotation.dart';
 
-import 'package:fladder/jellyfin/jellyfin_open_api.swagger.dart' as dto;
+import 'package:kebap/jellyfin/jellyfin_open_api.swagger.dart' as dto;
 
 part 'item_properties_model.freezed.dart';
 

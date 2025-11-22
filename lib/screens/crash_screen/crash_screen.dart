@@ -2,14 +2,14 @@ import 'package:flutter/material.dart';
 
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
-import 'package:fladder/models/error_log_model.dart';
-import 'package:fladder/providers/crash_log_provider.dart';
-import 'package:fladder/util/clipboard_helper.dart';
-import 'package:fladder/util/list_padding.dart';
-import 'package:fladder/util/localization_helper.dart';
-import 'package:fladder/util/string_extensions.dart';
-import 'package:fladder/widgets/shared/enum_selection.dart';
-import 'package:fladder/widgets/shared/item_actions.dart';
+import 'package:kebap/models/error_log_model.dart';
+import 'package:kebap/providers/crash_log_provider.dart';
+import 'package:kebap/util/clipboard_helper.dart';
+import 'package:kebap/util/list_padding.dart';
+import 'package:kebap/util/localization_helper.dart';
+import 'package:kebap/util/string_extensions.dart';
+import 'package:kebap/widgets/shared/enum_selection.dart';
+import 'package:kebap/widgets/shared/item_actions.dart';
 
 final _selectedWarningProvider = StateProvider<ErrorType?>((ref) => null);
 

@@ -6,7 +6,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:screen_retriever/screen_retriever.dart';
 import 'package:window_manager/window_manager.dart';
 
-import 'package:fladder/providers/arguments_provider.dart';
+import 'package:kebap/providers/arguments_provider.dart';
 
 class ResolutionChecker extends ConsumerStatefulWidget {
   final Widget child;

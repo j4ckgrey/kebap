@@ -1,11 +1,11 @@
 import 'dart:async';
 
 import 'package:async/async.dart';
-import 'package:fladder/jellyfin/jellyfin_open_api.swagger.dart';
-import 'package:fladder/providers/api_provider.dart';
-import 'package:fladder/providers/auth_provider.dart';
-import 'package:fladder/util/list_padding.dart';
-import 'package:fladder/util/localization_helper.dart';
+import 'package:kebap/jellyfin/jellyfin_open_api.swagger.dart';
+import 'package:kebap/providers/api_provider.dart';
+import 'package:kebap/providers/auth_provider.dart';
+import 'package:kebap/util/list_padding.dart';
+import 'package:kebap/util/localization_helper.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 

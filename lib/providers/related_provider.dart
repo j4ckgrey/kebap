@@ -1,9 +1,9 @@
 import 'package:chopper/chopper.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
-import 'package:fladder/models/item_base_model.dart';
-import 'package:fladder/providers/api_provider.dart';
-import 'package:fladder/providers/service_provider.dart';
+import 'package:kebap/models/item_base_model.dart';
+import 'package:kebap/providers/api_provider.dart';
+import 'package:kebap/providers/service_provider.dart';
 
 final relatedUtilityProvider = Provider<RelatedNotifier>((ref) {
   return RelatedNotifier(ref: ref);

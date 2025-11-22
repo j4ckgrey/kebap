@@ -2,17 +2,17 @@ import 'package:flutter/material.dart';
 
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
-import 'package:fladder/models/items/media_streams_model.dart';
-import 'package:fladder/models/settings/media_stream_view_type.dart';
-import 'package:fladder/providers/settings/media_stream_view_type_provider.dart';
-import 'package:fladder/screens/details_screens/components/label_title_item.dart';
-import 'package:fladder/screens/details_screens/components/media_stream_carousel.dart';
-import 'package:fladder/util/adaptive_layout/adaptive_layout.dart';
-import 'package:fladder/util/focus_provider.dart';
-import 'package:fladder/util/localization_helper.dart';
-import 'package:fladder/widgets/shared/enum_selection.dart';
-import 'package:fladder/widgets/shared/item_actions.dart';
-import 'package:fladder/widgets/shared/modal_bottom_sheet.dart';
+import 'package:kebap/models/items/media_streams_model.dart';
+import 'package:kebap/models/settings/media_stream_view_type.dart';
+import 'package:kebap/providers/settings/media_stream_view_type_provider.dart';
+import 'package:kebap/screens/details_screens/components/label_title_item.dart';
+import 'package:kebap/screens/details_screens/components/media_stream_carousel.dart';
+import 'package:kebap/util/adaptive_layout/adaptive_layout.dart';
+import 'package:kebap/util/focus_provider.dart';
+import 'package:kebap/util/localization_helper.dart';
+import 'package:kebap/widgets/shared/enum_selection.dart';
+import 'package:kebap/widgets/shared/item_actions.dart';
+import 'package:kebap/widgets/shared/modal_bottom_sheet.dart';
 
 class ParsedVersionName {
   final String quality;

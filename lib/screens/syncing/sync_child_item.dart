@@ -2,10 +2,10 @@ import 'package:flutter/material.dart';
 
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
-import 'package:fladder/models/items/episode_model.dart';
-import 'package:fladder/models/items/season_model.dart';
-import 'package:fladder/models/syncing/sync_item.dart';
-import 'package:fladder/screens/syncing/widgets/synced_season_poster.dart';
+import 'package:kebap/models/items/episode_model.dart';
+import 'package:kebap/models/items/season_model.dart';
+import 'package:kebap/models/syncing/sync_item.dart';
+import 'package:kebap/screens/syncing/widgets/synced_season_poster.dart';
 
 import 'widgets/synced_episode_item.dart';
 

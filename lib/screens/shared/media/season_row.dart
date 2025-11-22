@@ -2,21 +2,21 @@ import 'package:flutter/material.dart';
 
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
-import 'package:fladder/models/items/season_model.dart';
-import 'package:fladder/providers/sync/sync_provider_helpers.dart';
-import 'package:fladder/screens/syncing/sync_button.dart';
-import 'package:fladder/theme.dart';
-import 'package:fladder/util/adaptive_layout/adaptive_layout.dart';
-import 'package:fladder/util/fladder_image.dart';
-import 'package:fladder/util/focus_provider.dart';
-import 'package:fladder/util/item_base_model/item_base_model_extensions.dart';
-import 'package:fladder/util/localization_helper.dart';
-import 'package:fladder/util/refresh_state.dart';
-import 'package:fladder/widgets/shared/clickable_text.dart';
-import 'package:fladder/widgets/shared/horizontal_list.dart';
-import 'package:fladder/widgets/shared/item_actions.dart';
-import 'package:fladder/widgets/shared/modal_bottom_sheet.dart';
-import 'package:fladder/widgets/shared/status_card.dart';
+import 'package:kebap/models/items/season_model.dart';
+import 'package:kebap/providers/sync/sync_provider_helpers.dart';
+import 'package:kebap/screens/syncing/sync_button.dart';
+import 'package:kebap/theme.dart';
+import 'package:kebap/util/adaptive_layout/adaptive_layout.dart';
+import 'package:kebap/util/fladder_image.dart';
+import 'package:kebap/util/focus_provider.dart';
+import 'package:kebap/util/item_base_model/item_base_model_extensions.dart';
+import 'package:kebap/util/localization_helper.dart';
+import 'package:kebap/util/refresh_state.dart';
+import 'package:kebap/widgets/shared/clickable_text.dart';
+import 'package:kebap/widgets/shared/horizontal_list.dart';
+import 'package:kebap/widgets/shared/item_actions.dart';
+import 'package:kebap/widgets/shared/modal_bottom_sheet.dart';
+import 'package:kebap/widgets/shared/status_card.dart';
 
 class SeasonsRow extends ConsumerWidget {
   final EdgeInsets contentPadding;

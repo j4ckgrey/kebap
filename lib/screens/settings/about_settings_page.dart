@@ -5,15 +5,15 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:iconsax_plus/iconsax_plus.dart';
 
-import 'package:fladder/screens/crash_screen/crash_screen.dart';
-import 'package:fladder/screens/settings/settings_scaffold.dart';
-import 'package:fladder/screens/settings/widgets/settings_update_information.dart';
-import 'package:fladder/screens/shared/fladder_icon.dart';
-import 'package:fladder/screens/shared/fladder_logo.dart';
-import 'package:fladder/screens/shared/media/external_urls.dart';
-import 'package:fladder/util/application_info.dart';
-import 'package:fladder/util/list_padding.dart';
-import 'package:fladder/util/localization_helper.dart';
+import 'package:kebap/screens/crash_screen/crash_screen.dart';
+import 'package:kebap/screens/settings/settings_scaffold.dart';
+import 'package:kebap/screens/settings/widgets/settings_update_information.dart';
+import 'package:kebap/screens/shared/fladder_icon.dart';
+import 'package:kebap/screens/shared/fladder_logo.dart';
+import 'package:kebap/screens/shared/media/external_urls.dart';
+import 'package:kebap/util/application_info.dart';
+import 'package:kebap/util/list_padding.dart';
+import 'package:kebap/util/localization_helper.dart';
 
 class _Socials {
   final String label;

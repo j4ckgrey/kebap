@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 
-import 'package:fladder/screens/shared/flat_button.dart';
-import 'package:fladder/widgets/shared/ensure_visible.dart';
+import 'package:kebap/screens/shared/flat_button.dart';
+import 'package:kebap/widgets/shared/ensure_visible.dart';
 
 class SettingsListTile extends StatelessWidget {
   final Widget label;

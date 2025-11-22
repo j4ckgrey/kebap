@@ -1,10 +1,10 @@
 import 'package:auto_route/auto_route.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
-import 'package:fladder/providers/user_provider.dart';
-import 'package:fladder/routes/auto_router.gr.dart';
-import 'package:fladder/screens/login/lock_screen.dart';
-import 'package:fladder/widgets/navigation_scaffold/components/navigation_body.dart';
+import 'package:kebap/providers/user_provider.dart';
+import 'package:kebap/routes/auto_router.gr.dart';
+import 'package:kebap/screens/login/lock_screen.dart';
+import 'package:kebap/widgets/navigation_scaffold/components/navigation_body.dart';
 
 const settingsPageRoute = "settings";
 

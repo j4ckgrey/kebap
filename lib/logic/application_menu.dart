@@ -1,6 +1,6 @@
 import 'package:desktop_multi_window/desktop_multi_window.dart';
 
-import 'package:fladder/src/application_menu.g.dart';
+import 'package:kebap/src/application_menu.g.dart';
 
 class ApplicationMenuImp extends ApplicationMenu {
   @override

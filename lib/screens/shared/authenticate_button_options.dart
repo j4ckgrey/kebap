@@ -1,10 +1,10 @@
 import 'package:iconsax_plus/iconsax_plus.dart';
-import 'package:fladder/models/account_model.dart';
-import 'package:fladder/screens/shared/fladder_snackbar.dart';
-import 'package:fladder/screens/shared/passcode_input.dart';
-import 'package:fladder/util/auth_service.dart';
-import 'package:fladder/util/list_padding.dart';
-import 'package:fladder/util/localization_helper.dart';
+import 'package:kebap/models/account_model.dart';
+import 'package:kebap/screens/shared/fladder_snackbar.dart';
+import 'package:kebap/screens/shared/passcode_input.dart';
+import 'package:kebap/util/auth_service.dart';
+import 'package:kebap/util/list_padding.dart';
+import 'package:kebap/util/localization_helper.dart';
 import 'package:flutter/material.dart';
 
 void showAuthOptionsDialogue(
