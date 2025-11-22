@@ -22,7 +22,6 @@ class AuthService {
           authMessages: <AuthMessages>[
             AndroidAuthMessages(
               signInTitle: 'Fladder',
-              biometricHint: context.localized.scanBiometricHint,
             ),
             IOSAuthMessages(
               cancelButton: context.localized.cancel,
