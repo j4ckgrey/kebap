@@ -9,18 +9,17 @@ import 'package:intl/intl.dart' as intl;
 
 import 'package:kebap/l10n/generated/app_localizations.dart';
 
-class FladderLocalizations {
+class KebapLocalizations {
   static const List<LocalizationsDelegate<dynamic>> localizationsDelegates = <LocalizationsDelegate<dynamic>>[
     AppLocalizations.delegate,
-    FladderMaterialLocalizationsDelegate(),
-    FladderCupertinoLocalizationsDelegate(),
-    FladderWidgetsLocalizationsDelegate(),
+    KebapMaterialLocalizationsDelegate(),
+    KebapCupertinoLocalizationsDelegate(),
+    KebapWidgetsLocalizationsDelegate(),
   ];
 }
 
-class FladderMaterialLocalizationsDelegate extends LocalizationsDelegate<MaterialLocalizations> {
-  const FladderMaterialLocalizationsDelegate();
-
+class KebapMaterialLocalizationsDelegate extends LocalizationsDelegate<MaterialLocalizations> {
+  const KebapMaterialLocalizationsDelegate();
   @override
   bool isSupported(Locale locale) => true;
 
@@ -108,14 +107,14 @@ class FladderMaterialLocalizationsDelegate extends LocalizationsDelegate<Materia
   }
 
   @override
-  bool shouldReload(FladderMaterialLocalizationsDelegate old) => false;
+  bool shouldReload(KebapMaterialLocalizationsDelegate old) => false;
 
   @override
   String toString() => 'GlobalMaterialLocalizations.delegate(${kMaterialSupportedLanguages.length} locales)';
 }
 
-class FladderWidgetsLocalizationsDelegate extends LocalizationsDelegate<WidgetsLocalizations> {
-  const FladderWidgetsLocalizationsDelegate();
+class KebapWidgetsLocalizationsDelegate extends LocalizationsDelegate<WidgetsLocalizations> {
+  const KebapWidgetsLocalizationsDelegate();
 
   @override
   bool isSupported(Locale locale) => true;
@@ -138,8 +137,8 @@ class FladderWidgetsLocalizationsDelegate extends LocalizationsDelegate<WidgetsL
   bool shouldReload(covariant LocalizationsDelegate<WidgetsLocalizations> old) => false;
 }
 
-class FladderCupertinoLocalizationsDelegate extends LocalizationsDelegate<CupertinoLocalizations> {
-  const FladderCupertinoLocalizationsDelegate();
+class KebapCupertinoLocalizationsDelegate extends LocalizationsDelegate<CupertinoLocalizations> {
+  const KebapCupertinoLocalizationsDelegate();
 
   @override
   bool isSupported(Locale locale) => true;
@@ -214,7 +213,7 @@ class FladderCupertinoLocalizationsDelegate extends LocalizationsDelegate<Cupert
   }
 
   @override
-  bool shouldReload(FladderCupertinoLocalizationsDelegate old) => false;
+  bool shouldReload(KebapCupertinoLocalizationsDelegate old) => false;
 
   @override
   String toString() => 'GlobalCupertinoLocalizations.delegate(${kCupertinoSupportedLanguages.length} locales)';

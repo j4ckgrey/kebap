@@ -39,8 +39,8 @@ class AuthNotifier extends StateNotifier<LoginScreenModel> {
     ref.read(userProvider.notifier).clear();
     final currentAccounts = ref.read(authProvider.notifier).getSavedAccounts();
     ref.read(lockScreenActiveProvider.notifier).update((state) => true);
-    if (FladderConfig.baseUrl != null) {
-      final url = FladderConfig.baseUrl;
+    if (KebapConfig.baseUrl != null) {
+      final url = KebapConfig.baseUrl;
       state = state.copyWith(
         hasBaseUrl: true,
       );
@@ -179,7 +179,7 @@ class AuthNotifier extends StateNotifier<LoginScreenModel> {
   }
 
   Future<void> setServer(String server) async {
-    final url = (state.hasBaseUrl ? FladderConfig.baseUrl : server);
+    final url = (state.hasBaseUrl ? KebapConfig.baseUrl : server);
     if (url == null || server.isEmpty) return;
     await _fetchServerInfo(url);
   }

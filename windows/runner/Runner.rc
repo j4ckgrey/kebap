@@ -89,13 +89,13 @@ BEGIN
     BEGIN
         BLOCK "040904e4"
         BEGIN
-            VALUE "CompanyName", "DonutWare" "\0"
-            VALUE "FileDescription", "fladder" "\0"
+            VALUE "CompanyName", "j4ckgrey" "\0"
+            VALUE "FileDescription", "Kebap" "\0"
             VALUE "FileVersion", VERSION_AS_STRING "\0"
-            VALUE "InternalName", "nl.jknaapen.fladder" "\0"
-            VALUE "LegalCopyright", "Copyright (C) 2025 DonutWare. All rights reserved." "\0"
-            VALUE "OriginalFilename", "fladder.exe" "\0"
-            VALUE "ProductName", "fladder" "\0"
+            VALUE "InternalName", "nl.jknaapen.kebap" "\0"
+            VALUE "LegalCopyright", "Copyright (C) 2025 j4ckgrey. All rights reserved." "\0"
+            VALUE "OriginalFilename", "kebap.exe" "\0"
+            VALUE "ProductName", "Kebap" "\0"
             VALUE "ProductVersion", VERSION_AS_STRING "\0"
         END
     END
