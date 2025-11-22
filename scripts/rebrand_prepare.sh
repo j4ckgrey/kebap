@@ -29,7 +29,7 @@ echo >> "$OUTFILE"
 
 echo "3) Packaging and metadata files referencing Fladder" >> "$OUTFILE"
 echo "------------------------------------------------" >> "$OUTFILE"
-grep -R --line-number "DonutWare/Fladder\|nl.jknaapen.fladder\|kebap_icon\|fladder" -I --exclude-dir=.git . 2>/dev/null || true >> "$OUTFILE"
+grep -R --line-number "j4ckgrey/Fladder\|nl.jknaapen.fladder\|kebap_icon\|fladder" -I --exclude-dir=.git . 2>/dev/null || true >> "$OUTFILE"
 echo >> "$OUTFILE"
 
 echo "4) Suggested next steps" >> "$OUTFILE"

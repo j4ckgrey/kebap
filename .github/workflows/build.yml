@@ -751,10 +751,10 @@ jobs:
       matrix:
         include:
           - build_type: release
-            identifier: DonutWare.Fladder
+            identifier: j4ckgrey.Fladder
             max_versions: "0"
           - build_type: nightly
-            identifier: DonutWare.Fladder.Nightly
+            identifier: j4ckgrey.Fladder.Nightly
             max_versions: "1"
     steps:
       - name: Submit to Winget (${{ matrix.build_type }})

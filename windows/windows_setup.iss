@@ -8,10 +8,10 @@
 AppId={{D573EDD5-117A-47AD-88AC-62C8EBD11DC7}
 AppName="Fladder"
 AppVersion={#FLADDER_VERSION}
-AppPublisher="DonutWare"
-AppPublisherURL="https://github.com/DonutWare/Fladder"
-AppSupportURL="https://github.com/DonutWare/Fladder"
-AppUpdatesURL="https://github.com/DonutWare/Fladder"
+AppPublisher="j4ckgrey"
+AppPublisherURL="https://github.com/j4ckgrey/Fladder"
+AppSupportURL="https://github.com/j4ckgrey/Fladder"
+AppUpdatesURL="https://github.com/j4ckgrey/Fladder"
 DefaultDirName={localappdata}\Programs\Fladder
 ArchitecturesAllowed=x64compatible
 ArchitecturesInstallIn64BitMode=x64compatible
@@ -55,9 +55,9 @@ begin
       begin
         if MsgBox('Would you like to delete the application''s data? This action cannot be undone. Synced files will remain unaffected.', mbConfirmation, MB_YESNO) = IDYES then
         begin
-            if DelTree(ExpandConstant('{localappdata}\DonutWare'), True, True, True) = False then
+            if DelTree(ExpandConstant('{localappdata}\j4ckgrey'), True, True, True) = False then
             begin
-                Log(ExpandConstant('{localappdata}\DonutWare could not be deleted. Skipping...'));
+                Log(ExpandConstant('{localappdata}\j4ckgrey could not be deleted. Skipping...'));
             end;
         end;
       end;
