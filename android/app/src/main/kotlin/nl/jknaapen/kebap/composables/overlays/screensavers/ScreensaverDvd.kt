@@ -1,4 +1,4 @@
-package nl.jknaapen.fladder.composables.overlays.screensavers
+package nl.jknaapen.kebap.composables.overlays.screensavers
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
@@ -28,7 +28,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.isActive
-import nl.jknaapen.fladder.composables.shared.CurrentTime
+import nl.jknaapen.kebap.composables.shared.CurrentTime
 import kotlin.math.roundToInt
 import kotlin.random.Random
 
@@ -39,7 +39,7 @@ internal fun ScreensaverDvd(
     velocityY: Dp = 4.dp,
     logo: @Composable (color: Color) -> Unit = { color ->
         Text(
-            text = "FLADDER",
+            text = "Kebap",
             color = color,
             style = MaterialTheme.typography.bodyMedium.copy(
                 fontSize = 36.sp,

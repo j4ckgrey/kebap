@@ -1,4 +1,4 @@
-name: Build Fladder
+name: Build Kebap
 
 on:
   push:
@@ -181,7 +181,7 @@ jobs:
       - name: Archive Android artifacts
         uses: actions/upload-artifact@v4.0.0
         with:
-          name: fladder-android
+          name: kebap-android
           path: build/app/outputs/android_artifacts/
 
   build-windows:
@@ -211,19 +211,19 @@ jobs:
         uses: Minionguyjpro/Inno-Setup-Action@v1.2.2
         with:
           path: windows/windows_setup.iss
-          options: /O+ /DFLADDER_VERSION="${{ needs.fetch-info.outputs.version_name }}"
+          options: /O+ /DKEBAP_VERSION="${{ needs.fetch-info.outputs.version_name }}"
 
       - name: Archive Windows portable artifact
         uses: actions/upload-artifact@v4.0.0
         with:
-          name: fladder-windows-portable
+          name: kebap-windows-portable
           path: build\windows\x64\runner\Release\
 
       - name: Archive Windows installer artifact
         uses: actions/upload-artifact@v4.0.0
         with:
-          name: fladder-windows-installer
-          path: windows\Output\fladder_setup.exe
+          name: kebap-windows-installer
+          path: windows\Output\kebap_setup.exe
 
   build-ios:
     runs-on: macos-latest
@@ -261,7 +261,7 @@ jobs:
       - name: Archive iOS IPA artifact
         uses: actions/upload-artifact@v4.0.0
         with:
-          name: fladder-iOS
+          name: kebap-iOS
           path: build/ios/archive/Runner.xcarchive/Products/Applications/iOS.ipa
 
   build-macos:
@@ -290,7 +290,7 @@ jobs:
       - name: Ensure correct app name casing
         run: |
           APP_DIR="build/macos/Build/Products/Release-production"
-          mv "$APP_DIR/fladder.app" "$APP_DIR/Fladder.app"
+          mv "$APP_DIR/kebap.app" "$APP_DIR/Kebap.app"
 
       - name: Install create-dmg
         run: brew install create-dmg
@@ -301,7 +301,7 @@ jobs:
       - name: Archive macOS artifact
         uses: actions/upload-artifact@v4.0.0
         with:
-          name: fladder-macOS
+          name: kebap-macOS
           path: build/macos/Build/Products/Release-production/macOS.dmg
 
   build-linux:
@@ -342,12 +342,12 @@ jobs:
             [[ -f "$lib" && -n "$(patchelf --print-rpath "$lib")" ]] && \
             patchelf --set-rpath '$ORIGIN' "$lib"
           done
-          patchelf --set-rpath '$ORIGIN/lib' "build/linux/x64/release/bundle/Fladder"
+          patchelf --set-rpath '$ORIGIN/lib' "build/linux/x64/release/bundle/Kebap"
 
       - name: Archive Linux artifact
         uses: actions/upload-artifact@v4
         with:
-          name: fladder-linux
+          name: kebap-linux
           path: build/linux/x64/release/bundle
 
       - name: Build AppImage
@@ -362,10 +362,10 @@ jobs:
       - name: Archive Linux artifact
         uses: actions/upload-artifact@v4
         with:
-          name: fladder-linux-appimage
+          name: kebap-linux-appimage
           path: |
-            Fladder_x86_64.AppImage
-            Fladder_x86_64.AppImage.zsync
+            Kebap_x86_64.AppImage
+            Kebap_x86_64.AppImage.zsync
 
   build-linux-flatpak:
     runs-on: ubuntu-latest
@@ -383,19 +383,19 @@ jobs:
       - name: Download Artifacts Linux
         uses: actions/download-artifact@v4
         with:
-          name: fladder-linux
+          name: kebap-linux
           path: build/linux/x64/release/bundle
 
       - uses: flatpak/flatpak-github-actions/flatpak-builder@v6
         with:
-          bundle: Fladder-Linux.flatpak
-          manifest-path: flatpak/nl.jknaapen.fladder.yaml
+          bundle: Kebap-Linux.flatpak
+          manifest-path: flatpak/nl.jknaapen.kebap.yaml
 
       - name: Archive Linux Flatpak bundle
         uses: actions/upload-artifact@v4
         with:
-          name: fladder-linux-flatpak
-          path: Fladder-Linux.flatpak
+          name: kebap-linux-flatpak
+          path: Kebap-Linux.flatpak
 
   build-web:
     runs-on: ubuntu-latest
@@ -424,7 +424,7 @@ jobs:
       - name: Archive web artifact
         uses: actions/upload-artifact@v4.0.0
         with:
-          name: fladder-web
+          name: kebap-web
           path: build/web
 
       - name: Build Github pages web
@@ -435,7 +435,7 @@ jobs:
         if: needs.fetch-info.outputs.build_type == 'release'
         uses: actions/upload-artifact@v4.0.0
         with:
-          name: fladder-web-pages
+          name: kebap-web-pages
           path: build/web
 
   create_release:
@@ -540,94 +540,94 @@ jobs:
       - name: Download Artifacts Android
         uses: actions/download-artifact@v4
         with:
-          name: fladder-android
-          path: fladder-android
+          name: kebap-android
+          path: kebap-android
 
       - name: Move Android
         run: |
-          mv fladder-android/${{ needs.build-android.outputs.artifact_suffix }}.apk Fladder-Android-${{ steps.version.outputs.version }}.apk
-          mv fladder-android/${{ needs.build-android.outputs.artifact_suffix }}.aab Fladder-Android-${{ steps.version.outputs.version }}.aab
+          mv kebap-android/${{ needs.build-android.outputs.artifact_suffix }}.apk Kebap-Android-${{ steps.version.outputs.version }}.apk
+          mv kebap-android/${{ needs.build-android.outputs.artifact_suffix }}.aab Kebap-Android-${{ steps.version.outputs.version }}.aab
 
       - name: Download Windows portable artifact
         uses: actions/download-artifact@v4
         with:
-          name: fladder-windows-portable
-          path: fladder-windows-portable
+          name: kebap-windows-portable
+          path: kebap-windows-portable
 
       - name: Compress Windows
         run: |
-          cd fladder-windows-portable
-          zip -r ../Fladder-Windows-${{ steps.version.outputs.version }}.zip .
+          cd kebap-windows-portable
+          zip -r ../Kebap-Windows-${{ steps.version.outputs.version }}.zip .
 
       - name: Download Windows installer artifact
         uses: actions/download-artifact@v4
         with:
-          name: fladder-windows-installer
-          path: fladder-windows-installer
+          name: kebap-windows-installer
+          path: kebap-windows-installer
 
       - name: Rename Windows installer
-        run: mv fladder-windows-installer/fladder_setup.exe Fladder-Windows-${{ steps.version.outputs.version }}-Setup.exe
+        run: mv kebap-windows-installer/kebap_setup.exe Kebap-Windows-${{ steps.version.outputs.version }}-Setup.exe
 
       - name: Download Artifacts iOS
         uses: actions/download-artifact@v4
         with:
-          name: fladder-iOS
-          path: fladder-iOS
+          name: kebap-iOS
+          path: kebap-iOS
 
       - name: Move iOS
-        run: mv fladder-iOS/iOS.ipa Fladder-iOS-${{ steps.version.outputs.version }}.ipa
+        run: mv kebap-iOS/iOS.ipa Kebap-iOS-${{ steps.version.outputs.version }}.ipa
 
       - name: Download Artifacts macOS
         uses: actions/download-artifact@v4
         with:
-          name: fladder-macOS
-          path: fladder-macOS
+          name: kebap-macOS
+          path: kebap-macOS
 
       - name: Move macOS
-        run: mv fladder-macOS/macOS.dmg Fladder-macOS-${{ steps.version.outputs.version }}.dmg
+        run: mv kebap-macOS/macOS.dmg Kebap-macOS-${{ steps.version.outputs.version }}.dmg
 
       - name: Download Artifacts Linux
         uses: actions/download-artifact@v4
         with:
-          name: fladder-linux
-          path: fladder-linux
+          name: kebap-linux
+          path: kebap-linux
 
       - name: Compress Linux
         run: |
-          cd fladder-linux
-          zip -r ../Fladder-Linux-${{ steps.version.outputs.version }}.zip .
+          cd kebap-linux
+          zip -r ../Kebap-Linux-${{ steps.version.outputs.version }}.zip .
 
       - name: Download Artifacts Linux Flatpak
         if: needs.fetch-info.outputs.build_type == 'release'
         uses: actions/download-artifact@v4
         with:
-          name: fladder-linux-flatpak
-          path: fladder-linux-flatpak
+          name: kebap-linux-flatpak
+          path: kebap-linux-flatpak
 
       - name: Move Linux Flatpak
         if: needs.fetch-info.outputs.build_type == 'release'
-        run: mv fladder-linux-flatpak/Fladder-Linux.flatpak Fladder-Linux-${{ steps.version.outputs.version }}.flatpak
+        run: mv kebap-linux-flatpak/Kebap-Linux.flatpak Kebap-Linux-${{ steps.version.outputs.version }}.flatpak
 
       - name: Download Artifacts Linux AppImage
         uses: actions/download-artifact@v4
         with:
-          name: fladder-linux-appimage
-          path: fladder-linux-appimage
+          name: kebap-linux-appimage
+          path: kebap-linux-appimage
 
       - name: Move Linux AppImages
         run: |
-          mv fladder-linux-appimage/Fladder_x86_64.AppImage Fladder-Linux-${{ steps.version.outputs.version }}.AppImage
-          mv fladder-linux-appimage/Fladder_x86_64.AppImage.zsync Fladder-Linux-${{ steps.version.outputs.version }}.AppImage.zsync
+          mv kebap-linux-appimage/Kebap_x86_64.AppImage Kebap-Linux-${{ steps.version.outputs.version }}.AppImage
+          mv kebap-linux-appimage/Kebap_x86_64.AppImage.zsync Kebap-Linux-${{ steps.version.outputs.version }}.AppImage.zsync
       - name: Download Artifacts Web
         uses: actions/download-artifact@v4
         with:
-          name: fladder-web
-          path: fladder-web
+          name: kebap-web
+          path: kebap-web
 
       - name: Compress Web
         run: |
-          cd fladder-web
-          zip -r ../Fladder-Web-${{ steps.version.outputs.version }}.zip .
+          cd kebap-web
+          zip -r ../Kebap-Web-${{ steps.version.outputs.version }}.zip .
 
       - name: Create Release
         uses: softprops/action-gh-release@v2.2.2
@@ -641,16 +641,16 @@ jobs:
           generate_release_notes: ${{ needs.fetch-info.outputs.build_type == 'release' }}
           fail_on_unmatched_files: true
           files: |
-            Fladder-Android-${{ steps.version.outputs.version }}.apk
-            Fladder-Android-${{ steps.version.outputs.version }}.aab
-            Fladder-Windows-${{ steps.version.outputs.version }}-Setup.exe
-            Fladder-Windows-${{ steps.version.outputs.version }}.zip
-            Fladder-iOS-${{ steps.version.outputs.version }}.ipa
-            Fladder-macOS-${{ steps.version.outputs.version }}.dmg
-            Fladder-Web-${{ steps.version.outputs.version }}.zip
-            Fladder-Linux-${{ steps.version.outputs.version }}.zip
-            Fladder-Linux-${{ steps.version.outputs.version }}.AppImage
-            Fladder-Linux-${{ steps.version.outputs.version }}.AppImage.zsync
+            Kebap-Android-${{ steps.version.outputs.version }}.apk
+            Kebap-Android-${{ steps.version.outputs.version }}.aab
+            Kebap-Windows-${{ steps.version.outputs.version }}-Setup.exe
+            Kebap-Windows-${{ steps.version.outputs.version }}.zip
+            Kebap-iOS-${{ steps.version.outputs.version }}.ipa
+            Kebap-macOS-${{ steps.version.outputs.version }}.dmg
+            Kebap-Web-${{ steps.version.outputs.version }}.zip
+            Kebap-Linux-${{ steps.version.outputs.version }}.zip
+            Kebap-Linux-${{ steps.version.outputs.version }}.AppImage
+            Kebap-Linux-${{ steps.version.outputs.version }}.AppImage.zsync
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
@@ -660,7 +660,7 @@ jobs:
         with:
           tag_name: ${{ github.ref_name }}
           files: |
-            Fladder-Linux-${{ steps.version.outputs.version }}.flatpak
+            Kebap-Linux-${{ steps.version.outputs.version }}.flatpak
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
@@ -675,15 +675,15 @@ jobs:
       - name: Download Artifacts Android
         uses: actions/download-artifact@v4
         with:
-          name: fladder-android
-          path: fladder-android
+          name: kebap-android
+          path: kebap-android
 
       - name: Upload AAB to Google Play Console
         uses: r0adkll/upload-google-play@v1.1.3
         with:
           serviceAccountJsonPlainText: ${{ secrets.SERVICE_ACCOUNT_JSON }}
-          packageName: "nl.jknaapen.fladder"
-          releaseFiles: "fladder-android/${{ needs.build-android.outputs.artifact_suffix }}.aab"
+          packageName: "nl.jknaapen.kebap"
+          releaseFiles: "kebap-android/${{ needs.build-android.outputs.artifact_suffix }}.aab"
           track: ${{ needs.fetch-info.outputs.build_type == 'nightly' && 'internal' || 'production' }}
           status: ${{ needs.fetch-info.outputs.build_type == 'nightly' && 'completed' || 'draft' }}
           releaseName: "${{ github.run_number }} (${{ needs.fetch-info.outputs.version_name }})"
@@ -702,13 +702,13 @@ jobs:
       - name: Download Artifacts Web
         uses: actions/download-artifact@v4
         with:
-          name: fladder-web
+          name: kebap-web
           path: build/web
 
       - name: Deploy to ghcr.io
         uses: mr-smithers-excellent/docker-build-push@v6
         with:
-          image: fladder
+          image: kebap
           addLatest: true
           multiPlatform: true
           platform: linux/amd64,linux/arm64,linux/arm/v7
@@ -720,7 +720,7 @@ jobs:
         uses: mr-smithers-excellent/docker-build-push@v6
         with:
           dockerfile: Dockerfile-rootless
-          image: fladder-rootless
+          image: kebap-rootless
           addLatest: true
           multiPlatform: true
           platform: linux/amd64,linux/arm64,linux/arm/v7
@@ -734,7 +734,7 @@ jobs:
       - name: Download Artifacts Web
         uses: actions/download-artifact@v4
         with:
-          name: fladder-web-pages
+          name: kebap-web-pages
           path: build/web
 
       - name: Deploy to GitHub Pages
@@ -751,10 +751,10 @@ jobs:
       matrix:
         include:
           - build_type: release
-            identifier: j4ckgrey.Fladder
+            identifier: j4ckgrey.Kebap
             max_versions: "0"
           - build_type: nightly
-            identifier: j4ckgrey.Fladder.Nightly
+            identifier: j4ckgrey.Kebap.Nightly
             max_versions: "1"
     steps:
       - name: Submit to Winget (${{ matrix.build_type }})
@@ -762,7 +762,7 @@ jobs:
         uses: vedantmgoyal9/winget-releaser@19e706d4c9121098010096f9c495a70a7518b30f
         with:
           identifier: ${{ matrix.identifier }}
-          installers-regex: 'Fladder-Windows-.*-Setup\.exe$'
+          installers-regex: 'Kebap-Windows-.*-Setup\.exe$'
           token: ${{ secrets.WINGET_TOKEN }}
           max-versions-to-keep: ${{ matrix.max_versions || '' }}
           release-tag: ${{ matrix.build_type == 'nightly' && env.NIGHTLY_TAG || github.ref_name }}
