@@ -1,4 +1,4 @@
-package nl.jknaapen.fladder
+package nl.jknaapen.kebap
 
 import android.graphics.PixelFormat
 import android.os.Build
@@ -12,12 +12,12 @@ import androidx.annotation.RequiresApi
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.platform.LocalContext
 import androidx.media3.common.util.UnstableApi
-import nl.jknaapen.fladder.composables.controls.CustomVideoControls
-import nl.jknaapen.fladder.composables.overlays.screensavers.ScreenSaver
-import nl.jknaapen.fladder.objects.VideoPlayerObject
-import nl.jknaapen.fladder.player.ExoPlayer
-import nl.jknaapen.fladder.utility.ScaledContent
-import nl.jknaapen.fladder.utility.leanBackEnabled
+import nl.jknaapen.kebap.composables.controls.CustomVideoControls
+import nl.jknaapen.kebap.composables.overlays.screensavers.ScreenSaver
+import nl.jknaapen.kebap.objects.VideoPlayerObject
+import nl.jknaapen.kebap.player.ExoPlayer
+import nl.jknaapen.kebap.utility.ScaledContent
+import nl.jknaapen.kebap.utility.leanBackEnabled
 
 class VideoPlayerActivity : ComponentActivity() {
     @RequiresApi(Build.VERSION_CODES.O)

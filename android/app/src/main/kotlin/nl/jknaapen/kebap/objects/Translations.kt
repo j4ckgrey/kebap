@@ -1,4 +1,4 @@
-package nl.jknaapen.fladder.objects
+package nl.jknaapen.kebap.objects
 
 import TranslationsPigeon
 import androidx.compose.runtime.Composable

@@ -80,11 +80,11 @@ class _RequestDetailModalState extends ConsumerState<RequestDetailModal> {
       );
       if (mounted) {
         Navigator.of(context).pop();
-        fladderSnackbar(context, title: 'Request approved');
+        kebapSnackbar(context, title: 'Request approved');
       }
     } catch (e) {
       if (mounted) {
-        fladderSnackbar(context, title: 'Failed to approve request: $e');
+        kebapSnackbar(context, title: 'Failed to approve request: $e');
       }
     } finally {
       if (mounted) setState(() => _isApproving = false);
@@ -97,11 +97,11 @@ class _RequestDetailModalState extends ConsumerState<RequestDetailModal> {
       await ref.read(baklavaRequestsProvider.notifier).rejectRequest(widget.request.id);
       if (mounted) {
         Navigator.of(context).pop();
-        fladderSnackbar(context, title: 'Request rejected');
+        kebapSnackbar(context, title: 'Request rejected');
       }
     } catch (e) {
       if (mounted) {
-        fladderSnackbar(context, title: 'Failed to reject request: $e');
+        kebapSnackbar(context, title: 'Failed to reject request: $e');
       }
     } finally {
       if (mounted) setState(() => _isRejecting = false);
@@ -124,9 +124,7 @@ class _RequestDetailModalState extends ConsumerState<RequestDetailModal> {
     final metadata = metadataState.metadata;
     final credits = metadataState.credits;
 
-    return Dialog(
-      backgroundColor: Colors.transparent,
-      child: Container(
+    return Container(
         height: 600,
         width: double.maxFinite,
         constraints: const BoxConstraints(maxWidth: 900),
@@ -134,7 +132,7 @@ class _RequestDetailModalState extends ConsumerState<RequestDetailModal> {
           color: theme.colorScheme.surface,
           borderRadius: BorderRadius.circular(12),
         ),
-        child: metadataState.loading
+      child: metadataState.loading
             ? const Center(child: CircularProgressIndicator())
             : Row(
                 crossAxisAlignment: CrossAxisAlignment.stretch,
@@ -455,7 +453,6 @@ class _RequestDetailModalState extends ConsumerState<RequestDetailModal> {
                   ),
                 ],
               ),
-      ),
     );
   }
 
@@ -485,6 +482,7 @@ class _RequestDetailModalState extends ConsumerState<RequestDetailModal> {
     }
   }
 }
+
 
 // Reviews Carousel Widget with Navigation
 class _ReviewsCarousel extends StatefulWidget {
@@ -681,4 +679,6 @@ class _ReviewsCarouselState extends State<_ReviewsCarousel> {
     );
   }
 }
+
+
 

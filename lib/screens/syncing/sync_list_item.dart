@@ -34,7 +34,7 @@ class SyncListItem extends ConsumerWidget {
         clipBehavior: Clip.hardEdge,
         decoration: BoxDecoration(
           color: Theme.of(context).colorScheme.surfaceDim,
-          borderRadius: FladderTheme.defaultShape.borderRadius,
+          borderRadius: KebapTheme.defaultShape.borderRadius,
         ),
         child: Dismissible(
           key: Key(syncedItem.id),
@@ -80,11 +80,11 @@ class SyncListItem extends ConsumerWidget {
                   children: [
                     Container(
                       height: 150,
-                      decoration: FladderTheme.defaultPosterDecoration,
+                      decoration: KebapTheme.defaultPosterDecoration,
                       clipBehavior: Clip.hardEdge,
                       child: AspectRatio(
                           aspectRatio: baseItem?.primaryRatio ?? 0.67,
-                          child: FladderImage(
+                          child: KebapImage(
                             image: baseItem?.getPosters?.primary,
                             fit: BoxFit.cover,
                           )),

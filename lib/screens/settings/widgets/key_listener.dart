@@ -162,7 +162,7 @@ class KeyListenerWidgetState extends ConsumerState<KeyListenerWidget> {
               _stopListening();
             } else {
               if (context.mounted) {
-                fladderSnackbar(context, title: context.localized.shortCutAlreadyAssigned(currentHotKey.label));
+                kebapSnackbar(context, title: context.localized.shortCutAlreadyAssigned(currentHotKey.label));
               }
               _stopListening();
             }
@@ -209,7 +209,7 @@ class KeyListenerWidgetState extends ConsumerState<KeyListenerWidget> {
         onEnter: (event) => showClearButton(true),
         onExit: (event) => showClearButton(false),
         child: ClipRRect(
-          borderRadius: FladderTheme.smallShape.borderRadius,
+          borderRadius: KebapTheme.smallShape.borderRadius,
           child: InkWell(
             focusNode: buttonFocus,
             canRequestFocus: false,
@@ -223,7 +223,7 @@ class KeyListenerWidgetState extends ConsumerState<KeyListenerWidget> {
             child: Container(
               decoration: BoxDecoration(
                 color: Theme.of(context).colorScheme.primaryContainer,
-                borderRadius: FladderTheme.smallShape.borderRadius,
+                borderRadius: KebapTheme.smallShape.borderRadius,
                 border: BoxBorder.all(
                   width: 2.0,
                   strokeAlign: BorderSide.strokeAlignInside,

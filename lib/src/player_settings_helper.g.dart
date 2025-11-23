@@ -237,7 +237,7 @@ class PlayerSettingsPigeon {
   final String pigeonVar_messageChannelSuffix;
 
   Future<void> sendPlayerSettings(PlayerSettings playerSettings) async {
-    final String pigeonVar_channelName = 'dev.flutter.pigeon.nl_jknaapen_fladder.settings.PlayerSettingsPigeon.sendPlayerSettings$pigeonVar_messageChannelSuffix';
+    final String pigeonVar_channelName = 'dev.flutter.pigeon.nl_jknaapen_kebap.settings.PlayerSettingsPigeon.sendPlayerSettings$pigeonVar_messageChannelSuffix';
     final BasicMessageChannel<Object?> pigeonVar_channel = BasicMessageChannel<Object?>(
       pigeonVar_channelName,
       pigeonChannelCodec,

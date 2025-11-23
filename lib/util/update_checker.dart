@@ -69,7 +69,7 @@ extension DownloadLabelFormatter on String {
 
 class UpdateChecker {
   final String owner = 'j4ckgrey';
-  final String repo = 'Fladder';
+  final String repo = 'Kebap';
 
   Future<List<ReleaseInfo>> fetchRecentReleases({int count = 5}) async {
     final info = await PackageInfo.fromPlatform();

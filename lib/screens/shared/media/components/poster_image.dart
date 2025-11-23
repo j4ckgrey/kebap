@@ -34,6 +34,7 @@ class PosterImage extends ConsumerWidget {
   final Function(Function() action, ItemBaseModel item)? onPressed;
   final bool primaryPosters;
   final Function(bool focus)? onFocusChanged;
+  final FocusNode? focusNode;
 
   const PosterImage({
     required this.poster,
@@ -48,18 +49,20 @@ class PosterImage extends ConsumerWidget {
     this.onUserDataChanged,
     this.primaryPosters = false,
     this.onFocusChanged,
+    this.focusNode,
     super.key,
   });
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    final radius = FladderTheme.smallShape.borderRadius;
+    final radius = KebapTheme.smallShape.borderRadius;
     final padding = const EdgeInsets.all(5);
     final myKey = key ?? UniqueKey();
 
     return Hero(
       tag: myKey,
       child: FocusButton(
+        focusNode: focusNode,
         onTap: () async {
           if (onPressed != null) {
             onPressed?.call(() async {
@@ -84,7 +87,7 @@ class PosterImage extends ConsumerWidget {
             borderRadius: radius,
             border: Border.all(width: 1, color: Colors.white.withAlpha(45)),
           ),
-          child: FladderImage(
+          child: KebapImage(
             image: primaryPosters
                 ? poster.images?.primary
                 : poster.getPosters?.primary ?? poster.getPosters?.backDrop?.lastOrNull,
@@ -141,7 +144,7 @@ class PosterImage extends ConsumerWidget {
                     ],
                   ),
                 if ((poster.userData.progress > 0 && poster.userData.progress < 100) &&
-                    poster.type != FladderItemType.book) ...{
+                    poster.type != KebapItemType.book) ...{
                   const SizedBox(
                     height: 4,
                   ),
@@ -203,7 +206,7 @@ class PosterImage extends ConsumerWidget {
               ),
             ),
           if (poster.overview.runTime != null &&
-              ((poster is PhotoModel) && (poster as PhotoModel).internalType == FladderItemType.video)) ...{
+              ((poster is PhotoModel) && (poster as PhotoModel).internalType == KebapItemType.video)) ...{
             Align(
               alignment: Alignment.topRight,
               child: Padding(

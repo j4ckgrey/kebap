@@ -4,6 +4,7 @@ import 'package:riverpod_annotation/riverpod_annotation.dart';
 import 'package:kebap/models/media_request_model.dart';
 import 'package:kebap/providers/baklava_api_service.dart';
 import 'package:kebap/providers/user_provider.dart';
+import 'package:kebap/providers/effective_baklava_config_provider.dart';
 
 part 'baklava_requests_provider.g.dart';
 
@@ -21,9 +22,9 @@ class BaklavaRequests extends _$BaklavaRequests {
     return const RequestsState();
   }
 
-  /// Load all requests from server
+  /// Load all media requests
   Future<void> loadRequests() async {
-    state = state.copyWith(loading: true, error: null);
+    state = state.copyWith(loading: true);
 
     try {
       final service = ref.read(baklavaServiceProvider);
@@ -33,18 +34,22 @@ class BaklavaRequests extends _$BaklavaRequests {
         state = state.copyWith(
           requests: response.body!,
           loading: false,
+          error: null,
         );
       } else {
+        // Baklava unavailable (404) - show empty list instead of error
         state = state.copyWith(
+          requests: [],
           loading: false,
-          error: 'Failed to load requests',
+          error: null,
         );
       }
-    } catch (e, stackTrace) {
-      print('DEBUG: Stack trace: $stackTrace');
+    } catch (e) {
+      // Baklava plugin not installed - show empty list
       state = state.copyWith(
+        requests: [],
         loading: false,
-        error: e.toString(),
+        error: null,
       );
     }
   }
@@ -64,6 +69,15 @@ class BaklavaRequests extends _$BaklavaRequests {
       final user = ref.read(userProvider);
       if (user == null) {
         state = state.copyWith(error: 'User not logged in');
+        return false;
+      }
+
+      // Respect server/local configuration: if non-admin requests are disabled
+      // and the current user is not an admin, block client-side creation.
+      final config = await ref.read(effectiveBaklavaConfigProvider.future);
+      final isAdmin = user.policy?.isAdministrator ?? false;
+      if (config.disableNonAdminRequests == true && !isAdmin) {
+        state = state.copyWith(error: 'Requests are disabled for non-admin users');
         return false;
       }
 
@@ -93,10 +107,14 @@ class BaklavaRequests extends _$BaklavaRequests {
         );
         return true;
       } else {
-        state = state.copyWith(error: 'Failed to create request');
+        final errorMsg = 'Failed to create request: status=${response.statusCode}, body=${response.body}, error=${response.error}';
+        print('DEBUG createRequest failed: $errorMsg');
+        state = state.copyWith(error: errorMsg);
         return false;
       }
-    } catch (e) {
+    } catch (e, stackTrace) {
+      print('DEBUG createRequest exception: $e');
+      print('DEBUG Stack trace: $stackTrace');
       state = state.copyWith(error: e.toString());
       return false;
     }

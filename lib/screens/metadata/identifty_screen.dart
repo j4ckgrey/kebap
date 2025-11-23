@@ -210,10 +210,10 @@ class _IdentifyScreenState extends ConsumerState<IdentifyScreen> with TickerProv
                                             ? () async {
                                                 final response = await ref.read(provider.notifier).setIdentity(result);
                                                 if (response?.isSuccessful == true) {
-                                                  fladderSnackbar(context,
+                                                  kebapSnackbar(context,
                                                       title: context.localized.setIdentityTo(result.name ?? ""));
                                                 } else {
-                                                  fladderSnackbarResponse(context, response,
+                                                  kebapSnackbarResponse(context, response,
                                                       altTitle: context.localized.somethingWentWrong);
                                                 }
 

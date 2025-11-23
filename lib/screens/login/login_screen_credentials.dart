@@ -196,7 +196,7 @@ class _LoginScreenCredentialsState extends ConsumerState<LoginScreenCredentials>
                               },
                             );
                           } else {
-                            fladderSnackbar(context, title: context.localized.quickConnectPostFailed);
+                            kebapSnackbar(context, title: context.localized.quickConnectPostFailed);
                           }
                         },
                         child: Row(
@@ -236,7 +236,7 @@ class _LoginScreenCredentialsState extends ConsumerState<LoginScreenCredentials>
           passwordController.text,
         );
     if (response?.isSuccessful == false) {
-      fladderSnackbar(context,
+      kebapSnackbar(context,
           title:
               "(${response?.base.statusCode}) ${response?.base.reasonPhrase ?? context.localized.somethingWentWrongPasswordCheck}");
     } else if (response?.body != null) {
@@ -253,7 +253,7 @@ class _LoginScreenCredentialsState extends ConsumerState<LoginScreenCredentials>
     });
     final response = await ref.read(authProvider.notifier).authenticateUsingSecret(secret);
     if (response?.isSuccessful == false) {
-      fladderSnackbar(context,
+      kebapSnackbar(context,
           title:
               "(${response?.base.statusCode}) ${response?.base.reasonPhrase ?? context.localized.somethingWentWrongPasswordCheck}");
     } else if (response?.body != null) {
@@ -302,7 +302,7 @@ void tapLoggedInAccount(BuildContext context, AccountModel user, WidgetRef ref) 
           if (newPin == user.localPin) {
             loginFunction();
           } else {
-            fladderSnackbar(context, title: context.localized.incorrectPinTryAgain);
+            kebapSnackbar(context, title: context.localized.incorrectPinTryAgain);
           }
         });
       }

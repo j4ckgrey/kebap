@@ -135,11 +135,11 @@ class _EditDialogSwitcherState extends ConsumerState<EditDialogSwitcher> with Ti
                             if (response != null && context.mounted) {
                               if (response.isSuccessful) {
                                 widget.itemUpdated(response.body);
-                                fladderSnackbar(context,
+                                kebapSnackbar(context,
                                     title: context.localized.metaDataSavedFor(
                                         currentItem?.detailedName(context) ?? currentItem?.name ?? ""));
                               } else {
-                                fladderSnackbarResponse(context, response);
+                                kebapSnackbarResponse(context, response);
                               }
                             }
                             widget.refreshOnClose(true);

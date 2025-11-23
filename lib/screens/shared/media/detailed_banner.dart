@@ -7,7 +7,6 @@ import 'package:kebap/models/item_base_model.dart';
 import 'package:kebap/screens/details_screens/components/overview_header.dart';
 import 'package:kebap/util/adaptive_layout/adaptive_layout.dart';
 import 'package:kebap/util/kebap_image.dart';
-import 'package:kebap/util/localization_helper.dart';
 import 'package:kebap/widgets/shared/custom_shader_mask.dart';
 
 class DetailedBanner extends ConsumerStatefulWidget {
@@ -55,7 +54,7 @@ class _DetailedBannerState extends ConsumerState<DetailedBanner> {
                 child: CustomShaderMask(
                   child: ValueListenableBuilder<ItemBaseModel>(
                     valueListenable: selectedPoster,
-                    builder: (context, value, child) => FladderImage(
+                    builder: (context, value, child) => KebapImage(
                       image: value.images?.backDrop?.firstOrNull ?? value.images?.primary,
                     ),
                   ),
@@ -175,7 +174,7 @@ class _DetailedBannerState extends ConsumerState<DetailedBanner> {
                       child: CustomShaderMask(
                         child: ValueListenableBuilder<ItemBaseModel>(
                           valueListenable: selectedPoster,
-                          builder: (context, value, child) => FladderImage(
+                          builder: (context, value, child) => KebapImage(
                             image: value.images?.backDrop?.firstOrNull ?? value.images?.primary,
                           ),
                         ),

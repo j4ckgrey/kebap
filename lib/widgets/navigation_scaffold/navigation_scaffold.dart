@@ -110,7 +110,7 @@ class _NavigationScaffoldState extends ConsumerState<NavigationScaffold> {
               child: Builder(builder: (context) {
                 return Scaffold(
                   key: _key,
-                  appBar: fullScreenChildRoute ? null : const FladderAppBar(),
+                  appBar: fullScreenChildRoute ? null : const KebapAppBar(),
                   extendBodyBehindAppBar: false,
                   resizeToAvoidBottomInset: false,
                   extendBody: true,

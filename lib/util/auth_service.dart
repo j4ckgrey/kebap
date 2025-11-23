@@ -20,12 +20,12 @@ class AuthService {
           localizedReason:
               context.localized.scanYourFingerprintToAuthenticate("(${user.name} - ${user.credentials.serverName})"),
           authMessages: <AuthMessages>[
-            AndroidAuthMessages(
-              signInTitle: 'Fladder',
+            const AndroidAuthMessages(
+              signInTitle: 'Kebap',
             ),
             IOSAuthMessages(
               cancelButton: context.localized.cancel,
-            )
+            ),
           ],
         );
       } on PlatformException catch (_) {}

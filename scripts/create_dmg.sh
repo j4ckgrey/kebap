@@ -1,15 +1,15 @@
 #!/bin/bash
 
-# Script to create DMG for Fladder macOS app using create-dmg
+# Script to create DMG for Kebap macOS app using create-dmg
 # Usage: ./create_dmg.sh
 
 set -e
 
 # Configuration
-APP_NAME="Fladder"
-APP_PATH="build/macos/Build/Products/Release-production/Fladder.app"
+APP_NAME="Kebap"
+APP_PATH="build/macos/Build/Products/Release-production/Kebap.app"
 DMG_PATH="build/macos/Build/Products/Release-production/macOS.dmg"
-BACKGROUND_IMAGE="assets/macos-dmg/Fladder-DMG-Background.jpg"
+BACKGROUND_IMAGE="assets/macos-dmg/Kebap-DMG-Background.jpg"
 TEMP_DMG_DIR="dmg_temp"
 
 # Check if app exists

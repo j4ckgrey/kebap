@@ -13,7 +13,7 @@ class BaklavaService {
 
   final Ref ref;
 
-  static const String _baseRoute = 'api/baklava/requests';
+  static const String _baseRoute = '/api/baklava/requests';
 
   /// Fetch Baklava plugin configuration
   Future<Response<BaklavaConfig>> fetchConfig() async {
@@ -43,7 +43,6 @@ class BaklavaService {
       return Response(response.base, const BaklavaConfig());
     } catch (e) {
       // Return default config on error
-      final serverUrl = ref.read(serverUrlProvider) ?? '';
       final dummyResponse = Response(
         http.Response('{}', 500),
         const BaklavaConfig(),
@@ -62,7 +61,10 @@ class BaklavaService {
         throw Exception('Server URL not available');
       }
 
-      final url = '$serverUrl$_baseRoute';
+      final cleanServerUrl = serverUrl.endsWith('/') 
+          ? serverUrl.substring(0, serverUrl.length - 1) 
+          : serverUrl;
+      final url = '$cleanServerUrl$_baseRoute';
       final request = Request('GET', Uri.parse(url), Uri.parse(serverUrl));
 
       final response = await api.client.send(request);
@@ -82,9 +84,8 @@ class BaklavaService {
       }
 
       return Response(response.base, []);
-    } catch (e, stackTrace) {
+    } catch (e) {
       // Log error for debugging if needed
-      // print('Exception in fetchRequests: $e');
       throw Exception('Failed to fetch requests: $e');
     }
   }
@@ -143,7 +144,10 @@ class BaklavaService {
         throw Exception('Server URL not available');
       }
 
-      final url = '$serverUrl$_baseRoute/$requestId';
+      final cleanServerUrl = serverUrl.endsWith('/') 
+          ? serverUrl.substring(0, serverUrl.length - 1) 
+          : serverUrl;
+      final url = '$cleanServerUrl$_baseRoute/$requestId';
       final body = {
         'status': status,
         if (approvedBy != null) 'approvedBy': approvedBy,
@@ -179,7 +183,10 @@ class BaklavaService {
         throw Exception('Server URL not available');
       }
 
-      final url = '$serverUrl$_baseRoute/$requestId';
+      final cleanServerUrl = serverUrl.endsWith('/') 
+          ? serverUrl.substring(0, serverUrl.length - 1) 
+          : serverUrl;
+      final url = '$cleanServerUrl$_baseRoute/$requestId';
       final request = Request('DELETE', Uri.parse(url), Uri.parse(serverUrl));
 
       final response = await api.client.send(request);
@@ -204,7 +211,10 @@ class BaklavaService {
         throw Exception('Server URL not available');
       }
 
-      final url = '$serverUrl$_baseRoute/cleanup';
+      final cleanServerUrl = serverUrl.endsWith('/') 
+          ? serverUrl.substring(0, serverUrl.length - 1) 
+          : serverUrl;
+      final url = '$cleanServerUrl$_baseRoute/cleanup';
       final request = Request('POST', Uri.parse(url), Uri.parse(serverUrl));
 
       final response = await api.client.send(request);

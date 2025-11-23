@@ -1,4 +1,4 @@
-package nl.jknaapen.fladder.utility
+package nl.jknaapen.kebap.utility
 
 import VideoPlayerFit
 import androidx.media3.common.util.UnstableApi

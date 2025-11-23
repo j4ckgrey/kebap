@@ -61,7 +61,7 @@ body:
     id: version
     attributes:
       label: App Version
-      description: What version of Fladder are you using?
+      description: What version of Kebap are you using?
       placeholder: e.g. v0.7.0 (267)
   - type: input
     id: server

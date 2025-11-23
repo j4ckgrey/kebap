@@ -1,4 +1,4 @@
-package nl.jknaapen.fladder.utility
+package nl.jknaapen.kebap.utility
 
 fun formatTime(ms: Long): String {
     if (ms < 0) {

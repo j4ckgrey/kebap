@@ -128,7 +128,7 @@ class _CurrentlyPlayingBarState extends ConsumerState<FloatingPlayerBar> {
         },
         direction: DismissDirection.vertical,
         child: InkWell(
-          onLongPress: () => fladderSnackbar(context, title: "Swipe up/down to open/close the player"),
+          onLongPress: () => kebapSnackbar(context, title: "Swipe up/down to open/close the player"),
           child: Card(
             elevation: 5,
             color: Theme.of(context).colorScheme.primaryContainer,
@@ -259,7 +259,7 @@ class _CurrentlyPlayingBarState extends ConsumerState<FloatingPlayerBar> {
                     AdaptiveLayout.inputDeviceOf(context) == InputDevice.pointer
                         ? SizedBox(
                             height: 8,
-                            child: FladderSlider(
+                            child: KebapSlider(
                               value: lastPosition.inMilliseconds.toDouble(),
                               min: 0.0,
                               max: playbackInfo.duration.inMilliseconds.toDouble(),

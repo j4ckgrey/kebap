@@ -26,7 +26,7 @@ import 'package:kebap/providers/user_provider.dart';
 import 'package:kebap/util/jellyfin_extension.dart';
 
 const _userSettings = "usersettings";
-const _client = "fladder";
+const _client = "kebap";
 
 class ServerQueryResult {
   final List<BaseItemDto> original;

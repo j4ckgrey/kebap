@@ -3,11 +3,11 @@ import 'package:flutter/material.dart';
 import 'package:flexible_scrollbar/flexible_scrollbar.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
-class FladderScrollbar extends ConsumerWidget {
+class KebapScrollbar extends ConsumerWidget {
   final ScrollController controller;
   final Widget child;
   final bool visible;
-  const FladderScrollbar({
+  const KebapScrollbar({
     required this.controller,
     required this.child,
     this.visible = true,

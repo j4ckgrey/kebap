@@ -369,7 +369,7 @@ class _NextUpInformation extends StatelessWidget {
                     child: AspectRatio(
                       aspectRatio: 0.67,
                       child: Card(
-                        child: FladderImage(
+                        child: KebapImage(
                           image: item.images?.primary,
                         ),
                       ),
@@ -418,7 +418,7 @@ class _NextUpInformation extends StatelessWidget {
               child: AspectRatio(
                 aspectRatio: 2.1,
                 child: Card(
-                  child: FladderImage(
+                  child: KebapImage(
                     image: item.images?.primary,
                   ),
                 ),

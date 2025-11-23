@@ -45,7 +45,7 @@ class _LoginPageState extends ConsumerState<LoginScreen> {
     final accounts = ref.watch(authProvider.select((value) => value.accounts));
     return CustomKeyboardWrapper(
       child: Scaffold(
-        appBar: const FladderAppBar(),
+        appBar: const KebapAppBar(),
         extendBody: true,
         extendBodyBehindAppBar: true,
         floatingActionButton: switch (screen) {
@@ -86,7 +86,7 @@ class _LoginPageState extends ConsumerState<LoginScreen> {
               padding: MediaQuery.paddingOf(context)
                   .add(const EdgeInsetsGeometry.all(16)),
               children: [
-                const FladderLogo(),
+                const KebapLogo(useGradient: false),
                 const SizedBox(height: 24),
                 AnimatedFadeSize(
                   child: switch (screen) {

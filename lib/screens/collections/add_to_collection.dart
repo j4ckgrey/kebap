@@ -107,7 +107,7 @@ class _AddToCollectionState extends ConsumerState<AddToCollection> {
                               .read(provider.notifier)
                               .toggleCollection(boxSet: e.key, value: value == true, item: widget.items.first);
                           if (context.mounted) {
-                            fladderSnackbar(context,
+                            kebapSnackbar(context,
                                 title: response.isSuccessful
                                     ? value == true
                                         ? context.localized.addedToCollection(e.key.name)
@@ -137,7 +137,7 @@ class _AddToCollectionState extends ConsumerState<AddToCollection> {
                                     final response =
                                         await ref.read(provider.notifier).addToCollection(boxSet: e.key, add: true);
                                     if (context.mounted) {
-                                      fladderSnackbar(context,
+                                      kebapSnackbar(context,
                                           title: response.isSuccessful
                                               ? context.localized.addedToCollection(e.key.name)
                                               : '${context.localized.somethingWentWrong} - (${response.statusCode}) - ${response.base.reasonPhrase}');

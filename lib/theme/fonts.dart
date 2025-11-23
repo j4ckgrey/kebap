@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 
-class FladderFonts {
+class KebapFonts {
   static TextTheme rubikTextTheme([TextTheme? textTheme]) {
     textTheme ??= ThemeData.light().textTheme;
 

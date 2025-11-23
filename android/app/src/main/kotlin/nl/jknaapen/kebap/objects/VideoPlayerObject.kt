@@ -1,4 +1,4 @@
-package nl.jknaapen.fladder.objects
+package nl.jknaapen.kebap.objects
 
 import PlaybackState
 import VideoPlayerControlsCallback
@@ -10,9 +10,9 @@ import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.map
-import nl.jknaapen.fladder.VideoPlayerActivity
-import nl.jknaapen.fladder.messengers.VideoPlayerImplementation
-import nl.jknaapen.fladder.utility.InternalTrack
+import nl.jknaapen.kebap.VideoPlayerActivity
+import nl.jknaapen.kebap.messengers.VideoPlayerImplementation
+import nl.jknaapen.kebap.utility.InternalTrack
 import java.time.ZoneId
 import kotlin.time.Clock
 import kotlin.time.ExperimentalTime

@@ -24,7 +24,7 @@ class DashboardNotifier extends StateNotifier<HomeModel> {
     if (state.loading) return;
     state = state.copyWith(loading: true);
     final viewTypes =
-        ref.read(viewsProvider.select((value) => value.dashboardViews)).map((e) => e.collectionType).toSet().toList();
+        ref.read(viewsProvider.select((value) => value.views)).map((e) => e.collectionType).toSet().toList();
 
     final limit = 16;
 

@@ -16,15 +16,11 @@ abstract class HomeSettingsModel with _$HomeSettingsModel {
   factory HomeSettingsModel({
     @Default({...LayoutMode.values}) Set<LayoutMode> screenLayouts,
     @Default({...ViewSize.values}) Set<ViewSize> layoutStates,
-    @Default(HomeBanner.carousel) HomeBanner homeBanner,
-    @Default(HomeCarouselSettings.combined) HomeCarouselSettings carouselSettings,
     @Default(HomeNextUp.separate) HomeNextUp nextUp,
   }) = _HomeSettingsModel;
 
   static HomeSettingsModel defaultModel() {
-    return HomeSettingsModel(
-      homeBanner: leanBackMode ? HomeBanner.detailedBanner : HomeBanner.carousel,
-    );
+    return HomeSettingsModel();
   }
 
   factory HomeSettingsModel.fromJson(Map<String, dynamic> json) => _$HomeSettingsModelFromJson(json);
@@ -44,37 +40,6 @@ T selectAvailableOrSmaller<T>(T value, Set<T> availableOptions, List<T> allOptio
   }
 
   return availableOptions.first;
-}
-
-enum HomeBanner {
-  hide,
-  carousel,
-  banner,
-  detailedBanner;
-
-  const HomeBanner();
-
-  String label(BuildContext context) => switch (this) {
-        HomeBanner.hide => context.localized.hide,
-        HomeBanner.carousel => context.localized.homeBannerCarousel,
-        HomeBanner.banner => context.localized.homeBannerSlideshow,
-        HomeBanner.detailedBanner => 'Detailed banner'
-      };
-}
-
-enum HomeCarouselSettings {
-  nextUp,
-  cont,
-  combined,
-  ;
-
-  const HomeCarouselSettings();
-
-  String label(BuildContext context) => switch (this) {
-        HomeCarouselSettings.nextUp => context.localized.nextUp,
-        HomeCarouselSettings.cont => context.localized.settingsContinue,
-        HomeCarouselSettings.combined => context.localized.combined,
-      };
 }
 
 enum HomeNextUp {

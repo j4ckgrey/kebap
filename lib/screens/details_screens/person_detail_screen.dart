@@ -61,7 +61,7 @@ class _PersonDetailScreenState extends ConsumerState<PersonDetailScreen> {
                       : MediaQuery.of(context).size.width / 3.5,
                   child: AspectRatio(
                     aspectRatio: 0.70,
-                    child: FladderImage(
+                    child: KebapImage(
                       fit: BoxFit.cover,
                       placeHolder: placeHolder(details?.name ?? ""),
                       image: details?.images?.primary,

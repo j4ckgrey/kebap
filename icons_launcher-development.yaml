@@ -4,17 +4,17 @@ icons_launcher:
     android:
       adaptive_foreground_image: "icons/development/kebap_icon.png"
       adaptive_background_color: "#21013a"
-      adaptive_monochrome_image: "icons/development/fladder_adaptive_icon.png"
-      notification_image: icons/fladder_notification_icon.png
+      adaptive_monochrome_image: "icons/development/kebap_adaptive_icon.png"
+      notification_image: icons/kebap_notification_icon.png
       enable: true
     ios:
-      image_path: "icons/development/fladder_store_icon.png"
+      image_path: "icons/development/kebap_store_icon.png"
       enable: true
     windows:
       image_path: "icons/development/kebap_icon_desktop.png"
       enable: true
     macos:
-      image_path: "icons/development/fladder_macos_icon.png"
+      image_path: "icons/development/kebap_macos_icon.png"
       enable: true
     linux:
       image_path: "icons/development/kebap_icon_desktop.png"

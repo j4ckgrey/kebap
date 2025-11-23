@@ -96,7 +96,7 @@ const _$ThemeModeEnumMap = {
 };
 
 const _$ColorThemesEnumMap = {
-  ColorThemes.fladder: 'fladder',
+  ColorThemes.kebap: 'kebap',
   ColorThemes.deepOrange: 'deepOrange',
   ColorThemes.amber: 'amber',
   ColorThemes.green: 'green',

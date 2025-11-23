@@ -1,4 +1,4 @@
-package nl.jknaapen.fladder.composables.overlays
+package nl.jknaapen.kebap.composables.overlays
 
 import AutoNextType
 import MediaSegmentType
@@ -44,14 +44,14 @@ import io.github.rabehx.iconsax.filled.CloseCircle
 import io.github.rabehx.iconsax.filled.Next
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.isActive
-import nl.jknaapen.fladder.composables.controls.CustomButton
-import nl.jknaapen.fladder.objects.Localized
-import nl.jknaapen.fladder.objects.PlayerSettingsObject
-import nl.jknaapen.fladder.objects.Translate
-import nl.jknaapen.fladder.objects.VideoPlayerObject
-import nl.jknaapen.fladder.utility.conditional
-import nl.jknaapen.fladder.utility.highlightOnFocus
-import nl.jknaapen.fladder.utility.visible
+import nl.jknaapen.kebap.composables.controls.CustomButton
+import nl.jknaapen.kebap.objects.Localized
+import nl.jknaapen.kebap.objects.PlayerSettingsObject
+import nl.jknaapen.kebap.objects.Translate
+import nl.jknaapen.kebap.objects.VideoPlayerObject
+import nl.jknaapen.kebap.utility.conditional
+import nl.jknaapen.kebap.utility.highlightOnFocus
+import nl.jknaapen.kebap.utility.visible
 import kotlin.time.Duration.Companion.seconds
 import kotlin.time.DurationUnit
 import kotlin.time.toDuration

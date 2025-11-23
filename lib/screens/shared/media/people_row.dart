@@ -28,7 +28,7 @@ class PeopleRow extends ConsumerWidget {
           width: 75,
           child: Container(
             decoration: BoxDecoration(
-              borderRadius: FladderTheme.smallShape.borderRadius,
+              borderRadius: KebapTheme.smallShape.borderRadius,
               color: Theme.of(context).colorScheme.primaryContainer.withValues(alpha: 0.50),
             ),
             child: Center(
@@ -58,10 +58,10 @@ class PeopleRow extends ConsumerWidget {
               Flexible(
                 child: Container(
                   decoration: BoxDecoration(
-                    borderRadius: FladderTheme.smallShape.borderRadius,
+                    borderRadius: KebapTheme.smallShape.borderRadius,
                     color: Theme.of(context).colorScheme.surfaceContainer,
                   ),
-                  foregroundDecoration: FladderTheme.defaultPosterDecoration,
+                  foregroundDecoration: KebapTheme.defaultPosterDecoration,
                   child: FocusButton(
                     onTap: () => Navigator.of(context).push(
                       MaterialPageRoute(
@@ -70,7 +70,7 @@ class PeopleRow extends ConsumerWidget {
                         ),
                       ),
                     ),
-                    child: FladderImage(
+                    child: KebapImage(
                       image: person.image,
                       placeHolder: placeHolder(person.name),
                       fit: BoxFit.cover,

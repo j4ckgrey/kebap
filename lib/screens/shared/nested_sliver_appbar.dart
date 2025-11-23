@@ -37,7 +37,7 @@ class NestedSliverAppBar extends ConsumerWidget {
           end: Alignment.bottomCenter,
         )),
         child: Padding(
-          padding: MediaQuery.paddingOf(context).copyWith(bottom: 0),
+          padding: const EdgeInsets.only(top: 8, left: 14, right: 14),
           child: Padding(
             padding: const EdgeInsets.all(14),
             child: SizedBox(
@@ -46,15 +46,6 @@ class NestedSliverAppBar extends ConsumerWidget {
                 crossAxisAlignment: CrossAxisAlignment.stretch,
                 spacing: 12,
                 children: [
-                  AspectRatio(
-                    aspectRatio: 1.0,
-                    child: IconButton.filledTonal(
-                      style: buttonStyle,
-                      onPressed: () => Scaffold.of(parent).openDrawer(),
-                      icon: const Icon(IconsaxPlusLinear.menu),
-                      padding: EdgeInsets.zero,
-                    ),
-                  ),
                   const Spacer(),
                   const SettingsUserIcon()
                 ],

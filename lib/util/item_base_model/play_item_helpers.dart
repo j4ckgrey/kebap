@@ -71,7 +71,7 @@ Future<void> _playVideo(
   if (current == null) {
     if (context.mounted) {
       Navigator.of(context, rootNavigator: true).pop();
-      fladderSnackbar(context, title: context.localized.unableToPlayMedia);
+      kebapSnackbar(context, title: context.localized.unableToPlayMedia);
     }
     return;
   }
@@ -86,7 +86,7 @@ Future<void> _playVideo(
   if (!loadedCorrectly) {
     if (context.mounted) {
       Navigator.of(context, rootNavigator: true).pop();
-      fladderSnackbar(context, title: context.localized.errorOpeningMedia);
+      kebapSnackbar(context, title: context.localized.errorOpeningMedia);
     }
     return;
   }
@@ -118,7 +118,7 @@ extension BookBaseModelExtension on BookModel? {
     BuildContext? parentContext,
   }) async {
     if (kIsWeb) {
-      fladderSnackbar(context, title: context.localized.unableToPlayBooksOnWeb);
+      kebapSnackbar(context, title: context.localized.unableToPlayBooksOnWeb);
       return;
     }
     if (this == null) {
@@ -159,7 +159,7 @@ extension PhotoAlbumExtension on PhotoAlbumModel? {
     final api = ref.read(jellyApiProvider);
     final getChildItems = await api.itemsGet(
         parentId: albumModel.id,
-        includeItemTypes: FladderItemType.galleryItem.map((e) => e.dtoKind).toList(),
+        includeItemTypes: KebapItemType.galleryItem.map((e) => e.dtoKind).toList(),
         recursive: true);
     final photos = getChildItems.body?.items.whereType<PhotoModel>() ?? [];
 
@@ -224,7 +224,7 @@ extension ItemBaseModelsBooleans on List<ItemBaseModel> {
     // Replace all shows/seasons with all episodes
     List<List<ItemBaseModel>> newList = await Future.wait(map((element) async {
       switch (element.type) {
-        case FladderItemType.series:
+        case KebapItemType.series:
           return await ref.read(jellyApiProvider).fetchEpisodeFromShow(seriesId: element.id);
         default:
           return [element];

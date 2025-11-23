@@ -1,4 +1,4 @@
-package nl.jknaapen.fladder.utility
+package nl.jknaapen.kebap.utility
 
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.platform.LocalDensity

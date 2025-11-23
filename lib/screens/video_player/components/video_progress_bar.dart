@@ -95,7 +95,7 @@ class _ChapterProgressSliderState extends ConsumerState<VideoProgressBar> {
                   },
                   child: Opacity(
                     opacity: widget.buffering ? 0 : 1.0,
-                    child: FladderSlider(
+                    child: KebapSlider(
                       min: 0.0,
                       max: widget.duration.inMilliseconds.toDouble(),
                       animation: Duration.zero,

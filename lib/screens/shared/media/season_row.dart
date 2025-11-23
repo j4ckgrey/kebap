@@ -86,11 +86,11 @@ class SeasonPoster extends ConsumerWidget {
               child: FocusButton(
                 child: Container(
                   decoration: BoxDecoration(
-                    borderRadius: FladderTheme.smallShape.borderRadius,
+                    borderRadius: KebapTheme.smallShape.borderRadius,
                     color: Theme.of(context).colorScheme.surfaceContainer,
                   ),
-                  foregroundDecoration: FladderTheme.defaultPosterDecoration,
-                  child: FladderImage(
+                  foregroundDecoration: KebapTheme.defaultPosterDecoration,
+                  child: KebapImage(
                     image: season.getPosters?.primary ??
                         season.parentImages?.backDrop?.firstOrNull ??
                         season.parentImages?.primary,

@@ -68,10 +68,11 @@ class _HideOnScrollState extends ConsumerState<HideOnScroll> {
     final direction = position.userScrollDirection;
 
     bool newVisible;
-    if (position.atEdge && position.pixels >= position.maxScrollExtent) {
-      // Always show when scrolled to bottom
+    if (position.atEdge && position.pixels <= 0) {
+      // At top edge, always show
       newVisible = true;
     } else {
+      // Show when scrolling up (forward), hide when scrolling down (reverse)
       newVisible = direction == ScrollDirection.forward;
     }
 

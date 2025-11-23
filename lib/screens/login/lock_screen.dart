@@ -80,7 +80,7 @@ class _LockScreenState extends ConsumerState<LockScreen> with WidgetsBindingObse
             if (newPin == user.localPin) {
               handleLogin(user);
             } else {
-              fladderSnackbar(context, title: context.localized.incorrectPinTryAgain);
+              kebapSnackbar(context, title: context.localized.incorrectPinTryAgain);
             }
           });
         }

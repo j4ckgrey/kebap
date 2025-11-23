@@ -247,8 +247,8 @@ class PhotoModelMapper extends SubClassMapperBase<PhotoModel> {
   static ImagesData? _$thumbnail(PhotoModel v) => v.thumbnail;
   static const Field<PhotoModel, ImagesData> _f$thumbnail =
       Field('thumbnail', _$thumbnail);
-  static FladderItemType _$internalType(PhotoModel v) => v.internalType;
-  static const Field<PhotoModel, FladderItemType> _f$internalType =
+  static KebapItemType _$internalType(PhotoModel v) => v.internalType;
+  static const Field<PhotoModel, KebapItemType> _f$internalType =
       Field('internalType', _$internalType);
   static String _$name(PhotoModel v) => v.name;
   static const Field<PhotoModel, String> _f$name = Field('name', _$name);
@@ -362,7 +362,7 @@ abstract class PhotoModelCopyWith<$R, $In extends PhotoModel, $Out>
       {String? albumId,
       DateTime? dateTaken,
       ImagesData? thumbnail,
-      FladderItemType? internalType,
+      KebapItemType? internalType,
       String? name,
       String? id,
       OverviewModel? overview,
@@ -397,7 +397,7 @@ class _PhotoModelCopyWithImpl<$R, $Out>
           {Object? albumId = $none,
           Object? dateTaken = $none,
           Object? thumbnail = $none,
-          FladderItemType? internalType,
+          KebapItemType? internalType,
           String? name,
           String? id,
           OverviewModel? overview,

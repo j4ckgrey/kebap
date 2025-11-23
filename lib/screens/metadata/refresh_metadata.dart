@@ -109,9 +109,9 @@ class _RefreshPopupDialogState extends ConsumerState<RefreshPopupDialog> {
                                   replaceAllMetadata: replaceAllMetadata,
                                 );
                             if (!response.isSuccessful) {
-                              fladderSnackbarResponse(context, response);
+                              kebapSnackbarResponse(context, response);
                             } else {
-                              fladderSnackbar(context, title: context.localized.scanningName(widget.name));
+                              kebapSnackbar(context, title: context.localized.scanningName(widget.name));
                             }
                             Navigator.of(context).pop();
                           },

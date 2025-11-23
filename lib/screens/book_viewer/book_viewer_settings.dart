@@ -52,7 +52,7 @@ class BookViewerSettingsScreen extends ConsumerWidget {
                 Flexible(
                   child: Opacity(
                     opacity: settings.screenBrightness == null ? 0.5 : 1,
-                    child: FladderSlider(
+                    child: KebapSlider(
                       value: settings.screenBrightness ?? 1.0,
                       min: 0,
                       max: 1,

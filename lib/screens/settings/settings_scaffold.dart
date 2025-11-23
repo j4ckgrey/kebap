@@ -1,5 +1,6 @@
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 
 import 'package:auto_route/auto_route.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -43,16 +44,14 @@ class SettingsScaffold extends ConsumerWidget {
               controller: scrollController,
               slivers: [
                 if (singleLayout)
-                  SliverAppBar.large(
-                    leading: BackButton(
-                      onPressed: () => backAction(context),
-                    ),
+                  SliverAppBar.medium(
+                    automaticallyImplyLeading: false,
                     flexibleSpace: FlexibleSpaceBar(
                       titlePadding: const EdgeInsets.symmetric(horizontal: 16)
-                          .add(EdgeInsets.only(left: padding.left, right: padding.right, bottom: 4)),
+                          .add(EdgeInsets.only(left: padding.left, right: padding.right, bottom: 8)),
                       title: Row(
                         children: [
-                          Text(label, style: Theme.of(context).textTheme.headlineLarge),
+                          Text(label, style: Theme.of(context).textTheme.headlineMedium),
                           const Spacer(),
                           if (showUserIcon)
                             SizedBox.fromSize(
@@ -64,10 +63,10 @@ class SettingsScaffold extends ConsumerWidget {
                             )
                         ],
                       ),
-                      expandedTitleScale: 1.2,
+                      expandedTitleScale: 1.1,
                     ),
-                    expandedHeight: 100,
-                    collapsedHeight: 80,
+                    expandedHeight: 70,
+                    collapsedHeight: 64,
                     pinned: false,
                     floating: true,
                   )
@@ -86,7 +85,7 @@ class SettingsScaffold extends ConsumerWidget {
                     ),
                   ),
                 SliverPadding(
-                  padding: MediaQuery.paddingOf(context).copyWith(top: 0),
+                  padding: const EdgeInsets.symmetric(horizontal: 16),
                   sliver: SliverList.builder(
                     itemBuilder: (context, index) => items[index],
                     itemCount: items.length,

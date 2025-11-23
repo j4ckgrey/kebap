@@ -276,14 +276,14 @@ class SyncNotifier extends StateNotifier<SyncSettingsModel> {
         String? selectedDirectory =
             await FilePicker.platform.getDirectoryPath(dialogTitle: context.localized.syncSelectDownloadsFolder);
         if (selectedDirectory?.isEmpty == true && context.mounted) {
-          fladderSnackbar(context, title: context.localized.syncNoFolderSetup);
+          kebapSnackbar(context, title: context.localized.syncNoFolderSetup);
           return;
         }
         ref.read(clientSettingsProvider.notifier).setSyncPath(selectedDirectory);
       }
 
       if (context.mounted) {
-        fladderSnackbar(context,
+        kebapSnackbar(context,
             title: context.localized.syncAddItemForSyncing(item.detailedName(context) ?? "Unknown"));
       }
       final newSync = switch (item) {
@@ -294,7 +294,7 @@ class SyncNotifier extends StateNotifier<SyncSettingsModel> {
         _ => null
       };
       if (context.mounted) {
-        fladderSnackbar(context,
+        kebapSnackbar(context,
             title: newSync != null
                 ? context.localized.startedSyncingItem(item.detailedName(context) ?? "Unknown")
                 : context.localized.unableToSyncItem(item.detailedName(context) ?? "Unknown"));
@@ -304,7 +304,7 @@ class SyncNotifier extends StateNotifier<SyncSettingsModel> {
     } catch (e) {
       log('Error adding sync item: ${e.toString()}');
       if (context?.mounted == true) {
-        fladderSnackbar(context!, title: context.localized.somethingWentWrong);
+        kebapSnackbar(context!, title: context.localized.somethingWentWrong);
       }
     }
   }
@@ -345,7 +345,7 @@ class SyncNotifier extends StateNotifier<SyncSettingsModel> {
     } catch (e) {
       log('Error deleting synced item ${e.toString()}');
       state = state.copyWith(items: state.items.map((e) => e.copyWith(markedForDelete: false)).toList());
-      fladderSnackbar(context, title: context.localized.syncRemoveUnableToDeleteItem);
+      kebapSnackbar(context, title: context.localized.syncRemoveUnableToDeleteItem);
       return false;
     }
   }
@@ -591,7 +591,7 @@ class SyncNotifier extends StateNotifier<SyncSettingsModel> {
       SyncedItem updatedItem = item.copyWith(userData: updatedUserData, unSyncedData: !responseSuccessful);
 
       List<SyncedItem> children = [];
-      final shouldUpdateChildren = {FladderItemType.series, FladderItemType.season}.contains(item.itemModel?.type);
+      final shouldUpdateChildren = {KebapItemType.series, KebapItemType.season}.contains(item.itemModel?.type);
       if (shouldUpdateChildren) {
         // Update child items with the same played status, jellyfin server does this was well
         // when marking a series or season as played

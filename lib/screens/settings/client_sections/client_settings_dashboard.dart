@@ -19,46 +19,6 @@ List<Widget> buildClientSettingsDashboard(BuildContext context, WidgetRef ref) {
     SettingsLabelDivider(label: context.localized.dashboard),
     [
       SettingsListTile(
-        label: Text(context.localized.settingsHomeBannerTitle),
-        subLabel: Text(context.localized.settingsHomeBannerDescription),
-        trailing: EnumBox(
-          current: ref.watch(
-            homeSettingsProvider.select(
-              (value) => value.homeBanner.label(context),
-            ),
-          ),
-          itemBuilder: (context) => HomeBanner.values
-              .map(
-                (entry) => ItemActionButton(
-                  label: Text(entry.label(context)),
-                  action: () =>
-                      ref.read(homeSettingsProvider.notifier).update((context) => context.copyWith(homeBanner: entry)),
-                ),
-              )
-              .toList(),
-        ),
-      ),
-      if (ref.watch(homeSettingsProvider.select((value) => value.homeBanner)) != HomeBanner.hide)
-        SettingsListTile(
-          label: Text(context.localized.settingsHomeBannerInformationTitle),
-          subLabel: Text(context.localized.settingsHomeBannerInformationDesc),
-          trailing: EnumBox(
-            current: ref.watch(
-              homeSettingsProvider.select((value) => value.carouselSettings.label(context)),
-            ),
-            itemBuilder: (context) => HomeCarouselSettings.values
-                .map(
-                  (entry) => ItemActionButton(
-                    label: Text(entry.label(context)),
-                    action: () => ref
-                        .read(homeSettingsProvider.notifier)
-                        .update((context) => context.copyWith(carouselSettings: entry)),
-                  ),
-                )
-                .toList(),
-          ),
-        ),
-      SettingsListTile(
         label: Text(context.localized.settingsHomeNextUpTitle),
         subLabel: Text(context.localized.settingsHomeNextUpDesc),
         trailing: EnumBox(

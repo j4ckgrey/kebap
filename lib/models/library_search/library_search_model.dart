@@ -73,7 +73,7 @@ extension LibrarySearchModelX on LibrarySearchModel {
     if (totalItemCount == 0) return false;
     return filters.types.included.isEmpty ||
         filters.types.included.containsAny(
-          {...FladderItemType.playable, FladderItemType.folder},
+          {...KebapItemType.playable, KebapItemType.folder},
         );
   }
 
@@ -81,7 +81,7 @@ extension LibrarySearchModelX on LibrarySearchModel {
     if (totalItemCount == 0) return false;
     return filters.types.included.isEmpty ||
         filters.types.included.containsAny(
-          {...FladderItemType.galleryItem, FladderItemType.photoAlbum, FladderItemType.folder},
+          {...KebapItemType.galleryItem, KebapItemType.photoAlbum, KebapItemType.folder},
         );
   }
 

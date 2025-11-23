@@ -164,7 +164,7 @@ class _PhotoViewerScreenState extends ConsumerState<PhotoViewerScreen> with Widg
           onExit: (event) => setState(() => _showOverlay(show: false)),
           child: Scaffold(
             appBar: photos.isEmpty
-                ? const FladderAppBar(
+                ? const KebapAppBar(
                     automaticallyImplyLeading: true,
                   )
                 : null,
@@ -259,7 +259,7 @@ class _PhotoViewerScreenState extends ConsumerState<PhotoViewerScreen> with Widg
                             child: CircularProgressIndicator.adaptive(strokeCap: StrokeCap.round),
                           ),
                         LoadState.completed => switch (photo.internalType) {
-                            FladderItemType.video => SimpleVideoPlayer(
+                            KebapItemType.video => SimpleVideoPlayer(
                                 onTapped: _showOverlay,
                                 showOverlay: showInterface,
                                 video: photos[index],

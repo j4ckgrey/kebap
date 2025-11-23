@@ -142,7 +142,10 @@ class GridFocusTravelerPolicy extends WidgetOrderTraversalPolicy {
 
     if (direction == TraversalDirection.left && col == 0) {
       lastMainFocus = currentNode;
-      navBarNode.requestFocus();
+      try {
+        final cb = FocusTraversalPolicy.defaultTraversalRequestFocusCallback;
+        cb(navBarNode);
+      } catch (_) {}
       return true;
     }
 

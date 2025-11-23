@@ -1,4 +1,4 @@
-package nl.jknaapen.fladder.composables.controls
+package nl.jknaapen.kebap.composables.controls
 
 import androidx.compose.animation.core.FastOutLinearInEasing
 import androidx.compose.animation.core.animateFloat
@@ -24,7 +24,7 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
 import io.github.rabehx.iconsax.Iconsax
 import io.github.rabehx.iconsax.outline.Refresh
-import nl.jknaapen.fladder.utility.visible
+import nl.jknaapen.kebap.utility.visible
 import kotlin.math.absoluteValue
 import kotlin.time.DurationUnit
 import kotlin.time.toDuration

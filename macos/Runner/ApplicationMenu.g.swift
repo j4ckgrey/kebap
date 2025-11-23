@@ -60,7 +60,7 @@ class ApplicationMenu: ApplicationMenuProtocol {
     return ApplicationMenuPigeonCodec.shared
   }
   func openNewWindow(completion: @escaping (Result<Void, PigeonError>) -> Void) {
-    let channelName: String = "dev.flutter.pigeon.nl_jknaapen_fladder.application_menu.ApplicationMenu.openNewWindow\(messageChannelSuffix)"
+    let channelName: String = "dev.flutter.pigeon.nl_jknaapen_kebap.application_menu.ApplicationMenu.openNewWindow\(messageChannelSuffix)"
     let channel = FlutterBasicMessageChannel(name: channelName, binaryMessenger: binaryMessenger, codec: codec)
     channel.sendMessage(nil) { response in
       guard let listResponse = response as? [Any?] else {

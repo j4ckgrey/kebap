@@ -27,7 +27,7 @@ enum GlobalHotKeys {
   String label(BuildContext context) {
     return switch (this) {
       GlobalHotKeys.search => context.localized.search,
-      GlobalHotKeys.exit => context.localized.exitFladderTitle,
+      GlobalHotKeys.exit => context.localized.exitKebapTitle,
     };
   }
 }

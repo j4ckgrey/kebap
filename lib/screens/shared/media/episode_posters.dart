@@ -180,11 +180,11 @@ class EpisodePoster extends ConsumerWidget {
                 tag: heroTag ?? UniqueKey(),
                 child: Container(
                   decoration: BoxDecoration(
-                    borderRadius: FladderTheme.smallShape.borderRadius,
+                    borderRadius: KebapTheme.smallShape.borderRadius,
                     color: Theme.of(context).colorScheme.surfaceContainer,
                   ),
-                  foregroundDecoration: FladderTheme.defaultPosterDecoration,
-                  child: FladderImage(
+                  foregroundDecoration: KebapTheme.defaultPosterDecoration,
+                  child: KebapImage(
                     image: !episodeAvailable ? episode.parentImages?.primary : episode.images?.primary,
                     placeHolder: placeHolder,
                     blurOnly: !episodeAvailable

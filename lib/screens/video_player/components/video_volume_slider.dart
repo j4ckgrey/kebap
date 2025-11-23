@@ -41,7 +41,7 @@ class _VideoVolumeSliderState extends ConsumerState<VideoVolumeSlider> {
           child: SizedBox(
             height: 30,
             width: 75,
-            child: FladderSlider(
+            child: KebapSlider(
               min: 0,
               max: 100,
               value: volume,

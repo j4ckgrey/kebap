@@ -53,7 +53,7 @@ class LibrarySearchScreen extends ConsumerStatefulWidget {
   final List<String>? folderId;
   final SortingOrder? sortOrder;
   final SortingOptions? sortingOptions;
-  final Map<FladderItemType, bool>? types;
+  final Map<KebapItemType, bool>? types;
   final Map<String, bool>? genres;
   final bool? recursive;
   const LibrarySearchScreen({
@@ -214,7 +214,7 @@ class _LibrarySearchScreenState extends ConsumerState<LibrarySearchScreen> {
                 : null,
             body: PinchPosterZoom(
               scaleDifference: (difference) => ref.read(clientSettingsProvider.notifier).addPosterSize(difference),
-              child: FladderScrollbar(
+              child: KebapScrollbar(
                 visible: AdaptiveLayout.inputDeviceOf(context) != InputDevice.pointer,
                 controller: scrollController,
                 child: PullToRefresh(

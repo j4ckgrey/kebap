@@ -154,7 +154,7 @@ class _DetailScaffoldState extends ConsumerState<DetailScaffold> {
                       SizedBox(
                         height: maxHeight,
                         width: size.width,
-                        child: FladderImage(
+                        child: KebapImage(
                           image: backgroundImage,
                           blurOnly: true,
                         ),
@@ -217,7 +217,7 @@ class _DetailScaffoldState extends ConsumerState<DetailScaffold> {
                       Padding(
                         padding: EdgeInsets.only(
                           bottom: 0,
-                          top: MediaQuery.of(context).padding.top,
+                          top: 0,
                         ),
                         child: FocusScope(
                           autofocus: true,
@@ -242,11 +242,11 @@ class _DetailScaffoldState extends ConsumerState<DetailScaffold> {
                   IconTheme(
                     data: IconThemeData(color: Theme.of(context).colorScheme.onSurface),
                     child: Padding(
-                      padding: MediaQuery.paddingOf(context)
-                          .copyWith(left: sideBarPadding + MediaQuery.paddingOf(context).left)
-                          .add(
-                            const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
-                          ),
+                      padding: EdgeInsets.only(
+                        left: sideBarPadding + MediaQuery.paddingOf(context).left,
+                      ).add(
+                        const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+                      ),
                       child: Row(
                         children: [
                           IconButton.filledTonal(
@@ -265,7 +265,7 @@ class _DetailScaffoldState extends ConsumerState<DetailScaffold> {
                             duration: const Duration(milliseconds: 250),
                             child: Container(
                               decoration: BoxDecoration(
-                                  color: backGroundColor, borderRadius: FladderTheme.defaultShape.borderRadius),
+                                  color: backGroundColor, borderRadius: KebapTheme.defaultShape.borderRadius),
                               child: Row(
                                 mainAxisSize: MainAxisSize.min,
                                 children: [

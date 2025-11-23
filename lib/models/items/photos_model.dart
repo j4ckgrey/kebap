@@ -69,7 +69,7 @@ class PhotoModel extends ItemBaseModel with PhotoModelMappable {
   final String? albumId;
   final DateTime? dateTaken;
   final ImagesData? thumbnail;
-  final FladderItemType internalType;
+  final KebapItemType internalType;
 
   const PhotoModel({
     required this.albumId,
@@ -109,8 +109,8 @@ class PhotoModel extends ItemBaseModel with PhotoModelMappable {
 
   @override
   bool get galleryItem => switch (internalType) {
-        FladderItemType.photo => albumId?.isNotEmpty == true,
-        FladderItemType.video => parentId?.isNotEmpty == true,
+        KebapItemType.photo => albumId?.isNotEmpty == true,
+        KebapItemType.video => parentId?.isNotEmpty == true,
         _ => false,
       };
 
@@ -134,8 +134,8 @@ class PhotoModel extends ItemBaseModel with PhotoModelMappable {
       canDelete: item.canDelete,
       canDownload: item.canDownload,
       internalType: switch (item.type) {
-        BaseItemKind.video => FladderItemType.video,
-        _ => FladderItemType.photo,
+        BaseItemKind.video => KebapItemType.video,
+        _ => KebapItemType.photo,
       },
     );
   }
@@ -146,7 +146,7 @@ class PhotoModel extends ItemBaseModel with PhotoModelMappable {
 
   Future<void> navigateToAlbum(BuildContext context) async {
     if ((albumId ?? parentId) == null) {
-      fladderSnackbar(context, title: context.localized.notPartOfAlbum);
+      kebapSnackbar(context, title: context.localized.notPartOfAlbum);
       return;
     }
     await parentBaseModel.navigateTo(context);

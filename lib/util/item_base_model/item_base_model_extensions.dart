@@ -28,10 +28,10 @@ import 'package:kebap/widgets/pop_up/delete_file.dart';
 import 'package:kebap/widgets/shared/item_actions.dart';
 
 extension ItemBaseModelsBooleans on List<ItemBaseModel> {
-  Map<FladderItemType, List<ItemBaseModel>> get groupedItems {
-    Map<FladderItemType, List<ItemBaseModel>> groupedItems = {};
+  Map<KebapItemType, List<ItemBaseModel>> get groupedItems {
+    Map<KebapItemType, List<ItemBaseModel>> groupedItems = {};
     for (int i = 0; i < length; i++) {
-      FladderItemType type = this[i].type;
+      KebapItemType type = this[i].type;
       if (!groupedItems.containsKey(type)) {
         groupedItems[type] = [this[i]];
       } else {
@@ -41,9 +41,9 @@ extension ItemBaseModelsBooleans on List<ItemBaseModel> {
     return groupedItems;
   }
 
-  FladderItemType get getMostCommonType {
-    if (isEmpty) return FladderItemType.movie;
-    final Map<FladderItemType, int> counts = {};
+  KebapItemType get getMostCommonType {
+    if (isEmpty) return KebapItemType.movie;
+    final Map<KebapItemType, int> counts = {};
 
     for (final item in this) {
       final type = item.type;
@@ -122,13 +122,13 @@ extension ItemBaseModelExtensions on ItemBaseModel {
       if (parentId?.isNotEmpty == true) ...[
         if (!exclude.contains(ItemActions.openShow) && this is EpisodeModel)
           ItemActionButton(
-            icon: Icon(FladderItemType.series.icon),
+            icon: Icon(KebapItemType.series.icon),
             action: () => parentBaseModel.navigateTo(context),
             label: Text(context.localized.openShow),
           ),
         if (!exclude.contains(ItemActions.openParent) && this is! EpisodeModel && !galleryItem)
           ItemActionButton(
-            icon: Icon(FladderItemType.folder.icon),
+            icon: Icon(KebapItemType.folder.icon),
             action: () => parentBaseModel.navigateTo(context),
             label: Text(context.localized.openParent),
           ),
@@ -141,7 +141,7 @@ extension ItemBaseModelExtensions on ItemBaseModel {
         )
       else if (!exclude.contains(ItemActions.showAlbum) && galleryItem)
         ItemActionButton(
-          icon: Icon(FladderItemType.photoAlbum.icon),
+          icon: Icon(KebapItemType.photoAlbum.icon),
           action: () => parentBaseModel.navigateTo(context),
           label: Text(context.localized.showAlbum),
         ),
@@ -158,7 +158,7 @@ extension ItemBaseModelExtensions on ItemBaseModel {
           ),
       ItemActionDivider(),
       if (!exclude.contains(ItemActions.addCollection) && isAdmin)
-        if (type != FladderItemType.boxset)
+        if (type != KebapItemType.boxset)
           ItemActionButton(
             icon: const Icon(IconsaxPlusLinear.archive_add),
             action: () async {
@@ -170,7 +170,7 @@ extension ItemBaseModelExtensions on ItemBaseModel {
             label: Text(context.localized.addToCollection),
           ),
       if (!exclude.contains(ItemActions.addPlaylist))
-        if (type != FladderItemType.playlist)
+        if (type != KebapItemType.playlist)
           ItemActionButton(
             icon: const Icon(IconsaxPlusLinear.archive_add),
             action: () async {
@@ -304,7 +304,7 @@ extension ItemBaseModelExtensions on ItemBaseModel {
                 context.refreshData();
               }
             } else {
-              fladderSnackbarResponse(context, response);
+              kebapSnackbarResponse(context, response);
             }
           },
           label: Text(context.localized.delete),

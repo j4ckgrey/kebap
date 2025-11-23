@@ -154,33 +154,29 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen> {
             ),
             SettingsListTile(
               label: Text(context.localized.about),
-              subLabel: Text("Fladder, ${context.localized.latestReleases}"),
+              subLabel: Text("Kebap, ${context.localized.latestReleases}"),
               selected: containsRoute(const AboutSettingsRoute()),
-              leading: Opacity(
-                opacity: 1,
-                child: FladderIconOutlined(
-                  size: 24,
-                  color: context.colors.onSurfaceVariant,
-                ),
+              leading: const KebapIconOutlined(
+                size: 24,
               ),
               onTap: () => navigateTo(const AboutSettingsRoute()),
             ),
             if (ref.watch(argumentsStateProvider.select((value) => value.htpcMode))) ...[
               SettingsListTile(
-                label: Text(context.localized.exitFladderTitle),
+                label: Text(context.localized.exitKebapTitle),
                 icon: IconsaxPlusLinear.close_square,
                 onTap: () async {
                   showDefaultAlertDialog(
                     context,
-                    context.localized.exitFladderTitle,
-                    context.localized.exitFladderDesc,
+                    context.localized.exitKebapTitle,
+                    context.localized.exitKebapDesc,
                     (context) async {
                       if (AdaptiveLayout.of(context).isDesktop) {
                         final manager = WindowManager.instance;
                         if (await manager.isClosable()) {
                           manager.close();
                         } else {
-                          fladderSnackbar(context, title: context.localized.somethingWentWrong);
+                          kebapSnackbar(context, title: context.localized.somethingWentWrong);
                         }
                       } else {
                         SystemNavigator.pop();

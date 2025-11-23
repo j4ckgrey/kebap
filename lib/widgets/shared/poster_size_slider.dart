@@ -25,7 +25,7 @@ class PosterSizeWidget extends ConsumerWidget {
           ),
           SizedBox(
             width: width,
-            child: FladderSlider(
+            child: KebapSlider(
               value: ref.watch(clientSettingsProvider.select((value) => value.posterSize)),
               min: 0.5,
               divisions: 12,

@@ -1,4 +1,4 @@
-# 🚀 Fladder Dev Setup
+# 🚀 Kebap Dev Setup
 
 ## 🔧 Requirements
 
@@ -20,8 +20,8 @@ flutter doctor
 
 ```bash
 # Clone the repository
-git clone https://github.com/j4ckgrey/Fladder.git
-cd Fladder
+git clone https://github.com/j4ckgrey/Kebap.git
+cd Kebap
 
 # Install dependencies
 flutter pub get

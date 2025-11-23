@@ -18,6 +18,7 @@ import 'package:kebap/widgets/shared/ensure_visible.dart';
 class HorizontalList<T> extends ConsumerStatefulWidget {
   final bool autoFocus;
   final String? label;
+  final bool hideLabel; // Hide label when showing in banner
   final List<Widget> titleActions;
   final Function()? onLabelClick;
   final String? subtext;
@@ -38,6 +39,7 @@ class HorizontalList<T> extends ConsumerStatefulWidget {
     this.startIndex,
     this.height,
     this.label,
+    this.hideLabel = false,
     this.titleActions = const [],
     this.onLabelClick,
     this.scrollToEnd = false,
@@ -173,9 +175,10 @@ class _HorizontalListState extends ConsumerState<HorizontalList> with TickerProv
       mainAxisAlignment: MainAxisAlignment.start,
       crossAxisAlignment: CrossAxisAlignment.stretch,
       children: [
-        Padding(
-          padding: widget.contentPadding,
-          child: Row(
+        if (!widget.hideLabel)
+          Padding(
+            padding: widget.contentPadding,
+            child: Row(
             crossAxisAlignment: CrossAxisAlignment.center,
             children: [
               Flexible(
@@ -260,7 +263,7 @@ class _HorizontalListState extends ConsumerState<HorizontalList> with TickerProv
             ].addPadding(const EdgeInsets.symmetric(horizontal: 6)),
           ),
         ),
-        const SizedBox(height: 8),
+        if (!widget.hideLabel) const SizedBox(height: 8),
         Focus(
           focusNode: parentNode,
           onFocusChange: (value) {
@@ -423,6 +426,7 @@ class HorizontalRailFocus extends WidgetOrderTraversalPolicy {
         try {
           if (node.context == null) return false;
           final scrollable = Scrollable.of(node.context!);
+          // ignore: unnecessary_null_comparison
           if (scrollable == null) return false;
           final viewportBox = scrollable.context.findRenderObject() as RenderBox;
           final itemBox = node.context!.findRenderObject() as RenderBox;
@@ -481,7 +485,8 @@ class HorizontalRailFocus extends WidgetOrderTraversalPolicy {
         } catch (_) {}
         
         try {
-          navBarNode.requestFocus();
+          final cb = FocusTraversalPolicy.defaultTraversalRequestFocusCallback;
+          cb(navBarNode);
           return true;
         } catch (_) {}
       }

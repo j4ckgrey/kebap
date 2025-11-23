@@ -34,7 +34,7 @@ Future<void> showBottomSheetPill({
           padding: const EdgeInsets.symmetric(horizontal: 8).add(MediaQuery.paddingOf(context)),
           child: Card(
             shape: RoundedRectangleBorder(
-              borderRadius: FladderTheme.largeShape.borderRadius,
+              borderRadius: KebapTheme.largeShape.borderRadius,
             ),
             child: Column(
               mainAxisSize: MainAxisSize.min,
@@ -47,7 +47,7 @@ Future<void> showBottomSheetPill({
                       width: 35,
                       decoration: BoxDecoration(
                         color: Theme.of(context).colorScheme.onSurface,
-                        borderRadius: FladderTheme.largeShape.borderRadius,
+                        borderRadius: KebapTheme.largeShape.borderRadius,
                       ),
                     ),
                   ),
@@ -92,7 +92,7 @@ class ItemBottomSheetPreview extends ConsumerWidget {
                 height: 90,
                 child: AspectRatio(
                   aspectRatio: 1,
-                  child: FladderImage(
+                  child: KebapImage(
                     image: item.images?.primary,
                     fit: BoxFit.contain,
                   ),

@@ -8,14 +8,12 @@ import 'package:collection/collection.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import 'package:kebap/models/items/media_segments_model.dart';
-import 'package:kebap/models/settings/media_stream_view_type.dart';
 import 'package:kebap/models/settings/video_player_settings.dart';
 import 'package:kebap/providers/arguments_provider.dart';
 import 'package:kebap/providers/connectivity_provider.dart';
-import 'package:kebap/providers/settings/media_stream_view_type_provider.dart';
 import 'package:kebap/providers/settings/video_player_settings_provider.dart';
 import 'package:kebap/providers/user_provider.dart';
-import 'package:kebap/screens/details_screens/components/media_stream_information.dart';
+// removed unused imports flagged by analyzer
 import 'package:kebap/screens/settings/settings_list_tile.dart';
 import 'package:kebap/screens/settings/settings_scaffold.dart';
 import 'package:kebap/screens/settings/widgets/key_listener.dart';

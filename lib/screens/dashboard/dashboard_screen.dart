@@ -13,14 +13,16 @@ import 'package:kebap/models/item_base_model.dart';
 import 'package:kebap/models/library_search/library_search_options.dart';
 import 'package:kebap/models/settings/home_settings_model.dart';
 import 'package:kebap/providers/dashboard_provider.dart';
+import 'package:kebap/providers/focused_item_provider.dart';
 import 'package:kebap/providers/settings/client_settings_provider.dart';
 import 'package:kebap/providers/settings/home_settings_provider.dart';
 import 'package:kebap/providers/user_provider.dart';
 import 'package:kebap/providers/views_provider.dart';
 import 'package:kebap/routes/auto_router.gr.dart';
-import 'package:kebap/screens/dashboard/home_banner_widget.dart';
 import 'package:kebap/screens/home_screen.dart';
+import 'package:kebap/screens/shared/media/compact_item_banner.dart';
 import 'package:kebap/screens/shared/media/poster_row.dart';
+import 'package:kebap/screens/shared/media/single_row_view.dart';
 import 'package:kebap/screens/shared/nested_scaffold.dart';
 import 'package:kebap/screens/shared/nested_sliver_appbar.dart';
 import 'package:kebap/util/adaptive_layout/adaptive_layout.dart';
@@ -29,6 +31,7 @@ import 'package:kebap/util/list_padding.dart';
 import 'package:kebap/util/localization_helper.dart';
 import 'package:kebap/util/sliver_list_padding.dart';
 import 'package:kebap/widgets/navigation_scaffold/components/background_image.dart';
+import 'package:kebap/widgets/navigation_scaffold/components/settings_user_icon.dart';
 import 'package:kebap/widgets/shared/pinch_poster_zoom.dart';
 import 'package:kebap/widgets/shared/poster_size_slider.dart';
 import 'package:kebap/widgets/shared/pull_to_refresh.dart';
@@ -57,6 +60,11 @@ class _DashboardScreenState extends ConsumerState<DashboardScreen> {
     _timer = Timer.periodic(const Duration(seconds: 120), (timer) {
       _refreshIndicatorKey.currentState?.show();
     });
+    
+    // Trigger initial fetch for Continue Watching and Next Up
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      _refreshHome();
+    });
   }
 
   @override
@@ -76,42 +84,15 @@ class _DashboardScreenState extends ConsumerState<DashboardScreen> {
   @override
   Widget build(BuildContext context) {
     final padding = AdaptiveLayout.adaptivePadding(context);
-    final bannerType = AdaptiveLayout.inputDeviceOf(context) == InputDevice.dPad
-        ? HomeBanner.detailedBanner
-        : ref.watch(homeSettingsProvider.select((value) => value.homeBanner));
-
-    // Debug: log banner visibility and items
-    debugPrint('[Dashboard] bannerType=$bannerType');
 
     final dashboardData = ref.watch(dashboardProvider);
     final views = ref.watch(viewsProvider);
     final homeSettings = ref.watch(homeSettingsProvider);
-    final homeBanner = ref.watch(homeSettingsProvider.select((value) => value.homeBanner)) != HomeBanner.hide;
     final resumeVideo = dashboardData.resumeVideo;
     final resumeAudio = dashboardData.resumeAudio;
     final resumeBooks = dashboardData.resumeBooks;
 
     final allResume = [...resumeVideo, ...resumeAudio, ...resumeBooks].toList();
-
-    var homeCarouselItems = switch (homeSettings.carouselSettings) {
-      HomeCarouselSettings.nextUp => dashboardData.nextUp,
-      HomeCarouselSettings.combined => [...allResume, ...dashboardData.nextUp],
-      HomeCarouselSettings.cont => allResume,
-    };
-
-    // If no resume/nextUp items are available, fallback to showing library
-    // recentlyAdded items from the user's dashboard views so the home
-    // carousel isn't empty.
-    if (homeCarouselItems.isEmpty) {
-      final List<ItemBaseModel> fallback = views.dashboardViews
-          .expand((v) => v.recentlyAdded ?? <ItemBaseModel>[])
-          .cast<ItemBaseModel>()
-          .toList();
-      if (fallback.isNotEmpty) homeCarouselItems = fallback;
-    }
-
-    debugPrint('[Dashboard] homeBanner=${homeBanner.toString()} carouselItems=${homeCarouselItems.length}');
-
     final viewSize = AdaptiveLayout.viewSizeOf(context);
 
     return MediaQuery.removeViewInsets(
@@ -124,7 +105,6 @@ class _DashboardScreenState extends ConsumerState<DashboardScreen> {
               images: (value != null
                       ? [value]
                       : [
-                          ...homeCarouselItems,
                           ...dashboardData.nextUp,
                           ...allResume,
                         ])
@@ -134,138 +114,90 @@ class _DashboardScreenState extends ConsumerState<DashboardScreen> {
             );
           },
         ),
-        body: PullToRefresh(
-          refreshKey: _refreshIndicatorKey,
-          displacement: 80 + MediaQuery.of(context).viewPadding.top,
-          onRefresh: () async => await _refreshHome(),
-          child: PinchPosterZoom(
+        body: PinchPosterZoom(
             scaleDifference: (difference) => ref.read(clientSettingsProvider.notifier).addPosterSize(difference),
             child: CustomScrollView(
-              controller: AdaptiveLayout.scrollOf(context, HomeTabs.dashboard),
+              primary: true,
               physics: const AlwaysScrollableScrollPhysics(),
               slivers: [
-                if (bannerType != HomeBanner.detailedBanner) const DefaultSliverTopBadding(),
-                if (viewSize == ViewSize.phone)
-                  NestedSliverAppBar(
-                    route: LibrarySearchRoute(),
-                    parent: context,
-                  ),
-                if (homeBanner && homeCarouselItems.isNotEmpty) ...{
-                  SliverToBoxAdapter(
-                    child: Padding(
-                      padding: AdaptiveLayout.adaptivePadding(
-                        context,
-                        horizontalPadding: 0,
-                      ),
-                      child: HomeBannerWidget(
-                        posters: homeCarouselItems,
-                        onSelect: (poster) {
-                          selectedPoster.value = poster;
-                          Navigator.of(context).push(
-                            MaterialPageRoute(
-                              builder: (context) => poster.detailScreenWidget,
-                            ),
-                          );
-                        },
-                      ),
-                    ),
-                  ),
-                },
-                if (AdaptiveLayout.of(context).isDesktop)
-                  const SliverToBoxAdapter(
-                    child: Row(
-                      mainAxisAlignment: MainAxisAlignment.end,
-                      children: [
-                        PosterSizeWidget(),
-                      ],
-                    ),
-                  ),
-                ...[
-                  if (resumeVideo.isNotEmpty &&
-                      (homeSettings.nextUp == HomeNextUp.cont || homeSettings.nextUp == HomeNextUp.separate))
-                    PosterRow(
-                      contentPadding: padding,
-                      label: context.localized.dashboardContinueWatching,
-                      posters: resumeVideo,
-                    ),
-                  if (resumeAudio.isNotEmpty &&
-                      (homeSettings.nextUp == HomeNextUp.cont || homeSettings.nextUp == HomeNextUp.separate))
-                    PosterRow(
-                      contentPadding: padding,
-                      label: context.localized.dashboardContinueListening,
-                      posters: resumeAudio,
-                    ),
-                  if (resumeBooks.isNotEmpty &&
-                      (homeSettings.nextUp == HomeNextUp.cont || homeSettings.nextUp == HomeNextUp.separate))
-                    PosterRow(
-                      contentPadding: padding,
-                      label: context.localized.dashboardContinueReading,
-                      posters: resumeBooks,
-                    ),
-                  if (dashboardData.nextUp.isNotEmpty &&
-                      (homeSettings.nextUp == HomeNextUp.nextUp || homeSettings.nextUp == HomeNextUp.separate))
-                    PosterRow(
-                      contentPadding: padding,
-                      label: context.localized.nextUp,
-                      posters: dashboardData.nextUp,
-                    ),
-                  if ([...allResume, ...dashboardData.nextUp].isNotEmpty && homeSettings.nextUp == HomeNextUp.combined)
-                    PosterRow(
-                      contentPadding: padding,
-                      label: context.localized.dashboardContinue,
-                      posters: [...allResume, ...dashboardData.nextUp],
-                    ),
-                  ...views.dashboardViews.where((element) => element.recentlyAdded.isNotEmpty).map(
-                        (view) => PosterRow(
-                          contentPadding: padding,
-                          label: context.localized.dashboardRecentlyAdded(view.name),
-                          collectionAspectRatio: view.collectionType.aspectRatio,
-                          onLabelClick: () => context.router.push(
-                            LibrarySearchRoute(
-                              viewModelId: view.id,
-                              types: switch (view.collectionType) {
-                                CollectionType.tvshows => {
-                                    FladderItemType.episode: true,
-                                  },
-                                _ => {},
-                              },
-                              sortingOptions: switch (view.collectionType) {
-                                CollectionType.books ||
-                                CollectionType.boxsets ||
-                                CollectionType.folders ||
-                                CollectionType.music =>
-                                  SortingOptions.dateLastContentAdded,
-                                _ => SortingOptions.dateAdded,
-                              },
-                              sortOrder: SortingOrder.descending,
-                              recursive: true,
-                            ),
+                // Single row view with fixed banner
+                SliverFillRemaining(
+                  hasScrollBody: false,
+                  child: Builder(
+                    builder: (context) {
+                      final rows = [
+                        if (resumeVideo.isNotEmpty &&
+                            (homeSettings.nextUp == HomeNextUp.cont || homeSettings.nextUp == HomeNextUp.separate))
+                          RowData(
+                            label: context.localized.dashboardContinueWatching,
+                            posters: resumeVideo,
                           ),
-                          posters: view.recentlyAdded,
-                        ),
-                      ),
-                ]
-                    .nonNulls
-                    .toList()
-                    .mapIndexed(
-                      (index, child) => SliverToBoxAdapter(
-                        child: FocusProvider(
-                          autoFocus:
-                              bannerType != HomeBanner.detailedBanner || homeCarouselItems.isEmpty ? index == 0 : false,
-                          child: child,
-                        ),
-                      ),
-                    )
-                    .toList()
-                    .addInBetween(
-                      const SliverToBoxAdapter(
-                        child: SizedBox(height: 16),
-                      ),
-                    ),
+                        if (resumeAudio.isNotEmpty &&
+                            (homeSettings.nextUp == HomeNextUp.cont || homeSettings.nextUp == HomeNextUp.separate))
+                          RowData(
+                            label: context.localized.dashboardContinueListening,
+                            posters: resumeAudio,
+                          ),
+                        if (resumeBooks.isNotEmpty &&
+                            (homeSettings.nextUp == HomeNextUp.cont || homeSettings.nextUp == HomeNextUp.separate))
+                          RowData(
+                            label: context.localized.dashboardContinueReading,
+                            posters: resumeBooks,
+                          ),
+                        if (dashboardData.nextUp.isNotEmpty &&
+                            (homeSettings.nextUp == HomeNextUp.nextUp || homeSettings.nextUp == HomeNextUp.separate))
+                          RowData(
+                            label: context.localized.nextUp,
+                            posters: dashboardData.nextUp,
+                          ),
+                        if ([...allResume, ...dashboardData.nextUp].isNotEmpty && homeSettings.nextUp == HomeNextUp.combined)
+                          RowData(
+                            label: context.localized.dashboardContinue,
+                            posters: [...allResume, ...dashboardData.nextUp],
+                          ),
+                        ...views.views // Use all views to ensure rows appear (bypassing potential userProvider null issue)
+                            .where((element) => element.recentlyAdded.isNotEmpty)
+                            .map(
+                              (view) => RowData(
+                                label: context.localized.dashboardRecentlyAdded(view.name),
+                                posters: view.recentlyAdded,
+                                aspectRatio: view.collectionType.aspectRatio,
+                                onLabelClick: () => context.router.push(
+                                  LibrarySearchRoute(
+                                    viewModelId: view.id,
+                                    types: switch (view.collectionType) {
+                                      CollectionType.tvshows => {
+                                          KebapItemType.episode: true,
+                                        },
+                                      _ => {},
+                                    },
+                                    sortingOptions: switch (view.collectionType) {
+                                      CollectionType.books ||
+                                      CollectionType.boxsets ||
+                                      CollectionType.folders ||
+                                      CollectionType.music =>
+                                        SortingOptions.dateLastContentAdded,
+                                      _ => SortingOptions.dateAdded,
+                                    },
+                                    sortOrder: SortingOrder.descending,
+                                    recursive: true,
+                                  ),
+                                ),
+                              ),
+                            ),
+                      ];
+                      debugPrint('[Dashboard] SingleRowView rows count: ${rows.length}');
+                      return SingleRowView(
+                        contentPadding: padding,
+                        rows: rows,
+                      );
+                    },
+                  ),
+                ),
                 const DefautlSliverBottomPadding(),
               ],
             ),
-          ),
+
         ),
       ),
     );

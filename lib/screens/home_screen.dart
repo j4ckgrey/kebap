@@ -189,7 +189,7 @@ class HomeScreen extends ConsumerWidget {
               if (await manager.isClosable()) {
                 manager.close();
               } else {
-                fladderSnackbar(context, title: context.localized.somethingWentWrong);
+                kebapSnackbar(context, title: context.localized.somethingWentWrong);
               }
             });
             return true;

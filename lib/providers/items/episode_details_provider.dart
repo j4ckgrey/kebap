@@ -62,15 +62,15 @@ class EpisodeDetailsProvider extends StateNotifier<EpisodeDetailModel> {
       var episode = (await api.usersUserIdItemsItemIdGet(itemId: item.id)).bodyOrThrow as EpisodeModel;
 
       // Check if first version has 0 streams and fetch them
-      final firstVersion = episode.mediaStreams?.versionStreams.firstOrNull;
+      final firstVersion = episode.mediaStreams.versionStreams.firstOrNull;
       final totalStreams = (firstVersion?.videoStreams.length ?? 0) + 
                            (firstVersion?.audioStreams.length ?? 0) + 
                            (firstVersion?.subStreams.length ?? 0);
       
-      if (firstVersion != null && totalStreams == 0 && firstVersion.id != null && episode.mediaStreams != null) {
+      if (firstVersion != null && totalStreams == 0 && firstVersion.id != null) {
         // Set loading state before fetching
         episode = episode.copyWith(
-          mediaStreams: episode.mediaStreams!.copyWith(isLoading: true),
+          mediaStreams: episode.mediaStreams.copyWith(isLoading: true),
         );
         state = state.copyWith(episode: episode);
         
@@ -86,8 +86,9 @@ class EpisodeDetailsProvider extends StateNotifier<EpisodeDetailModel> {
             ),
           );
           
-          if (playbackInfo.body?.mediaSources?.firstOrNull != null) {
-            final sourceWithStreams = playbackInfo.body!.mediaSources!.first;
+          final mediaSources = playbackInfo.body?.mediaSources;
+          if (mediaSources != null && mediaSources.firstOrNull != null) {
+            final sourceWithStreams = mediaSources.first;
             
             if (sourceWithStreams.mediaStreams != null) {
               final streams = sourceWithStreams.mediaStreams!;
@@ -111,13 +112,13 @@ class EpisodeDetailsProvider extends StateNotifier<EpisodeDetailModel> {
                     .toList(),
               );
               
-              final updatedVersionStreams = [
+                final updatedVersionStreams = [
                 updatedFirstVersion,
-                ...episode.mediaStreams!.versionStreams.skip(1),
+                ...episode.mediaStreams.versionStreams.skip(1),
               ];
               
               episode = episode.copyWith(
-                mediaStreams: episode.mediaStreams!.copyWith(
+                mediaStreams: episode.mediaStreams.copyWith(
                   versionStreams: updatedVersionStreams,
                   defaultAudioStreamIndex: sourceWithStreams.defaultAudioStreamIndex,
                   defaultSubStreamIndex: sourceWithStreams.defaultSubtitleStreamIndex,
@@ -129,8 +130,8 @@ class EpisodeDetailsProvider extends StateNotifier<EpisodeDetailModel> {
         } catch (e) {
           // Ignore error, use empty streams, clear loading state
           episode = episode.copyWith(
-            mediaStreams: episode.mediaStreams!.copyWith(isLoading: false),
-          );
+              mediaStreams: episode.mediaStreams.copyWith(isLoading: false),
+            );
         }
       }
 

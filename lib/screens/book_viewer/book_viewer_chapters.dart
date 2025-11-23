@@ -75,7 +75,7 @@ class BookViewerChapters extends ConsumerWidget {
                             leading: AspectRatio(
                               aspectRatio: 1,
                               child: Card(
-                                child: FladderImage(
+                                child: KebapImage(
                                   image: book.getPosters?.primary,
                                 ),
                               ),

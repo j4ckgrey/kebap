@@ -1,4 +1,4 @@
-package nl.jknaapen.fladder.utility
+package nl.jknaapen.kebap.utility
 
 import androidx.annotation.OptIn
 import androidx.media3.common.C

@@ -75,13 +75,45 @@ class FocusButton extends StatefulWidget {
 }
 
 class FocusButtonState extends State<FocusButton> {
-  late FocusNode focusNode = widget.focusNode ?? FocusNode();
+  late FocusNode focusNode;
+  bool _didCreateFocusNode = false;
+  
   ValueNotifier<bool> onHover = ValueNotifier(false);
   Timer? _longPressTimer;
   bool _longPressTriggered = false;
   bool _keyDownActive = false;
 
   static const Duration _kLongPressTimeout = Duration(milliseconds: 500);
+
+  @override
+  void initState() {
+    super.initState();
+    if (widget.focusNode != null) {
+      focusNode = widget.focusNode!;
+    } else {
+      focusNode = FocusNode();
+      _didCreateFocusNode = true;
+    }
+  }
+
+  @override
+  void didUpdateWidget(FocusButton oldWidget) {
+    super.didUpdateWidget(oldWidget);
+    if (widget.focusNode != oldWidget.focusNode) {
+      // If we created the old node, dispose it
+      if (_didCreateFocusNode) {
+        focusNode.dispose();
+        _didCreateFocusNode = false;
+      }
+      
+      if (widget.focusNode != null) {
+        focusNode = widget.focusNode!;
+      } else {
+        focusNode = FocusNode();
+        _didCreateFocusNode = true;
+      }
+    }
+  }
 
   KeyEventResult _handleKey(FocusNode node, KeyEvent event) {
     if (!node.hasFocus) return KeyEventResult.ignored;
@@ -133,7 +165,9 @@ class FocusButtonState extends State<FocusButton> {
     if (lastMainFocus == focusNode) {
       lastMainFocus = null;
     }
-    focusNode.dispose();
+    if (_didCreateFocusNode) {
+      focusNode.dispose();
+    }
     super.dispose();
   }
 
@@ -165,10 +199,10 @@ class FocusButtonState extends State<FocusButton> {
                 curve: Curves.easeInOut,
                 clipBehavior: Clip.hardEdge,
                 decoration: BoxDecoration(
-                  borderRadius: widget.borderRadius ?? FladderTheme.smallShape.borderRadius,
+                  borderRadius: widget.borderRadius ?? KebapTheme.smallShape.borderRadius,
                 ),
                 foregroundDecoration: BoxDecoration(
-                  borderRadius: widget.borderRadius ?? FladderTheme.smallShape.borderRadius,
+                  borderRadius: widget.borderRadius ?? KebapTheme.smallShape.borderRadius,
                   color: widget.darkOverlay
                       ? Theme.of(context).colorScheme.primaryFixedDim.withValues(alpha: value ? 0.10 : 0.0)
                       : null,

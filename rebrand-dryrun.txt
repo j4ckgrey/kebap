@@ -1,13 +1,13 @@
 Rebrand dry-run report
 Generated: 2025-11-21T19:30:28+01:00
 
-1) Files containing the token 'Fladder' or 'fladder' (case-sensitive)
+1) Files containing the token 'Kebap' or 'kebap' (case-sensitive)
 -----------------------------------------------------------------
 
-2) Icon files that include 'fladder' in the filename
+2) Icon files that include 'kebap' in the filename
 --------------------------------------------------
 
-3) Packaging and metadata files referencing Fladder
+3) Packaging and metadata files referencing Kebap
 ------------------------------------------------
 
 4) Suggested next steps

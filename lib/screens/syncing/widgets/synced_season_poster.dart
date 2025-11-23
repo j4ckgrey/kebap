@@ -57,7 +57,7 @@ class _SyncedSeasonPosterState extends ConsumerState<SyncedSeasonPoster> {
                         return context.maybePop();
                       },
                       child: Card(
-                        child: FladderImage(
+                        child: KebapImage(
                           image: season.getPosters?.primary ??
                               season.parentImages?.backDrop?.firstOrNull ??
                               season.parentImages?.primary,

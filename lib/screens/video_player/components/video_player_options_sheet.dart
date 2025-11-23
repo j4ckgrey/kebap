@@ -280,7 +280,7 @@ class _VideoOptionsMobileState extends ConsumerState<VideoOptions> {
       children: [
         navTitle(currentItem?.title, currentItem?.subTextShort(context)),
         if (currentItem != null) ...{
-          if (currentItem.type == FladderItemType.episode)
+          if (currentItem.type == KebapItemType.episode)
             ListTile(
               onTap: () {
                 Navigator.of(context).pop();
@@ -297,7 +297,7 @@ class _VideoOptionsMobileState extends ConsumerState<VideoOptions> {
             },
             title: Text(context.localized.showDetails),
           ),
-          if (currentItem.type != FladderItemType.boxset)
+          if (currentItem.type != KebapItemType.boxset)
             ListTile(
               onTap: () async {
                 await addItemToCollection(context, [currentItem]);
@@ -307,7 +307,7 @@ class _VideoOptionsMobileState extends ConsumerState<VideoOptions> {
               },
               title: Text(context.localized.addToCollection),
             ),
-          if (currentItem.type != FladderItemType.playlist)
+          if (currentItem.type != KebapItemType.playlist)
             ListTile(
               onTap: () async {
                 await addItemToPlaylist(context, [currentItem]);
@@ -499,7 +499,7 @@ Future<void> showPlaybackSpeed(BuildContext context) {
                       Flexible(
                         child: SizedBox(
                           width: 250,
-                          child: FladderSlider(
+                          child: KebapSlider(
                             min: 0.25,
                             max: 3,
                             value: lastSpeed,

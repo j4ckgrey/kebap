@@ -1,4 +1,4 @@
-package nl.jknaapen.fladder
+package nl.jknaapen.kebap
 
 import NativeVideoActivity
 import PlayerSettingsPigeon
@@ -12,10 +12,10 @@ import androidx.activity.result.ActivityResultLauncher
 import androidx.activity.result.contract.ActivityResultContracts
 import com.ryanheise.audioservice.AudioServiceFragmentActivity
 import io.flutter.embedding.engine.FlutterEngine
-import nl.jknaapen.fladder.objects.PlayerSettingsObject
-import nl.jknaapen.fladder.objects.TranslationsMessenger
-import nl.jknaapen.fladder.objects.VideoPlayerObject
-import nl.jknaapen.fladder.utility.leanBackEnabled
+import nl.jknaapen.kebap.objects.PlayerSettingsObject
+import nl.jknaapen.kebap.objects.TranslationsMessenger
+import nl.jknaapen.kebap.objects.VideoPlayerObject
+import nl.jknaapen.kebap.utility.leanBackEnabled
 
 class MainActivity : AudioServiceFragmentActivity(), NativeVideoActivity {
     private lateinit var videoPlayerLauncher: ActivityResultLauncher<Intent>
