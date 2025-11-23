@@ -86,7 +86,7 @@ class AuthNotifier extends StateNotifier<LoginScreenModel> {
         loading: false,
       );
       if (context != null) {
-        fladderSnackbar(context!, title: context!.localized.unableToConnectHost);
+        kebapSnackbar(context!, title: context!.localized.unableToConnectHost);
       }
     }
   }

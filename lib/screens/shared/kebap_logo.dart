@@ -7,13 +7,14 @@ import 'package:kebap/util/application_info.dart';
 import 'package:kebap/util/string_extensions.dart';
 import 'package:kebap/util/theme_extensions.dart';
 
-class FladderLogo extends ConsumerWidget {
-  const FladderLogo({super.key});
+class KebapLogo extends ConsumerWidget {
+  final bool useGradient;
+  const KebapLogo({super.key, this.useGradient = true});
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     return Hero(
-      tag: "Fladder_Logo_Tag",
+      tag: "Kebap_Logo_Tag",
       child: Wrap(
         runAlignment: WrapAlignment.center,
         crossAxisAlignment: WrapCrossAlignment.center,
@@ -21,7 +22,7 @@ class FladderLogo extends ConsumerWidget {
         spacing: 16,
         runSpacing: 8,
         children: [
-          const FladderIcon(),
+          KebapIcon(useGradient: useGradient),
           Text(
             ref.read(applicationInfoProvider).name.capitalize(),
             style: context.textTheme.displayLarge,

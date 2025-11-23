@@ -12,7 +12,7 @@ class DebugBanner extends ConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final isPlaying = ref.watch(mediaPlaybackProvider.select((value) => value.playing));
-    if (!kDebugMode) return child;
+    return child;
     return Directionality(
       textDirection: TextDirection.ltr,
       child: Stack(

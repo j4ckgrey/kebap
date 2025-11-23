@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 
 import 'package:chopper/chopper.dart';
 
-void fladderSnackbar(
+void kebapSnackbar(
   BuildContext context, {
   String title = "",
   bool permanent = false,
@@ -32,12 +32,12 @@ void fladderSnackbar(
   }
 }
 
-void fladderSnackbarResponse(BuildContext context, Response? response, {String? altTitle}) {
+void kebapSnackbarResponse(BuildContext context, Response? response, {String? altTitle}) {
   if (response != null) {
-    fladderSnackbar(context,
+    kebapSnackbar(context,
         title: "(${response.base.statusCode}) ${response.base.reasonPhrase ?? "Something went wrong!"}");
     return;
   } else if (altTitle != null) {
-    fladderSnackbar(context, title: altTitle);
+    kebapSnackbar(context, title: altTitle);
   }
 }

@@ -1,4 +1,4 @@
-package nl.jknaapen.fladder.objects
+package nl.jknaapen.kebap.objects
 
 import AutoNextType
 import PlayerSettings
@@ -7,7 +7,7 @@ import Screensaver
 import androidx.compose.ui.graphics.Color
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.map
-import nl.jknaapen.fladder.utility.toExoPlayerFit
+import nl.jknaapen.kebap.utility.toExoPlayerFit
 import kotlin.time.DurationUnit
 import kotlin.time.toDuration
 

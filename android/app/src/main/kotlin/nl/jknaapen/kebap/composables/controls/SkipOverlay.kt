@@ -1,4 +1,4 @@
-package nl.jknaapen.fladder.composables.controls
+package nl.jknaapen.kebap.composables.controls
 
 import MediaSegment
 import MediaSegmentType
@@ -34,12 +34,12 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
-import nl.jknaapen.fladder.objects.Localized
-import nl.jknaapen.fladder.objects.PlayerSettingsObject
-import nl.jknaapen.fladder.objects.Translate
-import nl.jknaapen.fladder.objects.VideoPlayerObject
-import nl.jknaapen.fladder.utility.defaultSelected
-import nl.jknaapen.fladder.utility.leanBackEnabled
+import nl.jknaapen.kebap.objects.Localized
+import nl.jknaapen.kebap.objects.PlayerSettingsObject
+import nl.jknaapen.kebap.objects.Translate
+import nl.jknaapen.kebap.objects.VideoPlayerObject
+import nl.jknaapen.kebap.utility.defaultSelected
+import nl.jknaapen.kebap.utility.leanBackEnabled
 import kotlin.time.Duration.Companion.milliseconds
 
 @RequiresApi(Build.VERSION_CODES.O)

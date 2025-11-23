@@ -23,6 +23,7 @@ import 'package:kebap/util/focus_provider.dart';
 import 'package:kebap/util/localization_helper.dart';
 import 'package:kebap/util/sliver_list_padding.dart';
 import 'package:kebap/widgets/navigation_scaffold/components/background_image.dart';
+import 'package:kebap/widgets/navigation_scaffold/components/settings_user_icon.dart';
 import 'package:kebap/widgets/shared/button_group.dart';
 import 'package:kebap/widgets/shared/horizontal_list.dart';
 import 'package:kebap/widgets/shared/item_actions.dart';
@@ -84,15 +85,10 @@ class _LibraryScreenState extends ConsumerState<LibraryScreen> with SingleTicker
           duration: const Duration(milliseconds: 175),
           child: SizedBox.expand(
             child: CustomScrollView(
-              controller: AdaptiveLayout.scrollOf(context, HomeTabs.library),
+              primary: true,
               physics: const AlwaysScrollableScrollPhysics(),
               slivers: [
                 const DefaultSliverTopBadding(),
-                if (AdaptiveLayout.viewSizeOf(context) == ViewSize.phone)
-                  NestedSliverAppBar(
-                    route: LibrarySearchRoute(),
-                    parent: context,
-                  ),
                 if (views.isNotEmpty)
                   SliverToBoxAdapter(
                     child: LibraryRow(
@@ -293,15 +289,15 @@ class LibraryRow extends ConsumerWidget {
               },
               child: Container(
                 decoration: BoxDecoration(
-                  borderRadius: FladderTheme.defaultShape.borderRadius,
+                  borderRadius: KebapTheme.defaultShape.borderRadius,
                 ),
                 clipBehavior: Clip.hardEdge,
                 width: 200,
                 child: ClipRRect(
-                  borderRadius: FladderTheme.smallShape.borderRadius,
+                  borderRadius: KebapTheme.smallShape.borderRadius,
                   child: AspectRatio(
                     aspectRatio: 1.60,
-                    child: FladderImage(
+                    child: KebapImage(
                       image: view.imageData?.primary,
                       fit: BoxFit.cover,
                       placeHolder: Center(

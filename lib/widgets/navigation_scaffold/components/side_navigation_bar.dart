@@ -32,6 +32,11 @@ final navBarNode = FocusNode();
 // request focus into the navigation bar.
 FocusNode? firstNavButtonNode;
 
+// Whether the side-rail (legacy sidebar) is currently active/visible.
+// When true, LEFT fallback should move focus into the rail. When false
+// (we're using the top navbar), LEFT should not trigger a rail fallback.
+bool railActive = false;
+
 void registerFirstNavButtonNode(FocusNode node) {
   firstNavButtonNode = node;
 }
@@ -88,6 +93,9 @@ class _SideNavigationBarState extends ConsumerState<SideNavigationBar> {
 
     final sideBarPadding = isDesktop ? 6.0 : 0.0;
 
+    // Mark whether the side rail is effectively active for traversal logic.
+    railActive = largeBar && !fullScreenChildRoute && hasOverlay;
+
     return Stack(
       children: [
         AdaptiveLayout(
@@ -112,11 +120,11 @@ class _SideNavigationBarState extends ConsumerState<SideNavigationBar> {
                       child: Container(
                         decoration: BoxDecoration(
                           color: Theme.of(context).colorScheme.surface.withValues(alpha: 0.65),
-                          borderRadius: isDesktop ? FladderTheme.defaultShape.borderRadius : null,
+                          borderRadius: isDesktop ? KebapTheme.defaultShape.borderRadius : null,
                         ),
                         foregroundDecoration: isDesktop
                             ? BoxDecoration(
-                                borderRadius: FladderTheme.defaultShape.borderRadius,
+                                borderRadius: KebapTheme.defaultShape.borderRadius,
                                 border: Border.all(
                                   width: 1.0,
                                   color: Theme.of(context).colorScheme.onSurface.withValues(alpha: 0.12),
@@ -238,10 +246,10 @@ class _SideNavigationBarState extends ConsumerState<SideNavigationBar> {
                                             ),
                                             customIcon: usePostersForLibrary
                                                 ? ClipRRect(
-                                                    borderRadius: FladderTheme.smallShape.borderRadius,
+                                                    borderRadius: KebapTheme.smallShape.borderRadius,
                                                     child: SizedBox.square(
                                                       dimension: 50,
-                                                      child: FladderImage(
+                                                      child: KebapImage(
                                                         image: view.imageData?.primary,
                                                         placeHolder: Card(
                                                           child: Icon(
@@ -285,7 +293,7 @@ class _SideNavigationBarState extends ConsumerState<SideNavigationBar> {
                                             expanded: shouldExpand,
                                             customIcon: usePostersForLibrary
                                                 ? ClipRRect(
-                                                    borderRadius: FladderTheme.smallShape.borderRadius,
+                                                    borderRadius: KebapTheme.smallShape.borderRadius,
                                                     child: const SizedBox.square(
                                                       dimension: 50,
                                                       child: Card(
@@ -311,10 +319,10 @@ class _SideNavigationBarState extends ConsumerState<SideNavigationBar> {
                                                         ? Padding(
                                                             padding: const EdgeInsets.symmetric(vertical: 4),
                                                             child: ClipRRect(
-                                                              borderRadius: FladderTheme.smallShape.borderRadius,
+                                                              borderRadius: KebapTheme.smallShape.borderRadius,
                                                               child: SizedBox.square(
                                                                 dimension: 45,
-                                                                child: FladderImage(
+                                                                child: KebapImage(
                                                                   image: e.imageData?.primary,
                                                                   placeHolder: Card(
                                                                     child: Icon(
@@ -374,11 +382,11 @@ class _SideNavigationBarState extends ConsumerState<SideNavigationBar> {
                     child: Container(
                       decoration: BoxDecoration(
                         color: Theme.of(context).colorScheme.surface.withValues(alpha: 0.65),
-                        borderRadius: isDesktop ? FladderTheme.defaultShape.borderRadius : null,
+                        borderRadius: isDesktop ? KebapTheme.defaultShape.borderRadius : null,
                       ),
                       foregroundDecoration: isDesktop
                           ? BoxDecoration(
-                              borderRadius: FladderTheme.defaultShape.borderRadius,
+                              borderRadius: KebapTheme.defaultShape.borderRadius,
                               border: Border.all(
                                 width: 1.0,
                                 color: Theme.of(context).colorScheme.onSurface.withValues(alpha: 0.12),
@@ -501,10 +509,10 @@ class _SideNavigationBarState extends ConsumerState<SideNavigationBar> {
                                                 ),
                                                 customIcon: usePostersForLibrary
                                                     ? ClipRRect(
-                                                        borderRadius: FladderTheme.smallShape.borderRadius,
+                                                        borderRadius: KebapTheme.smallShape.borderRadius,
                                                         child: SizedBox.square(
                                                           dimension: 50,
-                                                          child: FladderImage(
+                                                          child: KebapImage(
                                                             image: view.imageData?.primary,
                                                             placeHolder: Card(
                                                               child: Icon(

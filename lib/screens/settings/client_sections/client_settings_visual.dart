@@ -170,7 +170,7 @@ List<Widget> buildClientSettingsVisual(
           ),
           Padding(
             padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
-            child: FladderSlider(
+            child: KebapSlider(
               min: 0.5,
               max: 1.5,
               value: clientSettings.posterSize,

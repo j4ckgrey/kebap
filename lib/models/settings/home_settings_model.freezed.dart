@@ -16,8 +16,6 @@ T _$identity<T>(T value) => value;
 mixin _$HomeSettingsModel {
   Set<LayoutMode> get screenLayouts;
   Set<ViewSize> get layoutStates;
-  HomeBanner get homeBanner;
-  HomeCarouselSettings get carouselSettings;
   HomeNextUp get nextUp;
 
   /// Create a copy of HomeSettingsModel
@@ -33,7 +31,7 @@ mixin _$HomeSettingsModel {
 
   @override
   String toString() {
-    return 'HomeSettingsModel(screenLayouts: $screenLayouts, layoutStates: $layoutStates, homeBanner: $homeBanner, carouselSettings: $carouselSettings, nextUp: $nextUp)';
+    return 'HomeSettingsModel(screenLayouts: $screenLayouts, layoutStates: $layoutStates, nextUp: $nextUp)';
   }
 }
 
@@ -46,8 +44,6 @@ abstract mixin class $HomeSettingsModelCopyWith<$Res> {
   $Res call(
       {Set<LayoutMode> screenLayouts,
       Set<ViewSize> layoutStates,
-      HomeBanner homeBanner,
-      HomeCarouselSettings carouselSettings,
       HomeNextUp nextUp});
 }
 
@@ -66,8 +62,6 @@ class _$HomeSettingsModelCopyWithImpl<$Res>
   $Res call({
     Object? screenLayouts = null,
     Object? layoutStates = null,
-    Object? homeBanner = null,
-    Object? carouselSettings = null,
     Object? nextUp = null,
   }) {
     return _then(_self.copyWith(
@@ -79,14 +73,6 @@ class _$HomeSettingsModelCopyWithImpl<$Res>
           ? _self.layoutStates
           : layoutStates // ignore: cast_nullable_to_non_nullable
               as Set<ViewSize>,
-      homeBanner: null == homeBanner
-          ? _self.homeBanner
-          : homeBanner // ignore: cast_nullable_to_non_nullable
-              as HomeBanner,
-      carouselSettings: null == carouselSettings
-          ? _self.carouselSettings
-          : carouselSettings // ignore: cast_nullable_to_non_nullable
-              as HomeCarouselSettings,
       nextUp: null == nextUp
           ? _self.nextUp
           : nextUp // ignore: cast_nullable_to_non_nullable
@@ -188,11 +174,7 @@ extension HomeSettingsModelPatterns on HomeSettingsModel {
 
   @optionalTypeArgs
   TResult maybeWhen<TResult extends Object?>(
-    TResult Function(
-            Set<LayoutMode> screenLayouts,
-            Set<ViewSize> layoutStates,
-            HomeBanner homeBanner,
-            HomeCarouselSettings carouselSettings,
+    TResult Function(Set<LayoutMode> screenLayouts, Set<ViewSize> layoutStates,
             HomeNextUp nextUp)?
         $default, {
     required TResult orElse(),
@@ -200,8 +182,7 @@ extension HomeSettingsModelPatterns on HomeSettingsModel {
     final _that = this;
     switch (_that) {
       case _HomeSettingsModel() when $default != null:
-        return $default(_that.screenLayouts, _that.layoutStates,
-            _that.homeBanner, _that.carouselSettings, _that.nextUp);
+        return $default(_that.screenLayouts, _that.layoutStates, _that.nextUp);
       case _:
         return orElse();
     }
@@ -222,19 +203,14 @@ extension HomeSettingsModelPatterns on HomeSettingsModel {
 
   @optionalTypeArgs
   TResult when<TResult extends Object?>(
-    TResult Function(
-            Set<LayoutMode> screenLayouts,
-            Set<ViewSize> layoutStates,
-            HomeBanner homeBanner,
-            HomeCarouselSettings carouselSettings,
+    TResult Function(Set<LayoutMode> screenLayouts, Set<ViewSize> layoutStates,
             HomeNextUp nextUp)
         $default,
   ) {
     final _that = this;
     switch (_that) {
       case _HomeSettingsModel():
-        return $default(_that.screenLayouts, _that.layoutStates,
-            _that.homeBanner, _that.carouselSettings, _that.nextUp);
+        return $default(_that.screenLayouts, _that.layoutStates, _that.nextUp);
       case _:
         throw StateError('Unexpected subclass');
     }
@@ -254,19 +230,14 @@ extension HomeSettingsModelPatterns on HomeSettingsModel {
 
   @optionalTypeArgs
   TResult? whenOrNull<TResult extends Object?>(
-    TResult? Function(
-            Set<LayoutMode> screenLayouts,
-            Set<ViewSize> layoutStates,
-            HomeBanner homeBanner,
-            HomeCarouselSettings carouselSettings,
+    TResult? Function(Set<LayoutMode> screenLayouts, Set<ViewSize> layoutStates,
             HomeNextUp nextUp)?
         $default,
   ) {
     final _that = this;
     switch (_that) {
       case _HomeSettingsModel() when $default != null:
-        return $default(_that.screenLayouts, _that.layoutStates,
-            _that.homeBanner, _that.carouselSettings, _that.nextUp);
+        return $default(_that.screenLayouts, _that.layoutStates, _that.nextUp);
       case _:
         return null;
     }
@@ -279,8 +250,6 @@ class _HomeSettingsModel extends HomeSettingsModel {
   _HomeSettingsModel(
       {final Set<LayoutMode> screenLayouts = const {...LayoutMode.values},
       final Set<ViewSize> layoutStates = const {...ViewSize.values},
-      this.homeBanner = HomeBanner.carousel,
-      this.carouselSettings = HomeCarouselSettings.combined,
       this.nextUp = HomeNextUp.separate})
       : _screenLayouts = screenLayouts,
         _layoutStates = layoutStates,
@@ -308,12 +277,6 @@ class _HomeSettingsModel extends HomeSettingsModel {
 
   @override
   @JsonKey()
-  final HomeBanner homeBanner;
-  @override
-  @JsonKey()
-  final HomeCarouselSettings carouselSettings;
-  @override
-  @JsonKey()
   final HomeNextUp nextUp;
 
   /// Create a copy of HomeSettingsModel
@@ -333,7 +296,7 @@ class _HomeSettingsModel extends HomeSettingsModel {
 
   @override
   String toString() {
-    return 'HomeSettingsModel(screenLayouts: $screenLayouts, layoutStates: $layoutStates, homeBanner: $homeBanner, carouselSettings: $carouselSettings, nextUp: $nextUp)';
+    return 'HomeSettingsModel(screenLayouts: $screenLayouts, layoutStates: $layoutStates, nextUp: $nextUp)';
   }
 }
 
@@ -348,8 +311,6 @@ abstract mixin class _$HomeSettingsModelCopyWith<$Res>
   $Res call(
       {Set<LayoutMode> screenLayouts,
       Set<ViewSize> layoutStates,
-      HomeBanner homeBanner,
-      HomeCarouselSettings carouselSettings,
       HomeNextUp nextUp});
 }
 
@@ -368,8 +329,6 @@ class __$HomeSettingsModelCopyWithImpl<$Res>
   $Res call({
     Object? screenLayouts = null,
     Object? layoutStates = null,
-    Object? homeBanner = null,
-    Object? carouselSettings = null,
     Object? nextUp = null,
   }) {
     return _then(_HomeSettingsModel(
@@ -381,14 +340,6 @@ class __$HomeSettingsModelCopyWithImpl<$Res>
           ? _self._layoutStates
           : layoutStates // ignore: cast_nullable_to_non_nullable
               as Set<ViewSize>,
-      homeBanner: null == homeBanner
-          ? _self.homeBanner
-          : homeBanner // ignore: cast_nullable_to_non_nullable
-              as HomeBanner,
-      carouselSettings: null == carouselSettings
-          ? _self.carouselSettings
-          : carouselSettings // ignore: cast_nullable_to_non_nullable
-              as HomeCarouselSettings,
       nextUp: null == nextUp
           ? _self.nextUp
           : nextUp // ignore: cast_nullable_to_non_nullable

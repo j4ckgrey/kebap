@@ -46,7 +46,7 @@ class _ResolutionCheckerState extends ConsumerState<ResolutionChecker> {
       if (isFullScreen) {
         await windowManager.setFullScreen(false);
       }
-      await windowManager.setFullScreen(true);
+      // await windowManager.setFullScreen(true);
     }
   }
 

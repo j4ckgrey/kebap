@@ -184,7 +184,7 @@ class _MediaBannerState extends ConsumerState<MediaBanner> {
                                 height: double.infinity,
                                 child: Padding(
                                   padding: const EdgeInsets.all(1),
-                                  child: FladderImage(
+                                  child: KebapImage(
                                     fit: BoxFit.cover,
                                     image: currentItem.bannerImage,
                                   ),
@@ -264,7 +264,7 @@ class _MediaBannerState extends ConsumerState<MediaBanner> {
           if (widget.items.length > 1)
             FractionallySizedBox(
               widthFactor: 0.35,
-              child: FladderSlider(
+              child: KebapSlider(
                 value: currentPage.toDouble(),
                 min: 0,
                 animation: const Duration(milliseconds: 250),

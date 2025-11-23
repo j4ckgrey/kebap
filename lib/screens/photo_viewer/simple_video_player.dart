@@ -139,7 +139,7 @@ class _SimpleVideoPlayerState extends ConsumerState<SimpleVideoPlayer> with Wind
         alignment: Alignment.center,
         children: [
           Positioned.fill(
-            child: FladderImage(
+            child: KebapImage(
               image: widget.video.thumbnail?.primary,
               disableBlur: true,
               fit: BoxFit.contain,
@@ -177,7 +177,7 @@ class _SimpleVideoPlayerState extends ConsumerState<SimpleVideoPlayer> with Wind
                                 children: [
                                   SizedBox(
                                     height: 40,
-                                    child: FladderSlider(
+                                    child: KebapSlider(
                                       min: 0.0,
                                       max: duration.inMilliseconds.toDouble(),
                                       value: position.inMilliseconds.toDouble().clamp(

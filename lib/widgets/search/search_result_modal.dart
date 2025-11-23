@@ -8,6 +8,7 @@ import 'package:kebap/models/item_base_model.dart';
 import 'package:kebap/models/tmdb_metadata_model.dart';
 import 'package:kebap/providers/baklava_metadata_provider.dart';
 import 'package:kebap/providers/baklava_requests_provider.dart';
+import 'package:kebap/providers/effective_baklava_config_provider.dart';
 import 'package:kebap/providers/user_provider.dart';
 import 'package:kebap/screens/shared/kebap_snackbar.dart';
 import 'package:kebap/util/adaptive_layout/adaptive_layout.dart';
@@ -116,7 +117,7 @@ class _SearchResultModalState extends ConsumerState<SearchResultModal> {
 
     if (imdbId == null) {
       if (mounted) {
-        fladderSnackbar(context, title: 'Cannot import: No IMDB ID found');
+        kebapSnackbar(context, title: 'Cannot import: No IMDB ID found');
       }
       setState(() => _importing = false);
       return;
@@ -129,10 +130,10 @@ class _SearchResultModalState extends ConsumerState<SearchResultModal> {
 
     if (mounted) {
       if (success) {
-        fladderSnackbar(context, title: 'Import started successfully');
+        kebapSnackbar(context, title: 'Import started successfully');
         Navigator.of(context).pop();
       } else {
-        fladderSnackbar(context, title: 'Import failed');
+        kebapSnackbar(context, title: 'Import failed');
       }
     }
   }
@@ -156,10 +157,10 @@ class _SearchResultModalState extends ConsumerState<SearchResultModal> {
 
     if (mounted) {
       if (success) {
-        fladderSnackbar(context, title: 'Request created successfully');
+        kebapSnackbar(context, title: 'Request created successfully');
         Navigator.of(context).pop();
       } else {
-        fladderSnackbar(context, title: 'Failed to create request');
+        kebapSnackbar(context, title: 'Failed to create request');
       }
     }
   }
@@ -173,10 +174,13 @@ class _SearchResultModalState extends ConsumerState<SearchResultModal> {
 
     final metadata = metadataState.metadata;
     final credits = metadataState.credits;
+    final effectiveConfigAsync = ref.watch(effectiveBaklavaConfigProvider);
+    final disableNonAdminRequests = effectiveConfigAsync.maybeWhen(
+      data: (cfg) => cfg.disableNonAdminRequests == true,
+      orElse: () => false,
+    );
 
-    return Dialog(
-      backgroundColor: Colors.transparent,
-      child: Container(
+    return Container(
         height: 600,
         width: double.maxFinite,
         constraints: const BoxConstraints(maxWidth: 900),
@@ -184,7 +188,7 @@ class _SearchResultModalState extends ConsumerState<SearchResultModal> {
           color: theme.colorScheme.surface,
           borderRadius: BorderRadius.circular(12),
         ),
-        child: metadataState.loading
+      child: metadataState.loading
             ? const Center(child: CircularProgressIndicator())
             : Row(
                 crossAxisAlignment: CrossAxisAlignment.stretch,
@@ -215,24 +219,14 @@ class _SearchResultModalState extends ConsumerState<SearchResultModal> {
                       child: Column(
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
-                          // Header with title and close button
-                          Row(
-                            children: [
-                              Expanded(
-                                child: Text(
-                                  metadata?.title ?? metadata?.name ?? widget.item.name,
-                                  style: theme.textTheme.headlineSmall?.copyWith(
-                                    fontWeight: FontWeight.bold,
-                                  ),
-                                  maxLines: 2,
-                                  overflow: TextOverflow.ellipsis,
-                                ),
-                              ),
-                              IconButton(
-                                icon: const Icon(Icons.close),
-                                onPressed: () => Navigator.of(context).pop(),
-                              ),
-                            ],
+                          // Header with title
+                          Text(
+                            metadata?.title ?? metadata?.name ?? widget.item.name,
+                            style: theme.textTheme.headlineSmall?.copyWith(
+                              fontWeight: FontWeight.bold,
+                            ),
+                            maxLines: 2,
+                            overflow: TextOverflow.ellipsis,
                           ),
 
                           const SizedBox(height: 16),
@@ -412,17 +406,49 @@ class _SearchResultModalState extends ConsumerState<SearchResultModal> {
                                   label: Text(_importing ? 'Importing...' : 'Import'),
                                 )
                               else
-                                FilledButton.icon(
-                                  onPressed: _requesting ? null : _handleRequest,
-                                  icon: _requesting
-                                      ? const SizedBox(
-                                          width: 16,
-                                          height: 16,
-                                          child: CircularProgressIndicator(strokeWidth: 2),
-                                        )
-                                      : const Icon(IconsaxPlusLinear.add),
-                                  label: Text(_requesting ? 'Requesting...' : 'Request'),
-                                ),
+                                Builder(builder: (context) {
+                                  final isConfigLoading = effectiveConfigAsync is AsyncLoading;
+                                  final isAdminUser = isAdmin;
+
+                                  final allowRequest = !disableNonAdminRequests || isAdminUser;
+
+                                  // Show a disabled button while config is loading, or a disabled
+                                  // button with explanatory tooltip if requests are blocked.
+                                  if (isConfigLoading) {
+                                    return FilledButton.icon(
+                                      onPressed: null,
+                                      icon: const SizedBox(
+                                        width: 16,
+                                        height: 16,
+                                        child: CircularProgressIndicator(strokeWidth: 2),
+                                      ),
+                                      label: const Text('Loading...'),
+                                    );
+                                  }
+
+                                  if (!allowRequest) {
+                                    return Tooltip(
+                                      message: 'Requests are disabled for non-admin users',
+                                      child: FilledButton.icon(
+                                        onPressed: null,
+                                        icon: const Icon(IconsaxPlusLinear.add),
+                                        label: const Text('Requests disabled'),
+                                      ),
+                                    );
+                                  }
+
+                                  return FilledButton.icon(
+                                    onPressed: _requesting ? null : _handleRequest,
+                                    icon: _requesting
+                                        ? const SizedBox(
+                                            width: 16,
+                                            height: 16,
+                                            child: CircularProgressIndicator(strokeWidth: 2),
+                                          )
+                                        : const Icon(IconsaxPlusLinear.add),
+                                    label: Text(_requesting ? 'Requesting...' : 'Request'),
+                                  );
+                                }),
                             ],
                           ),
                         ],
@@ -431,10 +457,10 @@ class _SearchResultModalState extends ConsumerState<SearchResultModal> {
                   ),
                 ],
               ),
-      ),
     );
   }
 }
+
 
 // Reviews Carousel Widget with Navigation
 class _ReviewsCarousel extends StatefulWidget {
@@ -631,4 +657,3 @@ class _ReviewsCarouselState extends State<_ReviewsCarousel> {
     );
   }
 }
-

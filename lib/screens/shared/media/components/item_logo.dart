@@ -35,7 +35,7 @@ class ItemLogo extends StatelessWidget {
     return logo != null
         ? ConstrainedBox(
             constraints: BoxConstraints(maxWidth: size.width * 0.25, maxHeight: maxHeight),
-            child: FladderImage(
+            child: KebapImage(
               image: logo,
               disableBlur: true,
               stackFit: StackFit.passthrough,

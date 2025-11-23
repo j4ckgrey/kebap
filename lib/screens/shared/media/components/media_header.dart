@@ -47,7 +47,7 @@ class MediaHeader extends ConsumerWidget {
           child: Stack(
             children: [
               logo != null
-                  ? FladderImage(
+                  ? KebapImage(
                       image: logo,
                       disableBlur: true,
                       alignment: alignment,

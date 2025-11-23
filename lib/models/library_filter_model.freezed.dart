@@ -21,7 +21,7 @@ mixin _$LibraryFilterModel implements DiagnosticableTreeMixin {
   Map<String, bool> get tags;
   Map<int, bool> get years;
   Map<String, bool> get officialRatings;
-  Map<FladderItemType, bool> get types;
+  Map<KebapItemType, bool> get types;
   SortingOptions get sortingOption;
   SortingOrder get sortOrder;
   bool? get favourites;
@@ -78,7 +78,7 @@ abstract mixin class $LibraryFilterModelCopyWith<$Res> {
       Map<String, bool> tags,
       Map<int, bool> years,
       Map<String, bool> officialRatings,
-      Map<FladderItemType, bool> types,
+      Map<KebapItemType, bool> types,
       SortingOptions sortingOption,
       SortingOrder sortOrder,
       bool? favourites,
@@ -142,7 +142,7 @@ class _$LibraryFilterModelCopyWithImpl<$Res>
       types: null == types
           ? _self.types
           : types // ignore: cast_nullable_to_non_nullable
-              as Map<FladderItemType, bool>,
+              as Map<KebapItemType, bool>,
       sortingOption: null == sortingOption
           ? _self.sortingOption
           : sortingOption // ignore: cast_nullable_to_non_nullable
@@ -271,7 +271,7 @@ extension LibraryFilterModelPatterns on LibraryFilterModel {
             Map<String, bool> tags,
             Map<int, bool> years,
             Map<String, bool> officialRatings,
-            Map<FladderItemType, bool> types,
+            Map<KebapItemType, bool> types,
             SortingOptions sortingOption,
             SortingOrder sortOrder,
             bool? favourites,
@@ -325,7 +325,7 @@ extension LibraryFilterModelPatterns on LibraryFilterModel {
             Map<String, bool> tags,
             Map<int, bool> years,
             Map<String, bool> officialRatings,
-            Map<FladderItemType, bool> types,
+            Map<KebapItemType, bool> types,
             SortingOptions sortingOption,
             SortingOrder sortOrder,
             bool? favourites,
@@ -377,7 +377,7 @@ extension LibraryFilterModelPatterns on LibraryFilterModel {
             Map<String, bool> tags,
             Map<int, bool> years,
             Map<String, bool> officialRatings,
-            Map<FladderItemType, bool> types,
+            Map<KebapItemType, bool> types,
             SortingOptions sortingOption,
             SortingOrder sortOrder,
             bool? favourites,
@@ -424,21 +424,21 @@ class _LibraryFilterModel extends LibraryFilterModel
       final Map<String, bool> tags = const {},
       final Map<int, bool> years = const {},
       final Map<String, bool> officialRatings = const {},
-      final Map<FladderItemType, bool> types = const {
-        FladderItemType.audio: false,
-        FladderItemType.boxset: false,
-        FladderItemType.book: false,
-        FladderItemType.collectionFolder: false,
-        FladderItemType.episode: false,
-        FladderItemType.folder: false,
-        FladderItemType.movie: false,
-        FladderItemType.musicAlbum: false,
-        FladderItemType.musicVideo: false,
-        FladderItemType.photo: false,
-        FladderItemType.person: false,
-        FladderItemType.photoAlbum: false,
-        FladderItemType.series: false,
-        FladderItemType.video: false
+      final Map<KebapItemType, bool> types = const {
+        KebapItemType.audio: false,
+        KebapItemType.boxset: false,
+        KebapItemType.book: false,
+        KebapItemType.collectionFolder: false,
+        KebapItemType.episode: false,
+        KebapItemType.folder: false,
+        KebapItemType.movie: false,
+        KebapItemType.musicAlbum: false,
+        KebapItemType.musicVideo: false,
+        KebapItemType.photo: false,
+        KebapItemType.person: false,
+        KebapItemType.photoAlbum: false,
+        KebapItemType.series: false,
+        KebapItemType.video: false
       },
       this.sortingOption = SortingOptions.sortName,
       this.sortOrder = SortingOrder.ascending,
@@ -512,10 +512,10 @@ class _LibraryFilterModel extends LibraryFilterModel
     return EqualUnmodifiableMapView(_officialRatings);
   }
 
-  final Map<FladderItemType, bool> _types;
+  final Map<KebapItemType, bool> _types;
   @override
   @JsonKey()
-  Map<FladderItemType, bool> get types {
+  Map<KebapItemType, bool> get types {
     if (_types is EqualUnmodifiableMapView) return _types;
     // ignore: implicit_dynamic_type
     return EqualUnmodifiableMapView(_types);
@@ -595,7 +595,7 @@ abstract mixin class _$LibraryFilterModelCopyWith<$Res>
       Map<String, bool> tags,
       Map<int, bool> years,
       Map<String, bool> officialRatings,
-      Map<FladderItemType, bool> types,
+      Map<KebapItemType, bool> types,
       SortingOptions sortingOption,
       SortingOrder sortOrder,
       bool? favourites,
@@ -659,7 +659,7 @@ class __$LibraryFilterModelCopyWithImpl<$Res>
       types: null == types
           ? _self._types
           : types // ignore: cast_nullable_to_non_nullable
-              as Map<FladderItemType, bool>,
+              as Map<KebapItemType, bool>,
       sortingOption: null == sortingOption
           ? _self.sortingOption
           : sortingOption // ignore: cast_nullable_to_non_nullable

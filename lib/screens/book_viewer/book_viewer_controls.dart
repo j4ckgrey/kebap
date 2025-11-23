@@ -316,7 +316,7 @@ class _BookViewerControlsState extends ConsumerState<BookViewerControls> {
                                                 },
                                               );
                                             }
-                                          : () => fladderSnackbar(context, title: "No other chapters"),
+                                          : () => kebapSnackbar(context, title: "No other chapters"),
                                       icon: const Icon(IconsaxPlusLinear.bookmark_2),
                                     )
                                   ],
@@ -388,7 +388,7 @@ class _BookViewerControlsState extends ConsumerState<BookViewerControls> {
             flipX: bookViewerSettings.readDirection == ReadDirection.rightToLeft,
             child: SizedBox(
               height: 40,
-              child: FladderSlider(
+              child: KebapSlider(
                 value: clampedCurrentPage.toDouble(),
                 divisions: details.pages.length - 1,
                 min: 1,

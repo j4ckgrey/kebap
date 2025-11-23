@@ -1,4 +1,4 @@
-package nl.jknaapen.fladder.composables.controls
+package nl.jknaapen.kebap.composables.controls
 
 import MediaSegment
 import MediaSegmentType
@@ -68,12 +68,12 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.util.fastCoerceIn
 import androidx.media3.exoplayer.ExoPlayer
 import kotlinx.coroutines.delay
-import nl.jknaapen.fladder.objects.Localized
-import nl.jknaapen.fladder.objects.Translate
-import nl.jknaapen.fladder.objects.VideoPlayerObject
-import nl.jknaapen.fladder.utility.capitalize
-import nl.jknaapen.fladder.utility.formatTime
-import nl.jknaapen.fladder.utility.measureTextWidth
+import nl.jknaapen.kebap.objects.Localized
+import nl.jknaapen.kebap.objects.Translate
+import nl.jknaapen.kebap.objects.VideoPlayerObject
+import nl.jknaapen.kebap.utility.capitalize
+import nl.jknaapen.kebap.utility.formatTime
+import nl.jknaapen.kebap.utility.measureTextWidth
 import kotlin.math.max
 import kotlin.math.min
 import kotlin.time.Duration

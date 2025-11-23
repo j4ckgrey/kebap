@@ -62,10 +62,10 @@ class ChapterRow extends ConsumerWidget {
           },
           child: Container(
             decoration: BoxDecoration(
-              borderRadius: FladderTheme.smallShape.borderRadius,
+              borderRadius: KebapTheme.smallShape.borderRadius,
               color: Theme.of(context).colorScheme.surfaceContainer,
             ),
-            foregroundDecoration: FladderTheme.defaultPosterDecoration,
+            foregroundDecoration: KebapTheme.defaultPosterDecoration,
             child: AspectRatio(
               aspectRatio: 1.75,
               child: CachedNetworkImage(
@@ -82,7 +82,7 @@ class ChapterRow extends ConsumerWidget {
                 padding: const EdgeInsets.all(5),
                 child: Container(
                   decoration: BoxDecoration(
-                    borderRadius: FladderTheme.smallShape.borderRadius,
+                    borderRadius: KebapTheme.smallShape.borderRadius,
                     color: Theme.of(context).colorScheme.surfaceContainer.withValues(alpha: 0.75),
                   ),
                   child: Padding(

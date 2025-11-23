@@ -50,8 +50,8 @@ class _BackgroundImageState extends ConsumerState<BackgroundImage> {
       } else if (widget.items.isNotEmpty) {
         final randomItem = widget.items.shuffled().firstOrNull;
         final itemId = switch (randomItem?.type) {
-          FladderItemType.folder => randomItem?.id,
-          FladderItemType.series => randomItem?.parentId ?? randomItem?.id,
+          KebapItemType.folder => randomItem?.id,
+          KebapItemType.series => randomItem?.parentId ?? randomItem?.id,
           _ => randomItem?.id,
         };
 
@@ -89,7 +89,7 @@ class _BackgroundImageState extends ConsumerState<BackgroundImage> {
           ],
         );
       },
-      child: FladderImage(
+      child: KebapImage(
         key: ValueKey(image.key),
         image: image,
         fit: BoxFit.cover,

@@ -201,7 +201,7 @@ class _ItemDetailScreenState extends ConsumerState<EpisodeDetailScreen> {
                           .moreFrom("${context.localized.season(1).toLowerCase()} ${episodeDetails.season}"),
                       onEpisodeTap: (action, episodeModel) {
                         if (episodeModel.id == episodeDetails.id) {
-                          fladderSnackbar(context, title: context.localized.selectedWith(context.localized.episode(0)));
+                          kebapSnackbar(context, title: context.localized.selectedWith(context.localized.episode(0)));
                         } else {
                           action();
                         }

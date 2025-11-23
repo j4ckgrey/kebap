@@ -7,7 +7,7 @@ import 'package:transparent_image/transparent_image.dart';
 import 'package:kebap/models/items/images_models.dart';
 import 'package:kebap/providers/settings/client_settings_provider.dart';
 
-class FladderImage extends ConsumerWidget {
+class KebapImage extends ConsumerWidget {
   final ImageData? image;
   final Widget Function(BuildContext context, Widget child, int? frame, bool wasSynchronouslyLoaded)? frameBuilder;
   final Widget Function(BuildContext context, Object object, StackTrace? stack)? imageErrorBuilder;
@@ -19,7 +19,7 @@ class FladderImage extends ConsumerWidget {
   final bool disableBlur;
   final bool blurOnly;
   final int? decodeHeight;
-  const FladderImage({
+  const KebapImage({
     required this.image,
     this.frameBuilder,
     this.imageErrorBuilder,

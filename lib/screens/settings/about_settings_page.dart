@@ -26,13 +26,8 @@ class _Socials {
 const socials = [
   _Socials(
     'Github',
-    'https://github.com/j4ckgrey/Fladder',
+    'https://github.com/j4ckgrey/Kebap',
     FontAwesomeIcons.githubAlt,
-  ),
-  _Socials(
-    'Weblate',
-    'https://hosted.weblate.org/projects/fladder/',
-    IconsaxPlusLinear.global,
   ),
 ];
 
@@ -47,7 +42,7 @@ class AboutSettingsPage extends ConsumerWidget {
     return SettingsScaffold(
       label: "",
       items: [
-        const FladderLogo(),
+        const KebapLogo(useGradient: false),
         Column(
           crossAxisAlignment: CrossAxisAlignment.center,
           children: [
@@ -96,7 +91,7 @@ class AboutSettingsPage extends ConsumerWidget {
             FilledButton.tonal(
               onPressed: () => showLicensePage(
                 context: context,
-                applicationIcon: const FladderIcon(size: 55),
+                applicationIcon: const KebapIcon(size: 55, useGradient: false),
                 applicationVersion: applicationInfo.versionPlatformBuild,
                 applicationLegalese: "j4ckgrey",
                 useRootNavigator: true,

@@ -29,13 +29,13 @@ ColorScheme _insertAdditionalColours(ColorScheme scheme) => scheme.copyWith(
       surfaceContainerHighest: scheme.surfaceContainerHighest,
     );
 
-class FladderTheme {
+class KebapTheme {
   static RoundedRectangleBorder get smallShape => RoundedRectangleBorder(borderRadius: BorderRadius.circular(12));
   static RoundedRectangleBorder get defaultShape => RoundedRectangleBorder(borderRadius: BorderRadius.circular(16));
   static RoundedRectangleBorder get largeShape => RoundedRectangleBorder(borderRadius: BorderRadius.circular(32));
 
   static BoxDecoration get defaultPosterDecoration => BoxDecoration(
-        borderRadius: FladderTheme.smallShape.borderRadius,
+        borderRadius: KebapTheme.smallShape.borderRadius,
         border: Border.all(width: 1, color: Colors.white.withAlpha(45)),
       );
 
@@ -52,7 +52,7 @@ class FladderTheme {
       },
     );
 
-    final textTheme = FladderFonts.rubikTextTheme(
+    final textTheme = KebapFonts.rubikTextTheme(
       const TextTheme(),
     );
     return ThemeData(
@@ -69,8 +69,8 @@ class FladderTheme {
         shape: smallShape,
       ),
       expansionTileTheme: ExpansionTileThemeData(
-        shape: RoundedRectangleBorder(borderRadius: FladderTheme.defaultShape.borderRadius),
-        collapsedShape: RoundedRectangleBorder(borderRadius: FladderTheme.defaultShape.borderRadius),
+        shape: RoundedRectangleBorder(borderRadius: KebapTheme.defaultShape.borderRadius),
+        collapsedShape: RoundedRectangleBorder(borderRadius: KebapTheme.defaultShape.borderRadius),
       ),
       progressIndicatorTheme: const ProgressIndicatorThemeData(),
       floatingActionButtonTheme: FloatingActionButtonThemeData(
@@ -80,7 +80,7 @@ class FladderTheme {
       snackBarTheme: SnackBarThemeData(
         backgroundColor: scheme?.secondary,
         behavior: SnackBarBehavior.fixed,
-        shape: RoundedRectangleBorder(borderRadius: FladderTheme.defaultShape.borderRadius),
+        shape: RoundedRectangleBorder(borderRadius: KebapTheme.defaultShape.borderRadius),
         elevation: 5,
         dismissDirection: DismissDirection.horizontal,
       ),
@@ -193,6 +193,6 @@ class FladderTheme {
   }
 
   static ColorScheme defaultScheme(Brightness brightness) {
-    return ColorScheme.fromSeed(seedColor: ColorThemes.fladder.color, brightness: brightness);
+    return ColorScheme.fromSeed(seedColor: ColorThemes.kebap.color, brightness: brightness);
   }
 }

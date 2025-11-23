@@ -52,9 +52,7 @@ class _SettingsUpdateInformationState extends ConsumerState<SettingsUpdateInform
           SettingsListTile(
             label: Text(context.localized.latestReleases),
             subLabel: Text(context.localized.autoCheckForUpdates),
-            onTap: () => ref
-                .read(clientSettingsProvider.notifier)
-                .update((value) => value.copyWith(checkForUpdates: !checkForUpdate)),
+            onTap: () => launchUrl(context, "https://github.com/j4ckgrey/Kebap/releases"),
             trailing: Switch(
               value: checkForUpdate,
               onChanged: (value) => ref

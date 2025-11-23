@@ -2,7 +2,11 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import 'package:kebap/models/tmdb_metadata_model.dart';
 import 'package:kebap/providers/api_provider.dart';
+import 'package:kebap/providers/effective_baklava_config_provider.dart';
 import 'package:kebap/providers/baklava_requests_provider.dart';
+import 'package:kebap/providers/effective_baklava_config_provider.dart';
+import 'package:kebap/providers/settings/kebap_settings_provider.dart';
+import 'package:kebap/providers/tmdb_direct_service.dart';
 
 final baklavaMetadataProvider =
     StateNotifierProvider<BaklavaMetadataNotifier, BaklavaMetadataState>((ref) {
@@ -67,44 +71,70 @@ class BaklavaMetadataNotifier extends StateNotifier<BaklavaMetadataState> {
     state = state.copyWith(loading: true, error: null);
 
     try {
-      final service = ref.read(baklavaServiceProvider);
-      final response = await service.fetchTMDBMetadata(
-        tmdbId: tmdbId,
-        imdbId: imdbId,
-        itemType: itemType,
-        title: title,
-        year: year,
-        includeCredits: includeCredits,
-        includeReviews: includeReviews,
+      Map<String, dynamic> data;
+
+      // Try Baklava first
+      try {
+        final service = ref.read(baklavaServiceProvider);
+        final response = await service.fetchTMDBMetadata(
+          tmdbId: tmdbId,
+          imdbId: imdbId,
+          itemType: itemType,
+          title: title,
+          year: year,
+          includeCredits: includeCredits,
+          includeReviews: includeReviews,
+        );
+
+        if (response.isSuccessful && response.body != null) {
+          data = response.body!;
+        } else {
+          throw Exception('Baklava returned ${response.statusCode}');
+        }
+      } catch (baklavaError) {
+        // Baklava failed, try direct TMDB API with local key
+        final effectiveConfig = await ref.read(effectiveBaklavaConfigProvider.future);
+        final tmdbApiKey = effectiveConfig.tmdbApiKey;
+        
+        if (tmdbApiKey == null || tmdbApiKey.isEmpty) {
+          state = state.copyWith(
+            loading: false,
+            error: 'Baklava unavailable and no TMDB API key configured',
+          );
+          return null;
+        }
+
+        data = await TMDBDirectService.fetchMetadata(
+          apiKey: tmdbApiKey,
+          tmdbId: tmdbId,
+          imdbId: imdbId,
+          itemType: itemType,
+          title: title,
+          year: year,
+          includeCredits: includeCredits,
+          includeReviews: includeReviews,
+        );
+      }
+
+      // Parse the response data
+      final metadata = TMDBMetadata.fromJson(data['main'] ?? data);
+      final credits = data['credits'] != null
+          ? TMDBCredits.fromJson(data['credits'] as Map<String, dynamic>)
+          : null;
+      final reviews = data['reviews'] != null && data['reviews']['results'] != null
+          ? (data['reviews']['results'] as List)
+              .map((r) => TMDBReview.fromJson(r as Map<String, dynamic>))
+              .toList()
+          : null;
+
+      state = state.copyWith(
+        metadata: metadata,
+        credits: credits,
+        reviews: reviews,
+        loading: false,
       );
 
-      if (response.isSuccessful && response.body != null) {
-        final data = response.body!;
-        final metadata = TMDBMetadata.fromJson(data['main'] ?? data);
-        final credits = data['credits'] != null
-            ? TMDBCredits.fromJson(data['credits'] as Map<String, dynamic>)
-            : null;
-        final reviews = data['reviews'] != null && data['reviews']['results'] != null
-            ? (data['reviews']['results'] as List)
-                .map((r) => TMDBReview.fromJson(r as Map<String, dynamic>))
-                .toList()
-            : null;
-
-        state = state.copyWith(
-          metadata: metadata,
-          credits: credits,
-          reviews: reviews,
-          loading: false,
-        );
-
-        return metadata;
-      } else {
-        state = state.copyWith(
-          loading: false,
-          error: 'Failed to fetch metadata: ${response.statusCode}',
-        );
-        return null;
-      }
+      return metadata;
     } catch (e) {
       state = state.copyWith(
         loading: false,
@@ -149,13 +179,30 @@ class BaklavaMetadataNotifier extends StateNotifier<BaklavaMetadataState> {
   Future<TMDBExternalIds?> fetchExternalIds(
       String tmdbId, String mediaType) async {
     try {
-      final service = ref.read(baklavaServiceProvider);
-      final response =
-          await service.fetchExternalIds(tmdbId, mediaType);
+      // Try Baklava first
+      try {
+        final service = ref.read(baklavaServiceProvider);
+        final response = await service.fetchExternalIds(tmdbId, mediaType);
 
-      if (response.isSuccessful && response.body != null) {
-        return TMDBExternalIds.fromJson(response.body!);
+        if (response.isSuccessful && response.body != null) {
+          return TMDBExternalIds.fromJson(response.body!);
+        }
+        throw Exception('Baklava failed');
+      } catch (baklavaError) {
+        // Fallback to direct TMDB API
+        final effectiveConfig = await ref.read(effectiveBaklavaConfigProvider.future);
+        final tmdbApiKey = effectiveConfig.tmdbApiKey;
+        
+        if (tmdbApiKey != null && tmdbApiKey.isNotEmpty) {
+          final data = await TMDBDirectService.fetchExternalIds(
+            apiKey: tmdbApiKey,
+            tmdbId: tmdbId,
+            mediaType: mediaType,
+          );
+          return TMDBExternalIds.fromJson(data);
+        }
       }
+      
       return null;
     } catch (e) {
       return null;

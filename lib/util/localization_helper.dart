@@ -3,7 +3,6 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import 'package:kebap/l10n/generated/app_localizations.dart';
-import 'package:kebap/l10n/compat_localizations.dart';
 export 'package:kebap/l10n/compat_localizations.dart';
 import 'package:kebap/providers/sync/background_download_provider.dart';
 import 'package:kebap/src/translations_pigeon.g.dart' as messenger;

@@ -1,4 +1,4 @@
-package nl.jknaapen.fladder.messengers
+package nl.jknaapen.kebap.messengers
 
 import PlayableData
 import VideoPlayerApi
@@ -11,14 +11,14 @@ import androidx.media3.common.MimeTypes
 import androidx.media3.common.Player
 import androidx.media3.exoplayer.ExoPlayer
 import kotlinx.coroutines.flow.MutableStateFlow
-import nl.jknaapen.fladder.objects.VideoPlayerObject
-import nl.jknaapen.fladder.utility.clearAudioTrack
-import nl.jknaapen.fladder.utility.clearSubtitleTrack
-import nl.jknaapen.fladder.utility.enableSubtitles
-import nl.jknaapen.fladder.utility.getAudioTracks
-import nl.jknaapen.fladder.utility.getSubtitleTracks
-import nl.jknaapen.fladder.utility.setInternalAudioTrack
-import nl.jknaapen.fladder.utility.setInternalSubtitleTrack
+import nl.jknaapen.kebap.objects.VideoPlayerObject
+import nl.jknaapen.kebap.utility.clearAudioTrack
+import nl.jknaapen.kebap.utility.clearSubtitleTrack
+import nl.jknaapen.kebap.utility.enableSubtitles
+import nl.jknaapen.kebap.utility.getAudioTracks
+import nl.jknaapen.kebap.utility.getSubtitleTracks
+import nl.jknaapen.kebap.utility.setInternalAudioTrack
+import nl.jknaapen.kebap.utility.setInternalSubtitleTrack
 import kotlin.time.Duration.Companion.seconds
 
 class VideoPlayerImplementation(

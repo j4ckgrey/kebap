@@ -8,7 +8,7 @@ import 'package:pigeon/pigeon.dart';
     swiftOptions: SwiftOptions(
       includeErrorClass: true,
     ),
-    dartPackageName: 'nl_jknaapen_fladder.directory_bookmark',
+    dartPackageName: 'nl_jknaapen_kebap.directory_bookmark',
   ),
 )
 @HostApi()

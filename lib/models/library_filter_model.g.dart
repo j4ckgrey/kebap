@@ -37,23 +37,23 @@ _LibraryFilterModel _$LibraryFilterModelFromJson(Map<String, dynamic> json) =>
           const {},
       types: (json['types'] as Map<String, dynamic>?)?.map(
             (k, e) =>
-                MapEntry($enumDecode(_$FladderItemTypeEnumMap, k), e as bool),
+                MapEntry($enumDecode(_$KebapItemTypeEnumMap, k), e as bool),
           ) ??
           const {
-            FladderItemType.audio: false,
-            FladderItemType.boxset: false,
-            FladderItemType.book: false,
-            FladderItemType.collectionFolder: false,
-            FladderItemType.episode: false,
-            FladderItemType.folder: false,
-            FladderItemType.movie: false,
-            FladderItemType.musicAlbum: false,
-            FladderItemType.musicVideo: false,
-            FladderItemType.photo: false,
-            FladderItemType.person: false,
-            FladderItemType.photoAlbum: false,
-            FladderItemType.series: false,
-            FladderItemType.video: false
+            KebapItemType.audio: false,
+            KebapItemType.boxset: false,
+            KebapItemType.book: false,
+            KebapItemType.collectionFolder: false,
+            KebapItemType.episode: false,
+            KebapItemType.folder: false,
+            KebapItemType.movie: false,
+            KebapItemType.musicAlbum: false,
+            KebapItemType.musicVideo: false,
+            KebapItemType.photo: false,
+            KebapItemType.person: false,
+            KebapItemType.photoAlbum: false,
+            KebapItemType.series: false,
+            KebapItemType.video: false
           },
       sortingOption:
           $enumDecodeNullable(_$SortingOptionsEnumMap, json['sortingOption']) ??
@@ -77,8 +77,8 @@ Map<String, dynamic> _$LibraryFilterModelToJson(_LibraryFilterModel instance) =>
       'tags': instance.tags,
       'years': instance.years.map((k, e) => MapEntry(k.toString(), e)),
       'officialRatings': instance.officialRatings,
-      'types': instance.types
-          .map((k, e) => MapEntry(_$FladderItemTypeEnumMap[k]!, e)),
+      'types':
+          instance.types.map((k, e) => MapEntry(_$KebapItemTypeEnumMap[k]!, e)),
       'sortingOption': _$SortingOptionsEnumMap[instance.sortingOption]!,
       'sortOrder': _$SortingOrderEnumMap[instance.sortOrder]!,
       'favourites': instance.favourites,
@@ -100,24 +100,24 @@ const _$ItemFilterEnumMap = {
   ItemFilter.isfavoriteorlikes: 'IsFavoriteOrLikes',
 };
 
-const _$FladderItemTypeEnumMap = {
-  FladderItemType.baseType: 'baseType',
-  FladderItemType.audio: 'audio',
-  FladderItemType.musicAlbum: 'musicAlbum',
-  FladderItemType.musicVideo: 'musicVideo',
-  FladderItemType.collectionFolder: 'collectionFolder',
-  FladderItemType.video: 'video',
-  FladderItemType.movie: 'movie',
-  FladderItemType.series: 'series',
-  FladderItemType.season: 'season',
-  FladderItemType.episode: 'episode',
-  FladderItemType.photo: 'photo',
-  FladderItemType.person: 'person',
-  FladderItemType.photoAlbum: 'photoAlbum',
-  FladderItemType.folder: 'folder',
-  FladderItemType.boxset: 'boxset',
-  FladderItemType.playlist: 'playlist',
-  FladderItemType.book: 'book',
+const _$KebapItemTypeEnumMap = {
+  KebapItemType.baseType: 'baseType',
+  KebapItemType.audio: 'audio',
+  KebapItemType.musicAlbum: 'musicAlbum',
+  KebapItemType.musicVideo: 'musicVideo',
+  KebapItemType.collectionFolder: 'collectionFolder',
+  KebapItemType.video: 'video',
+  KebapItemType.movie: 'movie',
+  KebapItemType.series: 'series',
+  KebapItemType.season: 'season',
+  KebapItemType.episode: 'episode',
+  KebapItemType.photo: 'photo',
+  KebapItemType.person: 'person',
+  KebapItemType.photoAlbum: 'photoAlbum',
+  KebapItemType.folder: 'folder',
+  KebapItemType.boxset: 'boxset',
+  KebapItemType.playlist: 'playlist',
+  KebapItemType.book: 'book',
 };
 
 const _$SortingOptionsEnumMap = {

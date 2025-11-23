@@ -40,7 +40,7 @@ class _ItemDetailListWidgetState extends ConsumerState<ItemDetailListWidget> {
                   onExit: (event) => setState(() => showImageOverlay = false),
                   child: Stack(
                     children: [
-                      FladderImage(image: widget.item.images?.primary),
+                      KebapImage(image: widget.item.images?.primary),
                       if (widget.item.subTextShort(context) != null)
                         Card(
                           child: Padding(

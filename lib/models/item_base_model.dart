@@ -249,17 +249,17 @@ class ItemBaseModel with ItemBaseModelMappable {
     );
   }
 
-  FladderItemType get type => switch (this) {
-        MovieModel _ => FladderItemType.movie,
-        SeriesModel _ => FladderItemType.series,
-        SeasonModel _ => FladderItemType.season,
-        PhotoAlbumModel _ => FladderItemType.photoAlbum,
+  KebapItemType get type => switch (this) {
+        MovieModel _ => KebapItemType.movie,
+        SeriesModel _ => KebapItemType.series,
+        SeasonModel _ => KebapItemType.season,
+        PhotoAlbumModel _ => KebapItemType.photoAlbum,
         PhotoModel model => model.internalType,
-        EpisodeModel _ => FladderItemType.episode,
-        BookModel _ => FladderItemType.book,
-        PlaylistModel _ => FladderItemType.playlist,
-        FolderModel _ => FladderItemType.folder,
-        ItemBaseModel _ => FladderItemType.baseType,
+        EpisodeModel _ => KebapItemType.episode,
+        BookModel _ => KebapItemType.book,
+        PlaylistModel _ => KebapItemType.playlist,
+        FolderModel _ => KebapItemType.folder,
+        ItemBaseModel _ => KebapItemType.baseType,
       };
 
   @override
@@ -275,7 +275,7 @@ class ItemBaseModel with ItemBaseModelMappable {
 }
 
 // Currently supported types
-enum FladderItemType {
+enum KebapItemType {
   baseType(
     icon: IconsaxPlusLinear.folder_2,
     selectedicon: IconsaxPlusBold.folder_2,
@@ -345,69 +345,69 @@ enum FladderItemType {
     selectedicon: IconsaxPlusBold.book,
   );
 
-  const FladderItemType({required this.icon, required this.selectedicon});
+  const KebapItemType({required this.icon, required this.selectedicon});
 
   double get aspectRatio => switch (this) {
-        FladderItemType.video => 0.8,
-        FladderItemType.photo => 0.8,
-        FladderItemType.photoAlbum => 0.8,
-        FladderItemType.folder => 0.8,
-        FladderItemType.musicAlbum => 0.8,
-        FladderItemType.baseType => 0.8,
+        KebapItemType.video => 0.8,
+        KebapItemType.photo => 0.8,
+        KebapItemType.photoAlbum => 0.8,
+        KebapItemType.folder => 0.8,
+        KebapItemType.musicAlbum => 0.8,
+        KebapItemType.baseType => 0.8,
         _ => 0.55,
       };
 
-  static Set<FladderItemType> get playable => {
-        FladderItemType.series,
-        FladderItemType.episode,
-        FladderItemType.season,
-        FladderItemType.movie,
-        FladderItemType.musicVideo,
+  static Set<KebapItemType> get playable => {
+        KebapItemType.series,
+        KebapItemType.episode,
+        KebapItemType.season,
+        KebapItemType.movie,
+        KebapItemType.musicVideo,
       };
 
-  static Set<FladderItemType> get galleryItem => {
-        FladderItemType.photo,
-        FladderItemType.video,
+  static Set<KebapItemType> get galleryItem => {
+        KebapItemType.photo,
+        KebapItemType.video,
       };
 
   String label(BuildContext context) => switch (this) {
-        FladderItemType.baseType => context.localized.mediaTypeBase,
-        FladderItemType.audio => context.localized.audio,
-        FladderItemType.collectionFolder => context.localized.collectionFolder,
-        FladderItemType.musicAlbum => context.localized.musicAlbum,
-        FladderItemType.musicVideo => context.localized.video,
-        FladderItemType.video => context.localized.video,
-        FladderItemType.movie => context.localized.mediaTypeMovie,
-        FladderItemType.series => context.localized.mediaTypeSeries,
-        FladderItemType.season => context.localized.mediaTypeSeason,
-        FladderItemType.episode => context.localized.mediaTypeEpisode,
-        FladderItemType.photo => context.localized.mediaTypePhoto,
-        FladderItemType.person => context.localized.mediaTypePerson,
-        FladderItemType.photoAlbum => context.localized.mediaTypePhotoAlbum,
-        FladderItemType.folder => context.localized.mediaTypeFolder,
-        FladderItemType.boxset => context.localized.mediaTypeBoxset,
-        FladderItemType.playlist => context.localized.mediaTypePlaylist,
-        FladderItemType.book => context.localized.mediaTypeBook,
+        KebapItemType.baseType => context.localized.mediaTypeBase,
+        KebapItemType.audio => context.localized.audio,
+        KebapItemType.collectionFolder => context.localized.collectionFolder,
+        KebapItemType.musicAlbum => context.localized.musicAlbum,
+        KebapItemType.musicVideo => context.localized.video,
+        KebapItemType.video => context.localized.video,
+        KebapItemType.movie => context.localized.mediaTypeMovie,
+        KebapItemType.series => context.localized.mediaTypeSeries,
+        KebapItemType.season => context.localized.mediaTypeSeason,
+        KebapItemType.episode => context.localized.mediaTypeEpisode,
+        KebapItemType.photo => context.localized.mediaTypePhoto,
+        KebapItemType.person => context.localized.mediaTypePerson,
+        KebapItemType.photoAlbum => context.localized.mediaTypePhotoAlbum,
+        KebapItemType.folder => context.localized.mediaTypeFolder,
+        KebapItemType.boxset => context.localized.mediaTypeBoxset,
+        KebapItemType.playlist => context.localized.mediaTypePlaylist,
+        KebapItemType.book => context.localized.mediaTypeBook,
       };
 
   BaseItemKind get dtoKind => switch (this) {
-        FladderItemType.baseType => BaseItemKind.userrootfolder,
-        FladderItemType.audio => BaseItemKind.audio,
-        FladderItemType.collectionFolder => BaseItemKind.collectionfolder,
-        FladderItemType.musicAlbum => BaseItemKind.musicalbum,
-        FladderItemType.musicVideo => BaseItemKind.video,
-        FladderItemType.video => BaseItemKind.video,
-        FladderItemType.movie => BaseItemKind.movie,
-        FladderItemType.series => BaseItemKind.series,
-        FladderItemType.season => BaseItemKind.season,
-        FladderItemType.episode => BaseItemKind.episode,
-        FladderItemType.photo => BaseItemKind.photo,
-        FladderItemType.person => BaseItemKind.person,
-        FladderItemType.photoAlbum => BaseItemKind.photoalbum,
-        FladderItemType.folder => BaseItemKind.folder,
-        FladderItemType.boxset => BaseItemKind.boxset,
-        FladderItemType.playlist => BaseItemKind.playlist,
-        FladderItemType.book => BaseItemKind.book,
+        KebapItemType.baseType => BaseItemKind.userrootfolder,
+        KebapItemType.audio => BaseItemKind.audio,
+        KebapItemType.collectionFolder => BaseItemKind.collectionfolder,
+        KebapItemType.musicAlbum => BaseItemKind.musicalbum,
+        KebapItemType.musicVideo => BaseItemKind.video,
+        KebapItemType.video => BaseItemKind.video,
+        KebapItemType.movie => BaseItemKind.movie,
+        KebapItemType.series => BaseItemKind.series,
+        KebapItemType.season => BaseItemKind.season,
+        KebapItemType.episode => BaseItemKind.episode,
+        KebapItemType.photo => BaseItemKind.photo,
+        KebapItemType.person => BaseItemKind.person,
+        KebapItemType.photoAlbum => BaseItemKind.photoalbum,
+        KebapItemType.folder => BaseItemKind.folder,
+        KebapItemType.boxset => BaseItemKind.boxset,
+        KebapItemType.playlist => BaseItemKind.playlist,
+        KebapItemType.book => BaseItemKind.book,
       };
 
   final IconData icon;

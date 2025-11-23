@@ -98,7 +98,7 @@ class DirectoryBookmarkSetup {
   /// Sets up an instance of `DirectoryBookmark` to handle messages through the `binaryMessenger`.
   static func setUp(binaryMessenger: FlutterBinaryMessenger, api: DirectoryBookmark?, messageChannelSuffix: String = "") {
     let channelSuffix = messageChannelSuffix.count > 0 ? ".\(messageChannelSuffix)" : ""
-    let saveDirectoryChannel = FlutterBasicMessageChannel(name: "dev.flutter.pigeon.nl_jknaapen_fladder.directory_bookmark.DirectoryBookmark.saveDirectory\(channelSuffix)", binaryMessenger: binaryMessenger, codec: codec)
+    let saveDirectoryChannel = FlutterBasicMessageChannel(name: "dev.flutter.pigeon.nl_jknaapen_kebap.directory_bookmark.DirectoryBookmark.saveDirectory\(channelSuffix)", binaryMessenger: binaryMessenger, codec: codec)
     if let api = api {
       saveDirectoryChannel.setMessageHandler { message, reply in
         let args = message as! [Any?]
@@ -114,7 +114,7 @@ class DirectoryBookmarkSetup {
     } else {
       saveDirectoryChannel.setMessageHandler(nil)
     }
-    let resolveDirectoryChannel = FlutterBasicMessageChannel(name: "dev.flutter.pigeon.nl_jknaapen_fladder.directory_bookmark.DirectoryBookmark.resolveDirectory\(channelSuffix)", binaryMessenger: binaryMessenger, codec: codec)
+    let resolveDirectoryChannel = FlutterBasicMessageChannel(name: "dev.flutter.pigeon.nl_jknaapen_kebap.directory_bookmark.DirectoryBookmark.resolveDirectory\(channelSuffix)", binaryMessenger: binaryMessenger, codec: codec)
     if let api = api {
       resolveDirectoryChannel.setMessageHandler { message, reply in
         let args = message as! [Any?]
@@ -129,7 +129,7 @@ class DirectoryBookmarkSetup {
     } else {
       resolveDirectoryChannel.setMessageHandler(nil)
     }
-    let closeDirectoryChannel = FlutterBasicMessageChannel(name: "dev.flutter.pigeon.nl_jknaapen_fladder.directory_bookmark.DirectoryBookmark.closeDirectory\(channelSuffix)", binaryMessenger: binaryMessenger, codec: codec)
+    let closeDirectoryChannel = FlutterBasicMessageChannel(name: "dev.flutter.pigeon.nl_jknaapen_kebap.directory_bookmark.DirectoryBookmark.closeDirectory\(channelSuffix)", binaryMessenger: binaryMessenger, codec: codec)
     if let api = api {
       closeDirectoryChannel.setMessageHandler { message, reply in
         let args = message as! [Any?]

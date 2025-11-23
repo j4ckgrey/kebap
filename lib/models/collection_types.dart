@@ -16,16 +16,16 @@ extension CollectionTypeExtension on CollectionType {
     return getIconType(false);
   }
 
-  Set<FladderItemType> get itemKinds {
+  Set<KebapItemType> get itemKinds {
     switch (this) {
       case CollectionType.music:
-        return {FladderItemType.musicAlbum};
+        return {KebapItemType.musicAlbum};
       case CollectionType.movies:
-        return {FladderItemType.movie};
+        return {KebapItemType.movie};
       case CollectionType.tvshows:
-        return {FladderItemType.series};
+        return {KebapItemType.series};
       case CollectionType.homevideos:
-        return {FladderItemType.photoAlbum, FladderItemType.folder, FladderItemType.photo, FladderItemType.video};
+        return {KebapItemType.photoAlbum, KebapItemType.folder, KebapItemType.photo, KebapItemType.video};
       default:
         return {};
     }

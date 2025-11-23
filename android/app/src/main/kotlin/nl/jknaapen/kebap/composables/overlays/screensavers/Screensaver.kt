@@ -1,4 +1,4 @@
-package nl.jknaapen.fladder.composables.overlays.screensavers
+package nl.jknaapen.kebap.composables.overlays.screensavers
 
 import Screensaver
 import android.os.Build
@@ -23,9 +23,9 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.input.key.onKeyEvent
 import androidx.compose.ui.platform.LocalContext
 import kotlinx.coroutines.delay
-import nl.jknaapen.fladder.objects.PlayerSettingsObject
-import nl.jknaapen.fladder.objects.VideoPlayerObject
-import nl.jknaapen.fladder.utility.leanBackEnabled
+import nl.jknaapen.kebap.objects.PlayerSettingsObject
+import nl.jknaapen.kebap.objects.VideoPlayerObject
+import nl.jknaapen.kebap.utility.leanBackEnabled
 import kotlin.time.Duration.Companion.minutes
 
 @RequiresApi(Build.VERSION_CODES.O)

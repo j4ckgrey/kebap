@@ -1,4 +1,4 @@
-package nl.jknaapen.fladder.composables.shared
+package nl.jknaapen.kebap.composables.shared
 
 import android.os.Build
 import androidx.annotation.RequiresApi
@@ -13,8 +13,8 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import kotlinx.coroutines.delay
-import nl.jknaapen.fladder.objects.Localized
-import nl.jknaapen.fladder.objects.Translate
+import nl.jknaapen.kebap.objects.Localized
+import nl.jknaapen.kebap.objects.Translate
 import java.time.ZoneId
 import kotlin.time.Clock
 import kotlin.time.ExperimentalTime

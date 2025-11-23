@@ -1,5 +1,10 @@
 import 'package:freezed_annotation/freezed_annotation.dart';
 
+// Freezed generates field annotations that the analyzer sometimes flags
+// as invalid_annotation_target in certain SDK versions. Suppress that
+// specific warning here so the file stays clean in analysis runs.
+// ignore_for_file: invalid_annotation_target
+
 part 'media_request_model.freezed.dart';
 part 'media_request_model.g.dart';
 

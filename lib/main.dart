@@ -28,6 +28,8 @@ import 'package:kebap/providers/settings/client_settings_provider.dart';
 import 'package:kebap/providers/shared_provider.dart';
 import 'package:kebap/providers/sync_provider.dart';
 import 'package:kebap/providers/user_provider.dart';
+import 'package:kebap/providers/search_mode_provider.dart';
+import 'package:kebap/providers/effective_baklava_config_provider.dart';
 import 'package:kebap/providers/video_player_provider.dart';
 import 'package:kebap/routes/auto_router.dart';
 import 'package:kebap/routes/auto_router.gr.dart';
@@ -261,6 +263,24 @@ class _MainState extends ConsumerState<Main> with WindowListener, WidgetsBinding
 
     ref.read(sharedUtilityProvider).loadSettings();
 
+    // If running on a lean-back (TV) device and the effective Baklava config
+    // requests forcing local search for TV clients, update the search mode.
+    ref.listen<AsyncValue>(effectiveBaklavaConfigProvider, (previous, next) {
+      try {
+        final args = ref.read(argumentsStateProvider);
+        final isLeanBack = args.leanBackMode;
+
+        if (isLeanBack) {
+          final cfg = next.asData?.value;
+          if (cfg != null && cfg.forceTVClientLocalSearch == true) {
+            ref.read(searchModeNotifierProvider.notifier).setMode(SearchMode.local);
+          }
+        }
+      } catch (e) {
+        // ignore
+      }
+    });
+
     final clientSettings = ref.read(clientSettingsProvider);
 
     if (_isDesktop) {
@@ -273,18 +293,17 @@ class _MainState extends ConsumerState<Main> with WindowListener, WidgetsBinding
 
       toggleMacTrafficLights(false);
 
-      windowManager.waitUntilReadyToShow(windowOptions, () async {
-        if (!kDebugMode) {
-          await windowManager.show();
-          await windowManager.focus();
-          await windowManager.setSize(Size(clientSettings.size.x, clientSettings.size.y));
-          await windowManager.center();
-        }
+        await windowManager.setResizable(true);
+        await windowManager.setTitleBarStyle(TitleBarStyle.hidden);
+        await windowManager.show();
+        await windowManager.focus();
+        // await windowManager.setSize(Size(clientSettings.size.x, clientSettings.size.y));
+        await windowManager.center();
+
         final startupArguments = ref.read(argumentsStateProvider);
         if (startupArguments.htpcMode && !(await windowManager.isFullScreen())) {
-          await windowManager.setFullScreen(true);
+          // await windowManager.setFullScreen(true);
         }
-      });
     } else {
       SystemChrome.setEnabledSystemUIMode(SystemUiMode.edgeToEdge, overlays: []);
       SystemChrome.setSystemUIOverlayStyle(const SystemUiOverlayStyle(
@@ -308,11 +327,11 @@ class _MainState extends ConsumerState<Main> with WindowListener, WidgetsBinding
     return DynamicColorBuilder(
       builder: (ColorScheme? lightDynamic, ColorScheme? darkDynamic) {
         final lightTheme = themeColor == null
-            ? FladderTheme.theme(lightDynamic ?? FladderTheme.defaultScheme(Brightness.light), schemeVariant)
-            : FladderTheme.theme(themeColor.schemeLight, schemeVariant);
+            ? KebapTheme.theme(lightDynamic ?? KebapTheme.defaultScheme(Brightness.light), schemeVariant)
+            : KebapTheme.theme(themeColor.schemeLight, schemeVariant);
         final darkTheme = (themeColor == null
-            ? FladderTheme.theme(darkDynamic ?? FladderTheme.defaultScheme(Brightness.dark), schemeVariant)
-            : FladderTheme.theme(themeColor.schemeDark, schemeVariant));
+            ? KebapTheme.theme(darkDynamic ?? KebapTheme.defaultScheme(Brightness.dark), schemeVariant)
+            : KebapTheme.theme(themeColor.schemeDark, schemeVariant));
         final amoledOverwrite = amoledBlack ? Colors.black : null;
         return ThemesData(
           light: lightTheme,

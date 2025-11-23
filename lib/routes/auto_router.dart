@@ -89,6 +89,7 @@ final List<AutoRoute> _settingsChildren = [
   AutoRoute(page: ClientSettingsRoute.page, path: 'client'),
   AutoRoute(page: ProfileSettingsRoute.page, path: 'security'),
   AutoRoute(page: PlayerSettingsRoute.page, path: 'player'),
+  AutoRoute(page: KebapSettingsRoute.page, path: 'kebap'),
   AutoRoute(page: AboutSettingsRoute.page, path: 'about'),
 ];
 

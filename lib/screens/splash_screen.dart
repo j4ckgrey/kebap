@@ -66,7 +66,7 @@ class _SplashScreenState extends ConsumerState<SplashScreen> {
       body: Center(
         child: FractionallySizedBox(
           heightFactor: 0.4,
-          child: FladderLogo(),
+          child: KebapLogo(useGradient: false),
         ),
       ),
     );

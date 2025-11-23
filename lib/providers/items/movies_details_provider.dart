@@ -33,7 +33,7 @@ class MovieDetails extends _$MovieDetails {
         try {
           final playbackInfo = await api.itemsItemIdPlaybackInfoPost(
             itemId: item.id,
-            body: PlaybackInfoDto(
+            body: const PlaybackInfoDto(
               enableDirectPlay: true,
               enableDirectStream: true,
               enableTranscoding: false,

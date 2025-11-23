@@ -23,19 +23,19 @@ Platform-specific installation instructions can be found in this document.
 
 ### Installer
 
-Download the latest `.exe` installer from the [Releases](https://github.com/j4ckgrey/Fladder/releases) page and open it. Follow the on-screen instructions.
+Download the latest `.exe` installer from the [Releases](https://github.com/j4ckgrey/Kebap/releases) page and open it. Follow the on-screen instructions.
 
 ### Portable
 
-Download the latest `.zip` file from the [Releases](https://github.com/j4ckgrey/Fladder/releases) page and extract it somewhere on your PC.
+Download the latest `.zip` file from the [Releases](https://github.com/j4ckgrey/Kebap/releases) page and extract it somewhere on your PC.
 
-Run `fladder.exe` to start the application.
+Run `kebap.exe` to start the application.
 
 ## macOS
 
-1. Download the latest `*.dmg` file from the [Releases](https://github.com/j4ckgrey/Fladder/releases) page.
+1. Download the latest `*.dmg` file from the [Releases](https://github.com/j4ckgrey/Kebap/releases) page.
 
-2. Open it and copy the Fladder application file into your `Applications` folder, or another place on your Mac.
+2. Open it and copy the Kebap application file into your `Applications` folder, or another place on your Mac.
 
 3. Right-click the application and click Open while holding `Control`. This will bypass the unidentified developer warning.
 
@@ -45,16 +45,16 @@ Run `fladder.exe` to start the application.
 ## Linux
 
 > [!NOTE]
-> You can install Fladder using Flatpak if you prefer an easier installation method. Download the latest `.flatpak` file from the [Releases](https://github.com/j4ckgrey/Fladder/releases) page to get started.
+> You can install Kebap using Flatpak if you prefer an easier installation method. Download the latest `.flatpak` file from the [Releases](https://github.com/j4ckgrey/Kebap/releases) page to get started.
 
 ### Ubuntu/Debian
 
 > [!TIP]
-> If you experience issues attempting to run Fladder with the process exiting with `libmpv` shared library errors, you may need to install `libmpv-dev` by running `sudo apt install libmpv-dev`.
+> If you experience issues attempting to run Kebap with the process exiting with `libmpv` shared library errors, you may need to install `libmpv-dev` by running `sudo apt install libmpv-dev`.
 
-Download the latest Linux `.zip` file from the [Releases](https://github.com/j4ckgrey/Fladder/releases) page and extract it somewhere on your computer.
+Download the latest Linux `.zip` file from the [Releases](https://github.com/j4ckgrey/Kebap/releases) page and extract it somewhere on your computer.
 
-Open a terminal and `cd` to the directory where you extracted Fladder to. Run `./Fladder` to open the application.
+Open a terminal and `cd` to the directory where you extracted Kebap to. Run `./Kebap` to open the application.
 
 ### Arch
 
@@ -62,17 +62,17 @@ An AUR package is available for download (thanks to @tam1m).
 
 You can download it using your favourite AUR helper.
 
-[Yay](https://github.com/Jguer/yay): `yay -S fladder-git`<br>
-[Paru](https://github.com/Morganamilo/paru): `paru -S fladder-git`
+[Yay](https://github.com/Jguer/yay): `yay -S kebap-git`<br>
+[Paru](https://github.com/Morganamilo/paru): `paru -S kebap-git`
 
 ### Fedora
 
 > [!TIP]
-> If you experience issues attempting to run Fladder with the process exiting with `libmpv` shared library errors, you may need to install `mpvlibs` by running `yum install mpvlibs`.
+> If you experience issues attempting to run Kebap with the process exiting with `libmpv` shared library errors, you may need to install `mpvlibs` by running `yum install mpvlibs`.
 
-Download the latest Linux `.zip` file from the [Releases](https://github.com/j4ckgrey/Fladder/releases) page and extract it somewhere on your computer.
+Download the latest Linux `.zip` file from the [Releases](https://github.com/j4ckgrey/Kebap/releases) page and extract it somewhere on your computer.
 
-Open a terminal and `cd` to the directory where you extracted Fladder to. Run `./Fladder` to open the application.
+Open a terminal and `cd` to the directory where you extracted Kebap to. Run `./Kebap` to open the application.
 
 ## Android
 
@@ -80,15 +80,15 @@ Open a terminal and `cd` to the directory where you extracted Fladder to. Run `.
 > This app is currently not compatible with Android TV, however contributions to add support are always appreciated.
 ### Play Store
 
-This is the recommended way to install Fladder on Android.
+This is the recommended way to install Kebap on Android.
 
-<a href='https://play.google.com/store/apps/details?id=nl.jknaapen.fladder&pcampaignid=pcampaignidMKT-Other-global-all-co-prtnr-py-PartBadge-Mar2515-1'><img alt='Get it on Google Play' src='https://play.google.com/intl/en_us/badges/static/images/badges/en_badge_web_generic.png' width=250/></a>
+<a href='https://play.google.com/store/apps/details?id=nl.jknaapen.kebap&pcampaignid=pcampaignidMKT-Other-global-all-co-prtnr-py-PartBadge-Mar2515-1'><img alt='Get it on Google Play' src='https://play.google.com/intl/en_us/badges/static/images/badges/en_badge_web_generic.png' width=250/></a>
 
 ### Manual
 
-If your device can't access the Play Store, you can install Fladder manually.
+If your device can't access the Play Store, you can install Kebap manually.
 
-1. Download the latest `.apk` file from the [Releases](https://github.com/j4ckgrey/Fladder/releases) page and save it to your device.
+1. Download the latest `.apk` file from the [Releases](https://github.com/j4ckgrey/Kebap/releases) page and save it to your device.
 
 2. Open it to start the installation. You may need to allow unknown apps to be installed on your device, as this will be disallowed by default.
 
@@ -97,14 +97,14 @@ If your device can't access the Play Store, you can install Fladder manually.
 ### Sideloadly
 
 > [!NOTE]
-> Installing using Sideloadly is the only method of using Fladder on iOS or iPadOS at this time. See [this issue](https://github.com/j4ckgrey/Fladder/issues/40) for more information.
+> Installing using Sideloadly is the only method of using Kebap on iOS or iPadOS at this time. See [this issue](https://github.com/j4ckgrey/Kebap/issues/40) for more information.
 
 > [!IMPORTANT]
 > If you are using Windows, you must install the web versions of iTunes and iCloud (**not the Microsoft Store versions**) before installing Sideloadly. You can download them [here](https://www.apple.com/itunes/download/win64) and [here](https://updates.cdn-apple.com/2020/windows/001-39935-20200911-1A70AA56-F448-11EA-8CC0-99D41950005E/iCloudSetup.exe).
 
 1. Download and install Sideloadly from their [downloads page](https://sideloadly.io/#download).
 
-2. Download the latest iOS IPA file from the [Releases](https://github.com/j4ckgrey/Fladder/releases) page and save it to your computer.
+2. Download the latest iOS IPA file from the [Releases](https://github.com/j4ckgrey/Kebap/releases) page and save it to your computer.
 
 3. Plug your device into your computer and open iTunes.
 
@@ -122,19 +122,19 @@ If your device can't access the Play Store, you can install Fladder manually.
 
 10. Click Start. You will be prompted to enter your Apple ID password. Enter it and allow any two-factor authentication, if required.
 
-11. The installation process will take a while. Once it's finished, you will see the Fladder icon on your home screen or in your App Library.
+11. The installation process will take a while. Once it's finished, you will see the Kebap icon on your home screen or in your App Library.
 
 > [!NOTE]
 > Your password is only used for authentication to Apple's servers. It is not sent to any third parties.
 
 > [!IMPORTANT]
-> Once installed, Fladder will only be valid for 7 days. Enabling auto refresh will keep the app from expiring (this should already be enabled). Your computer needs to be on for this to occur.
+> Once installed, Kebap will only be valid for 7 days. Enabling auto refresh will keep the app from expiring (this should already be enabled). Your computer needs to be on for this to occur.
 
 ## Docker
 
-You can install Fladder on your server to provide an alternate Jellyfin dashboard.
+You can install Kebap on your server to provide an alternate Jellyfin dashboard.
 
-Copy the contents of the [docker-compose.yml](https://raw.githubusercontent.com/j4ckgrey/Fladder/refs/heads/develop/docker-compose.yml) file and save it to your server.
+Copy the contents of the [docker-compose.yml](https://raw.githubusercontent.com/j4ckgrey/Kebap/refs/heads/develop/docker-compose.yml) file and save it to your server.
 
 Run `docker-compose up -d` to start the container. It will be available on `http://<server-ip>`.
 
@@ -146,5 +146,5 @@ Run `docker-compose up -d` to start the container. It will be available on `http
 You can also manually copy the web .zip build to any static file server such as Nginx, Caddy, or Apache
 
 > [!TIP]
-> You can preconfigure Fladder by placing a config file in [assets/config/config.json](https://github.com/j4ckgrey/Fladder/blob/develop/config/config.json)
+> You can preconfigure Kebap by placing a config file in [assets/config/config.json](https://github.com/j4ckgrey/Kebap/blob/develop/config/config.json)
 

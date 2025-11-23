@@ -190,7 +190,7 @@ class OverviewHeader extends ConsumerWidget {
                         height: 12,
                         decoration: BoxDecoration(
                           color: Theme.of(context).colorScheme.onSurface.withAlpha(64),
-                          borderRadius: FladderTheme.smallShape.borderRadius,
+                          borderRadius: KebapTheme.smallShape.borderRadius,
                         ),
                       )
                     ],

@@ -30,6 +30,7 @@ class PosterWidget extends ConsumerWidget {
   final Function(VoidCallback action, ItemBaseModel item)? onPressed;
   final bool primaryPosters;
   final Function(bool focus)? onFocusChanged;
+  final FocusNode? focusNode;
 
   const PosterWidget({
     required this.poster,
@@ -47,6 +48,7 @@ class PosterWidget extends ConsumerWidget {
     this.onPressed,
     this.primaryPosters = false,
     this.onFocusChanged,
+    this.focusNode,
     super.key,
   });
 
@@ -60,6 +62,7 @@ class PosterWidget extends ConsumerWidget {
         children: [
           Expanded(
             child: PosterImage(
+              focusNode: focusNode,
               poster: poster,
               selected: selected,
               playVideo: (value) async => await poster.play(context, ref),

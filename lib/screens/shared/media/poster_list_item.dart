@@ -130,7 +130,7 @@ class PosterListItem extends ConsumerWidget {
                           tag: poster.id,
                           child: Card(
                             margin: EdgeInsets.zero,
-                            child: FladderImage(
+                            child: KebapImage(
                               image: poster.getPosters?.primary ?? poster.getPosters?.backDrop?.lastOrNull,
                             ),
                           ),
@@ -173,7 +173,7 @@ class PosterListItem extends ConsumerWidget {
                         ],
                       ),
                     ),
-                    if (poster.type == FladderItemType.book)
+                    if (poster.type == KebapItemType.book)
                       if (poster.userData.progress > 0)
                         Card(
                           color: Theme.of(context).colorScheme.primary,

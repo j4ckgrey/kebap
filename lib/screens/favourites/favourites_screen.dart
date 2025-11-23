@@ -17,6 +17,7 @@ import 'package:kebap/util/focus_provider.dart';
 import 'package:kebap/util/localization_helper.dart';
 import 'package:kebap/util/sliver_list_padding.dart';
 import 'package:kebap/widgets/navigation_scaffold/components/background_image.dart';
+import 'package:kebap/widgets/navigation_scaffold/components/settings_user_icon.dart';
 import 'package:kebap/widgets/shared/pinch_poster_zoom.dart';
 import 'package:kebap/widgets/shared/poster_size_slider.dart';
 import 'package:kebap/widgets/shared/pull_to_refresh.dart';
@@ -37,16 +38,10 @@ class FavouritesScreen extends ConsumerWidget {
         body: PinchPosterZoom(
           scaleDifference: (difference) => ref.read(clientSettingsProvider.notifier).addPosterSize(difference / 2),
           child: CustomScrollView(
+        primary: true,
             physics: const AlwaysScrollableScrollPhysics(),
-            controller: AdaptiveLayout.scrollOf(context, HomeTabs.favorites),
             slivers: [
-              if (AdaptiveLayout.viewSizeOf(context) == ViewSize.phone)
-                NestedSliverAppBar(
-                  parent: context,
-                  route: LibrarySearchRoute(favourites: true),
-                )
-              else
-                const DefaultSliverTopBadding(),
+              const DefaultSliverTopBadding(),
               if (AdaptiveLayout.of(context).isDesktop)
                 const SliverToBoxAdapter(
                   child: Row(

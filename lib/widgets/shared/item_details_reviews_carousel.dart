@@ -3,7 +3,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import 'package:kebap/models/item_base_model.dart';
 import 'package:kebap/models/tmdb_metadata_model.dart';
-import 'package:kebap/providers/baklava_config_provider.dart';
+import 'package:kebap/providers/effective_baklava_config_provider.dart';
 import 'package:kebap/providers/baklava_metadata_provider.dart';
 import 'package:kebap/util/adaptive_layout/adaptive_layout.dart';
 import 'package:kebap/util/list_padding.dart';
@@ -33,7 +33,7 @@ class _ItemDetailsReviewsCarouselState extends ConsumerState<ItemDetailsReviewsC
   }
 
   Future<void> _fetchReviews() async {
-    final config = await ref.read(baklavaConfigProvider.future);
+    final config = await ref.read(effectiveBaklavaConfigProvider.future);
     
     // Don't show if reviews carousel is disabled in config
     if (config.showReviewsCarousel != true) {
@@ -53,7 +53,7 @@ class _ItemDetailsReviewsCarouselState extends ConsumerState<ItemDetailsReviewsC
     }
 
     // Determine media type
-    final mediaType = widget.item.type == 'Movie' ? 'movie' : 'tv';
+    final mediaType = widget.item.type.name.toLowerCase() == 'movie' ? 'movie' : 'tv';
 
     // Fetch metadata with reviews
     await ref.read(baklavaMetadataProvider.notifier).fetchTMDBMetadata(

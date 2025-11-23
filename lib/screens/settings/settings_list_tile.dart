@@ -33,17 +33,7 @@ class SettingsListTile extends StatelessWidget {
     final leadingWidget = (leading ?? iconWidget) != null
         ? Padding(
             padding: const EdgeInsets.only(left: 8, right: 16.0),
-            child: AnimatedContainer(
-              duration: const Duration(milliseconds: 125),
-              decoration: BoxDecoration(
-                color: Theme.of(context).colorScheme.primaryContainer.withValues(alpha: selected ? 1 : 0),
-                borderRadius: BorderRadius.circular(selected ? 5 : 20),
-              ),
-              child: Padding(
-                padding: const EdgeInsets.symmetric(horizontal: 12.0, vertical: 12),
-                child: (leading ?? iconWidget),
-              ),
-            ),
+            child: (leading ?? iconWidget),
           )
         : leading ?? const SizedBox();
     return Card(

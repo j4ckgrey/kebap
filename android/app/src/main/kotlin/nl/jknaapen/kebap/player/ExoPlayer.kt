@@ -1,4 +1,4 @@
-package nl.jknaapen.fladder.player
+package nl.jknaapen.kebap.player
 
 import PlaybackState
 import android.app.ActivityManager
@@ -42,14 +42,14 @@ import androidx.media3.ui.PlayerView
 import io.github.peerless2012.ass.media.kt.buildWithAssSupport
 import io.github.peerless2012.ass.media.type.AssRenderType
 import kotlinx.coroutines.delay
-import nl.jknaapen.fladder.composables.overlays.NextUpOverlay
-import nl.jknaapen.fladder.messengers.properlySetSubAndAudioTracks
-import nl.jknaapen.fladder.objects.PlayerSettingsObject
-import nl.jknaapen.fladder.objects.VideoPlayerObject
-import nl.jknaapen.fladder.utility.AllowedOrientations
-import nl.jknaapen.fladder.utility.conditional
-import nl.jknaapen.fladder.utility.getAudioTracks
-import nl.jknaapen.fladder.utility.getSubtitleTracks
+import nl.jknaapen.kebap.composables.overlays.NextUpOverlay
+import nl.jknaapen.kebap.messengers.properlySetSubAndAudioTracks
+import nl.jknaapen.kebap.objects.PlayerSettingsObject
+import nl.jknaapen.kebap.objects.VideoPlayerObject
+import nl.jknaapen.kebap.utility.AllowedOrientations
+import nl.jknaapen.kebap.utility.conditional
+import nl.jknaapen.kebap.utility.getAudioTracks
+import nl.jknaapen.kebap.utility.getSubtitleTracks
 import kotlin.time.Duration.Companion.seconds
 
 val LocalPlayer = compositionLocalOf<ExoPlayer?> { null }

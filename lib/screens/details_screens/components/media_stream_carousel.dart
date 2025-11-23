@@ -237,7 +237,7 @@ class _CarouselCard extends StatelessWidget {
                 subtitle!,
                 style: Theme.of(context).textTheme.bodySmall?.copyWith(
                       color: isSelected
-                          ? Theme.of(context).colorScheme.onPrimaryContainer.withOpacity(0.7)
+                          ? Theme.of(context).colorScheme.onPrimaryContainer.withValues(alpha: 0.7)
                           : Theme.of(context).colorScheme.onSurfaceVariant,
                     ),
                 maxLines: 1,
@@ -263,7 +263,7 @@ class _LoadingCard extends StatelessWidget {
       height: 100,
       padding: const EdgeInsets.all(12),
       decoration: BoxDecoration(
-        color: Theme.of(context).colorScheme.surfaceContainerHighest.withOpacity(0.5),
+        color: Theme.of(context).colorScheme.surfaceContainerHighest.withValues(alpha: 0.5),
         borderRadius: BorderRadius.circular(12),
       ),
       child: Column(

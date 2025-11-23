@@ -1,4 +1,4 @@
-package nl.jknaapen.fladder.composables.controls
+package nl.jknaapen.kebap.composables.controls
 
 import androidx.compose.animation.animateColorAsState
 import androidx.compose.animation.core.animateFloatAsState

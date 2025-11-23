@@ -4,7 +4,7 @@ class SearchModel {
   final bool loading;
   final String searchQuery;
   final int resultCount;
-  final Map<FladderItemType, List<ItemBaseModel>> results;
+  final Map<KebapItemType, List<ItemBaseModel>> results;
   SearchModel({
     this.loading = false,
     this.searchQuery = "",
@@ -16,7 +16,7 @@ class SearchModel {
     bool? loading,
     String? searchQuery,
     int? resultCount,
-    Map<FladderItemType, List<ItemBaseModel>>? results,
+    Map<KebapItemType, List<ItemBaseModel>>? results,
   }) {
     return SearchModel(
       loading: loading ?? this.loading,

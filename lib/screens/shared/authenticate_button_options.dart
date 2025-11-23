@@ -36,7 +36,7 @@ void showAuthOptionsDialogue(
                       if (authenticated) {
                         setMethod.call(currentUser.copyWith(authMethod: method));
                       } else if (context.mounted) {
-                        fladderSnackbar(context, title: context.localized.biometricsFailedCheckAgain);
+                        kebapSnackbar(context, title: context.localized.biometricsFailedCheckAgain);
                       }
                       break;
                     case Authentication.passcode:

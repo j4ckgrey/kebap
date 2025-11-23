@@ -2,8 +2,8 @@ import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 
 enum ColorThemes {
-  fladder(
-    name: 'Fladder',
+  kebap(
+    name: 'Kebap',
     color: kDebugMode ? Colors.purpleAccent : Colors.orange,
   ),
   deepOrange(

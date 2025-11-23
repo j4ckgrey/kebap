@@ -100,8 +100,8 @@ class AppDatabase extends _$AppDatabase {
     if (itemType == null) return [];
 
     final int maxDepth = switch (itemType) {
-      FladderItemType.season => 1,
-      FladderItemType.series => 2,
+      KebapItemType.season => 1,
+      KebapItemType.series => 2,
       _ => 0,
     };
 

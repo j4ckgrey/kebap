@@ -6,6 +6,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import 'package:kebap/providers/settings/client_settings_provider.dart';
 import 'package:kebap/providers/settings/media_stream_view_type_provider.dart';
+import 'package:kebap/providers/settings/kebap_settings_provider.dart';
 import 'package:kebap/models/settings/media_stream_view_type.dart';
 import 'package:kebap/providers/shared_provider.dart';
 import 'package:kebap/widgets/shared/enum_selection.dart';
@@ -40,12 +41,15 @@ class _ClientSettingsPageState extends ConsumerState<ClientSettingsPage> {
   late final libraryPageSizeController = TextEditingController(
       text: ref.read(clientSettingsProvider.select((value) => value.libraryPageSize))?.toString() ?? "");
 
+  late final tmdbApiKeyController = TextEditingController(
+      text: ref.read(kebapSettingsProvider.select((value) => value.tmdbApiKey)) ?? "");
+
   @override
   Widget build(BuildContext context) {
     final clientSettings = ref.watch(clientSettingsProvider);
 
     return SettingsScaffold(
-      label: "Fladder",
+      label: "Kebap",
       items: [
         ...buildClientSettingsDownload(context, ref, setState),
         ...settingsListGroup(context, SettingsLabelDivider(label: context.localized.lockscreen), [
@@ -92,6 +96,32 @@ class _ClientSettingsPageState extends ConsumerState<ClientSettingsPage> {
                       ),
                     )
                     .toList(),
+              ),
+            ),
+          ],
+        ),
+        const SizedBox(height: 12),
+        ...settingsListGroup(
+          context,
+          const SettingsLabelDivider(label: 'Content Display'),
+          [
+            SettingsListTile(
+              label: const Text('TMDB API Key (Fallback)'),
+              subLabel: TextField(
+                controller: tmdbApiKeyController,
+                decoration: const InputDecoration(
+                  hintText: 'Used for metadata when Baklava plugin is unavailable',
+                  border: InputBorder.none,
+                ),
+                onChanged: (v) => ref.read(kebapSettingsProvider.notifier).setTmdbApiKey(v),
+              ),
+            ),
+            SettingsListTile(
+              label: const Text('Show Reviews Carousel'),
+              subLabel: const Text('Display TMDB reviews on item detail pages'),
+              trailing: Switch(
+                value: ref.watch(kebapSettingsProvider).showReviewsCarousel,
+                onChanged: (v) => ref.read(kebapSettingsProvider.notifier).setShowReviewsCarousel(v),
               ),
             ),
           ],

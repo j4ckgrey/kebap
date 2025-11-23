@@ -79,7 +79,7 @@ class _DetailsScreenState extends ConsumerState<DetailsScreen> {
             ),
             //Small offset to match detailscaffold
             child: Transform.translate(
-                offset: const Offset(0, -5), child: FladderImage(image: widget.item?.getPosters?.primary)),
+                offset: const Offset(0, -5), child: KebapImage(image: widget.item?.getPosters?.primary)),
           ),
         ),
         AnimatedSwitcher(

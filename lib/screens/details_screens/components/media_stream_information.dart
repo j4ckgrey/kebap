@@ -10,7 +10,7 @@ import 'package:kebap/screens/details_screens/components/media_stream_carousel.d
 import 'package:kebap/util/adaptive_layout/adaptive_layout.dart';
 import 'package:kebap/util/focus_provider.dart';
 import 'package:kebap/util/localization_helper.dart';
-import 'package:kebap/widgets/shared/enum_selection.dart';
+// removed unused import
 import 'package:kebap/widgets/shared/item_actions.dart';
 import 'package:kebap/widgets/shared/modal_bottom_sheet.dart';
 
@@ -33,7 +33,7 @@ ParsedVersionName parseVersionName(String name) {
   }
   
   // Extract quality information from the full name (before filename)
-  final qualityPart = parts.length > 1 ? parts.first : '';
+  // (qualityPart was unused and removed)
   
   // Extract resolution (2160p, 1080p, 720p, etc.)
   final resolutionMatch = RegExp(r'\b(\d{3,4}p)\b', caseSensitive: false).firstMatch(name);
@@ -90,7 +90,7 @@ class MediaStreamInformation extends ConsumerWidget {
     
     // Otherwise use dropdown (default)
     // Check if ANY version has streams (used to keep dropdowns visible while fetching)
-    final hasAnyVideoStreams = mediaStream.versionStreams.any((v) => v.videoStreams.isNotEmpty);
+    // video stream presence is not used directly here, so skip computing it to avoid unused var
     final hasAnyAudioStreams = mediaStream.versionStreams.any((v) => v.audioStreams.isNotEmpty);
     final hasAnySubStreams = mediaStream.versionStreams.any((v) => v.subStreams.isNotEmpty);
     
@@ -224,7 +224,7 @@ class _StreamOptionSelect<T> extends StatelessWidget {
               ? Container(
                   padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
                   decoration: BoxDecoration(
-                    color: Theme.of(context).colorScheme.surfaceContainerHighest.withOpacity(0.5),
+                    color: Theme.of(context).colorScheme.surfaceContainerHighest.withValues(alpha: 0.5),
                     borderRadius: BorderRadius.circular(8),
                   ),
                   child: Row(
@@ -313,7 +313,7 @@ class _StreamOptionSelect<T> extends StatelessWidget {
                         textAlign: TextAlign.start,
                         style: Theme.of(context).textTheme.bodySmall?.copyWith(
                           color: itemList.length > 1 
-                              ? Theme.of(context).colorScheme.onPrimaryContainer.withOpacity(0.7)
+                              ? Theme.of(context).colorScheme.onPrimaryContainer.withValues(alpha: 0.7)
                               : Theme.of(context).colorScheme.onSurfaceVariant,
                         ),
                         maxLines: 1,

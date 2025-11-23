@@ -46,7 +46,7 @@ class _VideoPlayerQueueState extends ConsumerState<VideoPlayerQueue> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: const FladderAppBar(
+      appBar: const KebapAppBar(
         label: "",
         automaticallyImplyLeading: true,
       ),

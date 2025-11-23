@@ -1,4 +1,4 @@
-package nl.jknaapen.fladder.composables.controls
+package nl.jknaapen.kebap.composables.controls
 
 import TrickPlayModel
 import androidx.compose.foundation.Canvas

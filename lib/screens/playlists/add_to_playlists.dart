@@ -81,7 +81,7 @@ class _AddToPlaylistState extends ConsumerState<AddToPlaylist> {
                                 name: controller.text,
                               );
                           if (context.mounted) {
-                            fladderSnackbar(context,
+                            kebapSnackbar(context,
                                 title: response.isSuccessful
                                     ? context.localized.addedToPlaylist(controller.text)
                                     : '${context.localized.somethingWentWrong} - (${response.statusCode}) - ${response.base.reasonPhrase}');
@@ -119,7 +119,7 @@ class _AddToPlaylistState extends ConsumerState<AddToPlaylist> {
                                 onPressed: () async {
                                   final response = await ref.read(provider.notifier).addToPlaylist(playlist: e.key);
                                   if (context.mounted) {
-                                    fladderSnackbar(context,
+                                    kebapSnackbar(context,
                                         title: response.isSuccessful
                                             ? context.localized.addedToPlaylist(controller.text)
                                             : '${context.localized.somethingWentWrong} - (${response.statusCode}) - ${response.base.reasonPhrase}');

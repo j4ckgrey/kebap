@@ -16,11 +16,11 @@ bool get _isDesktop {
   ].contains(defaultTargetPlatform);
 }
 
-class FladderAppBar extends StatelessWidget implements PreferredSize {
+class KebapAppBar extends StatelessWidget implements PreferredSize {
   final double height;
   final String? label;
   final bool automaticallyImplyLeading;
-  const FladderAppBar({this.height = 35, this.automaticallyImplyLeading = false, this.label, super.key});
+  const KebapAppBar({this.height = 35, this.automaticallyImplyLeading = false, this.label, super.key});
 
   @override
   Widget build(BuildContext context) {

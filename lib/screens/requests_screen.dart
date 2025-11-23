@@ -13,6 +13,8 @@ import 'package:kebap/theme.dart';
 import 'package:kebap/widgets/requests/request_card.dart';
 import 'package:kebap/widgets/requests/request_detail_modal.dart';
 import 'package:kebap/widgets/shared/status_card.dart';
+import 'package:kebap/models/items/images_models.dart';
+import 'package:kebap/widgets/navigation_scaffold/components/background_image.dart';
 
 @RoutePage()
 class RequestsScreen extends ConsumerStatefulWidget {
@@ -40,26 +42,19 @@ class _RequestsScreenState extends ConsumerState<RequestsScreen> {
     final isAdmin = user?.policy?.isAdministrator ?? false;
 
     // Filter requests based on user role
-    final filteredRequests = isAdmin
-        ? requestsState.requests
-        : requestsState.requests
-            .where((r) => r.username != null && r.username == user?.name)
-            .toList();
+    final filteredRequests = requestsState.filterByUser(user?.name ?? '', isAdmin: isAdmin);
 
-    // Categorize requests
-    final movies = filteredRequests
-        .where((r) =>
-            (r.itemType ?? 'movie') == 'movie' &&
-            r.status != 'approved' &&
-            r.status != 'rejected')
-        .toList();
+    final movies = isAdmin
+        ? requestsState.movies
+        : filteredRequests.where((r) => r.itemType?.toLowerCase() == 'movie' && r.status != 'approved' && r.status != 'rejected').toList();
 
-    final series = filteredRequests
-        .where((r) =>
-            (r.itemType ?? '') == 'series' &&
-            r.status != 'approved' &&
-            r.status != 'rejected')
-        .toList();
+    final series = isAdmin
+        ? requestsState.series
+        : filteredRequests.where((r) => (r.itemType?.toLowerCase() == 'series' || r.itemType?.toLowerCase() == 'tv') && r.status != 'approved' && r.status != 'rejected').toList();
+
+    final pending = isAdmin
+        ? requestsState.pending
+        : filteredRequests.where((r) => r.status == 'pending').toList();
 
     final approved = isAdmin
         ? requestsState.requests
@@ -74,12 +69,23 @@ class _RequestsScreenState extends ConsumerState<RequestsScreen> {
         : filteredRequests.where((r) => r.status == 'rejected').toList();
 
     return NestedScaffold(
+      background: BackgroundImage(
+        images: filteredRequests
+            .map((r) => r.img != null 
+                ? ImagesData(primary: ImageData(path: r.img!, hash: 'LEHV6nWB2yk8pyo0adR*.7kCMdnj'))
+                : null)
+            .nonNulls
+            .toList(),
+      ),
       body: CustomScrollView(
         slivers: [
           SliverAppBar(
             title: const Text('Media Requests'),
+            automaticallyImplyLeading: false,
             floating: true,
-            pinned: true,
+            pinned: false,
+            primary: false,
+            backgroundColor: Colors.transparent,
           ),
           requestsState.loading
               ? const SliverFillRemaining(
@@ -303,7 +309,7 @@ class _EmptyPlaceholder extends StatelessWidget {
       height: 150,
       width: 100,
       decoration: BoxDecoration(
-        borderRadius: FladderTheme.smallShape.borderRadius,
+        borderRadius: KebapTheme.smallShape.borderRadius,
         border: Border.all(
           color: theme.colorScheme.outlineVariant,
           width: 2,

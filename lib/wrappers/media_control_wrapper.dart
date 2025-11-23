@@ -62,7 +62,7 @@ class MediaControlsWrapper extends BaseAudioHandler implements VideoPlayerContro
       await AudioService.init(
         builder: () => this,
         config: const AudioServiceConfig(
-          androidNotificationChannelId: 'nl.jknaapen.fladder.channel.playback',
+          androidNotificationChannelId: 'nl.jknaapen.kebap.channel.playback',
           androidNotificationChannelName: 'Video playback',
           androidNotificationOngoing: true,
           androidStopForegroundOnPause: true,

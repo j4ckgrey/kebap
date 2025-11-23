@@ -1,4 +1,4 @@
-package nl.jknaapen.fladder.composables.dialogs
+package nl.jknaapen.kebap.composables.dialogs
 
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Row
@@ -16,7 +16,7 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import io.github.rabehx.iconsax.Iconsax
 import io.github.rabehx.iconsax.filled.TickSquare
-import nl.jknaapen.fladder.composables.controls.CustomButton
+import nl.jknaapen.kebap.composables.controls.CustomButton
 
 @Composable
 internal fun TrackButton(

@@ -7,7 +7,7 @@ double normalize(double min, double max, double value) {
   return (value - min) / (max - min);
 }
 
-class FladderSlider extends StatefulWidget {
+class KebapSlider extends StatefulWidget {
   final double value;
   final double min;
   final double max;
@@ -21,7 +21,7 @@ class FladderSlider extends StatefulWidget {
   final Function(double value)? onChangeStart;
   final Function(double value)? onChangeEnd;
 
-  const FladderSlider({
+  const KebapSlider({
     required this.value,
     this.min = 0.0,
     this.max = 1.0,
@@ -38,10 +38,10 @@ class FladderSlider extends StatefulWidget {
   }) : assert(value >= min || value <= max);
 
   @override
-  FladderSliderState createState() => FladderSliderState();
+  KebapSliderState createState() => KebapSliderState();
 }
 
-class FladderSliderState extends State<FladderSlider> with SingleTickerProviderStateMixin {
+class KebapSliderState extends State<KebapSlider> with SingleTickerProviderStateMixin {
   late AnimationController _controller;
   late Animation<double> _animation;
   double _currentValue = 0.0;
@@ -57,7 +57,7 @@ class FladderSliderState extends State<FladderSlider> with SingleTickerProviderS
   }
 
   @override
-  void didUpdateWidget(covariant FladderSlider oldWidget) {
+  void didUpdateWidget(covariant KebapSlider oldWidget) {
     super.didUpdateWidget(oldWidget);
 
     if (oldWidget.value != widget.value || oldWidget.divisions != widget.divisions) {

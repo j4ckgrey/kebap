@@ -365,7 +365,7 @@ class LibrarySearchNotifier extends StateNotifier<LibrarySearchModel> {
       state = state.copyWith(filters: state.filters.copyWith(favourites: state.filters.favourites == false));
   void toggleRecursive() =>
       state = state.copyWith(filters: state.filters.copyWith(recursive: state.filters.recursive == false));
-  void toggleType(FladderItemType type) =>
+  void toggleType(KebapItemType type) =>
       state = state.copyWith(filters: state.filters.copyWith(types: state.filters.types.toggleKey(type)));
   void toggleView(ViewModel view) => state = state.copyWith(views: state.views.toggleKey(view));
   void toggleGenre(String genre) =>
@@ -390,7 +390,7 @@ class LibrarySearchNotifier extends StateNotifier<LibrarySearchModel> {
   void setStudios(Map<Studio, bool> studios) =>
       state = state.copyWith(filters: state.filters.copyWith(studios: studios));
   void setTags(Map<String, bool> tags) => state = state.copyWith(filters: state.filters.copyWith(tags: tags));
-  void setTypes(Map<FladderItemType, bool> types) =>
+  void setTypes(Map<KebapItemType, bool> types) =>
       state = state.copyWith(filters: state.filters.copyWith(types: types));
   void setRatings(Map<String, bool> officialRatings) =>
       state = state.copyWith(filters: state.filters.copyWith(officialRatings: officialRatings));
@@ -599,12 +599,12 @@ class LibrarySearchNotifier extends StateNotifier<LibrarySearchModel> {
     }
 
     //Only try to load video items
-    itemsToPlay = itemsToPlay.where((element) => FladderItemType.playable.contains(element.type)).toList();
+    itemsToPlay = itemsToPlay.where((element) => KebapItemType.playable.contains(element.type)).toList();
 
     if (itemsToPlay.isNotEmpty) {
       await itemsToPlay.playLibraryItems(context, ref, shuffle: shuffle);
     } else {
-      fladderSnackbar(context, title: context.localized.libraryFetchNoItemsFound);
+      kebapSnackbar(context, title: context.localized.libraryFetchNoItemsFound);
     }
   }
 
@@ -620,7 +620,7 @@ class LibrarySearchNotifier extends StateNotifier<LibrarySearchModel> {
 
       List<PhotoModel> albumItems = [];
 
-      if (!state.filters.types.included.containsAny([FladderItemType.video, FladderItemType.photo]) &&
+      if (!state.filters.types.included.containsAny([KebapItemType.video, KebapItemType.photo]) &&
           state.filters.recursive == true) {
         for (var album in itemsToPlay.where(
           (element) => element is PhotoAlbumModel || element is FolderModel,
@@ -679,7 +679,7 @@ class LibrarySearchNotifier extends StateNotifier<LibrarySearchModel> {
         selected: selected?.id,
       ));
     } else {
-      fladderSnackbar(context, title: context.localized.libraryFetchNoItemsFound);
+      kebapSnackbar(context, title: context.localized.libraryFetchNoItemsFound);
     }
   }
 

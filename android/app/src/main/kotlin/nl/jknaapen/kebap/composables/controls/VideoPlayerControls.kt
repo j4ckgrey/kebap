@@ -1,4 +1,4 @@
-package nl.jknaapen.fladder.composables.controls
+package nl.jknaapen.kebap.composables.controls
 
 import android.os.Build
 import androidx.activity.compose.BackHandler
@@ -70,17 +70,17 @@ import io.github.rabehx.iconsax.filled.Subtitle
 import io.github.rabehx.iconsax.outline.CloseSquare
 import io.github.rabehx.iconsax.outline.Refresh
 import kotlinx.coroutines.delay
-import nl.jknaapen.fladder.composables.dialogs.AudioPicker
-import nl.jknaapen.fladder.composables.dialogs.ChapterSelectionSheet
-import nl.jknaapen.fladder.composables.dialogs.PlaybackSpeedPicker
-import nl.jknaapen.fladder.composables.dialogs.SubtitlePicker
-import nl.jknaapen.fladder.composables.shared.CurrentTime
-import nl.jknaapen.fladder.objects.PlayerSettingsObject
-import nl.jknaapen.fladder.objects.VideoPlayerObject
-import nl.jknaapen.fladder.utility.ImmersiveSystemBars
-import nl.jknaapen.fladder.utility.defaultSelected
-import nl.jknaapen.fladder.utility.leanBackEnabled
-import nl.jknaapen.fladder.utility.visible
+import nl.jknaapen.kebap.composables.dialogs.AudioPicker
+import nl.jknaapen.kebap.composables.dialogs.ChapterSelectionSheet
+import nl.jknaapen.kebap.composables.dialogs.PlaybackSpeedPicker
+import nl.jknaapen.kebap.composables.dialogs.SubtitlePicker
+import nl.jknaapen.kebap.composables.shared.CurrentTime
+import nl.jknaapen.kebap.objects.PlayerSettingsObject
+import nl.jknaapen.kebap.objects.VideoPlayerObject
+import nl.jknaapen.kebap.utility.ImmersiveSystemBars
+import nl.jknaapen.kebap.utility.defaultSelected
+import nl.jknaapen.kebap.utility.leanBackEnabled
+import nl.jknaapen.kebap.utility.visible
 import kotlin.time.Duration.Companion.seconds
 
 

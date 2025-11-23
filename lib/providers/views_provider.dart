@@ -1,3 +1,4 @@
+import 'package:flutter/foundation.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import 'package:kebap/jellyfin/jellyfin_open_api.swagger.dart';
@@ -46,7 +47,11 @@ class ViewsNotifier extends StateNotifier<ViewsModel> {
 
     if (createdViews != null) {
       newList = await Future.wait(createdViews.map((e) async {
-        if (ref.read(userProvider)?.latestItemsExcludes.contains(e.id) == true) return e;
+        if (ref.read(userProvider)?.latestItemsExcludes.contains(e.id) == true) {
+          debugPrint('[ViewsProvider] Skipping view ${e.name} due to user exclusion');
+          return e;
+        }
+        debugPrint('[ViewsProvider] Fetching latest items for view ${e.name} (id: ${e.id}, type: ${e.collectionType})');
         final recents = await api.usersUserIdItemsLatestGet(
           parentId: e.id,
           imageTypeLimit: 1,
@@ -68,6 +73,7 @@ class ViewsNotifier extends StateNotifier<ViewsModel> {
             ItemFields.overview,
           ],
         );
+        debugPrint('[ViewsProvider] View ${e.name} returned ${recents.body?.length ?? 0} items');
         return e.copyWith(recentlyAdded: recents.body?.map((e) => ItemBaseModel.fromBaseDto(e, ref)).toList());
       }));
     }
