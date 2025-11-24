@@ -1,10 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
-import 'package:kebap/models/item_base_model.dart';
 import 'package:kebap/providers/focused_item_provider.dart';
 import 'package:kebap/screens/shared/media/compact_item_banner.dart';
 import 'package:kebap/screens/shared/media/poster_row.dart';
+import 'package:kebap/screens/shared/media/single_row_view.dart';
 
 class MultiRowView extends ConsumerStatefulWidget {
   final List<RowData> rows;

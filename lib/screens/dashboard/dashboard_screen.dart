@@ -20,21 +20,11 @@ import 'package:kebap/providers/user_provider.dart';
 import 'package:kebap/providers/views_provider.dart';
 import 'package:kebap/routes/auto_router.gr.dart';
 import 'package:kebap/screens/home_screen.dart';
-import 'package:kebap/screens/shared/media/compact_item_banner.dart';
-import 'package:kebap/screens/shared/media/poster_row.dart';
 import 'package:kebap/screens/shared/media/single_row_view.dart';
 import 'package:kebap/screens/shared/nested_scaffold.dart';
-import 'package:kebap/screens/shared/nested_sliver_appbar.dart';
 import 'package:kebap/util/adaptive_layout/adaptive_layout.dart';
-import 'package:kebap/util/focus_provider.dart';
-import 'package:kebap/util/list_padding.dart';
 import 'package:kebap/util/localization_helper.dart';
-import 'package:kebap/util/sliver_list_padding.dart';
 import 'package:kebap/widgets/navigation_scaffold/components/background_image.dart';
-import 'package:kebap/widgets/navigation_scaffold/components/settings_user_icon.dart';
-import 'package:kebap/widgets/shared/pinch_poster_zoom.dart';
-import 'package:kebap/widgets/shared/poster_size_slider.dart';
-import 'package:kebap/widgets/shared/pull_to_refresh.dart';
 
 @RoutePage()
 class DashboardScreen extends ConsumerStatefulWidget {
@@ -93,7 +83,6 @@ class _DashboardScreenState extends ConsumerState<DashboardScreen> {
     final resumeBooks = dashboardData.resumeBooks;
 
     final allResume = [...resumeVideo, ...resumeAudio, ...resumeBooks].toList();
-    final viewSize = AdaptiveLayout.viewSizeOf(context);
 
     return MediaQuery.removeViewInsets(
       context: context,
@@ -114,90 +103,75 @@ class _DashboardScreenState extends ConsumerState<DashboardScreen> {
             );
           },
         ),
-        body: PinchPosterZoom(
-            scaleDifference: (difference) => ref.read(clientSettingsProvider.notifier).addPosterSize(difference),
-            child: CustomScrollView(
-              primary: true,
-              physics: const AlwaysScrollableScrollPhysics(),
-              slivers: [
-                // Single row view with fixed banner
-                SliverFillRemaining(
-                  hasScrollBody: false,
-                  child: Builder(
-                    builder: (context) {
-                      final rows = [
-                        if (resumeVideo.isNotEmpty &&
-                            (homeSettings.nextUp == HomeNextUp.cont || homeSettings.nextUp == HomeNextUp.separate))
-                          RowData(
-                            label: context.localized.dashboardContinueWatching,
-                            posters: resumeVideo,
-                          ),
-                        if (resumeAudio.isNotEmpty &&
-                            (homeSettings.nextUp == HomeNextUp.cont || homeSettings.nextUp == HomeNextUp.separate))
-                          RowData(
-                            label: context.localized.dashboardContinueListening,
-                            posters: resumeAudio,
-                          ),
-                        if (resumeBooks.isNotEmpty &&
-                            (homeSettings.nextUp == HomeNextUp.cont || homeSettings.nextUp == HomeNextUp.separate))
-                          RowData(
-                            label: context.localized.dashboardContinueReading,
-                            posters: resumeBooks,
-                          ),
-                        if (dashboardData.nextUp.isNotEmpty &&
-                            (homeSettings.nextUp == HomeNextUp.nextUp || homeSettings.nextUp == HomeNextUp.separate))
-                          RowData(
-                            label: context.localized.nextUp,
-                            posters: dashboardData.nextUp,
-                          ),
-                        if ([...allResume, ...dashboardData.nextUp].isNotEmpty && homeSettings.nextUp == HomeNextUp.combined)
-                          RowData(
-                            label: context.localized.dashboardContinue,
-                            posters: [...allResume, ...dashboardData.nextUp],
-                          ),
-                        ...views.views // Use all views to ensure rows appear (bypassing potential userProvider null issue)
-                            .where((element) => element.recentlyAdded.isNotEmpty)
-                            .map(
-                              (view) => RowData(
-                                label: context.localized.dashboardRecentlyAdded(view.name),
-                                posters: view.recentlyAdded,
-                                aspectRatio: view.collectionType.aspectRatio,
-                                onLabelClick: () => context.router.push(
-                                  LibrarySearchRoute(
-                                    viewModelId: view.id,
-                                    types: switch (view.collectionType) {
-                                      CollectionType.tvshows => {
-                                          KebapItemType.episode: true,
-                                        },
-                                      _ => {},
-                                    },
-                                    sortingOptions: switch (view.collectionType) {
-                                      CollectionType.books ||
-                                      CollectionType.boxsets ||
-                                      CollectionType.folders ||
-                                      CollectionType.music =>
-                                        SortingOptions.dateLastContentAdded,
-                                      _ => SortingOptions.dateAdded,
-                                    },
-                                    sortOrder: SortingOrder.descending,
-                                    recursive: true,
-                                  ),
-                                ),
-                              ),
-                            ),
-                      ];
-                      debugPrint('[Dashboard] SingleRowView rows count: ${rows.length}');
-                      return SingleRowView(
-                        contentPadding: padding,
-                        rows: rows,
-                      );
-                    },
-                  ),
+        body: Builder(
+          builder: (context) {
+            final rows = [
+              if (resumeVideo.isNotEmpty &&
+                  (homeSettings.nextUp == HomeNextUp.cont || homeSettings.nextUp == HomeNextUp.separate))
+                RowData(
+                  label: context.localized.dashboardContinueWatching,
+                  posters: resumeVideo,
                 ),
-                const DefautlSliverBottomPadding(),
-              ],
-            ),
-
+              if (resumeAudio.isNotEmpty &&
+                  (homeSettings.nextUp == HomeNextUp.cont || homeSettings.nextUp == HomeNextUp.separate))
+                RowData(
+                  label: context.localized.dashboardContinueListening,
+                  posters: resumeAudio,
+                ),
+              if (resumeBooks.isNotEmpty &&
+                  (homeSettings.nextUp == HomeNextUp.cont || homeSettings.nextUp == HomeNextUp.separate))
+                RowData(
+                  label: context.localized.dashboardContinueReading,
+                  posters: resumeBooks,
+                ),
+              if (dashboardData.nextUp.isNotEmpty &&
+                  (homeSettings.nextUp == HomeNextUp.nextUp || homeSettings.nextUp == HomeNextUp.separate))
+                RowData(
+                  label: context.localized.nextUp,
+                  posters: dashboardData.nextUp,
+                ),
+              if ([...allResume, ...dashboardData.nextUp].isNotEmpty && homeSettings.nextUp == HomeNextUp.combined)
+                RowData(
+                  label: context.localized.dashboardContinue,
+                  posters: [...allResume, ...dashboardData.nextUp],
+                ),
+              ...views.views
+                  .where((element) => element.recentlyAdded.isNotEmpty)
+                  .map(
+                    (view) => RowData(
+                      label: context.localized.dashboardRecentlyAdded(view.name),
+                      posters: view.recentlyAdded,
+                      aspectRatio: view.collectionType.aspectRatio,
+                      onLabelClick: () => context.router.push(
+                        LibrarySearchRoute(
+                          viewModelId: view.id,
+                          types: switch (view.collectionType) {
+                            CollectionType.tvshows => {
+                                KebapItemType.episode: true,
+                              },
+                            _ => {},
+                          },
+                          sortingOptions: switch (view.collectionType) {
+                            CollectionType.books ||
+                            CollectionType.boxsets ||
+                            CollectionType.folders ||
+                            CollectionType.music =>
+                              SortingOptions.dateLastContentAdded,
+                            _ => SortingOptions.dateAdded,
+                          },
+                          sortOrder: SortingOrder.descending,
+                          recursive: true,
+                        ),
+                      ),
+                    ),
+                  ),
+            ];
+            debugPrint('[Dashboard] SingleRowView rows count: ${rows.length}');
+            return SingleRowView(
+              contentPadding: padding,
+              rows: rows,
+            );
+          },
         ),
       ),
     );

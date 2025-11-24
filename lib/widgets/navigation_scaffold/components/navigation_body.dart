@@ -76,6 +76,7 @@ class _NavigationBodyState extends ConsumerState<NavigationBody> {
         child: FocusTraversalGroup(
           policy: GlobalFallbackTraversalPolicy(fallbackNode: navBarNode),
           child: NestedScrollView(
+            physics: const NeverScrollableScrollPhysics(), // Prevent outer scroll
             floatHeaderSlivers: true,
             headerSliverBuilder: (context, innerBoxIsScrolled) {
               return [
@@ -192,18 +193,18 @@ class GlobalFallbackTraversalPolicy extends ReadingOrderTraversalPolicy {
       } catch (_) {}
     }
 
-    // UP navigation: when at the first content node, move focus to the navbar
+    // UP navigation: HorizontalList handles UP from first row to navbar
+    // This fallback handles other cases like BackButton widgets
     if (direction == TraversalDirection.up) {
       try {
-        final primary = FocusManager.instance.primaryFocus;
-        final atFirstContent = firstContentNode != null && (
-          currentNode == firstContentNode ||
-          currentNode.descendants.contains(firstContentNode) ||
-          primary == firstContentNode
-        );
-        debugPrint('[GlobalFallback] UP navigation check: atFirstContent=$atFirstContent primary=$primary');
-        if (atFirstContent) {
-          // Prefer focusing the first navigation button if available
+        // If the focused widget is a nested BackButton (like in Settings where
+        // the back control is placed inline rather than in an AppBar), allow
+        // UP to focus the navbar. We check for a BackButton ancestor which is
+        // a reliable indicator of a 'back' control in content.
+        final ctx = currentNode.context;
+        final hasBackButtonAncestor = ctx != null && ctx.findAncestorWidgetOfExactType<BackButton>() != null;
+        debugPrint('[GlobalFallback] UP BackButton check: hasBack=$hasBackButtonAncestor ctx=$ctx');
+        if (hasBackButtonAncestor) {
           if (firstNavButtonNode != null && firstNavButtonNode!.canRequestFocus) {
             firstNavButtonNode!.requestFocus();
             return true;
@@ -212,31 +213,6 @@ class GlobalFallbackTraversalPolicy extends ReadingOrderTraversalPolicy {
             final cb = FocusTraversalPolicy.defaultTraversalRequestFocusCallback;
             cb(navBarNode);
             return true;
-          }
-        }
-
-        // If the focused widget is a nested BackButton (like in Settings where
-        // the back control is placed inline rather than in an AppBar), allow
-        // UP to focus the navbar. We check for a BackButton ancestor which is
-        // a reliable indicator of a 'back' control in content.
-        if (!atFirstContent) {
-          try {
-            final ctx = currentNode.context;
-            final hasBackButtonAncestor = ctx != null && ctx.findAncestorWidgetOfExactType<BackButton>() != null;
-            debugPrint('[GlobalFallback] UP BackButton check: hasBack=$hasBackButtonAncestor ctx=$ctx');
-            if (hasBackButtonAncestor) {
-              if (firstNavButtonNode != null && firstNavButtonNode!.canRequestFocus) {
-                firstNavButtonNode!.requestFocus();
-                return true;
-              }
-              if (navBarNode.canRequestFocus) {
-                final cb = FocusTraversalPolicy.defaultTraversalRequestFocusCallback;
-                cb(navBarNode);
-                return true;
-              }
-            }
-          } catch (e) {
-            debugPrint('[GlobalFallback] BackButton check error: $e');
           }
         }
       } catch (e) {

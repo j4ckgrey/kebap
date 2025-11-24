@@ -9,17 +9,13 @@ import 'package:kebap/providers/connectivity_provider.dart';
 import 'package:kebap/providers/video_player_provider.dart';
 import 'package:kebap/providers/views_provider.dart';
 import 'package:kebap/routes/auto_router.dart';
-import 'package:kebap/screens/home_screen.dart';
 import 'package:kebap/screens/shared/animated_fade_size.dart';
-import 'package:kebap/screens/shared/nested_bottom_appbar.dart';
 import 'package:kebap/util/adaptive_layout/adaptive_layout.dart';
 import 'package:kebap/widgets/navigation_scaffold/components/destination_model.dart';
 import 'package:kebap/widgets/navigation_scaffold/components/kebap_app_bar.dart';
 import 'package:kebap/widgets/navigation_scaffold/components/floating_player_bar.dart';
 import 'package:kebap/widgets/navigation_scaffold/components/navigation_body.dart';
 import 'package:kebap/widgets/navigation_scaffold/components/navigation_drawer.dart';
-import 'package:kebap/widgets/shared/animated_visibility.dart';
-import 'package:kebap/widgets/shared/hide_on_scroll.dart';
 import 'package:kebap/widgets/shared/offline_banner.dart';
 
 class NavigationScaffold extends ConsumerStatefulWidget {
@@ -79,9 +75,6 @@ class _NavigationScaffoldState extends ConsumerState<NavigationScaffold> {
     final calculatedBottomViewPadding =
         showPlayerBar ? floatingPlayerHeight(context) + bottomViewPadding : bottomViewPadding;
 
-    final currentTab =
-        HomeTabs.values.elementAtOrNull(currentIndex.clamp(0, HomeTabs.values.length - 1)) ?? HomeTabs.dashboard;
-
     final fullScreenChildRoute = fullScreenRoutes.contains(context.router.current.name);
 
     return PopScope(
@@ -126,30 +119,6 @@ class _NavigationScaffoldState extends ConsumerState<NavigationScaffold> {
                           currentLocation: currentLocation,
                         )
                       : null,
-                  bottomNavigationBar: AnimatedVisibility(
-                    visible: (isHomeScreen && AdaptiveLayout.viewSizeOf(context) == ViewSize.phone),
-                    hiddenHeight: calculatedBottomViewPadding,
-                    duration: const Duration(milliseconds: 250),
-                    child: HideOnScroll(
-                      controller: AdaptiveLayout.scrollOf(context, currentTab),
-                      forceHide: !homeRoutes.any((element) => element.name.contains(currentLocation)),
-                      child: NestedBottomAppBar(
-                        child: SizedBox(
-                          height: 65,
-                          child: Row(
-                            mainAxisAlignment: MainAxisAlignment.spaceAround,
-                            crossAxisAlignment: CrossAxisAlignment.stretch,
-                            children: widget.destinations
-                                .map(
-                                  (destination) => destination.toNavigationButton(
-                                      widget.currentRouteName == destination.route?.routeName, false, false),
-                                )
-                                .toList(),
-                          ),
-                        ),
-                      ),
-                    ),
-                  ),
                   body: widget.nestedChild != null
                       ? NavigationBody(
                           child: widget.nestedChild!,
