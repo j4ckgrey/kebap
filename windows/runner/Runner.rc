@@ -54,7 +54,9 @@ END
 // remains consistent on all systems.
 // Path is relative to this file (windows/runner). Move up two levels to
 // reach the project root where `icons/production/...` lives.
-IDI_APP_ICON            ICON                    "../../icons/production/kebap_icon.png"
+// The Windows resource compiler requires an .ico file for ICON resources.
+// Use the prepared ICO under icons/production.
+IDI_APP_ICON            ICON                    "../../icons/production/kebap_icon.ico"
 
 
 /////////////////////////////////////////////////////////////////////////////
