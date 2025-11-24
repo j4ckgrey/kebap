@@ -6,7 +6,7 @@ import 'package:kebap/providers/focused_item_provider.dart';
 import 'package:kebap/screens/shared/media/compact_item_banner.dart';
 import 'package:kebap/screens/shared/media/poster_row.dart';
 import 'package:kebap/util/adaptive_layout/adaptive_layout.dart';
-import 'package:kebap/widgets/navigation_scaffold/components/side_navigation_bar.dart';
+
 
 /// Single row view with fixed banner
 /// Shows scrollable rows with banner that updates based on card selection

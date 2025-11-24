@@ -3,8 +3,8 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import 'package:kebap/widgets/navigation_scaffold/components/destination_model.dart';
 import 'package:kebap/widgets/navigation_scaffold/components/navigation_button.dart';
-import 'package:kebap/widgets/navigation_scaffold/components/side_navigation_bar.dart';
-// removed unused import
+
+import 'package:kebap/widgets/navigation_scaffold/components/navigation_constants.dart';
 import 'package:kebap/widgets/navigation_scaffold/components/adaptive_fab.dart';
 import 'package:kebap/widgets/navigation_scaffold/components/settings_user_icon.dart';
 import 'package:auto_route/auto_route.dart';

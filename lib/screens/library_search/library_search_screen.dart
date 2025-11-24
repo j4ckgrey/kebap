@@ -161,41 +161,8 @@ class _LibrarySearchScreenState extends ConsumerState<LibrarySearchScreen> {
             extendBody: true,
             backgroundColor: Colors.transparent,
             extendBodyBehindAppBar: true,
-            floatingActionButton: AdaptiveLayout.inputDeviceOf(context) != InputDevice.dPad
-                ? HideOnScroll(
-                    controller: scrollController,
-                    visibleBuilder: (visible) => librarySearchResults.activePosters.isNotEmpty
-                        ? FloatingActionButtonAnimated(
-                            key: Key(context.localized.playLabel),
-                            isExtended: visible,
-                            tooltip: context.localized.playVideos,
-                            onPressed: () async {
-                              if (librarySearchResults.showGalleryButtons && !librarySearchResults.showPlayButtons) {
-                                libraryProvider.viewGallery(context);
-                                return;
-                              } else if (!librarySearchResults.showGalleryButtons &&
-                                  librarySearchResults.showPlayButtons) {
-                                libraryProvider.playLibraryItems(context, ref);
-                                return;
-                              }
-
-                              await showLibraryPlayOptions(
-                                context,
-                                context.localized.libraryPlayItems,
-                                playVideos: librarySearchResults.showPlayButtons
-                                    ? () => libraryProvider.playLibraryItems(context, ref)
-                                    : null,
-                                viewGallery: librarySearchResults.showGalleryButtons
-                                    ? () => libraryProvider.viewGallery(context)
-                                    : null,
-                              );
-                            },
-                            label: Text(context.localized.playLabel),
-                            icon: const Icon(IconsaxPlusBold.play),
-                          )
-                        : null,
-                  )
-                : null,
+            // Floating action button removed for mobile view per design decision.
+            floatingActionButton: null,
             bottomNavigationBar: AdaptiveLayout.inputDeviceOf(context) != InputDevice.dPad
                 ? HideOnScroll(
                     controller: scrollController,

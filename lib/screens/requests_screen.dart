@@ -16,6 +16,8 @@ import 'package:kebap/widgets/shared/status_card.dart';
 import 'package:kebap/models/items/images_models.dart';
 import 'package:kebap/widgets/navigation_scaffold/components/background_image.dart';
 
+import 'package:kebap/widgets/navigation_scaffold/components/navigation_constants.dart';
+
 @RoutePage()
 class RequestsScreen extends ConsumerStatefulWidget {
   const RequestsScreen({super.key});
@@ -25,6 +27,8 @@ class RequestsScreen extends ConsumerStatefulWidget {
 }
 
 class _RequestsScreenState extends ConsumerState<RequestsScreen> {
+  final FocusScopeNode _contentFocusNode = FocusScopeNode();
+
   @override
   void initState() {
     super.initState();
@@ -32,6 +36,16 @@ class _RequestsScreenState extends ConsumerState<RequestsScreen> {
     Future.microtask(() {
       ref.read(baklavaRequestsProvider.notifier).loadRequests();
     });
+    
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      registerFirstContentNode(_contentFocusNode);
+    });
+  }
+
+  @override
+  void dispose() {
+    _contentFocusNode.dispose();
+    super.dispose();
   }
 
   @override
@@ -79,7 +93,9 @@ class _RequestsScreenState extends ConsumerState<RequestsScreen> {
             .nonNulls
             .toList(),
       ),
-      body: CustomScrollView(
+      body: FocusScope(
+        node: _contentFocusNode,
+        child: CustomScrollView(
         slivers: [
           SliverAppBar(
             title: const Text('Media Requests'),
@@ -178,6 +194,7 @@ class _RequestsScreenState extends ConsumerState<RequestsScreen> {
                     ),
         ],
       ),
+    ),
     );
   }
 }

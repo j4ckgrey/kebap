@@ -237,7 +237,7 @@ class _DetailScaffoldState extends ConsumerState<DetailScaffold> {
                     ],
                   ),
                 ),
-                //Top row buttons
+                // Top row buttons: show only the item actions and refresh. Back/home/user icons removed.
                 if (AdaptiveLayout.inputDeviceOf(context) != InputDevice.dPad)
                   IconTheme(
                     data: IconThemeData(color: Theme.of(context).colorScheme.onSurface),
@@ -249,17 +249,6 @@ class _DetailScaffoldState extends ConsumerState<DetailScaffold> {
                       ),
                       child: Row(
                         children: [
-                          IconButton.filledTonal(
-                            style: IconButton.styleFrom(
-                              backgroundColor: backGroundColor,
-                            ),
-                            onPressed: () => context.router.popBack(),
-                            icon: Padding(
-                              padding:
-                                  EdgeInsets.all(AdaptiveLayout.inputDeviceOf(context) == InputDevice.pointer ? 0 : 4),
-                              child: const BackButtonIcon(),
-                            ),
-                          ),
                           const Spacer(),
                           AnimatedSize(
                             duration: const Duration(milliseconds: 250),
@@ -336,23 +325,6 @@ class _DetailScaffoldState extends ConsumerState<DetailScaffold> {
                                         ),
                                       ),
                                     ),
-                                  if (AdaptiveLayout.layoutModeOf(context) == LayoutMode.single ||
-                                      AdaptiveLayout.viewSizeOf(context) == ViewSize.phone)
-                                    Container(
-                                      margin: const EdgeInsets.symmetric(horizontal: 6),
-                                      child: const SizedBox(
-                                        height: 30,
-                                        width: 30,
-                                        child: SettingsUserIcon(),
-                                      ),
-                                    ),
-                                  if (AdaptiveLayout.layoutModeOf(context) == LayoutMode.single)
-                                    Tooltip(
-                                        message: context.localized.home,
-                                        child: IconButton(
-                                          onPressed: () => context.navigateTo(const DashboardRoute()),
-                                          icon: const Icon(IconsaxPlusLinear.home),
-                                        )),
                                 ],
                               ),
                             ),

@@ -1,15 +1,13 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 
-import 'package:auto_route/auto_route.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import 'package:kebap/providers/settings/client_settings_provider.dart';
 import 'package:kebap/providers/views_provider.dart';
-import 'package:kebap/routes/auto_router.dart';
-import 'package:kebap/util/adaptive_layout/adaptive_layout.dart';
 import 'package:kebap/widgets/navigation_scaffold/components/destination_model.dart';
-import 'package:kebap/widgets/navigation_scaffold/components/side_navigation_bar.dart';
+
+import 'package:kebap/widgets/navigation_scaffold/components/navigation_constants.dart';
 import 'package:kebap/widgets/navigation_scaffold/components/top_navigation_bar.dart';
 import 'package:kebap/widgets/shared/back_intent_dpad.dart';
 
@@ -47,9 +45,6 @@ class _NavigationBodyState extends ConsumerState<NavigationBody> {
 
   @override
   Widget build(BuildContext context) {
-    final hasOverlay = AdaptiveLayout.layoutModeOf(context) == LayoutMode.dual ||
-        homeRoutes.any((element) => element.name.contains(context.router.current.name));
-
     ref.listen(
       clientSettingsProvider,
       (previous, next) {
@@ -61,84 +56,24 @@ class _NavigationBodyState extends ConsumerState<NavigationBody> {
       },
     );
 
-    // Determine whether we should reserve top padding for an overlay navbar.
-    // Keep as a non-constant variable so analyzer won't treat branches as dead.
-    // ignore: dead_code
-    var useTopNavbar = true;
-    final effectiveHasOverlay = useTopNavbar || hasOverlay;
-
-    // Use Top Navbar for both Desktop and Mobile if enabled
-    // This replaces the side rail on mobile with the top navbar
-    final enableTopNavbar = useTopNavbar;
-
-    if (enableTopNavbar) {
-      return BackIntentDpad(
-        child: FocusTraversalGroup(
-          policy: GlobalFallbackTraversalPolicy(fallbackNode: navBarNode),
-          child: NestedScrollView(
-            physics: const NeverScrollableScrollPhysics(), // Prevent outer scroll
-            floatHeaderSlivers: true,
-            headerSliverBuilder: (context, innerBoxIsScrolled) {
-              return [
-                SliverAppBar(
-                  forceElevated: innerBoxIsScrolled,
-                  primary: false,
-                  floating: false,
-                  snap: false,
-                  pinned: true,
-                  automaticallyImplyLeading: false,
-                  backgroundColor: Theme.of(context).colorScheme.surface,
-                  elevation: 0,
-                  scrolledUnderElevation: 0,
-                  // Height includes status bar + content
-                  toolbarHeight: MediaQuery.paddingOf(context).top + 56.0,
-                  expandedHeight: MediaQuery.paddingOf(context).top + 56.0,
-                  flexibleSpace: TopNavigationBar(
-                    destinations: widget.destinations,
-                    currentIndex: widget.currentIndex,
-                    currentLocation: widget.currentLocation,
-                    scaffoldKey: widget.drawerKey,
-                  ),
-                ),
-              ];
-            },
-            body: MediaQuery(
-              // Remove top padding from body as it's handled by the sliver app bar's displacement
-              // or the content's own padding if needed.
-              // But we might need to ensure content doesn't overlap if it's not scrolled?
-              // NestedScrollView body starts *below* the sliver if pinned, or at top if floating?
-              // With floating, it scrolls under.
-              // We want consistent padding.
-              data: MediaQuery.of(context).copyWith(
-                  padding: MediaQuery.paddingOf(context).copyWith(top: 0)
-              ),
+    return BackIntentDpad(
+      child: FocusTraversalGroup(
+        policy: GlobalFallbackTraversalPolicy(fallbackNode: navBarNode),
+        child: Column(
+          children: [
+            TopNavigationBar(
+              destinations: widget.destinations,
+              currentIndex: widget.currentIndex,
+              currentLocation: widget.currentLocation,
+              scaffoldKey: widget.drawerKey,
+            ),
+            Expanded(
               child: widget.child,
             ),
-          ),
+          ],
         ),
-      );
-    }
-
-    // Fallback to original side navigation behavior (only if useTopNavbar is false)
-    return SideNavigationBar(
-      currentIndex: widget.currentIndex,
-      destinations: widget.destinations,
-      currentLocation: widget.currentLocation,
-      child: widget.child, // Removed wrapped/padding logic as it was specific to the old layout
-      scaffoldKey: widget.drawerKey,
+      ),
     );
-  }
-
-  MediaQueryData semiNestedPadding(BuildContext context, bool hasOverlay, bool useTopNavbar) {
-    // This method might be obsolete with NestedScrollView but keeping it for now if needed by other widgets
-    // or if we revert.
-    final paddingOf = MediaQuery.paddingOf(context);
-    const navbarContentHeight = 56.0;
-    // For NestedScrollView with floating navbar, the content should probably start with top padding
-    // equal to the navbar height so it's initially visible?
-    // Or NestedScrollView handles it?
-    // Usually NestedScrollView body is placed below the header.
-    return MediaQuery.of(context);
   }
 }
 
@@ -195,25 +130,21 @@ class GlobalFallbackTraversalPolicy extends ReadingOrderTraversalPolicy {
 
     // UP navigation: HorizontalList handles UP from first row to navbar
     // This fallback handles other cases like BackButton widgets
+    // UP navigation: Fallback to navbar when at the top of content
     if (direction == TraversalDirection.up) {
       try {
-        // If the focused widget is a nested BackButton (like in Settings where
-        // the back control is placed inline rather than in an AppBar), allow
-        // UP to focus the navbar. We check for a BackButton ancestor which is
-        // a reliable indicator of a 'back' control in content.
-        final ctx = currentNode.context;
-        final hasBackButtonAncestor = ctx != null && ctx.findAncestorWidgetOfExactType<BackButton>() != null;
-        debugPrint('[GlobalFallback] UP BackButton check: hasBack=$hasBackButtonAncestor ctx=$ctx');
-        if (hasBackButtonAncestor) {
-          if (firstNavButtonNode != null && firstNavButtonNode!.canRequestFocus) {
-            firstNavButtonNode!.requestFocus();
-            return true;
-          }
-          if (navBarNode.canRequestFocus) {
-            final cb = FocusTraversalPolicy.defaultTraversalRequestFocusCallback;
-            cb(navBarNode);
-            return true;
-          }
+        // If we're here, it means the default traversal didn't find a target UP.
+        // This usually means we are at the top of the content.
+        // We blindly try to go to the navbar.
+        
+        if (firstNavButtonNode != null && firstNavButtonNode!.canRequestFocus) {
+          firstNavButtonNode!.requestFocus();
+          return true;
+        }
+        if (navBarNode.canRequestFocus) {
+          final cb = FocusTraversalPolicy.defaultTraversalRequestFocusCallback;
+          cb(navBarNode);
+          return true;
         }
       } catch (e) {
         debugPrint('[GlobalFallback] UP handler error: $e');
