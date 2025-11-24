@@ -12,7 +12,7 @@ import 'package:kebap/util/focus_provider.dart';
 import 'package:kebap/util/list_padding.dart';
 import 'package:kebap/util/sticky_header_text.dart';
 import 'package:kebap/widgets/navigation_scaffold/components/navigation_body.dart';
-import 'package:kebap/widgets/navigation_scaffold/components/side_navigation_bar.dart';
+import 'package:kebap/widgets/navigation_scaffold/components/navigation_constants.dart';
 import 'package:kebap/widgets/shared/ensure_visible.dart';
 
 class HorizontalList<T> extends ConsumerStatefulWidget {
@@ -66,6 +66,28 @@ class _HorizontalListState extends ConsumerState<HorizontalList> with TickerProv
   bool hasFocus = false;
 
   AnimationController? _scrollAnimation;
+
+  @override
+  void didUpdateWidget(HorizontalList oldWidget) {
+    super.didUpdateWidget(oldWidget);
+    if (widget.startIndex != oldWidget.startIndex) {
+      if (widget.startIndex != null) {
+        _scrollToPosition(widget.startIndex!);
+        
+        // Restore focus to the new start index if this list is auto-focusing
+        if (widget.autoFocus) {
+          WidgetsBinding.instance.addPostFrameCallback((_) {
+            if (mounted) {
+              final nodes = _nodesInRow(parentNode);
+              if (nodes.isNotEmpty && widget.startIndex! < nodes.length) {
+                nodes[widget.startIndex!].requestFocus();
+              }
+            }
+          });
+        }
+      }
+    }
+  }
 
   @override
   void initState() {

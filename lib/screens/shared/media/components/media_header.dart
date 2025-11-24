@@ -22,8 +22,8 @@ class MediaHeader extends ConsumerWidget {
   Widget build(BuildContext context, WidgetRef ref) {
     final maxSize = 700.0;
     final textWidget = Container(
-      height: 512,
       alignment: Alignment.center,
+      padding: const EdgeInsets.symmetric(vertical: 8),
       child: SelectableText(
         name,
         textAlign: TextAlign.start,
