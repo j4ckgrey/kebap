@@ -52,7 +52,9 @@ END
 
 // Icon with lowest ID value placed first to ensure application icon
 // remains consistent on all systems.
-IDI_APP_ICON            ICON                    "icons/production/kebap_icon.png"
+// Path is relative to this file (windows/runner). Move up two levels to
+// reach the project root where `icons/production/...` lives.
+IDI_APP_ICON            ICON                    "../../icons/production/kebap_icon.png"
 
 
 /////////////////////////////////////////////////////////////////////////////

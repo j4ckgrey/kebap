@@ -158,10 +158,8 @@ class GlobalFallbackTraversalPolicy extends ReadingOrderTraversalPolicy {
     } catch (_) {}
     
     // Only fall back to navbar on LEFT when we're truly stuck at the edge
-    // (not in the middle of content navigation). Additionally only do the
-    // LEFT -> rail fallback when the legacy side-rail is active; when using
-    // the top navbar we don't want LEFT to jump to the navbar.
-    if (!handled && direction == TraversalDirection.left && railActive) {
+    // (not in the middle of content navigation)
+    if (!handled && direction == TraversalDirection.left) {
       lastMainFocus = currentNode;
 
       // Try to focus the first navigation button if it's registered.
@@ -198,15 +196,10 @@ class GlobalFallbackTraversalPolicy extends ReadingOrderTraversalPolicy {
     if (direction == TraversalDirection.up) {
       try {
         final primary = FocusManager.instance.primaryFocus;
-        final sameEnclosingScope = firstContentNode != null &&
-            firstContentNode!.enclosingScope != null &&
-            currentNode.enclosingScope == firstContentNode!.enclosingScope;
-
         final atFirstContent = firstContentNode != null && (
           currentNode == firstContentNode ||
           currentNode.descendants.contains(firstContentNode) ||
-          primary == firstContentNode ||
-          sameEnclosingScope
+          primary == firstContentNode
         );
         debugPrint('[GlobalFallback] UP navigation check: atFirstContent=$atFirstContent primary=$primary');
         if (atFirstContent) {

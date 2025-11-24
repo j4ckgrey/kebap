@@ -31,6 +31,7 @@ class PosterWidget extends ConsumerWidget {
   final bool primaryPosters;
   final Function(bool focus)? onFocusChanged;
   final FocusNode? focusNode;
+  final VoidCallback? onCustomTap;
 
   const PosterWidget({
     required this.poster,
@@ -49,6 +50,7 @@ class PosterWidget extends ConsumerWidget {
     this.primaryPosters = false,
     this.onFocusChanged,
     this.focusNode,
+    this.onCustomTap,
     super.key,
   });
 
@@ -75,6 +77,7 @@ class PosterWidget extends ConsumerWidget {
               onPressed: onPressed,
               primaryPosters: primaryPosters,
               onFocusChanged: onFocusChanged,
+              onCustomTap: onCustomTap,
             ),
           ),
           if (!inlineTitle && underTitle)

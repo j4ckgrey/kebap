@@ -21,7 +21,7 @@ class PosterRow extends ConsumerWidget {
   final bool primaryPosters;
   final double? explicitHeight; // Explicit height for cards
   final FocusNode? firstItemFocusNode;
-  final bool? autoFocus;
+  final Function(ItemBaseModel item)? onCardTap;
 
   const PosterRow({
     required this.posters,
@@ -34,7 +34,7 @@ class PosterRow extends ConsumerWidget {
     this.primaryPosters = false,
     this.explicitHeight,
     this.firstItemFocusNode,
-    this.autoFocus,
+    this.onCardTap,
     super.key,
   });
 
@@ -45,7 +45,7 @@ class PosterRow extends ConsumerWidget {
       contentPadding: contentPadding,
       label: label,
       hideLabel: hideLabel,
-      autoFocus: autoFocus ?? (ref.read(argumentsStateProvider).htpcMode ? FocusProvider.autoFocusOf(context) : false),
+      autoFocus: ref.read(argumentsStateProvider).htpcMode ? FocusProvider.autoFocusOf(context) : false,
       onLabelClick: onLabelClick,
       dominantRatio: dominantRatio,
       items: posters,
@@ -66,6 +66,7 @@ class PosterRow extends ConsumerWidget {
           aspectRatio: dominantRatio,
           primaryPosters: primaryPosters,
           underTitle: !hideLabel, // Hide title when label is hidden (shown in banner)
+          onCustomTap: onCardTap != null ? () => onCardTap!(poster) : null,
         );
       },
     );

@@ -6,6 +6,7 @@ import 'package:kebap/models/item_base_model.dart';
 import 'package:kebap/providers/focused_item_provider.dart';
 import 'package:kebap/screens/shared/media/compact_item_banner.dart';
 import 'package:kebap/screens/shared/media/poster_row.dart';
+import 'package:kebap/util/adaptive_layout/adaptive_layout.dart';
 import 'package:kebap/widgets/navigation_scaffold/components/side_navigation_bar.dart';
 
 /// Single row view with fixed banner
@@ -50,8 +51,11 @@ class _SingleRowViewState extends ConsumerState<SingleRowView> {
         // Set initial banner item
         ref.read(focusedItemProvider.notifier).state = widget.rows[0].posters.first;
         
-        // Request focus on the first item of the first row
-        _requestFocusOnRow(0);
+        // Request focus on the first item of the first row (only for non-touch devices)
+        final isTouchDevice = AdaptiveLayout.inputDeviceOf(context) == InputDevice.touch;
+        if (!isTouchDevice) {
+          _requestFocusOnRow(0);
+        }
       }
     });
   }
@@ -155,14 +159,86 @@ class _SingleRowViewState extends ConsumerState<SingleRowView> {
   @override
   Widget build(BuildContext context) {
     final size = MediaQuery.sizeOf(context);
+    final viewSize = AdaptiveLayout.viewSizeOf(context);
+    final isTouchDevice = AdaptiveLayout.inputDeviceOf(context) == InputDevice.touch;
     final navbarHeight = MediaQuery.paddingOf(context).top + 56.0;
     final availableHeight = size.height - navbarHeight;
     
-    // Explicit small card height
+    // For touch devices on mobile: larger cards, smaller banner
+    // For non-touch devices: keep existing layout
     final titleHeight = 30.0; // Reduced height for row title (smaller padding + font)
-    final cardHeight = 200.0 - titleHeight; // Cards + title = 200px total
-    final bannerHeight = availableHeight - 200.0; // Rest goes to banner
+    final cardHeight = isTouchDevice && viewSize <= ViewSize.phone 
+        ? 280.0 - titleHeight  // Larger cards for touch devices
+        : 200.0 - titleHeight; // Original size for non-touch
+    final bannerHeight = isTouchDevice && viewSize <= ViewSize.phone
+        ? availableHeight * 0.42  // ~42% for banner on touch devices
+        : availableHeight - 200.0; // Rest goes to banner on non-touch
 
+    // For touch devices, use scrollable ListView
+    if (isTouchDevice && viewSize <= ViewSize.phone) {
+      return Column(
+        children: [
+          // Fixed banner
+          SizedBox(
+            height: bannerHeight,
+            child: CompactItemBanner(
+              item: ref.watch(focusedItemProvider),
+              maxHeight: bannerHeight,
+            ),
+          ),
+          // Scrollable rows
+          Expanded(
+            child: ListView.builder(
+              padding: EdgeInsets.zero,
+              itemCount: widget.rows.length,
+              itemBuilder: (context, index) {
+                final row = widget.rows[index];
+                return SizedBox(
+                  height: cardHeight + titleHeight,
+                  child: Column(
+                    mainAxisSize: MainAxisSize.min,
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      // Row title
+                      Padding(
+                        padding: const EdgeInsets.only(left: 16, top: 8, bottom: 4),
+                        child: Text(
+                          row.label,
+                          style: Theme.of(context).textTheme.titleMedium?.copyWith(
+                            fontWeight: FontWeight.bold,
+                          ),
+                        ),
+                      ),
+                      // Poster cards
+                      Expanded(
+                        child: PosterRow(
+                          contentPadding: EdgeInsets.only(
+                            left: widget.contentPadding.left, 
+                            right: widget.contentPadding.right,
+                          ),
+                          label: row.label,
+                          hideLabel: true, // Hide label, shown above instead
+                          posters: row.posters,
+                          collectionAspectRatio: row.aspectRatio,
+                          onLabelClick: row.onLabelClick,
+                          explicitHeight: cardHeight,
+                          onCardTap: (item) {
+                            // Update banner content instead of navigating
+                            ref.read(focusedItemProvider.notifier).state = item;
+                          },
+                        ),
+                      ),
+                    ],
+                  ),
+                );
+              },
+            ),
+          ),
+        ],
+      );
+    }
+
+    // For non-touch devices, use existing PageView with keyboard navigation
     return Focus(
       focusNode: _focusNode,
       canRequestFocus: false, // Don't steal focus, just listen to bubbling events
@@ -179,7 +255,7 @@ class _SingleRowViewState extends ConsumerState<SingleRowView> {
           ),
           // Single row view (PageView)
           SizedBox(
-            height: cardHeight,
+            height: cardHeight + titleHeight,
             child: Column(
               mainAxisSize: MainAxisSize.min,
               crossAxisAlignment: CrossAxisAlignment.start,
@@ -216,7 +292,7 @@ class _SingleRowViewState extends ConsumerState<SingleRowView> {
                         posters: row.posters,
                         collectionAspectRatio: row.aspectRatio,
                         onLabelClick: row.onLabelClick,
-                        explicitHeight: cardHeight - 32, // Account for title + extra 2px
+                        explicitHeight: cardHeight,
                         onFocused: (item) {
                           ref.read(focusedItemProvider.notifier).state = item;
                         },

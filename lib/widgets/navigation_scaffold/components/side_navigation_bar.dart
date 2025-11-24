@@ -32,11 +32,6 @@ final navBarNode = FocusNode();
 // request focus into the navigation bar.
 FocusNode? firstNavButtonNode;
 
-// Whether the side-rail (legacy sidebar) is currently active/visible.
-// When true, LEFT fallback should move focus into the rail. When false
-// (we're using the top navbar), LEFT should not trigger a rail fallback.
-bool railActive = false;
-
 void registerFirstNavButtonNode(FocusNode node) {
   firstNavButtonNode = node;
 }
@@ -92,9 +87,6 @@ class _SideNavigationBarState extends ConsumerState<SideNavigationBar> {
         homeRoutes.any((element) => element.name.contains(context.router.current.name));
 
     final sideBarPadding = isDesktop ? 6.0 : 0.0;
-
-    // Mark whether the side rail is effectively active for traversal logic.
-    railActive = largeBar && !fullScreenChildRoute && hasOverlay;
 
     return Stack(
       children: [
