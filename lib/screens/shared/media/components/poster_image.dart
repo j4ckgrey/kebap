@@ -61,6 +61,19 @@ class PosterImage extends ConsumerWidget {
     final padding = const EdgeInsets.all(5);
     final myKey = key ?? UniqueKey();
 
+    void defaultAction() async {
+      if (onPressed != null) {
+        onPressed?.call(() async {
+          await poster.navigateTo(context, ref: ref, tag: myKey);
+          context.refreshData();
+        }, poster);
+      } else {
+        await poster.navigateTo(context, ref: ref, tag: myKey);
+        if (!context.mounted) return;
+        context.refreshData();
+      }
+    }
+
     return Hero(
       tag: myKey,
       child: FocusButton(
@@ -68,17 +81,11 @@ class PosterImage extends ConsumerWidget {
         onTap: () async {
           if (onCustomTap != null) {
             onCustomTap?.call();
-          } else if (onPressed != null) {
-            onPressed?.call(() async {
-              await poster.navigateTo(context, ref: ref, tag: myKey);
-              context.refreshData();
-            }, poster);
           } else {
-            await poster.navigateTo(context, ref: ref, tag: myKey);
-            if (!context.mounted) return;
-            context.refreshData();
+            defaultAction();
           }
         },
+        onSubmit: defaultAction,
         onFocusChanged: onFocusChanged,
         onLongPress: () => _showBottomSheet(context, ref),
         onSecondaryTapDown: (details) => _showContextMenu(context, ref, details.globalPosition),

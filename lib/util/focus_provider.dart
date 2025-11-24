@@ -9,6 +9,7 @@ import 'package:kebap/widgets/navigation_scaffold/components/navigation_body.dar
 
 final acceptKeys = {
   LogicalKeyboardKey.enter,
+  LogicalKeyboardKey.numpadEnter,
   LogicalKeyboardKey.accept,
   LogicalKeyboardKey.select,
   LogicalKeyboardKey.gameButtonA,
@@ -54,6 +55,7 @@ class FocusButton extends StatefulWidget {
   final bool darkOverlay;
   final Function(bool focus)? onFocusChanged;
   final BorderRadiusGeometry? borderRadius;
+  final Function()? onSubmit;
 
   const FocusButton({
     this.child,
@@ -67,6 +69,7 @@ class FocusButton extends StatefulWidget {
     this.darkOverlay = true,
     this.onFocusChanged,
     this.borderRadius,
+    this.onSubmit,
     super.key,
   });
 
@@ -132,7 +135,11 @@ class FocusButtonState extends State<FocusButton> {
         }
         _cancelLongPressTimer();
         _keyDownActive = false;
-        widget.onTap?.call();
+        if (widget.onSubmit != null) {
+          widget.onSubmit!.call();
+        } else {
+          widget.onTap?.call();
+        }
       }
     }
     return KeyEventResult.ignored;

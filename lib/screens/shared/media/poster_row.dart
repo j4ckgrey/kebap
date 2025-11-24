@@ -22,12 +22,14 @@ class PosterRow extends ConsumerWidget {
   final double? explicitHeight; // Explicit height for cards
   final FocusNode? firstItemFocusNode;
   final Function(ItemBaseModel item)? onCardTap;
+  final bool autoFocus; // Enable UP navigation to navbar for first row
 
   const PosterRow({
     required this.posters,
     this.contentPadding = const EdgeInsets.symmetric(horizontal: 16),
     required this.label,
     this.hideLabel = false,
+    this.autoFocus = false,
     this.collectionAspectRatio,
     this.onLabelClick,
     this.onFocused,
@@ -45,7 +47,7 @@ class PosterRow extends ConsumerWidget {
       contentPadding: contentPadding,
       label: label,
       hideLabel: hideLabel,
-      autoFocus: ref.read(argumentsStateProvider).htpcMode ? FocusProvider.autoFocusOf(context) : false,
+      autoFocus: autoFocus, // Pass autoFocus to enable UP navigation
       onLabelClick: onLabelClick,
       dominantRatio: dominantRatio,
       items: posters,
@@ -55,6 +57,10 @@ class PosterRow extends ConsumerWidget {
           onFocused?.call(posters[index]);
         } else {
           context.ensureVisible();
+        }
+        // Also update banner when navigating with arrow keys
+        if (onCardTap != null) {
+          onCardTap!(posters[index]);
         }
       },
       itemBuilder: (context, index) {
