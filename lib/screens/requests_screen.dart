@@ -44,12 +44,14 @@ class _RequestsScreenState extends ConsumerState<RequestsScreen> {
     // Filter requests based on user role
     final filteredRequests = requestsState.filterByUser(user?.name ?? '', isAdmin: isAdmin);
 
+    // Movies: exclude approved/rejected for both admin and non-admin
     final movies = isAdmin
-        ? requestsState.movies
+        ? requestsState.movies.where((r) => r.status != 'approved' && r.status != 'rejected').toList()
         : filteredRequests.where((r) => r.itemType?.toLowerCase() == 'movie' && r.status != 'approved' && r.status != 'rejected').toList();
 
+    // Series: exclude approved/rejected for both admin and non-admin
     final series = isAdmin
-        ? requestsState.series
+        ? requestsState.series.where((r) => r.status != 'approved' && r.status != 'rejected').toList()
         : filteredRequests.where((r) => (r.itemType?.toLowerCase() == 'series' || r.itemType?.toLowerCase() == 'tv') && r.status != 'approved' && r.status != 'rejected').toList();
 
     final pending = isAdmin

@@ -58,7 +58,6 @@ class _MultiRowViewState extends ConsumerState<MultiRowView> {
                 contentPadding: widget.contentPadding,
                 label: row.label,
                 posters: row.posters,
-                autoFocus: index == 0,
                 collectionAspectRatio: row.aspectRatio,
                 onLabelClick: row.onLabelClick,
                 onFocused: (item) => ref.read(focusedItemProvider.notifier).state = item,

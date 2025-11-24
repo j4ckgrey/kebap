@@ -35,6 +35,7 @@ class PosterImage extends ConsumerWidget {
   final bool primaryPosters;
   final Function(bool focus)? onFocusChanged;
   final FocusNode? focusNode;
+  final VoidCallback? onCustomTap;
 
   const PosterImage({
     required this.poster,
@@ -50,6 +51,7 @@ class PosterImage extends ConsumerWidget {
     this.primaryPosters = false,
     this.onFocusChanged,
     this.focusNode,
+    this.onCustomTap,
     super.key,
   });
 
@@ -64,7 +66,9 @@ class PosterImage extends ConsumerWidget {
       child: FocusButton(
         focusNode: focusNode,
         onTap: () async {
-          if (onPressed != null) {
+          if (onCustomTap != null) {
+            onCustomTap?.call();
+          } else if (onPressed != null) {
             onPressed?.call(() async {
               await poster.navigateTo(context, ref: ref, tag: myKey);
               context.refreshData();
