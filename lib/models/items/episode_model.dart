@@ -74,7 +74,7 @@ class EpisodeModel extends ItemStreamModel with EpisodeModelMappable {
   });
   EpisodeStatus get status {
     return switch (location) {
-      ItemLocation.filesystem => EpisodeStatus.available,
+      ItemLocation.filesystem || ItemLocation.remote => EpisodeStatus.available,
       ItemLocation.virtual =>
         (dateAired?.isBefore(DateTime.now()) == true) ? EpisodeStatus.missing : EpisodeStatus.unaired,
       _ => EpisodeStatus.missing
@@ -129,8 +129,7 @@ class EpisodeModel extends ItemStreamModel with EpisodeModelMappable {
 
   @override
   String playButtonLabel(BuildContext context) {
-    final string = seasonEpisodeLabel(context).maxLength();
-    return progress != 0 ? context.localized.resume(string) : context.localized.play(string);
+    return progress != 0 ? context.localized.resumeLabel : context.localized.playLabel;
   }
 
   String seasonAnnotation(BuildContext context) => context.localized.season(1)[0];

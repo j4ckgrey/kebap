@@ -138,7 +138,7 @@ class ItemBaseModel with ItemBaseModelMappable {
   double get progress => userData.progress;
 
   String playButtonLabel(BuildContext context) =>
-      progress != 0 ? context.localized.resume(name.maxLength()) : context.localized.play(name.maxLength());
+      progress != 0 ? context.localized.resumeLabel : context.localized.playLabel;
 
   Widget get detailScreenWidget {
     switch (this) {

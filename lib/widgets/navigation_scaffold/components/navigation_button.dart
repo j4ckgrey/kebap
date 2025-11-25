@@ -20,6 +20,7 @@ class NavigationButton extends ConsumerStatefulWidget {
   final Widget? customIcon;
   final bool selected;
   final Duration duration;
+  final Color? backgroundColor;
   const NavigationButton({
     required this.label,
     required this.selectedIcon,
@@ -34,6 +35,7 @@ class NavigationButton extends ConsumerStatefulWidget {
     this.selected = false,
     this.trailing = const [],
     this.duration = const Duration(milliseconds: 125),
+    this.backgroundColor,
     super.key,
   });
 
@@ -83,7 +85,7 @@ class _NavigationButtonState extends ConsumerState<NavigationButton> {
             elevation: const WidgetStatePropertyAll(0),
             padding: const WidgetStatePropertyAll(EdgeInsets.zero),
             backgroundColor: WidgetStatePropertyAll(
-              widget.expanded && widget.selected ? Theme.of(context).colorScheme.primary : Colors.transparent,
+              widget.backgroundColor ?? (widget.expanded && widget.selected ? Theme.of(context).colorScheme.primary : Colors.transparent),
             ),
             iconSize: const WidgetStatePropertyAll(24),
             iconColor: WidgetStateProperty.resolveWith((states) {

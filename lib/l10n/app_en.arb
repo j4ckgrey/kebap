@@ -612,6 +612,10 @@
       }
     }
   },
+  "resumeLabel": "Resume",
+  "@resumeLabel": {},
+  "playFromStartLabel": "Play from Start",
+  "@playFromStartLabel": {},
   "retrievePublicListOfUsers": "Retrieve public list of users",
   "@retrievePublicListOfUsers": {},
   "retry": "Retry",

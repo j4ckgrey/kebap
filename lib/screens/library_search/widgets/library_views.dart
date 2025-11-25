@@ -115,8 +115,11 @@ class LibraryViews extends ConsumerWidget {
       case LibraryViewTypes.grid:
         Widget createGrid(List<ItemBaseModel> items) {
           final width = MediaQuery.of(context).size.width;
+          // Ensure a minimum width for the cells to prevent text wrapping on small screens
+          const minCellWidth = 120.0;
           final cellWidth = (width / posterSize).floorToDouble();
-          final crossAxisCount = ((width / cellWidth).floor()).clamp(2, 10);
+          final effectiveCellWidth = cellWidth < minCellWidth ? minCellWidth : cellWidth;
+          final crossAxisCount = ((width / effectiveCellWidth).floor()).clamp(2, 10);
           return GridFocusTraveler(
             itemCount: items.length,
             crossAxisCount: crossAxisCount,

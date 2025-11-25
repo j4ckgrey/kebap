@@ -92,16 +92,7 @@ class TopNavigationBar extends ConsumerWidget {
                   policy: NavBarLoopTraversalPolicy(),
                   child: Row(
                     children: [
-                      Padding(
-                        padding: const EdgeInsets.symmetric(horizontal: 8),
-                        child: AdaptiveFab(
-                          context: context,
-                          title: "",
-                          key: const Key('TopNavAction'),
-                          onPressed: () => context.router.navigate(LibrarySearchRoute()),
-                          child: const Icon(Icons.search),
-                        ).normal,
-                      ),
+                      // Search button removed
                       // Destinations as horizontal buttons in a scrollable view
                       Expanded(
                         child: SingleChildScrollView(
@@ -118,6 +109,20 @@ class TopNavigationBar extends ConsumerWidget {
                             }).toList(),
                           ),
                         ),
+                      ),
+
+                      // Search button
+                      NavigationButton(
+                        label: context.localized.search,
+                        selected: false,
+                        selectedIcon: const Icon(IconsaxPlusBold.search_normal_1),
+                        icon: const Icon(IconsaxPlusLinear.search_normal_1),
+                        horizontal: true,
+                        expanded: false,
+                        backgroundColor: Colors.transparent,
+                        onPressed: () {
+                          context.router.push(LibrarySearchRoute());
+                        },
                       ),
                       NavigationButton(
                         label: context.localized.settings,

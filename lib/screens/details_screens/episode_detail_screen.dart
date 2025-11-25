@@ -79,8 +79,14 @@ class _ItemDetailScreenState extends ConsumerState<EpisodeDetailScreen> {
                   OverviewHeader(
                     name: details.series?.name ?? "",
                     image: seasonDetails.images,
-                    playButton: episodeDetails.playAble
-                        ? MediaPlayButton(
+                    centerButtons: Wrap(
+                      spacing: 8,
+                      runSpacing: 8,
+                      alignment: wrapAlignment,
+                      crossAxisAlignment: WrapCrossAlignment.center,
+                      children: [
+                        if (episodeDetails.playAble)
+                          MediaPlayButton(
                             item: episodeDetails,
                             onPressed: (restart) async {
                               await details.episode.play(
@@ -99,14 +105,7 @@ class _ItemDetailScreenState extends ConsumerState<EpisodeDetailScreen> {
                               );
                               ref.read(providerInstance.notifier).fetchDetails(widget.item);
                             },
-                          )
-                        : null,
-                    centerButtons: Wrap(
-                      spacing: 8,
-                      runSpacing: 8,
-                      alignment: wrapAlignment,
-                      crossAxisAlignment: WrapCrossAlignment.center,
-                      children: [
+                          ),
                         SelectableIconButton(
                           onPressed: () async {
                             await ref

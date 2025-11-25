@@ -77,8 +77,14 @@ class _SeriesDetailScreenState extends ConsumerState<SeriesDetailScreen> {
                   OverviewHeader(
                     name: details.name,
                     image: details.images,
-                    playButton: details.nextUp != null
-                        ? MediaPlayButton(
+                    centerButtons: Wrap(
+                      spacing: 8,
+                      runSpacing: 8,
+                      alignment: wrapAlignment,
+                      crossAxisAlignment: WrapCrossAlignment.center,
+                      children: [
+                        if (details.nextUp != null)
+                          MediaPlayButton(
                             item: details.nextUp,
                             onPressed: (restart) async {
                               await details.nextUp.play(
@@ -97,14 +103,7 @@ class _SeriesDetailScreenState extends ConsumerState<SeriesDetailScreen> {
                               );
                               ref.read(providerId.notifier).fetchDetails(widget.item);
                             },
-                          )
-                        : null,
-                    centerButtons: Wrap(
-                      spacing: 8,
-                      runSpacing: 8,
-                      alignment: wrapAlignment,
-                      crossAxisAlignment: WrapCrossAlignment.center,
-                      children: [
+                          ),
                         SelectableIconButton(
                           onPressed: () async {
                             await ref

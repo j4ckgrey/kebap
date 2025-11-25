@@ -163,22 +163,7 @@ class _LibrarySearchScreenState extends ConsumerState<LibrarySearchScreen> {
             extendBodyBehindAppBar: true,
             // Floating action button removed for mobile view per design decision.
             floatingActionButton: null,
-            bottomNavigationBar: AdaptiveLayout.inputDeviceOf(context) != InputDevice.dPad
-                ? HideOnScroll(
-                    controller: scrollController,
-                    canHide: !floatingAppBar,
-                    child: IgnorePointer(
-                      ignoring: librarySearchResults.fetchingItems,
-                      child: _LibrarySearchBottomBar(
-                        uniqueKey: uniqueKey,
-                        refreshKey: refreshKey,
-                        scrollController: scrollController,
-                        libraryProvider: libraryProvider,
-                        postersList: postersList,
-                      ),
-                    ),
-                  )
-                : null,
+            bottomNavigationBar: null,
             body: PinchPosterZoom(
               scaleDifference: (difference) => ref.read(clientSettingsProvider.notifier).addPosterSize(difference),
               child: KebapScrollbar(
@@ -374,7 +359,7 @@ class _LibrarySearchScreenState extends ConsumerState<LibrarySearchScreen> {
                           ),
                           if (AdaptiveLayout.layoutModeOf(context) == LayoutMode.single) ...[
                             const SizedBox(width: 6),
-                            SizedBox.square(dimension: toolbarHeight - 3.0, child: const SettingsUserIcon()),
+                            // User icon removed as per user request
                           ],
                           const SizedBox(width: 12)
                         ],
@@ -462,7 +447,9 @@ class _LibrarySearchScreenState extends ConsumerState<LibrarySearchScreen> {
                       if (postersList.isNotEmpty)
                         SliverPadding(
                           padding: EdgeInsets.only(
-                              left: MediaQuery.of(context).padding.left, right: MediaQuery.of(context).padding.right),
+                              top: 10,
+                              left: MediaQuery.of(context).padding.left,
+                              right: MediaQuery.of(context).padding.right),
                           sliver: LibraryViews(
                             key: uniqueKey,
                             items: postersList,

@@ -74,32 +74,32 @@ class _ItemDetailScreenState extends ConsumerState<MovieDetailScreen> {
                     name: details.name,
                     image: details.images,
                     padding: padding,
-                    playButton: MediaPlayButton(
-                      item: details,
-                      onLongPressed: (restart) async {
-                        await details.play(
-                          context,
-                          ref,
-                          showPlaybackOption: true,
-                          startPosition: restart ? Duration.zero : null,
-                        );
-                        ref.read(providerInstance.notifier).fetchDetails(widget.item);
-                      },
-                      onPressed: (restart) async {
-                        await details.play(
-                          context,
-                          ref,
-                          startPosition: restart ? Duration.zero : null,
-                        );
-                        ref.read(providerInstance.notifier).fetchDetails(widget.item);
-                      },
-                    ),
                     centerButtons: Wrap(
                       spacing: 8,
                       runSpacing: 8,
                       alignment: wrapAlignment,
                       crossAxisAlignment: WrapCrossAlignment.center,
                       children: [
+                        MediaPlayButton(
+                          item: details,
+                          onLongPressed: (restart) async {
+                            await details.play(
+                              context,
+                              ref,
+                              showPlaybackOption: true,
+                              startPosition: restart ? Duration.zero : null,
+                            );
+                            ref.read(providerInstance.notifier).fetchDetails(widget.item);
+                          },
+                          onPressed: (restart) async {
+                            await details.play(
+                              context,
+                              ref,
+                              startPosition: restart ? Duration.zero : null,
+                            );
+                            ref.read(providerInstance.notifier).fetchDetails(widget.item);
+                          },
+                        ),
                         SelectableIconButton(
                           onPressed: () async {
                             await ref
