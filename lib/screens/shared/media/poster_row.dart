@@ -45,7 +45,7 @@ class PosterRow extends ConsumerWidget {
       contentPadding: contentPadding,
       label: label,
       hideLabel: hideLabel,
-      autoFocus: ref.read(argumentsStateProvider).htpcMode ? FocusProvider.autoFocusOf(context) : false,
+      autoFocus: FocusProvider.autoFocusOf(context),
       onLabelClick: onLabelClick,
       dominantRatio: dominantRatio,
       items: posters,

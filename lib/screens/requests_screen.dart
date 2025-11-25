@@ -18,8 +18,8 @@ import 'package:kebap/models/items/images_models.dart';
 import 'package:kebap/widgets/navigation_scaffold/components/background_image.dart';
 import 'package:kebap/util/focus_provider.dart';
 
+import 'package:kebap/util/sliver_list_padding.dart';
 import 'package:kebap/widgets/navigation_scaffold/components/navigation_body.dart';
-import 'package:kebap/widgets/navigation_scaffold/components/navigation_constants.dart';
 
 @RoutePage()
 class RequestsScreen extends ConsumerStatefulWidget {
@@ -95,9 +95,11 @@ class _RequestsScreenState extends ConsumerState<RequestsScreen> {
       body: FocusTraversalGroup(
         policy: GlobalFallbackTraversalPolicy(fallbackNode: navBarNode),
         child: FocusScope(
+        autofocus: true,
         node: _contentFocusNode,
         child: CustomScrollView(
         slivers: [
+          const DefaultSliverTopBadding(),
           SliverAppBar(
             title: const Text('Media Requests'),
             automaticallyImplyLeading: false,
@@ -232,6 +234,8 @@ class _RequestSection extends ConsumerWidget {
   Widget build(BuildContext context, WidgetRef ref) {
     final theme = Theme.of(context);
 
+    final shouldAutoFocus = FocusProvider.autoFocusOf(context);
+
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
@@ -281,6 +285,7 @@ class _RequestSection extends ConsumerWidget {
                     return RequestCard(
                       request: request,
                       isAdminView: isAdminView,
+                      autofocus: shouldAutoFocus && index == 0,
                       onTap: () {
                         _showRequestDetail(context, ref, request);
                       },
@@ -324,9 +329,12 @@ class _RequestSection extends ConsumerWidget {
 
   void _showRequestDetail(
       BuildContext context, WidgetRef ref, MediaRequest request) {
-    showBottomSheetPill(
+    showDialog(
       context: context,
-      content: (context, scrollController) => RequestDetailModal(request: request),
+      builder: (context) => Dialog(
+        shape: const RoundedRectangleBorder(borderRadius: BorderRadius.zero),
+        child: RequestDetailModal(request: request),
+      ),
     );
   }
 }

@@ -3,7 +3,6 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import 'package:kebap/util/localization_helper.dart';
-import 'package:kebap/widgets/navigation_scaffold/components/navigation_constants.dart';
 import 'package:kebap/widgets/shared/item_actions.dart';
 
 class NavigationButton extends ConsumerStatefulWidget {
@@ -56,16 +55,11 @@ class _NavigationButtonState extends ConsumerState<NavigationButton> {
       WidgetsBinding.instance.addPostFrameCallback((_) {
         if (mounted) _focusNode.requestFocus();
       });
-      // Register this as the first navigation button for global focus fallback.
-      registerFirstNavButtonNode(_focusNode);
     }
   }
 
   @override
   void dispose() {
-    if (firstNavButtonNode == _focusNode) {
-      firstNavButtonNode = null;
-    }
     _focusNode.dispose();
     super.dispose();
   }

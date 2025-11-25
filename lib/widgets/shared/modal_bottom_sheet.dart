@@ -13,6 +13,7 @@ Future<void> showBottomSheetPill({
   Function()? onDismiss,
   EdgeInsets padding = const EdgeInsets.all(16),
   required BuildContext context,
+  BorderRadiusGeometry? borderRadius,
   required Widget Function(
     BuildContext context,
     ScrollController scrollController,
@@ -34,7 +35,7 @@ Future<void> showBottomSheetPill({
           padding: const EdgeInsets.symmetric(horizontal: 8).add(MediaQuery.paddingOf(context)),
           child: Card(
             shape: RoundedRectangleBorder(
-              borderRadius: KebapTheme.largeShape.borderRadius,
+              borderRadius: borderRadius ?? KebapTheme.largeShape.borderRadius,
             ),
             child: Column(
               mainAxisSize: MainAxisSize.min,

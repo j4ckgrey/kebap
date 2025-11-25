@@ -12,7 +12,6 @@ import 'package:kebap/util/focus_provider.dart';
 import 'package:kebap/util/list_padding.dart';
 import 'package:kebap/util/sticky_header_text.dart';
 import 'package:kebap/widgets/navigation_scaffold/components/navigation_body.dart';
-import 'package:kebap/widgets/navigation_scaffold/components/navigation_constants.dart';
 import 'package:kebap/widgets/shared/ensure_visible.dart';
 
 class HorizontalList<T> extends ConsumerStatefulWidget {
@@ -111,11 +110,9 @@ class _HorizontalListState extends ConsumerState<HorizontalList> with TickerProv
         _scrollToPosition(widget.startIndex ?? 0);
       }
 
-      if (AdaptiveLayout.inputDeviceOf(context) == InputDevice.dPad) {
-        final nodesOnSameRow = _nodesInRow(parentNode);
-        if (nodesOnSameRow.isNotEmpty && (FocusProvider.autoFocusOf(context) || widget.autoFocus)) {
-          nodesOnSameRow[widget.startIndex ?? 0].requestFocus();
-        }
+      final nodesOnSameRow = _nodesInRow(parentNode);
+      if (nodesOnSameRow.isNotEmpty && (FocusProvider.autoFocusOf(context) || widget.autoFocus)) {
+        nodesOnSameRow[widget.startIndex ?? 0].requestFocus();
       }
     });
   }

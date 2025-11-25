@@ -15,6 +15,7 @@ import 'package:kebap/routes/auto_router.gr.dart';
 import 'package:kebap/screens/shared/kebap_snackbar.dart';
 import 'package:kebap/util/input_handler.dart';
 import 'package:kebap/util/localization_helper.dart';
+import 'package:kebap/util/adaptive_layout/adaptive_layout.dart';
 import 'package:kebap/widgets/keyboard/slide_in_keyboard.dart';
 import 'package:kebap/widgets/navigation_scaffold/components/destination_model.dart';
 import 'package:kebap/widgets/navigation_scaffold/navigation_scaffold.dart';
@@ -119,6 +120,8 @@ class HomeScreen extends ConsumerWidget {
                 action: () => e.navigate(context),
               );
             case HomeTabs.requests:
+              // Hide the Requests tab on TV clients only
+              if (AdaptiveLayout.viewSizeOf(context) == ViewSize.television) return null;
               return DestinationModel(
                 label: 'Requests',
                 icon: Icon(e.icon),

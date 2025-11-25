@@ -422,52 +422,44 @@ class _RequestDetailModalState extends ConsumerState<RequestDetailModal> {
           width: double.maxFinite,
           decoration: BoxDecoration(
             color: theme.colorScheme.surface,
-            borderRadius: BorderRadius.circular(12),
           ),
-          child: metadataState.loading
-              ? const SizedBox(
-                  height: 200,
-                  child: Center(child: CircularProgressIndicator()),
-                )
-              : isMobile
-                  ? SingleChildScrollView(
-                      child: Column(
-                        crossAxisAlignment: CrossAxisAlignment.stretch,
-                        children: [
-                          // Top: Poster
-                          Container(
-                            height: 200,
-                            decoration: BoxDecoration(
-                              borderRadius: const BorderRadius.vertical(top: Radius.circular(12)),
-                              image: DecorationImage(
-                                image: CachedNetworkImageProvider(
-                                  metadata?.posterPath != null
-                                      ? 'https://image.tmdb.org/t/p/w500${metadata!.posterPath}'
-                                      : widget.request.img ?? '',
-                                ),
-                                fit: BoxFit.cover,
-                                alignment: Alignment.topCenter,
-                              ),
-                            ),
-                          ),
-                          Padding(
-                            padding: const EdgeInsets.all(16),
-                            child: content,
-                          ),
-                        ],
+          child: metadataState.error != null
+              ? Center(
+                  child: Column(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [
+                      const Icon(Icons.error_outline, size: 48, color: Colors.red),
+                      const SizedBox(height: 16),
+                      Text(
+                        'Error loading metadata',
+                        style: theme.textTheme.titleMedium,
                       ),
+                      const SizedBox(height: 8),
+                      Padding(
+                        padding: const EdgeInsets.symmetric(horizontal: 16),
+                        child: Text(
+                          metadataState.error!,
+                          textAlign: TextAlign.center,
+                          style: theme.textTheme.bodySmall,
+                        ),
+                      ),
+                    ],
+                  ),
+                )
+              : metadataState.loading
+                  ? const SizedBox(
+                      height: 200,
+                      child: Center(child: CircularProgressIndicator()),
                     )
-                  : Row(
+              : isMobile
+                  ? Column(
                       crossAxisAlignment: CrossAxisAlignment.stretch,
                       children: [
-                        // Left: Poster
+                        // Top: Poster
                         Container(
-                          width: 300,
+                          height: 200,
                           decoration: BoxDecoration(
-                            borderRadius: const BorderRadius.only(
-                              topLeft: Radius.circular(12),
-                              bottomLeft: Radius.circular(12),
-                            ),
+                            borderRadius: const BorderRadius.vertical(top: Radius.circular(12)),
                             image: DecorationImage(
                               image: CachedNetworkImageProvider(
                                 metadata?.posterPath != null
@@ -475,18 +467,52 @@ class _RequestDetailModalState extends ConsumerState<RequestDetailModal> {
                                     : widget.request.img ?? '',
                               ),
                               fit: BoxFit.cover,
+                              alignment: Alignment.center,
                             ),
                           ),
                         ),
-
-                        // Right: Content
-                        Expanded(
-                          child: SingleChildScrollView(
-                            padding: const EdgeInsets.all(24),
-                            child: content,
-                          ),
+                        Padding(
+                          padding: const EdgeInsets.all(16),
+                          child: content,
                         ),
                       ],
+                    )
+                  : Container(
+                      height: 700,
+                      constraints: const BoxConstraints(maxWidth: 1100),
+                      child: Row(
+                        crossAxisAlignment: CrossAxisAlignment.stretch,
+                        children: [
+                          // Left: Poster
+                          Expanded(
+                            flex: 1,
+                            child: Container(
+                              decoration: BoxDecoration(
+                                image: DecorationImage(
+                                  image: CachedNetworkImageProvider(
+                                    metadata?.posterPath != null
+                                        ? 'https://image.tmdb.org/t/p/w500${metadata!.posterPath}'
+                                        : widget.request.img ?? '',
+                                  ),
+                                  fit: BoxFit.cover,
+                                  alignment: Alignment.center,
+                                ),
+                              ),
+                            ),
+                          ),
+
+                          // Right: Content
+                          Expanded(
+                            flex: 2,
+                            child: SingleChildScrollView(
+                              child: Padding(
+                                padding: const EdgeInsets.all(24),
+                                child: content,
+                              ),
+                            ),
+                          ),
+                        ],
+                      ),
                     ),
         );
       },

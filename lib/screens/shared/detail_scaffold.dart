@@ -10,7 +10,6 @@ import 'package:kebap/shaders/fade_edges.dart';
 import 'package:kebap/util/adaptive_layout/adaptive_layout.dart';
 import 'package:kebap/util/kebap_image.dart';
 import 'package:kebap/widgets/navigation_scaffold/components/navigation_body.dart';
-import 'package:kebap/widgets/navigation_scaffold/components/navigation_constants.dart';
 import 'package:kebap/widgets/shared/item_actions.dart';
 import 'package:kebap/widgets/shared/pull_to_refresh.dart';
 

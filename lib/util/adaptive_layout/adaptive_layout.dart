@@ -206,6 +206,7 @@ class _AdaptiveLayoutBuilderState extends ConsumerState<AdaptiveLayoutBuilder> {
           isDesktop: isDesktop,
           controller: scrollControllers,
           posterDefaults: posterDefaults,
+          sideBarWidth: 0,
         );
 
     final mediaQuery = MediaQuery.of(context);

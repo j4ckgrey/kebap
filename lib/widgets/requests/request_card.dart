@@ -10,12 +10,14 @@ class RequestCard extends ConsumerWidget {
     required this.isAdminView,
     this.onTap,
     this.onDelete,
+    this.autofocus = false,
   });
 
   final MediaRequest request;
   final bool isAdminView;
   final VoidCallback? onTap;
   final VoidCallback? onDelete;
+  final bool autofocus;
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
@@ -38,7 +40,7 @@ class RequestCard extends ConsumerWidget {
                   color: Colors.transparent,
                   child: InkWell(
                     onTap: onTap,
-                    autofocus: false,
+                    autofocus: autofocus,
                     borderRadius: BorderRadius.circular(8),
                     child: Container(
                       decoration: BoxDecoration(

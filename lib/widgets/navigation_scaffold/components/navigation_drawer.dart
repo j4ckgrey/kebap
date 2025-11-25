@@ -60,6 +60,13 @@ class NestedNavigationDrawer extends ConsumerWidget {
                 onPressed: () => toggleExpanded(false),
                 icon: const Icon(IconsaxPlusLinear.sidebar_left),
               ),
+              IconButton(
+                onPressed: () {
+                  context.router.push(LibrarySearchRoute());
+                  Scaffold.of(context).closeDrawer();
+                },
+                icon: const Icon(IconsaxPlusLinear.search_normal),
+              ),
             ],
           ),
         ),
@@ -132,27 +139,7 @@ class NestedNavigationDrawer extends ConsumerWidget {
                 icon: posterIcon ?? Icon(library.collectionType.iconOutlined));
           }),
         },
-        const Divider(indent: 28, endIndent: 28),
-        // Requests button
-        Consumer(
-          builder: (context, ref, child) {
-            return DrawerListButton(
-              label: 'Media Requests',
-              selectedIcon: const Icon(IconsaxPlusBold.task_square),
-              icon: const Icon(IconsaxPlusLinear.task_square),
-              selected: false,
-              onPressed: () {
-                Scaffold.of(context).closeDrawer();
-                showModalBottomSheet(
-                  context: context,
-                  isScrollControlled: true,
-                  builder: (context) => const RequestsSheet(),
-                );
-              },
-            );
-          },
-        ),
-        const Divider(indent: 28, endIndent: 28),
+
         if (isExpanded)
           Transform.translate(
             offset: const Offset(-8, 0),
