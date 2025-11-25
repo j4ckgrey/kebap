@@ -7,6 +7,7 @@ import 'package:kebap/models/item_base_model.dart';
 import 'package:kebap/screens/shared/animated_fade_size.dart';
 import 'package:kebap/util/adaptive_layout/adaptive_layout.dart';
 import 'package:kebap/util/focus_provider.dart';
+import 'package:kebap/util/localization_helper.dart';
 import 'package:kebap/widgets/shared/ensure_visible.dart';
 
 class MediaPlayButton extends ConsumerWidget {
@@ -24,137 +25,35 @@ class MediaPlayButton extends ConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final progress = (item?.progress ?? 0) / 100.0;
-    final radius = BorderRadius.circular(16);
-    final smallRadius = const Radius.circular(4);
     final theme = Theme.of(context);
 
-    Widget buttonTitle(Color contentColor) {
-      return Padding(
-        padding: const EdgeInsets.all(10.0),
-        child: Row(
-          mainAxisSize: MainAxisSize.min,
-          crossAxisAlignment: CrossAxisAlignment.center,
-          children: [
-            Flexible(
-              child: Text(
-                item?.playButtonLabel(context) ?? "",
-                maxLines: 1,
-                overflow: TextOverflow.fade,
-                style: theme.textTheme.titleMedium?.copyWith(
-                  fontWeight: FontWeight.w700,
-                  color: contentColor,
-                ),
-              ),
-            ),
-            const SizedBox(width: 4),
-            Icon(
-              IconsaxPlusBold.play,
-              color: contentColor,
-            ),
-          ],
-        ),
+    if (progress > 0) {
+      return Row(
+        mainAxisSize: MainAxisSize.min,
+        spacing: 8,
+        children: [
+          // Resume Button (Primary)
+          FilledButton(
+            onPressed: onPressed == null ? null : () => onPressed?.call(false),
+            onLongPress: onLongPressed == null ? null : () => onLongPressed?.call(false),
+            child: Text(context.localized.resumeLabel),
+          ),
+          // Play from Start Button (Secondary)
+          FilledButton(
+            onPressed: onPressed == null ? null : () => onPressed?.call(true),
+            onLongPress: onLongPressed == null ? null : () => onLongPressed?.call(true),
+            child: Text(context.localized.playFromStartLabel),
+          ),
+        ],
       );
     }
 
-    return AnimatedFadeSize(
-      duration: const Duration(milliseconds: 250),
-      child: onPressed == null
-          ? const SizedBox.shrink(key: ValueKey('empty'))
-          : Row(
-              mainAxisAlignment: MainAxisAlignment.center,
-              mainAxisSize: MainAxisSize.min,
-              spacing: 4,
-              children: [
-                Flexible(
-                  child: FocusButton(
-                    onTap: () => onPressed?.call(false),
-                    onLongPress: () => onLongPressed?.call(false),
-                    autoFocus: AdaptiveLayout.inputDeviceOf(context) == InputDevice.dPad,
-                    borderRadius: radius.copyWith(
-                      topRight: progress != 0 ? smallRadius : radius.topRight,
-                      bottomRight: progress != 0 ? smallRadius : radius.bottomRight,
-                    ),
-                    darkOverlay: false,
-                    onFocusChanged: (value) {
-                      if (value) {
-                        context.ensureVisible(
-                          alignment: 1.0,
-                        );
-                      }
-                    },
-                    child: Stack(
-                      alignment: Alignment.center,
-                      children: [
-                        // Progress background
-                        Positioned.fill(
-                          child: DecoratedBox(
-                            decoration: BoxDecoration(
-                              color: theme.colorScheme.primaryContainer,
-                              borderRadius: radius.copyWith(
-                                topRight: progress != 0 ? smallRadius : radius.topRight,
-                                bottomRight: progress != 0 ? smallRadius : radius.bottomRight,
-                              ),
-                            ),
-                          ),
-                        ),
-                        // Button content
-                        buttonTitle(theme.colorScheme.onPrimaryContainer),
-                        Positioned.fill(
-                          child: ClipRect(
-                            clipper: _ProgressClipper(
-                              progress,
-                            ),
-                            child: DecoratedBox(
-                              decoration: BoxDecoration(
-                                color: theme.colorScheme.primary,
-                                borderRadius: radius.copyWith(
-                                  topRight: progress != 0 ? smallRadius : radius.topRight,
-                                  bottomRight: progress != 0 ? smallRadius : radius.bottomRight,
-                                ),
-                              ),
-                              child: buttonTitle(theme.colorScheme.onPrimary),
-                            ),
-                          ),
-                        ),
-                      ],
-                    ),
-                  ),
-                ),
-                if (progress != 0)
-                  FocusButton(
-                    onTap: () => onPressed?.call(true),
-                    onLongPress: () => onLongPressed?.call(true),
-                    borderRadius: radius.copyWith(
-                      topLeft: progress != 0 ? smallRadius : radius.topLeft,
-                      bottomLeft: progress != 0 ? smallRadius : radius.bottomLeft,
-                    ),
-                    onFocusChanged: (value) {
-                      if (value) {
-                        context.ensureVisible(
-                          alignment: 1.0,
-                        );
-                      }
-                    },
-                    child: Container(
-                      decoration: BoxDecoration(
-                        color: theme.colorScheme.primaryContainer,
-                        borderRadius: radius.copyWith(
-                          topLeft: progress != 0 ? smallRadius : radius.topLeft,
-                          bottomLeft: progress != 0 ? smallRadius : radius.bottomLeft,
-                        ),
-                      ),
-                      child: Padding(
-                        padding: const EdgeInsets.all(7.5),
-                        child: Icon(
-                          IconsaxPlusBold.refresh,
-                          size: 29,
-                          color: theme.colorScheme.onPrimaryContainer,
-                        ),
-                      ),
-                    ),
-                  ),
-              ],
-            ),
+    // Default Play Button (No progress)
+    return FilledButton.icon(
+      onPressed: onPressed == null ? null : () => onPressed?.call(false),
+      onLongPress: onLongPressed == null ? null : () => onLongPressed?.call(false),
+      icon: const Icon(IconsaxPlusBold.play),
+      label: Text(item?.playButtonLabel(context) ?? context.localized.playLabel),
     );
   }
 }

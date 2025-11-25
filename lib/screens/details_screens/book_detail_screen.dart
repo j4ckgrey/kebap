@@ -76,20 +76,6 @@ class _BookDetailScreenState extends ConsumerState<BookDetailScreen> {
                               OverviewHeader(
                                 subTitle: details.book?.parentName ?? details.parentModel?.name,
                                 name: details.nextUp?.name ?? "",
-                                playButton: Builder(
-                                  builder: (context) {
-                                    //Wrapped so the correct context is used for refreshing the pages
-                                    return MediaPlayButton(
-                                      item: details.nextUp!,
-                                      onPressed: (restart) async => details.nextUp.play(
-                                        context,
-                                        ref,
-                                        provider: provider,
-                                        currentPage: restart ? 0 : null,
-                                      ),
-                                    );
-                                  },
-                                ),
                                 image: ImagesData(
                                   logo: details.book?.getPosters?.primary,
                                 ),
@@ -106,6 +92,21 @@ class _BookDetailScreenState extends ConsumerState<BookDetailScreen> {
                               runSpacing: 8,
                               crossAxisAlignment: WrapCrossAlignment.center,
                               children: [
+                                if (details.nextUp != null)
+                                  Builder(
+                                    builder: (context) {
+                                      //Wrapped so the correct context is used for refreshing the pages
+                                      return MediaPlayButton(
+                                        item: details.nextUp!,
+                                        onPressed: (restart) async => details.nextUp.play(
+                                          context,
+                                          ref,
+                                          provider: provider,
+                                          currentPage: restart ? 0 : null,
+                                        ),
+                                      );
+                                    },
+                                  ),
                                 if (details.parentModel != null)
                                   SelectableIconButton(
                                     onPressed: () async => await details.parentModel?.navigateTo(context),

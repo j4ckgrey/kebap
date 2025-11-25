@@ -15,7 +15,6 @@ import 'package:kebap/util/list_padding.dart';
 class OverviewHeader extends ConsumerWidget {
   final String name;
   final ImagesData? image;
-  final Widget? playButton;
   final Widget? centerButtons;
   final EdgeInsets? padding;
   final String? subTitle;
@@ -33,7 +32,6 @@ class OverviewHeader extends ConsumerWidget {
   const OverviewHeader({
     required this.name,
     this.image,
-    this.playButton,
     this.centerButtons,
     this.padding,
     this.subTitle,
@@ -60,23 +58,18 @@ class OverviewHeader extends ConsumerWidget {
           fontSize: 18,
         );
 
-    final fullHeight =
-        (MediaQuery.sizeOf(context).height - (MediaQuery.paddingOf(context).top + 150)).clamp(50, 1250).toDouble();
+
 
     final crossAlignment =
         AdaptiveLayout.viewSizeOf(context) != ViewSize.phone ? CrossAxisAlignment.start : CrossAxisAlignment.stretch;
 
-    return ConstrainedBox(
-      constraints: BoxConstraints(
-        minHeight: fullHeight,
-      ),
-      child: Padding(
+    return Padding(
         padding: padding ?? EdgeInsets.zero,
         child: Column(
-          mainAxisAlignment: MainAxisAlignment.end,
+          mainAxisAlignment: MainAxisAlignment.start,
           crossAxisAlignment: crossAlignment,
           mainAxisSize: MainAxisSize.min,
-          spacing: 16,
+          spacing: 8,
           children: [
             if (showImage)
               Flexible(
@@ -176,31 +169,18 @@ class OverviewHeader extends ConsumerWidget {
               ),
             ),
             if (AdaptiveLayout.viewSizeOf(context) <= ViewSize.phone) ...[
-              if (playButton != null) playButton!,
               if (centerButtons != null) centerButtons!,
             ] else
               Flexible(
                 child: Row(
                   spacing: 16,
                   children: [
-                    if (playButton != null) ...[
-                      playButton!,
-                      Container(
-                        width: 2,
-                        height: 12,
-                        decoration: BoxDecoration(
-                          color: Theme.of(context).colorScheme.onSurface.withAlpha(64),
-                          borderRadius: KebapTheme.smallShape.borderRadius,
-                        ),
-                      )
-                    ],
                     if (centerButtons != null) centerButtons!,
                   ],
                 ),
               ),
           ],
         ),
-      ),
     );
   }
 }

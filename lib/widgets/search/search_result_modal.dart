@@ -180,283 +180,319 @@ class _SearchResultModalState extends ConsumerState<SearchResultModal> {
       orElse: () => false,
     );
 
-    return Container(
-        height: 600,
-        width: double.maxFinite,
-        constraints: const BoxConstraints(maxWidth: 900),
-        decoration: BoxDecoration(
-          color: theme.colorScheme.surface,
-          borderRadius: BorderRadius.circular(12),
-        ),
-      child: metadataState.loading
-            ? const Center(child: CircularProgressIndicator())
-            : Row(
-                crossAxisAlignment: CrossAxisAlignment.stretch,
-                children: [
-                  // Left: Poster - show item poster immediately, fallback to TMDB
-                  Container(
-                    width: 300,
-                    decoration: BoxDecoration(
-                      borderRadius: const BorderRadius.only(
-                        topLeft: Radius.circular(12),
-                        bottomLeft: Radius.circular(12),
-                      ),
-                      image: DecorationImage(
-                        image: CachedNetworkImageProvider(
-                          metadata?.posterPath != null
-                              ? 'https://image.tmdb.org/t/p/w500${metadata!.posterPath}'
-                              : widget.item.images?.primary?.path ?? '',
-                        ),
-                        fit: BoxFit.cover,
-                      ),
+    return LayoutBuilder(
+      builder: (context, constraints) {
+        final isMobile = constraints.maxWidth < 600;
+
+        Widget content = Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            // Header with title
+            Text(
+              metadata?.title ?? metadata?.name ?? widget.item.name,
+              style: theme.textTheme.headlineSmall?.copyWith(
+                fontWeight: FontWeight.bold,
+              ),
+              maxLines: 2,
+              overflow: TextOverflow.ellipsis,
+            ),
+
+            const SizedBox(height: 16),
+
+            // Metadata row
+            Wrap(
+              spacing: 16,
+              runSpacing: 8,
+              children: [
+                if (metadata?.releaseDate != null || metadata?.firstAirDate != null)
+                  Text(
+                    (metadata?.releaseDate ?? metadata?.firstAirDate ?? '').substring(0, 4),
+                    style: theme.textTheme.bodyMedium?.copyWith(
+                      color: theme.colorScheme.onSurface.withValues(alpha: 0.7),
                     ),
                   ),
+                if (metadata?.runtime != null)
+                  Text(
+                    '${metadata!.runtime} min',
+                    style: theme.textTheme.bodyMedium?.copyWith(
+                      color: theme.colorScheme.onSurface.withValues(alpha: 0.7),
+                    ),
+                  ),
+                if (metadata?.voteAverage != null)
+                  Row(
+                    mainAxisSize: MainAxisSize.min,
+                    children: [
+                      const Icon(Icons.star, size: 16, color: Colors.amber),
+                      const SizedBox(width: 4),
+                      Text(
+                        metadata!.voteAverage!.toStringAsFixed(1),
+                        style: theme.textTheme.bodyMedium?.copyWith(
+                          color: theme.colorScheme.onSurface.withValues(alpha: 0.7),
+                        ),
+                      ),
+                    ],
+                  ),
+              ],
+            ),
 
-                  // Right: Content
-                  Expanded(
-                    child: SingleChildScrollView(
-                      padding: const EdgeInsets.all(24),
+            const SizedBox(height: 16),
+
+            // Genres
+            if (metadata?.genres != null && metadata!.genres!.isNotEmpty) ...[
+              Wrap(
+                spacing: 8,
+                runSpacing: 8,
+                children: metadata.genres!
+                    .map((genre) => Chip(
+                                        label: Text(genre.name),
+                                        labelStyle: theme.textTheme.bodySmall,
+                                      ))
+                    .toList(),
+              ),
+              const SizedBox(height: 24),
+            ],
+
+            // Overview
+            if (metadata?.overview != null && metadata!.overview!.isNotEmpty) ...[
+              Text(
+                'Overview',
+                style: theme.textTheme.titleMedium?.copyWith(
+                  fontWeight: FontWeight.bold,
+                ),
+              ),
+              const SizedBox(height: 8),
+              Text(
+                metadata.overview!,
+                style: theme.textTheme.bodyMedium,
+              ),
+              const SizedBox(height: 24),
+            ],
+
+            // Cast with photos
+            if (credits?.cast != null && credits!.cast!.isNotEmpty) ...[
+              Text(
+                'Cast',
+                style: theme.textTheme.titleMedium?.copyWith(
+                  fontWeight: FontWeight.bold,
+                ),
+              ),
+              const SizedBox(height: 12),
+              SizedBox(
+                height: 140,
+                child: ListView.builder(
+                  scrollDirection: Axis.horizontal,
+                  itemCount: credits.cast!.take(12).length,
+                  itemBuilder: (context, index) {
+                    final cast = credits.cast![index];
+                    return Container(
+                      width: 100,
+                      margin: const EdgeInsets.only(right: 12),
                       child: Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
-                          // Header with title
+                          Container(
+                            width: 80,
+                            height: 80,
+                            decoration: BoxDecoration(
+                              borderRadius: BorderRadius.circular(8),
+                              color: theme.colorScheme.surfaceContainerHighest,
+                            ),
+                            clipBehavior: Clip.antiAlias,
+                            child: cast.profilePath != null
+                                ? CachedNetworkImage(
+                                    imageUrl:
+                                        'https://image.tmdb.org/t/p/w185${cast.profilePath}',
+                                    fit: BoxFit.cover,
+                                    errorWidget: (_, __, ___) => const Icon(
+                                      Icons.person,
+                                      size: 40,
+                                    ),
+                                  )
+                                : const Icon(Icons.person, size: 40),
+                          ),
+                          const SizedBox(height: 6),
                           Text(
-                            metadata?.title ?? metadata?.name ?? widget.item.name,
-                            style: theme.textTheme.headlineSmall?.copyWith(
+                            cast.name,
+                            style: theme.textTheme.bodySmall?.copyWith(
                               fontWeight: FontWeight.bold,
                             ),
                             maxLines: 2,
                             overflow: TextOverflow.ellipsis,
+                            textAlign: TextAlign.center,
+                          ),
+                          if (cast.character != null)
+                            Text(
+                              cast.character!,
+                              style: theme.textTheme.bodySmall?.copyWith(
+                                color: theme.colorScheme.onSurface
+                                    .withValues(alpha: 0.6),
+                              ),
+                              maxLines: 1,
+                              overflow: TextOverflow.ellipsis,
+                              textAlign: TextAlign.center,
+                            ),
+                        ],
+                      ),
+                    );
+                  },
+                ),
+              ),
+              const SizedBox(height: 24),
+            ],
+
+            // Reviews carousel
+            if (metadataState.reviews != null && metadataState.reviews!.isNotEmpty) ...[
+              _ReviewsCarousel(
+                reviews: metadataState.reviews!.take(10).toList(),
+                theme: theme,
+              ),
+              const SizedBox(height: 24),
+            ],
+
+            // Action buttons
+            Row(
+              mainAxisAlignment: MainAxisAlignment.end,
+              children: [
+                if (metadataState.inLibrary)
+                  FilledButton.icon(
+                    onPressed: () {
+                      Navigator.of(context).pop();
+                      // Navigate to item details
+                    },
+                    icon: const Icon(IconsaxPlusLinear.play),
+                    label: const Text('Open'),
+                  )
+                else if (isAdmin)
+                  FilledButton.icon(
+                    onPressed: _importing ? null : _handleImport,
+                    icon: _importing
+                        ? const SizedBox(
+                            width: 16,
+                            height: 16,
+                            child: CircularProgressIndicator(strokeWidth: 2),
+                          )
+                        : const Icon(IconsaxPlusLinear.import),
+                    label: Text(_importing ? 'Importing...' : 'Import'),
+                  )
+                else
+                  Builder(builder: (context) {
+                    final isConfigLoading = effectiveConfigAsync is AsyncLoading;
+                    final isAdminUser = isAdmin;
+
+                    final allowRequest = !disableNonAdminRequests || isAdminUser;
+
+                    // Show a disabled button while config is loading, or a disabled
+                    // button with explanatory tooltip if requests are blocked.
+                    if (isConfigLoading) {
+                      return FilledButton.icon(
+                        onPressed: null,
+                        icon: const SizedBox(
+                          width: 16,
+                          height: 16,
+                          child: CircularProgressIndicator(strokeWidth: 2),
+                        ),
+                        label: const Text('Loading...'),
+                      );
+                    }
+
+                    if (!allowRequest) {
+                      return Tooltip(
+                        message: 'Requests are disabled for non-admin users',
+                        child: FilledButton.icon(
+                          onPressed: null,
+                          icon: const Icon(IconsaxPlusLinear.add),
+                          label: const Text('Requests disabled'),
+                        ),
+                      );
+                    }
+
+                    return FilledButton.icon(
+                      onPressed: _requesting ? null : _handleRequest,
+                      icon: _requesting
+                          ? const SizedBox(
+                              width: 16,
+                              height: 16,
+                              child: CircularProgressIndicator(strokeWidth: 2),
+                            )
+                          : const Icon(IconsaxPlusLinear.add),
+                      label: Text(_requesting ? 'Requesting...' : 'Request'),
+                    );
+                  }),
+              ],
+            ),
+          ],
+        );
+
+        return Container(
+            height: 600,
+            width: double.maxFinite,
+            constraints: const BoxConstraints(maxWidth: 900),
+            decoration: BoxDecoration(
+              color: theme.colorScheme.surface,
+              borderRadius: BorderRadius.circular(12),
+            ),
+          child: metadataState.loading
+                ? const Center(child: CircularProgressIndicator())
+                : isMobile
+                    ? SingleChildScrollView(
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.stretch,
+                          children: [
+                            // Top: Poster
+                            Container(
+                              height: 200,
+                              decoration: BoxDecoration(
+                                borderRadius: const BorderRadius.vertical(top: Radius.circular(12)),
+                                image: DecorationImage(
+                                  image: CachedNetworkImageProvider(
+                                    metadata?.posterPath != null
+                                        ? 'https://image.tmdb.org/t/p/w500${metadata!.posterPath}'
+                                        : widget.item.images?.primary?.path ?? '',
+                                  ),
+                                  fit: BoxFit.cover,
+                                  alignment: Alignment.topCenter,
+                                ),
+                              ),
+                            ),
+                            Padding(
+                              padding: const EdgeInsets.all(16),
+                              child: content,
+                            ),
+                          ],
+                        ),
+                      )
+                    : Row(
+                        crossAxisAlignment: CrossAxisAlignment.stretch,
+                        children: [
+                          // Left: Poster - show item poster immediately, fallback to TMDB
+                          Container(
+                            width: 300,
+                            decoration: BoxDecoration(
+                              borderRadius: const BorderRadius.only(
+                                topLeft: Radius.circular(12),
+                                bottomLeft: Radius.circular(12),
+                              ),
+                              image: DecorationImage(
+                                image: CachedNetworkImageProvider(
+                                  metadata?.posterPath != null
+                                      ? 'https://image.tmdb.org/t/p/w500${metadata!.posterPath}'
+                                      : widget.item.images?.primary?.path ?? '',
+                                ),
+                                fit: BoxFit.cover,
+                              ),
+                            ),
                           ),
 
-                          const SizedBox(height: 16),
-
-                          // Metadata row
-                          Wrap(
-                            spacing: 16,
-                            runSpacing: 8,
-                            children: [
-                              if (metadata?.releaseDate != null || metadata?.firstAirDate != null)
-                                Text(
-                                  (metadata?.releaseDate ?? metadata?.firstAirDate ?? '').substring(0, 4),
-                                  style: theme.textTheme.bodyMedium?.copyWith(
-                                    color: theme.colorScheme.onSurface.withValues(alpha: 0.7),
-                                  ),
-                                ),
-                              if (metadata?.runtime != null)
-                                Text(
-                                  '${metadata!.runtime} min',
-                                  style: theme.textTheme.bodyMedium?.copyWith(
-                                    color: theme.colorScheme.onSurface.withValues(alpha: 0.7),
-                                  ),
-                                ),
-                              if (metadata?.voteAverage != null)
-                                Row(
-                                  mainAxisSize: MainAxisSize.min,
-                                  children: [
-                                    const Icon(Icons.star, size: 16, color: Colors.amber),
-                                    const SizedBox(width: 4),
-                                    Text(
-                                      metadata!.voteAverage!.toStringAsFixed(1),
-                                      style: theme.textTheme.bodyMedium?.copyWith(
-                                        color: theme.colorScheme.onSurface.withValues(alpha: 0.7),
-                                      ),
-                                    ),
-                                  ],
-                                ),
-                            ],
-                          ),
-
-                          const SizedBox(height: 16),
-
-                          // Genres
-                          if (metadata?.genres != null && metadata!.genres!.isNotEmpty) ...[
-                            Wrap(
-                              spacing: 8,
-                              runSpacing: 8,
-                              children: metadata.genres!
-                                  .map((genre) => Chip(
-                                        label: Text(genre.name),
-                                        labelStyle: theme.textTheme.bodySmall,
-                                      ))
-                                  .toList(),
+                          // Right: Content
+                          Expanded(
+                            child: SingleChildScrollView(
+                              padding: const EdgeInsets.all(24),
+                              child: content,
                             ),
-                            const SizedBox(height: 24),
-                          ],
-
-                          // Overview
-                          if (metadata?.overview != null && metadata!.overview!.isNotEmpty) ...[
-                            Text(
-                              'Overview',
-                              style: theme.textTheme.titleMedium?.copyWith(
-                                fontWeight: FontWeight.bold,
-                              ),
-                            ),
-                            const SizedBox(height: 8),
-                            Text(
-                              metadata.overview!,
-                              style: theme.textTheme.bodyMedium,
-                            ),
-                            const SizedBox(height: 24),
-                          ],
-
-                          // Cast with photos
-                          if (credits?.cast != null && credits!.cast!.isNotEmpty) ...[
-                            Text(
-                              'Cast',
-                              style: theme.textTheme.titleMedium?.copyWith(
-                                fontWeight: FontWeight.bold,
-                              ),
-                            ),
-                            const SizedBox(height: 12),
-                            SizedBox(
-                              height: 140,
-                              child: ListView.builder(
-                                scrollDirection: Axis.horizontal,
-                                itemCount: credits.cast!.take(12).length,
-                                itemBuilder: (context, index) {
-                                  final cast = credits.cast![index];
-                                  return Container(
-                                    width: 100,
-                                    margin: const EdgeInsets.only(right: 12),
-                                    child: Column(
-                                      children: [
-                                        Container(
-                                          width: 80,
-                                          height: 80,
-                                          decoration: BoxDecoration(
-                                            borderRadius: BorderRadius.circular(8),
-                                            color: theme.colorScheme.surfaceContainerHighest,
-                                          ),
-                                          clipBehavior: Clip.antiAlias,
-                                          child: cast.profilePath != null
-                                              ? CachedNetworkImage(
-                                                  imageUrl:
-                                                      'https://image.tmdb.org/t/p/w185${cast.profilePath}',
-                                                  fit: BoxFit.cover,
-                                                  errorWidget: (_, __, ___) => const Icon(
-                                                    Icons.person,
-                                                    size: 40,
-                                                  ),
-                                                )
-                                              : const Icon(Icons.person, size: 40),
-                                        ),
-                                        const SizedBox(height: 6),
-                                        Text(
-                                          cast.name,
-                                          style: theme.textTheme.bodySmall?.copyWith(
-                                            fontWeight: FontWeight.bold,
-                                          ),
-                                          maxLines: 2,
-                                          overflow: TextOverflow.ellipsis,
-                                          textAlign: TextAlign.center,
-                                        ),
-                                        if (cast.character != null)
-                                          Text(
-                                            cast.character!,
-                                            style: theme.textTheme.bodySmall?.copyWith(
-                                              color: theme.colorScheme.onSurface
-                                                  .withValues(alpha: 0.6),
-                                            ),
-                                            maxLines: 1,
-                                            overflow: TextOverflow.ellipsis,
-                                            textAlign: TextAlign.center,
-                                          ),
-                                      ],
-                                    ),
-                                  );
-                                },
-                              ),
-                            ),
-                            const SizedBox(height: 24),
-                          ],
-
-                          // Reviews carousel
-                          if (metadataState.reviews != null && metadataState.reviews!.isNotEmpty) ...[
-                            _ReviewsCarousel(
-                              reviews: metadataState.reviews!.take(10).toList(),
-                              theme: theme,
-                            ),
-                            const SizedBox(height: 24),
-                          ],
-
-                          // Action buttons
-                          Row(
-                            mainAxisAlignment: MainAxisAlignment.end,
-                            children: [
-                              if (metadataState.inLibrary)
-                                FilledButton.icon(
-                                  onPressed: () {
-                                    Navigator.of(context).pop();
-                                    // Navigate to item details
-                                  },
-                                  icon: const Icon(IconsaxPlusLinear.play),
-                                  label: const Text('Open'),
-                                )
-                              else if (isAdmin)
-                                FilledButton.icon(
-                                  onPressed: _importing ? null : _handleImport,
-                                  icon: _importing
-                                      ? const SizedBox(
-                                          width: 16,
-                                          height: 16,
-                                          child: CircularProgressIndicator(strokeWidth: 2),
-                                        )
-                                      : const Icon(IconsaxPlusLinear.import),
-                                  label: Text(_importing ? 'Importing...' : 'Import'),
-                                )
-                              else
-                                Builder(builder: (context) {
-                                  final isConfigLoading = effectiveConfigAsync is AsyncLoading;
-                                  final isAdminUser = isAdmin;
-
-                                  final allowRequest = !disableNonAdminRequests || isAdminUser;
-
-                                  // Show a disabled button while config is loading, or a disabled
-                                  // button with explanatory tooltip if requests are blocked.
-                                  if (isConfigLoading) {
-                                    return FilledButton.icon(
-                                      onPressed: null,
-                                      icon: const SizedBox(
-                                        width: 16,
-                                        height: 16,
-                                        child: CircularProgressIndicator(strokeWidth: 2),
-                                      ),
-                                      label: const Text('Loading...'),
-                                    );
-                                  }
-
-                                  if (!allowRequest) {
-                                    return Tooltip(
-                                      message: 'Requests are disabled for non-admin users',
-                                      child: FilledButton.icon(
-                                        onPressed: null,
-                                        icon: const Icon(IconsaxPlusLinear.add),
-                                        label: const Text('Requests disabled'),
-                                      ),
-                                    );
-                                  }
-
-                                  return FilledButton.icon(
-                                    onPressed: _requesting ? null : _handleRequest,
-                                    icon: _requesting
-                                        ? const SizedBox(
-                                            width: 16,
-                                            height: 16,
-                                            child: CircularProgressIndicator(strokeWidth: 2),
-                                          )
-                                        : const Icon(IconsaxPlusLinear.add),
-                                    label: Text(_requesting ? 'Requesting...' : 'Request'),
-                                  );
-                                }),
-                            ],
                           ),
                         ],
                       ),
-                    ),
-                  ),
-                ],
-              ),
+        );
+      },
     );
   }
 }

@@ -80,13 +80,6 @@ class HomeScreen extends ConsumerWidget {
                 selectedIcon: Icon(e.selectedIcon),
                 route: const DashboardRoute(),
                 action: () => e.navigate(context),
-                floatingActionButton: AdaptiveFab(
-                  context: context,
-                  title: context.localized.search,
-                  key: Key(e.name.capitalize()),
-                  onPressed: () => context.router.navigate(LibrarySearchRoute()),
-                  child: const Icon(IconsaxPlusLinear.search_normal_1),
-                ),
               );
             case HomeTabs.favorites:
               return DestinationModel(
@@ -94,13 +87,6 @@ class HomeScreen extends ConsumerWidget {
                 icon: Icon(e.icon),
                 selectedIcon: Icon(e.selectedIcon),
                 route: const FavouritesRoute(),
-                floatingActionButton: AdaptiveFab(
-                  context: context,
-                  title: context.localized.filter(0),
-                  key: Key(e.name.capitalize()),
-                  onPressed: () => context.router.navigate(LibrarySearchRoute(favourites: true)),
-                  child: const Icon(IconsaxPlusLinear.heart_search),
-                ),
                 action: () => e.navigate(context),
               );
             case HomeTabs.sync:
@@ -133,13 +119,6 @@ class HomeScreen extends ConsumerWidget {
                 selectedIcon: Icon(e.selectedIcon),
                 route: const LibraryRoute(),
                 action: () => e.navigate(context),
-                floatingActionButton: AdaptiveFab(
-                  context: context,
-                  title: context.localized.search,
-                  key: Key(e.name.capitalize()),
-                  onPressed: () => context.router.navigate(LibrarySearchRoute()),
-                  child: const Icon(IconsaxPlusLinear.search_status),
-                ),
               );
             case HomeTabs.requests:
               return DestinationModel(

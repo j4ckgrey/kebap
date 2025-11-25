@@ -12,6 +12,7 @@ import 'package:kebap/theme.dart';
 
 import 'package:kebap/widgets/requests/request_card.dart';
 import 'package:kebap/widgets/requests/request_detail_modal.dart';
+import 'package:kebap/widgets/shared/modal_bottom_sheet.dart';
 import 'package:kebap/widgets/shared/status_card.dart';
 import 'package:kebap/models/items/images_models.dart';
 import 'package:kebap/widgets/navigation_scaffold/components/background_image.dart';
@@ -310,9 +311,9 @@ class _RequestSection extends ConsumerWidget {
 
   void _showRequestDetail(
       BuildContext context, WidgetRef ref, MediaRequest request) {
-    showDialog(
+    showBottomSheetPill(
       context: context,
-      builder: (context) => RequestDetailModal(request: request),
+      content: (context, scrollController) => RequestDetailModal(request: request),
     );
   }
 }

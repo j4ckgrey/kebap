@@ -88,7 +88,7 @@ class _LibraryScreenState extends ConsumerState<LibraryScreen> with SingleTicker
               primary: true,
               physics: const AlwaysScrollableScrollPhysics(),
               slivers: [
-                const DefaultSliverTopBadding(),
+                const SliverToBoxAdapter(child: SizedBox(height: 10)),
                 if (views.isNotEmpty)
                   SliverToBoxAdapter(
                     child: LibraryRow(
