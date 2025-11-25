@@ -1,15 +1,16 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 
+import 'package:auto_route/auto_route.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:iconsax_plus/iconsax_plus.dart';
 
 import 'package:kebap/providers/settings/client_settings_provider.dart';
 import 'package:kebap/providers/views_provider.dart';
 import 'package:kebap/widgets/navigation_scaffold/components/destination_model.dart';
-
-import 'package:kebap/widgets/navigation_scaffold/components/navigation_constants.dart';
-import 'package:kebap/widgets/navigation_scaffold/components/top_navigation_bar.dart';
 import 'package:kebap/widgets/shared/back_intent_dpad.dart';
+
+final navBarNode = FocusNode();
 
 class NavigationBody extends ConsumerStatefulWidget {
   final BuildContext parentContext;
@@ -54,20 +55,101 @@ class _NavigationBodyState extends ConsumerState<NavigationBody> {
       },
     );
 
+    // Navigation visibility logic
+    final isSettingsPage = widget.currentLocation.toLowerCase().contains('settings');
+    final isDetailsPage = widget.currentLocation.toLowerCase().contains('details');
+    final isSearchPage = widget.currentLocation.toLowerCase().contains('search');
+    
+    // Settings & Search: No navigation
+    // Details: Back button on left, no hamburger
+    // Others: Hamburger on left, Back on right
+    
+    final showNavigation = !isSettingsPage && !isSearchPage;
+    final showHamburger = !isDetailsPage && showNavigation;
+    final showBackButton = showNavigation; // Back button always shown if navigation is shown (except settings)
+    
+    // On details page, back button is on the left (replaces hamburger position)
+    // On other pages, back button is on the right
+
+    final topInset = MediaQuery.paddingOf(context).top;
+
     return BackIntentDpad(
       child: FocusTraversalGroup(
         policy: GlobalFallbackTraversalPolicy(fallbackNode: navBarNode),
-        child: Column(
+        child: Stack(
           children: [
-            TopNavigationBar(
-              destinations: widget.destinations,
-              currentIndex: widget.currentIndex,
-              currentLocation: widget.currentLocation,
-              scaffoldKey: widget.drawerKey,
-            ),
-            Expanded(
+            // Main content - full screen
+            Positioned.fill(
               child: widget.child,
             ),
+            // Floating navigation buttons
+            if (showNavigation)
+              Positioned(
+                top: 0,
+                left: 0,
+                right: 0,
+                child: Padding(
+                  padding: EdgeInsets.only(
+                    top: topInset + 8,
+                    left: 8,
+                    right: 8,
+                  ),
+                  child: Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    children: [
+                      // Left Button Slot (Hamburger or Back)
+                      if (isDetailsPage)
+                        // Details Page: Back Button on Left
+                        Container(
+                          decoration: BoxDecoration(
+                            color: Theme.of(context).colorScheme.surface.withValues(alpha: 0.8),
+                            borderRadius: BorderRadius.circular(12),
+                          ),
+                          child: IconButton(
+                            icon: const Icon(IconsaxPlusLinear.arrow_left),
+                            onPressed: () {
+                              context.router.maybePop();
+                            },
+                          ),
+                        )
+                      else if (showHamburger)
+                        // Standard Page: Hamburger on Left
+                        Container(
+                          decoration: BoxDecoration(
+                            color: Theme.of(context).colorScheme.surface.withValues(alpha: 0.8),
+                            borderRadius: BorderRadius.circular(12),
+                          ),
+                          child: IconButton(
+                            focusNode: navBarNode,
+                            icon: const Icon(IconsaxPlusLinear.menu),
+                            onPressed: () {
+                              widget.drawerKey.currentState?.openDrawer();
+                            },
+                          ),
+                        )
+                      else
+                        const SizedBox(width: 48), // Spacer if nothing on left
+
+                      // Right Button Slot (Back button for non-details pages)
+                      if (!isDetailsPage && showBackButton)
+                        Container(
+                          decoration: BoxDecoration(
+                            color: Theme.of(context).colorScheme.surface.withValues(alpha: 0.8),
+                            borderRadius: BorderRadius.circular(12),
+                          ),
+                          child: IconButton(
+                            icon: const Icon(IconsaxPlusLinear.arrow_left),
+                            onPressed: () {
+                              context.router.maybePop();
+                            },
+                          ),
+                        )
+                      else
+                        const SizedBox(width: 48), // Spacer if nothing on right
+                    ],
+                  ),
+                ),
+              ),
           ],
         ),
       ),
@@ -86,34 +168,12 @@ class GlobalFallbackTraversalPolicy extends ReadingOrderTraversalPolicy {
   bool inDirection(FocusNode currentNode, TraversalDirection direction) {
     lastMainFocus = null;
     final handled = super.inDirection(currentNode, direction);
-    
-    // Handle LEFT navigation for navbar fallback (original Fladder behavior)
-    // This is for when content is at the left edge
     if (!handled && direction == TraversalDirection.left) {
       lastMainFocus = currentNode;
 
       if (fallbackNode.canRequestFocus && fallbackNode.context?.mounted == true) {
         final cb = FocusTraversalPolicy.defaultTraversalRequestFocusCallback;
         cb(fallbackNode);
-        return true;
-      }
-    }
-    
-    // Handle UP navigation to navbar (adapted for top navbar instead of left sidebar)
-    // Only go to navbar if we're truly at the top with nowhere else to go
-    if (!handled && direction == TraversalDirection.up) {
-      lastMainFocus = currentNode;
-      
-      // Try to focus the first nav button
-      if (firstNavButtonNode != null && firstNavButtonNode!.canRequestFocus) {
-        firstNavButtonNode!.requestFocus();
-        return true;
-      }
-      
-      // Fallback to navbar node
-      if (navBarNode.canRequestFocus && navBarNode.context?.mounted == true) {
-        final cb = FocusTraversalPolicy.defaultTraversalRequestFocusCallback;
-        cb(navBarNode);
         return true;
       }
     }

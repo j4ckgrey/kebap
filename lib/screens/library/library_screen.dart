@@ -15,6 +15,7 @@ import 'package:kebap/screens/home_screen.dart';
 import 'package:kebap/screens/metadata/refresh_metadata.dart';
 import 'package:kebap/screens/shared/media/poster_row.dart';
 import 'package:kebap/screens/shared/nested_scaffold.dart';
+import 'package:kebap/screens/shared/nested_sliver_appbar.dart';
 import 'package:kebap/theme.dart';
 import 'package:kebap/util/adaptive_layout/adaptive_layout.dart';
 import 'package:kebap/util/kebap_image.dart';
@@ -86,7 +87,12 @@ class _LibraryScreenState extends ConsumerState<LibraryScreen> with SingleTicker
               controller: AdaptiveLayout.scrollOf(context, HomeTabs.library),
               physics: const AlwaysScrollableScrollPhysics(),
               slivers: [
-                const SliverToBoxAdapter(child: SizedBox(height: 10)),
+                const DefaultSliverTopBadding(),
+                if (AdaptiveLayout.viewSizeOf(context) == ViewSize.phone)
+                  NestedSliverAppBar(
+                    route: LibrarySearchRoute(),
+                    parent: context,
+                  ),
                 if (views.isNotEmpty)
                   SliverToBoxAdapter(
                     child: LibraryRow(

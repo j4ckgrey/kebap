@@ -5,6 +5,8 @@ import 'package:kebap/util/string_extensions.dart';
 import 'package:kebap/widgets/search/search_mode_toggle.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:kebap/widgets/shared/modal_bottom_sheet.dart';
+import 'package:kebap/widgets/shared/item_actions.dart';
 
 class SearchScreen extends ConsumerStatefulWidget {
   const SearchScreen({super.key});
@@ -31,6 +33,7 @@ class _SearchScreenState extends ConsumerState<SearchScreen> {
     final searchResults = ref.watch(searchProvider);
     return Scaffold(
       appBar: AppBar(
+        automaticallyImplyLeading: false,
         actions: [
           SearchModeToggle(
             onModeChanged: () {
@@ -91,6 +94,29 @@ class _SearchScreenState extends ConsumerState<SearchScreen> {
                 stickyHeader: false,
                 name: e.key.name.capitalize(),
                 posters: e.value,
+                onPressed: (action, item) {
+                  showBottomSheetPill(
+                    context: context,
+                    content: (context, scrollController) {
+                      final actions = item.generateActions(context, ref);
+                      return Column(
+                        mainAxisSize: MainAxisSize.min,
+                        children: [
+                          ItemActionButton(
+                            label: Text('View Details'),
+                            icon: const Icon(Icons.info_outline),
+                            action: () {
+                              Navigator.of(context).pop();
+                              action();
+                            },
+                          ).toListItem(context, useIcons: true),
+                          const Divider(),
+                          ...actions.listTileItems(context, useIcons: true),
+                        ],
+                      );
+                    },
+                  );
+                },
               ),
             )
             .toList(),

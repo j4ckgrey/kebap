@@ -366,6 +366,7 @@ class _LibrarySearchScreenState extends ConsumerState<LibrarySearchScreen> {
                             spacing: 2,
                             children: [
                               const SizedBox(width: 2),
+                              const SizedBox(width: 2),
                               if (AdaptiveLayout.inputDeviceOf(context) != InputDevice.dPad)
                                 Center(
                                   child: SizedBox.square(
@@ -451,6 +452,30 @@ class _LibrarySearchScreenState extends ConsumerState<LibrarySearchScreen> {
                             key: uniqueKey,
                             items: postersList,
                             groupByType: librarySearchResults.filters.groupBy,
+                            onPressed: (item) {
+                              showBottomSheetPill(
+                                context: context,
+                                item: item,
+                                content: (context, scrollController) {
+                                  final actions = item.generateActions(context, ref);
+                                  return Column(
+                                    mainAxisSize: MainAxisSize.min,
+                                    children: [
+                                      ItemActionButton(
+                                        label: Text("View Details"),
+                                        icon: const Icon(IconsaxPlusLinear.info_circle),
+                                        action: () {
+                                          Navigator.of(context).pop();
+                                          item.navigateTo(context, ref: ref);
+                                        },
+                                      ).toListItem(context, useIcons: true),
+                                      const Divider(),
+                                      ...actions.listTileItems(context, useIcons: true),
+                                    ],
+                                  );
+                                },
+                              );
+                            },
                           ),
                         )
                       else

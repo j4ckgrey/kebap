@@ -26,7 +26,6 @@ import 'package:kebap/widgets/shared/item_actions.dart';
 import 'package:kebap/widgets/shared/item_details_reviews_carousel.dart';
 import 'package:kebap/widgets/shared/modal_bottom_sheet.dart';
 import 'package:kebap/widgets/shared/selectable_icon_button.dart';
-import 'package:kebap/widgets/navigation_scaffold/components/navigation_constants.dart';
 
 class MovieDetailScreen extends ConsumerStatefulWidget {
   final ItemBaseModel item;
@@ -45,7 +44,6 @@ class _ItemDetailScreenState extends ConsumerState<MovieDetailScreen> {
     super.initState();
     WidgetsBinding.instance.addPostFrameCallback((_) {
       if (mounted) {
-        registerFirstContentNode(_playButtonNode);
       }
     });
   }

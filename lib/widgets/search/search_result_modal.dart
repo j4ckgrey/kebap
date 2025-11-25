@@ -41,6 +41,7 @@ class _SearchResultModalState extends ConsumerState<SearchResultModal> {
   }
 
   Future<void> _fetchMetadata() async {
+    if (!mounted) return;
     final metadataNotifier = ref.read(baklavaMetadataProvider.notifier);
 
     // Extract IDs from item
@@ -422,14 +423,12 @@ class _SearchResultModalState extends ConsumerState<SearchResultModal> {
           ],
         );
 
-        return Container(
-            height: 600,
-            width: double.maxFinite,
-            constraints: const BoxConstraints(maxWidth: 900),
-            decoration: BoxDecoration(
-              color: theme.colorScheme.surface,
-              borderRadius: BorderRadius.circular(12),
-            ),
+        return Material(
+            color: theme.colorScheme.surface,
+            clipBehavior: Clip.antiAlias,
+            child: Container(
+              height: 700,
+              constraints: const BoxConstraints(maxWidth: 1100),
           child: metadataState.loading
                 ? const Center(child: CircularProgressIndicator())
                 : isMobile
@@ -464,36 +463,36 @@ class _SearchResultModalState extends ConsumerState<SearchResultModal> {
                         crossAxisAlignment: CrossAxisAlignment.stretch,
                         children: [
                           // Left: Poster - show item poster immediately, fallback to TMDB
-                          Container(
-                            width: 300,
-                            decoration: BoxDecoration(
-                              borderRadius: const BorderRadius.only(
-                                topLeft: Radius.circular(12),
-                                bottomLeft: Radius.circular(12),
-                              ),
-                              image: DecorationImage(
-                                image: CachedNetworkImageProvider(
-                                  metadata?.posterPath != null
-                                      ? 'https://image.tmdb.org/t/p/w500${metadata!.posterPath}'
-                                      : widget.item.images?.primary?.path ?? '',
+                          Expanded(
+                            flex: 1,
+                            child: Container(
+                              decoration: BoxDecoration(
+                                image: DecorationImage(
+                                  image: CachedNetworkImageProvider(
+                                    metadata?.posterPath != null
+                                        ? 'https://image.tmdb.org/t/p/w500${metadata!.posterPath}'
+                                        : widget.item.images?.primary?.path ?? '',
+                                  ),
+                                  fit: BoxFit.cover,
                                 ),
-                                fit: BoxFit.cover,
                               ),
                             ),
                           ),
 
                           // Right: Content
                           Expanded(
+                            flex: 2,
                             child: SingleChildScrollView(
                               padding: const EdgeInsets.all(24),
                               child: content,
                             ),
                           ),
-                        ],
-                      ),
-        );
-      },
+                      ],
+                    ),
+      ),
     );
+  },
+);
   }
 }
 

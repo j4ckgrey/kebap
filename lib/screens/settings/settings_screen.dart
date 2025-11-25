@@ -14,7 +14,6 @@ import 'package:kebap/routes/auto_router.gr.dart';
 import 'package:kebap/screens/settings/quick_connect_window.dart';
 import 'package:kebap/screens/settings/settings_list_tile.dart';
 import 'package:kebap/screens/settings/settings_scaffold.dart';
-import 'package:kebap/widgets/navigation_scaffold/components/navigation_constants.dart';
 import 'package:kebap/screens/shared/default_alert_dialog.dart';
 import 'package:kebap/screens/shared/kebap_icon.dart';
 import 'package:kebap/screens/shared/kebap_snackbar.dart';
@@ -34,36 +33,21 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen> {
   final scrollController = ScrollController();
   final minVerticalPadding = 20.0;
   late LayoutMode lastAdaptiveLayout = AdaptiveLayout.layoutModeOf(context);
-  final FocusScopeNode _settingsFocusNode = FocusScopeNode();
-
-  @override
-  void initState() {
-    super.initState();
-    WidgetsBinding.instance.addPostFrameCallback((_) {
-      registerFirstContentNode(_settingsFocusNode);
-    });
-  }
-
-  @override
-  void dispose() {
-    _settingsFocusNode.dispose();
-    super.dispose();
-  }
 
   @override
   Widget build(BuildContext context) {
     return AutoTabsRouter(
       builder: (context, content) {
         checkForNullIndex(context);
-        return FocusScope(
-          node: _settingsFocusNode,
-          child: PopScope(
-            canPop: context.tabsRouter.activeIndex == 0 || AdaptiveLayout.layoutModeOf(context) == LayoutMode.dual,
-            onPopInvokedWithResult: (didPop, result) {
-              if (!didPop) {
-                context.tabsRouter.setActiveIndex(0);
-              }
-            },
+        return PopScope(
+          canPop: context.tabsRouter.activeIndex == 0 || AdaptiveLayout.layoutModeOf(context) == LayoutMode.dual,
+          onPopInvokedWithResult: (didPop, result) {
+            if (!didPop) {
+              context.tabsRouter.setActiveIndex(0);
+            }
+          },
+          child: FocusScope(
+            autofocus: true,
             child: AdaptiveLayout.layoutModeOf(context) == LayoutMode.single
                 ? Card(
                     elevation: 0,
@@ -128,7 +112,7 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen> {
     final hasNewUpdate = ref.watch(hasNewUpdateProvider);
 
     return Padding(
-      padding: EdgeInsets.only(left: 16),
+      padding: EdgeInsets.only(left: AdaptiveLayout.of(context).sideBarWidth),
       child: Container(
         color: context.colors.surface,
         child: SettingsScaffold(
@@ -175,8 +159,12 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen> {
               label: Text(context.localized.about),
               subLabel: Text("Kebap, ${context.localized.latestReleases}"),
               selected: containsRoute(const AboutSettingsRoute()),
-              leading: const KebapIconOutlined(
-                size: 24,
+              leading: Opacity(
+                opacity: 1,
+                child: KebapIconOutlined(
+                  size: 24,
+                  color: context.colors.onSurfaceVariant,
+                ),
               ),
               onTap: () => navigateTo(const AboutSettingsRoute()),
             ),
