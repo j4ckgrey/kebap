@@ -16,7 +16,6 @@ import 'package:kebap/models/items/media_streams_model.dart';
 import 'package:kebap/models/items/overview_model.dart';
 import 'package:kebap/models/items/series_model.dart';
 import 'package:kebap/util/localization_helper.dart';
-import 'package:kebap/util/string_extensions.dart';
 
 part 'episode_model.mapper.dart';
 

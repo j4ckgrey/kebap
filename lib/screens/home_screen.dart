@@ -15,9 +15,7 @@ import 'package:kebap/routes/auto_router.gr.dart';
 import 'package:kebap/screens/shared/kebap_snackbar.dart';
 import 'package:kebap/util/input_handler.dart';
 import 'package:kebap/util/localization_helper.dart';
-import 'package:kebap/util/string_extensions.dart';
 import 'package:kebap/widgets/keyboard/slide_in_keyboard.dart';
-import 'package:kebap/widgets/navigation_scaffold/components/adaptive_fab.dart';
 import 'package:kebap/widgets/navigation_scaffold/components/destination_model.dart';
 import 'package:kebap/widgets/navigation_scaffold/navigation_scaffold.dart';
 

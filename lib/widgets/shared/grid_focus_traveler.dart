@@ -4,7 +4,6 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import 'package:kebap/util/adaptive_layout/adaptive_layout.dart';
 import 'package:kebap/util/focus_provider.dart';
-import 'package:kebap/widgets/navigation_scaffold/components/navigation_body.dart';
 import 'package:kebap/widgets/navigation_scaffold/components/navigation_constants.dart';
 
 class GridFocusTraveler extends ConsumerStatefulWidget {
@@ -140,15 +139,7 @@ class GridFocusTravelerPolicy extends WidgetOrderTraversalPolicy {
       return true;
     }
 
-    if (direction == TraversalDirection.left && col == 0) {
-      lastMainFocus = currentNode;
-      try {
-        final cb = FocusTraversalPolicy.defaultTraversalRequestFocusCallback;
-        cb(navBarNode);
-      } catch (_) {}
-      return true;
-    }
-
+    // Let GlobalFallbackTraversalPolicy handle edge cases
     return super.inDirection(currentNode, direction);
   }
 }

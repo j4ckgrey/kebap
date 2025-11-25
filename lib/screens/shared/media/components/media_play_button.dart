@@ -4,21 +4,21 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:iconsax_plus/iconsax_plus.dart';
 
 import 'package:kebap/models/item_base_model.dart';
-import 'package:kebap/screens/shared/animated_fade_size.dart';
-import 'package:kebap/util/adaptive_layout/adaptive_layout.dart';
-import 'package:kebap/util/focus_provider.dart';
 import 'package:kebap/util/localization_helper.dart';
-import 'package:kebap/widgets/shared/ensure_visible.dart';
 
 class MediaPlayButton extends ConsumerWidget {
   final ItemBaseModel? item;
   final Function(bool restart)? onPressed;
   final Function(bool restart)? onLongPressed;
+  final FocusNode? focusNode;
+  final bool autofocus;
 
   const MediaPlayButton({
     required this.item,
     this.onPressed,
     this.onLongPressed,
+    this.focusNode,
+    this.autofocus = false,
     super.key,
   });
 
@@ -34,6 +34,8 @@ class MediaPlayButton extends ConsumerWidget {
         children: [
           // Resume Button (Primary)
           FilledButton(
+            focusNode: focusNode,
+            autofocus: autofocus,
             onPressed: onPressed == null ? null : () => onPressed?.call(false),
             onLongPress: onLongPressed == null ? null : () => onLongPressed?.call(false),
             child: Text(context.localized.resumeLabel),
@@ -50,6 +52,8 @@ class MediaPlayButton extends ConsumerWidget {
 
     // Default Play Button (No progress)
     return FilledButton.icon(
+      focusNode: focusNode,
+      autofocus: autofocus,
       onPressed: onPressed == null ? null : () => onPressed?.call(false),
       onLongPress: onLongPressed == null ? null : () => onLongPressed?.call(false),
       icon: const Icon(IconsaxPlusBold.play),

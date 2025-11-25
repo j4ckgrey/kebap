@@ -4,8 +4,6 @@ import 'package:kebap/models/tmdb_metadata_model.dart';
 import 'package:kebap/providers/api_provider.dart';
 import 'package:kebap/providers/effective_baklava_config_provider.dart';
 import 'package:kebap/providers/baklava_requests_provider.dart';
-import 'package:kebap/providers/effective_baklava_config_provider.dart';
-import 'package:kebap/providers/settings/kebap_settings_provider.dart';
 import 'package:kebap/providers/tmdb_direct_service.dart';
 
 final baklavaMetadataProvider =

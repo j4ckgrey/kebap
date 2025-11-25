@@ -1,29 +1,17 @@
 import 'package:flutter/material.dart';
 
-import 'package:auto_route/auto_route.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:iconsax_plus/iconsax_plus.dart';
 import 'package:palette_generator_master/palette_generator_master.dart';
 
 import 'package:kebap/models/item_base_model.dart';
 import 'package:kebap/models/items/images_models.dart';
 import 'package:kebap/providers/settings/client_settings_provider.dart';
-import 'package:kebap/providers/sync/sync_provider_helpers.dart';
-import 'package:kebap/providers/sync_provider.dart';
-import 'package:kebap/providers/user_provider.dart';
-import 'package:kebap/routes/auto_router.gr.dart';
-import 'package:kebap/screens/syncing/sync_button.dart';
-import 'package:kebap/screens/syncing/sync_item_details.dart';
 import 'package:kebap/shaders/fade_edges.dart';
-import 'package:kebap/theme.dart';
 import 'package:kebap/util/adaptive_layout/adaptive_layout.dart';
 import 'package:kebap/util/kebap_image.dart';
-import 'package:kebap/util/localization_helper.dart';
-import 'package:kebap/util/refresh_state.dart';
-import 'package:kebap/util/router_extension.dart';
-import 'package:kebap/widgets/navigation_scaffold/components/settings_user_icon.dart';
+import 'package:kebap/widgets/navigation_scaffold/components/navigation_body.dart';
+import 'package:kebap/widgets/navigation_scaffold/components/navigation_constants.dart';
 import 'package:kebap/widgets/shared/item_actions.dart';
-import 'package:kebap/widgets/shared/modal_bottom_sheet.dart';
 import 'package:kebap/widgets/shared/pull_to_refresh.dart';
 
 Future<Color?> getDominantColor(ImageProvider imageProvider) async {
@@ -104,7 +92,6 @@ class _DetailScaffoldState extends ConsumerState<DetailScaffold> {
     final backGroundColor = Theme.of(context).colorScheme.surface.withValues(alpha: 0.8);
     final minHeight = 450.0.clamp(0, size.height).toDouble();
     final maxHeight = size.height - 10;
-    final sideBarPadding = AdaptiveLayout.of(context).sideBarWidth;
     final newColorScheme = dominantColor != null
         ? ColorScheme.fromSeed(
             seedColor: dominantColor!,
@@ -145,7 +132,9 @@ class _DetailScaffoldState extends ConsumerState<DetailScaffold> {
           child: Scaffold(
             backgroundColor: Theme.of(context).colorScheme.surface,
             extendBodyBehindAppBar: true,
-            body: Stack(
+            body: FocusTraversalGroup(
+              policy: GlobalFallbackTraversalPolicy(fallbackNode: navBarNode),
+              child: Stack(
               children: [
                 SingleChildScrollView(
                   physics: const AlwaysScrollableScrollPhysics(),
@@ -163,7 +152,7 @@ class _DetailScaffoldState extends ConsumerState<DetailScaffold> {
                         Align(
                           alignment: Alignment.topCenter,
                           child: Padding(
-                            padding: EdgeInsets.only(left: (sideBarPadding - 25).clamp(0, double.infinity)),
+                            padding: EdgeInsets.only(left: 25.0),
                             child: FadeEdges(
                               leftFade: AdaptiveLayout.layoutModeOf(context) != LayoutMode.single ? 0.05 : 0.0,
                               bottomFade: 0.3,
@@ -219,20 +208,17 @@ class _DetailScaffoldState extends ConsumerState<DetailScaffold> {
                           bottom: 0,
                           top: 0,
                         ),
-                        child: FocusScope(
-                          autofocus: true,
-                          child: ConstrainedBox(
+                        child: ConstrainedBox(
                             constraints: BoxConstraints(
                               minHeight: size.height,
                               maxWidth: size.width,
                             ),
                             child: widget.content(
                               padding.copyWith(
-                                left: sideBarPadding + 25 + MediaQuery.paddingOf(context).left,
+                                left: 25 + MediaQuery.paddingOf(context).left,
                               ),
                             ),
                           ),
-                        ),
                       ),
                     ],
                   ),
@@ -241,9 +227,11 @@ class _DetailScaffoldState extends ConsumerState<DetailScaffold> {
                 // Floating button group removed as per user request
               ],
             ),
-          ),
+            ),
+            ),
         );
       }),
     );
   }
 }
+

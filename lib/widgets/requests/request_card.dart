@@ -34,29 +34,33 @@ class RequestCard extends ConsumerWidget {
             child: Stack(
               children: [
                 // Poster image
-                InkWell(
-                  onTap: onTap,
-                  borderRadius: BorderRadius.circular(8),
-                  child: Container(
-                    decoration: BoxDecoration(
-                      borderRadius: BorderRadius.circular(8),
-                      image: request.img != null
-                          ? DecorationImage(
-                              image: NetworkImage(request.img!),
-                              fit: BoxFit.cover,
+                Material(
+                  color: Colors.transparent,
+                  child: InkWell(
+                    onTap: onTap,
+                    autofocus: false,
+                    borderRadius: BorderRadius.circular(8),
+                    child: Container(
+                      decoration: BoxDecoration(
+                        borderRadius: BorderRadius.circular(8),
+                        image: request.img != null
+                            ? DecorationImage(
+                                image: NetworkImage(request.img!),
+                                fit: BoxFit.cover,
+                              )
+                            : null,
+                        color: theme.colorScheme.surfaceContainerHighest,
+                      ),
+                      child: request.img == null
+                          ? Center(
+                              child: Icon(
+                                Icons.movie,
+                                size: 48,
+                                color: theme.colorScheme.onSurfaceVariant,
+                              ),
                             )
                           : null,
-                      color: theme.colorScheme.surfaceContainerHighest,
                     ),
-                    child: request.img == null
-                        ? Center(
-                            child: Icon(
-                              Icons.movie,
-                              size: 48,
-                              color: theme.colorScheme.onSurfaceVariant,
-                            ),
-                          )
-                        : null,
                   ),
                 ),
                 

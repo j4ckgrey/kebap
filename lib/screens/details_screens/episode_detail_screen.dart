@@ -8,7 +8,7 @@ import 'package:kebap/models/item_base_model.dart';
 import 'package:kebap/providers/items/episode_details_provider.dart';
 import 'package:kebap/providers/user_provider.dart';
 import 'package:kebap/screens/details_screens/components/media_stream_information.dart';
-import 'package:kebap/screens/details_screens/components/overview_header.dart';
+import 'package:kebap/screens/details_screens/components/overview_header_v3.dart';
 import 'package:kebap/screens/shared/detail_scaffold.dart';
 import 'package:kebap/screens/shared/kebap_snackbar.dart';
 import 'package:kebap/screens/shared/media/chapter_row.dart';
@@ -76,7 +76,7 @@ class _ItemDetailScreenState extends ConsumerState<EpisodeDetailScreen> {
                 mainAxisAlignment: MainAxisAlignment.start,
                 crossAxisAlignment: CrossAxisAlignment.stretch,
                 children: [
-                  OverviewHeader(
+                  OverviewHeaderV3(
                     name: details.series?.name ?? "",
                     image: seasonDetails.images,
                     centerButtons: Wrap(
@@ -87,6 +87,7 @@ class _ItemDetailScreenState extends ConsumerState<EpisodeDetailScreen> {
                       children: [
                         if (episodeDetails.playAble)
                           MediaPlayButton(
+                            autofocus: true,
                             item: episodeDetails,
                             onPressed: (restart) async {
                               await details.episode.play(
@@ -148,7 +149,7 @@ class _ItemDetailScreenState extends ConsumerState<EpisodeDetailScreen> {
                     originalTitle: details.series?.originalTitle,
                     onTitleClicked: () => details.series?.navigateTo(context),
                     productionYear: details.series?.overview.productionYear,
-                    runTime: details.episode?.overview.runTime,
+                    duration: details.episode?.overview.runTime,
                     studios: details.series?.overview.studios ?? [],
                     genres: details.series?.overview.genreItems ?? [],
                     officialRating: details.series?.overview.parentalRating,

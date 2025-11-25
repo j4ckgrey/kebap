@@ -186,7 +186,7 @@ class _PhotoViewerScreenState extends ConsumerState<PhotoViewerScreen> with Widg
       children: [
         AnimatedSwitcher(
           duration: const Duration(milliseconds: 250),
-          child: ref.watch(photoViewSettingsProvider.select((value) => value.theaterMode)) && imageHash != null
+          child: ref.watch(photoViewSettingsProvider.select((value) => value.theaterMode)) && imageHash != null && imageHash.length >= 6
               ? Opacity(
                   key: Key(currentPhoto.id),
                   opacity: 0.7,

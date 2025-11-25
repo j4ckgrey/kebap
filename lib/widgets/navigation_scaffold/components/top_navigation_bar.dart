@@ -5,7 +5,7 @@ import 'package:kebap/widgets/navigation_scaffold/components/destination_model.d
 import 'package:kebap/widgets/navigation_scaffold/components/navigation_button.dart';
 
 import 'package:kebap/widgets/navigation_scaffold/components/navigation_constants.dart';
-import 'package:kebap/widgets/navigation_scaffold/components/adaptive_fab.dart';
+import 'package:kebap/widgets/navigation_scaffold/components/navigation_body.dart';
 import 'package:kebap/widgets/navigation_scaffold/components/settings_user_icon.dart';
 import 'package:auto_route/auto_route.dart';
 import 'package:kebap/routes/auto_router.gr.dart';
@@ -17,7 +17,27 @@ import 'package:iconsax_plus/iconsax_plus.dart';
 class NavBarLoopTraversalPolicy extends WidgetOrderTraversalPolicy {
   @override
   bool inDirection(FocusNode currentNode, TraversalDirection direction) {
-    // Block up navigation - navbar is at the top
+    // Allow DOWN navigation to exit navbar and go to content
+    if (direction == TraversalDirection.down) {
+      // Return to last focused content if available
+      if (lastMainFocus != null && 
+          lastMainFocus!.canRequestFocus && 
+          lastMainFocus!.context?.mounted == true) {
+        lastMainFocus!.requestFocus();
+        return true;
+      }
+      
+      // Otherwise go to first content node
+      if (firstContentNode != null && firstContentNode!.canRequestFocus) {
+        firstContentNode!.requestFocus();
+        return true;
+      }
+      
+      // Fall back to default
+      return super.inDirection(currentNode, direction);
+    }
+
+    // Block UP navigation - navbar is at the top
     if (direction == TraversalDirection.up) {
       return true;
     }

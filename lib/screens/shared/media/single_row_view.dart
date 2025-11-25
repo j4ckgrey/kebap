@@ -6,6 +6,7 @@ import 'package:kebap/providers/focused_item_provider.dart';
 import 'package:kebap/screens/shared/media/compact_item_banner.dart';
 import 'package:kebap/screens/shared/media/poster_row.dart';
 import 'package:kebap/util/adaptive_layout/adaptive_layout.dart';
+import 'package:kebap/util/focus_provider.dart';
 
 
 /// Single row view with fixed banner
@@ -99,43 +100,45 @@ class _SingleRowViewState extends ConsumerState<SingleRowView> {
               final row = widget.rows[index];
               final isFirstRow = index == 0;
               
-              return SizedBox(
-                height: cardHeight + titleHeight + 16, // Added 16px padding to prevent overflow
-                child: Column(
-                  mainAxisSize: MainAxisSize.min,
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    // Row title
-                    Padding(
-                      padding: const EdgeInsets.only(left: 16, top: 8, bottom: 4),
-                      child: Text(
-                        row.label,
-                        style: Theme.of(context).textTheme.titleMedium?.copyWith(
-                          fontWeight: FontWeight.bold,
+              return FocusProvider(
+                autoFocus: isFirstRow,
+                child: SizedBox(
+                  height: cardHeight + titleHeight + 16, // Added 16px padding to prevent overflow
+                  child: Column(
+                    mainAxisSize: MainAxisSize.min,
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      // Row title
+                      Padding(
+                        padding: const EdgeInsets.only(left: 16, top: 8, bottom: 4),
+                        child: Text(
+                          row.label,
+                          style: Theme.of(context).textTheme.titleMedium?.copyWith(
+                            fontWeight: FontWeight.bold,
+                          ),
                         ),
                       ),
-                    ),
-                    // Poster cards
-                    Expanded(
-                      child: PosterRow(
-                        autoFocus: isFirstRow, // Enable UP navigation for first row
-                        contentPadding: EdgeInsets.only(
-                          left: widget.contentPadding.left, 
-                          right: widget.contentPadding.right,
+                      // Poster cards
+                      Expanded(
+                        child: PosterRow(
+                          contentPadding: EdgeInsets.only(
+                            left: widget.contentPadding.left, 
+                            right: widget.contentPadding.right,
+                          ),
+                          label: row.label,
+                          hideLabel: true, // Hide label, shown above instead
+                          posters: row.posters,
+                          collectionAspectRatio: row.aspectRatio,
+                          onLabelClick: row.onLabelClick,
+                          explicitHeight: cardHeight,
+                          onCardTap: (item) {
+                            // Update banner content for all devices
+                            ref.read(focusedItemProvider.notifier).state = item;
+                          },
                         ),
-                        label: row.label,
-                        hideLabel: true, // Hide label, shown above instead
-                        posters: row.posters,
-                        collectionAspectRatio: row.aspectRatio,
-                        onLabelClick: row.onLabelClick,
-                        explicitHeight: cardHeight,
-                        onCardTap: (item) {
-                          // Update banner content for all devices
-                          ref.read(focusedItemProvider.notifier).state = item;
-                        },
                       ),
-                    ),
-                  ],
+                    ],
+                  ),
                 ),
               );
             },

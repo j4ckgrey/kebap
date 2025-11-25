@@ -3,7 +3,6 @@ import 'package:flutter/material.dart';
 import 'package:auto_route/auto_route.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
-import 'package:iconsax_plus/iconsax_plus.dart';
 
 import 'package:kebap/screens/crash_screen/crash_screen.dart';
 import 'package:kebap/screens/settings/settings_scaffold.dart';

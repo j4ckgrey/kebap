@@ -16,7 +16,9 @@ import 'package:kebap/widgets/shared/modal_bottom_sheet.dart';
 import 'package:kebap/widgets/shared/status_card.dart';
 import 'package:kebap/models/items/images_models.dart';
 import 'package:kebap/widgets/navigation_scaffold/components/background_image.dart';
+import 'package:kebap/util/focus_provider.dart';
 
+import 'package:kebap/widgets/navigation_scaffold/components/navigation_body.dart';
 import 'package:kebap/widgets/navigation_scaffold/components/navigation_constants.dart';
 
 @RoutePage()
@@ -36,10 +38,6 @@ class _RequestsScreenState extends ConsumerState<RequestsScreen> {
     // Load requests when screen opens
     Future.microtask(() {
       ref.read(baklavaRequestsProvider.notifier).loadRequests();
-    });
-    
-    WidgetsBinding.instance.addPostFrameCallback((_) {
-      registerFirstContentNode(_contentFocusNode);
     });
   }
 
@@ -94,7 +92,9 @@ class _RequestsScreenState extends ConsumerState<RequestsScreen> {
             .nonNulls
             .toList(),
       ),
-      body: FocusScope(
+      body: FocusTraversalGroup(
+        policy: GlobalFallbackTraversalPolicy(fallbackNode: navBarNode),
+        child: FocusScope(
         node: _contentFocusNode,
         child: CustomScrollView(
         slivers: [
@@ -150,45 +150,57 @@ class _RequestsScreenState extends ConsumerState<RequestsScreen> {
                       sliver: SliverList(
                         delegate: SliverChildListDelegate([
                           // Movie Requests
-                          _RequestSection(
-                            title: 'Movie Requests',
-                            titleColor: theme.colorScheme.primary,
-                            icon: IconsaxPlusLinear.video,
-                            requests: movies,
-                            isAdminView: isAdmin,
+                          FocusProvider(
+                            autoFocus: true,
+                            child: _RequestSection(
+                              title: 'Movie Requests',
+                              titleColor: theme.colorScheme.primary,
+                              icon: IconsaxPlusLinear.video,
+                              requests: movies,
+                              isAdminView: isAdmin,
+                            ),
                           ),
 
                           const SizedBox(height: 24),
 
                           // Series Requests
-                          _RequestSection(
-                            title: 'Series Requests',
-                            titleColor: theme.colorScheme.primary,
-                            icon: IconsaxPlusLinear.video_play,
-                            requests: series,
-                            isAdminView: isAdmin,
+                          FocusProvider(
+                            autoFocus: false,
+                            child: _RequestSection(
+                              title: 'Series Requests',
+                              titleColor: theme.colorScheme.primary,
+                              icon: IconsaxPlusLinear.video_play,
+                              requests: series,
+                              isAdminView: isAdmin,
+                            ),
                           ),
 
                           const SizedBox(height: 24),
 
                           // Approved
-                          _RequestSection(
-                            title: 'Approved',
-                            titleColor: Colors.green,
-                            icon: IconsaxPlusLinear.tick_circle,
-                            requests: approved,
-                            isAdminView: isAdmin,
+                          FocusProvider(
+                            autoFocus: false,
+                            child: _RequestSection(
+                              title: 'Approved',
+                              titleColor: Colors.green,
+                              icon: IconsaxPlusLinear.tick_circle,
+                              requests: approved,
+                              isAdminView: isAdmin,
+                            ),
                           ),
 
                           const SizedBox(height: 24),
 
                           // Rejected
-                          _RequestSection(
-                            title: 'Rejected',
-                            titleColor: Colors.red,
-                            icon: IconsaxPlusLinear.close_circle,
-                            requests: rejected,
-                            isAdminView: isAdmin,
+                          FocusProvider(
+                            autoFocus: false,
+                            child: _RequestSection(
+                              title: 'Rejected',
+                              titleColor: Colors.red,
+                              icon: IconsaxPlusLinear.close_circle,
+                              requests: rejected,
+                              isAdminView: isAdmin,
+                            ),
                           ),
                         ]),
                       ),
@@ -196,7 +208,8 @@ class _RequestsScreenState extends ConsumerState<RequestsScreen> {
         ],
       ),
     ),
-    );
+  ),
+);
   }
 }
 

@@ -101,7 +101,7 @@ class AdaptiveLayout extends InheritedWidget {
   static EdgeInsets adaptivePadding(BuildContext context, {double horizontalPadding = 16}) {
     final viewPadding = MediaQuery.paddingOf(context);
     final padding = viewPadding.copyWith(
-      left: AdaptiveLayout.of(context).sideBarWidth + horizontalPadding + viewPadding.left,
+      left: horizontalPadding + viewPadding.left,
       top: 0,
       bottom: 0,
       right: viewPadding.right + horizontalPadding,
@@ -204,7 +204,6 @@ class _AdaptiveLayoutBuilderState extends ConsumerState<AdaptiveLayoutBuilder> {
           inputDevice: InputDevice.pointer,
           platform: currentPlatform,
           isDesktop: isDesktop,
-          sideBarWidth: 0,
           controller: scrollControllers,
           posterDefaults: posterDefaults,
         );

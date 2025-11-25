@@ -8,7 +8,7 @@ import 'package:kebap/models/item_base_model.dart';
 import 'package:kebap/models/items/series_model.dart';
 import 'package:kebap/providers/items/series_details_provider.dart';
 import 'package:kebap/providers/user_provider.dart';
-import 'package:kebap/screens/details_screens/components/overview_header.dart';
+import 'package:kebap/screens/details_screens/components/overview_header_v3.dart';
 import 'package:kebap/screens/shared/detail_scaffold.dart';
 import 'package:kebap/screens/shared/media/components/media_play_button.dart';
 import 'package:kebap/screens/shared/media/components/next_up_episode.dart';
@@ -29,6 +29,7 @@ import 'package:kebap/widgets/shared/item_actions.dart';
 import 'package:kebap/widgets/shared/item_details_reviews_carousel.dart';
 import 'package:kebap/widgets/shared/modal_bottom_sheet.dart';
 import 'package:kebap/widgets/shared/selectable_icon_button.dart';
+import 'package:kebap/widgets/navigation_scaffold/components/navigation_constants.dart';
 
 class SeriesDetailScreen extends ConsumerStatefulWidget {
   final ItemBaseModel item;
@@ -41,6 +42,23 @@ class SeriesDetailScreen extends ConsumerStatefulWidget {
 class _SeriesDetailScreenState extends ConsumerState<SeriesDetailScreen> {
   AutoDisposeStateNotifierProvider<SeriesDetailViewNotifier, SeriesModel?> get providerId =>
       seriesDetailsProvider(widget.item.id);
+  final FocusNode _playButtonNode = FocusNode();
+
+  @override
+  void initState() {
+    super.initState();
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      if (mounted) {
+        registerFirstContentNode(_playButtonNode);
+      }
+    });
+  }
+
+  @override
+  void dispose() {
+    _playButtonNode.dispose();
+    super.dispose();
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -74,7 +92,7 @@ class _SeriesDetailScreenState extends ConsumerState<SeriesDetailScreen> {
                 mainAxisAlignment: MainAxisAlignment.start,
                 crossAxisAlignment: CrossAxisAlignment.stretch,
                 children: [
-                  OverviewHeader(
+                  OverviewHeaderV3(
                     name: details.name,
                     image: details.images,
                     centerButtons: Wrap(
@@ -85,6 +103,8 @@ class _SeriesDetailScreenState extends ConsumerState<SeriesDetailScreen> {
                       children: [
                         if (details.nextUp != null)
                           MediaPlayButton(
+                            focusNode: _playButtonNode,
+                            autofocus: true,
                             item: details.nextUp,
                             onPressed: (restart) async {
                               await details.nextUp.play(
@@ -141,7 +161,7 @@ class _SeriesDetailScreenState extends ConsumerState<SeriesDetailScreen> {
                     padding: padding,
                     originalTitle: details.originalTitle,
                     productionYear: details.overview.productionYear,
-                    runTime: details.overview.runTime,
+                    duration: details.overview.runTime,
                     studios: details.overview.studios,
                     officialRating: details.overview.parentalRating,
                     genres: details.overview.genreItems,

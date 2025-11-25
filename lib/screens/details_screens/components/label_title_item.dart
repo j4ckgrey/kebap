@@ -30,7 +30,7 @@ class LabelTitleItem extends ConsumerWidget {
               ? SelectableText(
                   label!,
                 )
-              : content!,
+              : Flexible(child: content!),
         ].nonNulls.toList(),
       ),
     );

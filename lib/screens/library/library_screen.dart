@@ -15,7 +15,6 @@ import 'package:kebap/screens/home_screen.dart';
 import 'package:kebap/screens/metadata/refresh_metadata.dart';
 import 'package:kebap/screens/shared/media/poster_row.dart';
 import 'package:kebap/screens/shared/nested_scaffold.dart';
-import 'package:kebap/screens/shared/nested_sliver_appbar.dart';
 import 'package:kebap/theme.dart';
 import 'package:kebap/util/adaptive_layout/adaptive_layout.dart';
 import 'package:kebap/util/kebap_image.dart';
@@ -23,7 +22,6 @@ import 'package:kebap/util/focus_provider.dart';
 import 'package:kebap/util/localization_helper.dart';
 import 'package:kebap/util/sliver_list_padding.dart';
 import 'package:kebap/widgets/navigation_scaffold/components/background_image.dart';
-import 'package:kebap/widgets/navigation_scaffold/components/settings_user_icon.dart';
 import 'package:kebap/widgets/shared/button_group.dart';
 import 'package:kebap/widgets/shared/horizontal_list.dart';
 import 'package:kebap/widgets/shared/item_actions.dart';
@@ -85,7 +83,7 @@ class _LibraryScreenState extends ConsumerState<LibraryScreen> with SingleTicker
           duration: const Duration(milliseconds: 175),
           child: SizedBox.expand(
             child: CustomScrollView(
-              primary: true,
+              controller: AdaptiveLayout.scrollOf(context, HomeTabs.library),
               physics: const AlwaysScrollableScrollPhysics(),
               slivers: [
                 const SliverToBoxAdapter(child: SizedBox(height: 10)),

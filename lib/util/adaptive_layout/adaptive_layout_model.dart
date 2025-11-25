@@ -48,7 +48,6 @@ class AdaptiveLayoutModel {
   final bool isDesktop;
   final PosterDefaults posterDefaults;
   final Map<HomeTabs, ScrollController> controller;
-  final double sideBarWidth;
 
   const AdaptiveLayoutModel({
     required this.viewSize,
@@ -58,7 +57,6 @@ class AdaptiveLayoutModel {
     required this.isDesktop,
     required this.posterDefaults,
     required this.controller,
-    required this.sideBarWidth,
   });
 
   AdaptiveLayoutModel copyWith({
@@ -69,7 +67,6 @@ class AdaptiveLayoutModel {
     bool? isDesktop,
     PosterDefaults? posterDefaults,
     Map<HomeTabs, ScrollController>? controller,
-    double? sideBarWidth,
   }) {
     return AdaptiveLayoutModel(
       viewSize: viewSize ?? this.viewSize,
@@ -79,7 +76,6 @@ class AdaptiveLayoutModel {
       isDesktop: isDesktop ?? this.isDesktop,
       posterDefaults: posterDefaults ?? this.posterDefaults,
       controller: controller ?? this.controller,
-      sideBarWidth: sideBarWidth ?? this.sideBarWidth,
     );
   }
 
@@ -88,10 +84,11 @@ class AdaptiveLayoutModel {
     if (identical(this, other)) return true;
     return other.viewSize == viewSize &&
         other.layoutMode == layoutMode &&
-        other.sideBarWidth == sideBarWidth &&
-        other.inputDevice == inputDevice;
+        other.inputDevice == inputDevice &&
+        other.platform == platform &&
+        other.isDesktop == isDesktop;
   }
 
   @override
-  int get hashCode => viewSize.hashCode ^ layoutMode.hashCode ^ sideBarWidth.hashCode;
+  int get hashCode => viewSize.hashCode ^ layoutMode.hashCode ^ inputDevice.hashCode;
 }
