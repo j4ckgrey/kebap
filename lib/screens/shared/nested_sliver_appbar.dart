@@ -2,7 +2,6 @@ import 'package:flutter/material.dart';
 
 import 'package:auto_route/auto_route.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:iconsax_plus/iconsax_plus.dart';
 
 import 'package:kebap/widgets/navigation_scaffold/components/settings_user_icon.dart';
 

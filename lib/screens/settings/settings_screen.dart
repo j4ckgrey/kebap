@@ -128,7 +128,7 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen> {
     final hasNewUpdate = ref.watch(hasNewUpdateProvider);
 
     return Padding(
-      padding: EdgeInsets.only(left: AdaptiveLayout.of(context).sideBarWidth),
+      padding: EdgeInsets.only(left: 16),
       child: Container(
         color: context.colors.surface,
         child: SettingsScaffold(

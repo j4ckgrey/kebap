@@ -4,7 +4,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:iconsax_plus/iconsax_plus.dart';
 
 import 'package:kebap/models/item_base_model.dart';
-import 'package:kebap/screens/details_screens/components/overview_header.dart';
+import 'package:kebap/screens/details_screens/components/overview_header_v3.dart';
 import 'package:kebap/util/adaptive_layout/adaptive_layout.dart';
 import 'package:kebap/util/focus_provider.dart';
 import 'package:kebap/util/kebap_image.dart';
@@ -72,7 +72,7 @@ class CompactItemBanner extends ConsumerWidget {
                         ? (viewSize <= ViewSize.phone ? 1.0 : 0.55) // Limit width on larger screens
                         : 0.55,
                     alignment: Alignment.centerLeft, // Keep left-aligned
-                    child: OverviewHeader(
+                    child: OverviewHeaderV3(
                       name: item!.parentBaseModel.name,
                       subTitle: item!.label(context),
                       image: item!.getPosters,
@@ -80,7 +80,7 @@ class CompactItemBanner extends ConsumerWidget {
                       logoAlignment: Alignment.centerLeft,
                       summary: item!.overview.summary,
                       productionYear: item!.overview.productionYear,
-                      runTime: item!.overview.runTime,
+                      duration: item!.overview.runTime,
                       genres: item!.overview.genreItems,
                       studios: item!.overview.studios,
                       officialRating: item!.overview.parentalRating,

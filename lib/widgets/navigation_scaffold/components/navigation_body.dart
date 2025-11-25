@@ -33,8 +33,6 @@ class NavigationBody extends ConsumerStatefulWidget {
 }
 
 class _NavigationBodyState extends ConsumerState<NavigationBody> {
-  double currentSideBarWidth = 80;
-
   @override
   void initState() {
     super.initState();
@@ -88,23 +86,11 @@ class GlobalFallbackTraversalPolicy extends ReadingOrderTraversalPolicy {
   bool inDirection(FocusNode currentNode, TraversalDirection direction) {
     lastMainFocus = null;
     final handled = super.inDirection(currentNode, direction);
-    try {
-      debugPrint('[GlobalFallback] inDirection: direction=$direction handled=$handled currentNode=${currentNode.runtimeType} ${currentNode.toString()}');
-      debugPrint('[GlobalFallback] nodes: firstContentNode=${firstContentNode?.toString()} firstNavButtonNode=${firstNavButtonNode?.toString()} navBarNode=${navBarNode.toString()} fallbackNode=${fallbackNode.toString()}');
-    } catch (_) {}
     
-    // Only fall back to navbar on LEFT when we're truly stuck at the edge
-    // (not in the middle of content navigation)
+    // Handle LEFT navigation for navbar fallback (original Fladder behavior)
+    // This is for when content is at the left edge
     if (!handled && direction == TraversalDirection.left) {
       lastMainFocus = currentNode;
-
-      // Try to focus the first navigation button if it's registered.
-      try {
-        if (firstNavButtonNode != null && firstNavButtonNode!.canRequestFocus) {
-          firstNavButtonNode!.requestFocus();
-          return true;
-        }
-      } catch (_) {}
 
       if (fallbackNode.canRequestFocus && fallbackNode.context?.mounted == true) {
         final cb = FocusTraversalPolicy.defaultTraversalRequestFocusCallback;
@@ -112,42 +98,23 @@ class GlobalFallbackTraversalPolicy extends ReadingOrderTraversalPolicy {
         return true;
       }
     }
-
-    // DOWN from navbar should go to first content
-    if (direction == TraversalDirection.down) {
-      try {
-        // Check if we're in the navbar
-        final inNavBar = navBarNode.descendants.contains(currentNode) || 
-                        currentNode == firstNavButtonNode ||
-                        currentNode == navBarNode;
-        
-        if (inNavBar && firstContentNode != null && firstContentNode!.canRequestFocus) {
-          firstContentNode!.requestFocus();
-          return true;
-        }
-      } catch (_) {}
-    }
-
-    // UP navigation: HorizontalList handles UP from first row to navbar
-    // This fallback handles other cases like BackButton widgets
-    // UP navigation: Fallback to navbar when at the top of content
-    if (direction == TraversalDirection.up) {
-      try {
-        // If we're here, it means the default traversal didn't find a target UP.
-        // This usually means we are at the top of the content.
-        // We blindly try to go to the navbar.
-        
-        if (firstNavButtonNode != null && firstNavButtonNode!.canRequestFocus) {
-          firstNavButtonNode!.requestFocus();
-          return true;
-        }
-        if (navBarNode.canRequestFocus) {
-          final cb = FocusTraversalPolicy.defaultTraversalRequestFocusCallback;
-          cb(navBarNode);
-          return true;
-        }
-      } catch (e) {
-        debugPrint('[GlobalFallback] UP handler error: $e');
+    
+    // Handle UP navigation to navbar (adapted for top navbar instead of left sidebar)
+    // Only go to navbar if we're truly at the top with nowhere else to go
+    if (!handled && direction == TraversalDirection.up) {
+      lastMainFocus = currentNode;
+      
+      // Try to focus the first nav button
+      if (firstNavButtonNode != null && firstNavButtonNode!.canRequestFocus) {
+        firstNavButtonNode!.requestFocus();
+        return true;
+      }
+      
+      // Fallback to navbar node
+      if (navBarNode.canRequestFocus && navBarNode.context?.mounted == true) {
+        final cb = FocusTraversalPolicy.defaultTraversalRequestFocusCallback;
+        cb(navBarNode);
+        return true;
       }
     }
 

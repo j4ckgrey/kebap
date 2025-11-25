@@ -46,7 +46,7 @@ class KebapImage extends ConsumerWidget {
         key: Key(newImage.key),
         fit: stackFit,
         children: [
-          if (!disableBlur && useBluredPlaceHolder && newImage.hash.isNotEmpty || blurOnly)
+          if ((!disableBlur && useBluredPlaceHolder && newImage.hash.length >= 6) || (blurOnly && newImage.hash.length >= 6))
             Image(
               image: BlurHashImage(
                 newImage.hash,

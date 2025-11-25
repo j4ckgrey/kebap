@@ -2,7 +2,6 @@ import 'package:flutter/material.dart';
 
 import 'package:freezed_annotation/freezed_annotation.dart';
 
-import 'package:kebap/models/settings/arguments_model.dart';
 import 'package:kebap/util/adaptive_layout/adaptive_layout.dart';
 import 'package:kebap/util/localization_helper.dart';
 

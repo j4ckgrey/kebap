@@ -4,7 +4,6 @@ import 'package:flutter/material.dart';
 
 import 'package:flutter_svg/flutter_svg.dart';
 
-import 'package:kebap/util/theme_extensions.dart';
 
 class KebapIcon extends StatelessWidget {
   final double size;

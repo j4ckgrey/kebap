@@ -27,7 +27,6 @@ import 'package:kebap/screens/shared/nested_bottom_appbar.dart';
 import 'package:kebap/screens/shared/nested_scaffold.dart';
 import 'package:kebap/util/adaptive_layout/adaptive_layout.dart';
 import 'package:kebap/util/debouncer.dart';
-import 'package:kebap/util/fab_extended_anim.dart';
 import 'package:kebap/util/item_base_model/item_base_model_extensions.dart';
 import 'package:kebap/util/list_padding.dart';
 import 'package:kebap/util/localization_helper.dart';
@@ -35,10 +34,8 @@ import 'package:kebap/util/map_bool_helper.dart';
 import 'package:kebap/util/refresh_state.dart';
 import 'package:kebap/util/router_extension.dart';
 import 'package:kebap/widgets/navigation_scaffold/components/background_image.dart';
-import 'package:kebap/widgets/navigation_scaffold/components/settings_user_icon.dart';
 import 'package:kebap/widgets/search/search_mode_toggle.dart';
 import 'package:kebap/widgets/shared/kebap_scrollbar.dart';
-import 'package:kebap/widgets/shared/hide_on_scroll.dart';
 import 'package:kebap/widgets/shared/item_actions.dart';
 import 'package:kebap/widgets/shared/modal_bottom_sheet.dart';
 import 'package:kebap/widgets/shared/pinch_poster_zoom.dart';
@@ -156,7 +153,7 @@ class _LibrarySearchScreenState extends ConsumerState<LibrarySearchScreen> {
       child: NestedScaffold(
         background: BackgroundImage(images: postersList.map((e) => e.images).nonNulls.toList()),
         body: Padding(
-          padding: EdgeInsets.only(left: AdaptiveLayout.of(context).sideBarWidth),
+          padding: EdgeInsets.only(left: 16),
           child: Scaffold(
             extendBody: true,
             backgroundColor: Colors.transparent,

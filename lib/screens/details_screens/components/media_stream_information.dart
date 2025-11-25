@@ -7,7 +7,6 @@ import 'package:kebap/models/settings/media_stream_view_type.dart';
 import 'package:kebap/providers/settings/media_stream_view_type_provider.dart';
 import 'package:kebap/screens/details_screens/components/label_title_item.dart';
 import 'package:kebap/screens/details_screens/components/media_stream_carousel.dart';
-import 'package:kebap/util/adaptive_layout/adaptive_layout.dart';
 import 'package:kebap/util/focus_provider.dart';
 import 'package:kebap/util/localization_helper.dart';
 // removed unused import
@@ -102,85 +101,94 @@ class MediaStreamInformation extends ConsumerWidget {
       mainAxisSize: MainAxisSize.min,
       crossAxisAlignment: CrossAxisAlignment.stretch,
       children: [
-        if (mediaStream.versionStreams.length > 1)
-          _StreamOptionSelect(
-            label: Text(context.localized.version),
-            currentQuality: parseVersionName(mediaStream.currentVersionStream?.name ?? "").quality,
-            currentFilename: parseVersionName(mediaStream.currentVersionStream?.name ?? "").filename,
-            itemBuilder: (context) => mediaStream.versionStreams
-                .map((e) {
-                  final parsed = parseVersionName(e.name);
-                  return ItemActionButton(
-                    selected: mediaStream.currentVersionStream == e,
-                    label: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      mainAxisSize: MainAxisSize.min,
-                      children: [
-                        Text(
-                          parsed.quality,
-                          style: Theme.of(context).textTheme.labelLarge?.copyWith(
-                            fontWeight: FontWeight.bold,
+          if (mediaStream.versionStreams.length > 1)
+            Padding(
+              padding: const EdgeInsets.symmetric(vertical: 2),
+              child: _StreamOptionSelect(
+                label: Text(context.localized.version),
+                currentQuality: parseVersionName(mediaStream.currentVersionStream?.name ?? "").quality,
+                currentFilename: parseVersionName(mediaStream.currentVersionStream?.name ?? "").filename,
+                itemBuilder: (context) => mediaStream.versionStreams
+                    .map((e) {
+                      final parsed = parseVersionName(e.name);
+                      return ItemActionButton(
+                        selected: mediaStream.currentVersionStream == e,
+                        label: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          mainAxisSize: MainAxisSize.min,
+                          children: [
+                            Text(
+                              parsed.quality,
+                              style: Theme.of(context).textTheme.labelLarge?.copyWith(
+                                fontWeight: FontWeight.bold,
+                              ),
+                            ),
+                            Text(
+                              parsed.filename,
+                              style: Theme.of(context).textTheme.bodySmall?.copyWith(
+                                color: Theme.of(context).colorScheme.onSurfaceVariant,
+                              ),
+                            ),
+                          ],
+                        ),
+                        action: () {
+                          onVersionIndexChanged?.call(e.index);
+                        },
+                      );
+                    }).toList(),
+              ),
+            ),
+          if (showAudioDropdown)
+            Padding(
+              padding: const EdgeInsets.symmetric(vertical: 2),
+              child: _StreamOptionSelect(
+                label: Text(context.localized.audio),
+                current: mediaStream.isLoading 
+                    ? context.localized.loading 
+                    : (mediaStream.currentAudioStream?.displayTitle ?? context.localized.none),
+                isLoading: mediaStream.isLoading,
+                itemBuilder: (context) => mediaStream.isLoading
+                    ? []
+                    : [AudioStreamModel.no(), ...mediaStream.audioStreams]
+                        .map(
+                          (e) => ItemActionButton(
+                            selected: mediaStream.currentAudioStream?.index == e.index,
+                            label: textWidget(
+                              context,
+                              label: e.displayTitle,
+                            ),
+                            action: () => onAudioIndexChanged?.call(e.index),
                           ),
-                        ),
-                        Text(
-                          parsed.filename,
-                          style: Theme.of(context).textTheme.bodySmall?.copyWith(
-                            color: Theme.of(context).colorScheme.onSurfaceVariant,
+                        )
+                        .toList(),
+              ),
+            ),
+          if (showSubDropdown)
+            Padding(
+              padding: const EdgeInsets.symmetric(vertical: 2),
+              child: _StreamOptionSelect(
+                label: Text(context.localized.subtitles),
+                current: mediaStream.isLoading
+                    ? context.localized.loading
+                    : (mediaStream.currentSubStream?.displayTitle ?? context.localized.none),
+                isLoading: mediaStream.isLoading,
+                itemBuilder: (context) => mediaStream.isLoading
+                    ? []
+                    : [SubStreamModel.no(), ...mediaStream.subStreams]
+                        .map(
+                          (e) => ItemActionButton(
+                            selected: mediaStream.currentSubStream?.index == e.index,
+                            label: textWidget(
+                              context,
+                              label: e.displayTitle,
+                            ),
+                            action: () => onSubIndexChanged?.call(e.index),
                           ),
-                        ),
-                      ],
-                    ),
-                    action: () {
-                      onVersionIndexChanged?.call(e.index);
-                    },
-                  );
-                }).toList(),
-          ),
-        if (showAudioDropdown)
-          _StreamOptionSelect(
-            label: Text(context.localized.audio),
-            current: mediaStream.isLoading 
-                ? context.localized.loading 
-                : (mediaStream.currentAudioStream?.displayTitle ?? context.localized.none),
-            isLoading: mediaStream.isLoading,
-            itemBuilder: (context) => mediaStream.isLoading
-                ? []
-                : [AudioStreamModel.no(), ...mediaStream.audioStreams]
-                    .map(
-                      (e) => ItemActionButton(
-                        selected: mediaStream.currentAudioStream?.index == e.index,
-                        label: textWidget(
-                          context,
-                          label: e.displayTitle,
-                        ),
-                        action: () => onAudioIndexChanged?.call(e.index),
-                      ),
-                    )
-                    .toList(),
-          ),
-        if (showSubDropdown)
-          _StreamOptionSelect(
-            label: Text(context.localized.subtitles),
-            current: mediaStream.isLoading
-                ? context.localized.loading
-                : (mediaStream.currentSubStream?.displayTitle ?? context.localized.none),
-            isLoading: mediaStream.isLoading,
-            itemBuilder: (context) => mediaStream.isLoading
-                ? []
-                : [SubStreamModel.no(), ...mediaStream.subStreams]
-                    .map(
-                      (e) => ItemActionButton(
-                        selected: mediaStream.currentSubStream?.index == e.index,
-                        label: textWidget(
-                          context,
-                          label: e.displayTitle,
-                        ),
-                        action: () => onSubIndexChanged?.call(e.index),
-                      ),
-                    )
-                    .toList(),
-          ),
-      ],
+                        )
+                        .toList(),
+              ),
+            ),
+        ],
     );
   }
 
@@ -213,14 +221,16 @@ class _StreamOptionSelect<T> extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final itemList = itemBuilder(context);
-    final useBottomSheet = AdaptiveLayout.inputDeviceOf(context) != InputDevice.pointer;
+    // Force use of FocusButton/BottomSheet logic to ensure keyboard navigation works reliably
+    // even if the device reports as having a pointer (e.g. Linux desktop with mouse).
+    // This fixes the issue where dropdowns were skipped during focus traversal.
+    final useBottomSheet = true; // AdaptiveLayout.inputDeviceOf(context) != InputDevice.pointer;
     
     return Padding(
       padding: const EdgeInsets.symmetric(vertical: 3),
       child: LabelTitleItem(
         title: label,
-        content: Expanded(
-          child: isLoading
+        content: isLoading
               ? Container(
                   padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
                   decoration: BoxDecoration(
@@ -284,7 +294,6 @@ class _StreamOptionSelect<T> extends StatelessWidget {
                           ),
                         ),
                 ),
-        ),
       ),
     );
   }

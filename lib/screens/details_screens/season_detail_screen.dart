@@ -7,7 +7,7 @@ import 'package:kebap/models/item_base_model.dart';
 import 'package:kebap/models/items/season_model.dart';
 import 'package:kebap/providers/items/season_details_provider.dart';
 import 'package:kebap/providers/user_provider.dart';
-import 'package:kebap/screens/details_screens/components/overview_header.dart';
+import 'package:kebap/screens/details_screens/components/overview_header_v3.dart';
 import 'package:kebap/screens/shared/detail_scaffold.dart';
 import 'package:kebap/screens/shared/media/episode_details_list.dart';
 import 'package:kebap/screens/shared/media/expanding_overview.dart';
@@ -56,7 +56,7 @@ class _SeasonDetailScreenState extends ConsumerState<SeasonDetailScreen> {
             ? Column(
                 crossAxisAlignment: CrossAxisAlignment.stretch,
                 children: [
-                  OverviewHeader(
+                  OverviewHeaderV3(
                     name: details.seriesName,
                     image: details.parentImages,
                     padding: padding,
@@ -64,7 +64,7 @@ class _SeasonDetailScreenState extends ConsumerState<SeasonDetailScreen> {
                     onTitleClicked: () => details.parentBaseModel.navigateTo(context),
                     originalTitle: details.seriesName,
                     productionYear: details.overview.productionYear,
-                    runTime: details.overview.runTime,
+                    duration: details.overview.runTime,
                     studios: details.overview.studios,
                     officialRating: details.overview.parentalRating,
                     genres: details.overview.genreItems,

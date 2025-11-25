@@ -11,13 +11,10 @@ import 'package:kebap/routes/auto_router.gr.dart';
 import 'package:kebap/screens/home_screen.dart';
 import 'package:kebap/screens/shared/media/poster_row.dart';
 import 'package:kebap/screens/shared/nested_scaffold.dart';
-import 'package:kebap/screens/shared/nested_sliver_appbar.dart';
 import 'package:kebap/util/adaptive_layout/adaptive_layout.dart';
-import 'package:kebap/util/focus_provider.dart';
 import 'package:kebap/util/localization_helper.dart';
 import 'package:kebap/util/sliver_list_padding.dart';
 import 'package:kebap/widgets/navigation_scaffold/components/background_image.dart';
-import 'package:kebap/widgets/navigation_scaffold/components/settings_user_icon.dart';
 import 'package:kebap/widgets/shared/pinch_poster_zoom.dart';
 import 'package:kebap/widgets/shared/poster_size_slider.dart';
 import 'package:kebap/widgets/shared/pull_to_refresh.dart';
@@ -33,14 +30,14 @@ class FavouritesScreen extends ConsumerWidget {
 
     return PullToRefresh(
       onRefresh: () async => await ref.read(favouritesProvider.notifier).fetchFavourites(),
-      child: NestedScaffold(
-        background: BackgroundImage(items: favourites.favourites.values.expand((element) => element).toList()),
-        body: PinchPosterZoom(
-          scaleDifference: (difference) => ref.read(clientSettingsProvider.notifier).addPosterSize(difference / 2),
-          child: CustomScrollView(
-        primary: true,
-            physics: const AlwaysScrollableScrollPhysics(),
-            slivers: [
+        child: NestedScaffold(
+          background: BackgroundImage(items: favourites.favourites.values.expand((element) => element).toList()),
+          body: PinchPosterZoom(
+            scaleDifference: (difference) => ref.read(clientSettingsProvider.notifier).addPosterSize(difference / 2),
+            child: CustomScrollView(
+              controller: AdaptiveLayout.scrollOf(context, HomeTabs.favorites),
+              physics: const AlwaysScrollableScrollPhysics(),
+              slivers: [
               const DefaultSliverTopBadding(),
               if (AdaptiveLayout.of(context).isDesktop)
                 const SliverToBoxAdapter(
@@ -76,7 +73,7 @@ class FavouritesScreen extends ConsumerWidget {
                   ),
               ].mapIndexed(
                 (index, e) => SliverToBoxAdapter(
-                  child: FocusProvider(hasFocus: false, autoFocus: index == 0, child: e),
+                  child: e,
                 ),
               ),
               const DefautlSliverBottomPadding(),

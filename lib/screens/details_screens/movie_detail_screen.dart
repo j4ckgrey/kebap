@@ -8,7 +8,7 @@ import 'package:kebap/models/item_base_model.dart';
 import 'package:kebap/providers/items/movies_details_provider.dart';
 import 'package:kebap/providers/user_provider.dart';
 import 'package:kebap/screens/details_screens/components/media_stream_information.dart';
-import 'package:kebap/screens/details_screens/components/overview_header.dart';
+import 'components/overview_header_v3.dart';
 import 'package:kebap/screens/shared/detail_scaffold.dart';
 import 'package:kebap/screens/shared/media/chapter_row.dart';
 import 'package:kebap/screens/shared/media/components/media_play_button.dart';
@@ -26,6 +26,7 @@ import 'package:kebap/widgets/shared/item_actions.dart';
 import 'package:kebap/widgets/shared/item_details_reviews_carousel.dart';
 import 'package:kebap/widgets/shared/modal_bottom_sheet.dart';
 import 'package:kebap/widgets/shared/selectable_icon_button.dart';
+import 'package:kebap/widgets/navigation_scaffold/components/navigation_constants.dart';
 
 class MovieDetailScreen extends ConsumerStatefulWidget {
   final ItemBaseModel item;
@@ -37,6 +38,23 @@ class MovieDetailScreen extends ConsumerStatefulWidget {
 
 class _ItemDetailScreenState extends ConsumerState<MovieDetailScreen> {
   MovieDetailsProvider get providerInstance => movieDetailsProvider(widget.item.id);
+  final FocusNode _playButtonNode = FocusNode();
+
+  @override
+  void initState() {
+    super.initState();
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      if (mounted) {
+        registerFirstContentNode(_playButtonNode);
+      }
+    });
+  }
+
+  @override
+  void dispose() {
+    _playButtonNode.dispose();
+    super.dispose();
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -70,7 +88,7 @@ class _ItemDetailScreenState extends ConsumerState<MovieDetailScreen> {
                 mainAxisAlignment: MainAxisAlignment.start,
                 crossAxisAlignment: CrossAxisAlignment.stretch,
                 children: [
-                  OverviewHeader(
+                  OverviewHeaderV3(
                     name: details.name,
                     image: details.images,
                     padding: padding,
@@ -81,6 +99,8 @@ class _ItemDetailScreenState extends ConsumerState<MovieDetailScreen> {
                       crossAxisAlignment: WrapCrossAlignment.center,
                       children: [
                         MediaPlayButton(
+                          focusNode: _playButtonNode,
+                          autofocus: true,
                           item: details,
                           onLongPressed: (restart) async {
                             await details.play(
@@ -136,7 +156,7 @@ class _ItemDetailScreenState extends ConsumerState<MovieDetailScreen> {
                     ),
                     originalTitle: details.originalTitle,
                     productionYear: details.overview.productionYear,
-                    runTime: details.overview.runTime,
+                    duration: details.overview.runTime,
                     genres: details.overview.genreItems,
                     studios: details.overview.studios,
                     officialRating: details.overview.parentalRating,

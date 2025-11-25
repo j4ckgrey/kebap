@@ -4,7 +4,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_widget_from_html/flutter_widget_from_html.dart';
 import 'package:iconsax_plus/iconsax_plus.dart';
 
-import 'package:kebap/screens/shared/flat_button.dart';
+import 'package:kebap/util/focus_provider.dart';
 import 'package:kebap/util/adaptive_layout/adaptive_layout.dart';
 import 'package:kebap/util/localization_helper.dart';
 import 'package:kebap/widgets/shared/ensure_visible.dart';
@@ -32,9 +32,9 @@ class _ExpandingOverviewState extends ConsumerState<ExpandingOverview> {
     const int maxLength = 200;
     final bool canExpand = widget.text.length > maxLength;
     final isDpad = AdaptiveLayout.inputDeviceOf(context) == InputDevice.dPad;
-    return FlatButton(
-      onTap: canExpand && isDpad ? toggleState : null,
-      onFocusChange: (value) {
+    return FocusButton(
+      onTap: canExpand && isDpad ? toggleState : () {}, // Always focusable
+      onFocusChanged: (value) {
         if (value) {
           context.ensureVisible();
         }

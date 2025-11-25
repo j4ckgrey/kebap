@@ -16,6 +16,8 @@ import 'package:kebap/util/focus_provider.dart';
 import 'package:kebap/util/localization_helper.dart';
 import 'package:kebap/util/sliver_list_padding.dart';
 import 'package:kebap/widgets/navigation_scaffold/components/background_image.dart';
+import 'package:kebap/widgets/navigation_scaffold/components/navigation_body.dart';
+import 'package:kebap/widgets/navigation_scaffold/components/navigation_constants.dart';
 import 'package:kebap/widgets/shared/pull_to_refresh.dart';
 
 @RoutePage()
@@ -37,7 +39,9 @@ class _SyncedScreenState extends ConsumerState<SyncedScreen> {
       onRefresh: () => ref.read(syncProvider.notifier).refresh(),
       child: NestedScaffold(
         background: BackgroundImage(images: items.map((value) => value.images).nonNulls.toList()),
-        body: CustomScrollView(
+        body: FocusTraversalGroup(
+          policy: GlobalFallbackTraversalPolicy(fallbackNode: navBarNode),
+          child: CustomScrollView(
           physics: const AlwaysScrollableScrollPhysics(),
           controller: AdaptiveLayout.scrollOf(context, HomeTabs.sync),
           slivers: [
@@ -113,6 +117,7 @@ class _SyncedScreenState extends ConsumerState<SyncedScreen> {
             ],
             const DefautlSliverBottomPadding(),
           ],
+        ),
         ),
       ),
     );

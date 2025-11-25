@@ -8,7 +8,7 @@ import 'package:kebap/models/book_model.dart';
 import 'package:kebap/models/items/images_models.dart';
 import 'package:kebap/providers/items/book_details_provider.dart';
 import 'package:kebap/providers/user_provider.dart';
-import 'package:kebap/screens/details_screens/components/overview_header.dart';
+import 'package:kebap/screens/details_screens/components/overview_header_v3.dart';
 import 'package:kebap/screens/shared/detail_scaffold.dart';
 import 'package:kebap/screens/shared/media/components/media_play_button.dart';
 import 'package:kebap/screens/shared/media/expanding_overview.dart';
@@ -73,14 +73,14 @@ class _BookDetailScreenState extends ConsumerState<BookDetailScreen> {
                           crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
                             if (details.nextUp != null)
-                              OverviewHeader(
+                              OverviewHeaderV3(
                                 subTitle: details.book?.parentName ?? details.parentModel?.name,
                                 name: details.nextUp?.name ?? "",
                                 image: ImagesData(
                                   logo: details.book?.getPosters?.primary,
                                 ),
                                 productionYear: details.nextUp!.overview.productionYear,
-                                runTime: details.nextUp!.overview.runTime,
+                                duration: details.nextUp!.overview.runTime,
                                 genres: details.nextUp!.overview.genreItems,
                                 studios: details.nextUp!.overview.studios,
                                 officialRating: details.nextUp!.overview.parentalRating,
@@ -97,6 +97,7 @@ class _BookDetailScreenState extends ConsumerState<BookDetailScreen> {
                                     builder: (context) {
                                       //Wrapped so the correct context is used for refreshing the pages
                                       return MediaPlayButton(
+                                        autofocus: true,
                                         item: details.nextUp!,
                                         onPressed: (restart) async => details.nextUp.play(
                                           context,

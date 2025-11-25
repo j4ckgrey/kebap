@@ -32,7 +32,6 @@ import 'package:kebap/screens/library_search/library_search_screen.dart';
 import 'package:kebap/screens/photo_viewer/photo_viewer_screen.dart';
 import 'package:kebap/src/video_player_helper.g.dart' show SimpleItemModel;
 import 'package:kebap/util/localization_helper.dart';
-import 'package:kebap/util/string_extensions.dart';
 
 part 'item_base_model.mapper.dart';
 

@@ -7,6 +7,7 @@ import 'package:kebap/providers/effective_baklava_config_provider.dart';
 import 'package:kebap/providers/baklava_metadata_provider.dart';
 import 'package:kebap/util/adaptive_layout/adaptive_layout.dart';
 import 'package:kebap/util/list_padding.dart';
+import 'package:kebap/util/focus_provider.dart';
 
 class ItemDetailsReviewsCarousel extends ConsumerStatefulWidget {
   final ItemBaseModel item;
@@ -189,71 +190,74 @@ class _ReviewsCarouselWidgetState extends State<_ReviewsCarouselWidget> {
               final truncatedContent = review.content.length > 200
                   ? '${review.content.substring(0, 200)}...'
                   : review.content;
-              return Container(
-                width: _cardWidth,
-                margin: EdgeInsets.only(right: _cardMargin),
-                padding: const EdgeInsets.all(16),
-                decoration: BoxDecoration(
-                  color: widget.theme.colorScheme.surfaceContainerHighest,
-                  borderRadius: BorderRadius.circular(12),
-                ),
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Row(
-                      children: [
-                        if (review.authorDetails?.rating != null)
-                          Container(
-                            padding: const EdgeInsets.symmetric(
-                              horizontal: 8,
-                              vertical: 4,
-                            ),
-                            decoration: BoxDecoration(
-                              color: Colors.amber,
-                              borderRadius: BorderRadius.circular(4),
-                            ),
-                            child: Row(
-                              mainAxisSize: MainAxisSize.min,
-                              children: [
-                                const Icon(
-                                  Icons.star,
-                                  size: 14,
-                                  color: Colors.black,
-                                ),
-                                const SizedBox(width: 4),
-                                Text(
-                                  review.authorDetails!.rating!.toStringAsFixed(1),
-                                  style: widget.theme.textTheme.bodySmall?.copyWith(
+              return FocusButton(
+                onTap: () {}, // Make it focusable
+                child: Container(
+                  width: _cardWidth,
+                  margin: EdgeInsets.only(right: _cardMargin),
+                  padding: const EdgeInsets.all(16),
+                  decoration: BoxDecoration(
+                    color: widget.theme.colorScheme.surfaceContainerHighest,
+                    borderRadius: BorderRadius.circular(12),
+                  ),
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Row(
+                        children: [
+                          if (review.authorDetails?.rating != null)
+                            Container(
+                              padding: const EdgeInsets.symmetric(
+                                horizontal: 8,
+                                vertical: 4,
+                              ),
+                              decoration: BoxDecoration(
+                                color: Colors.amber,
+                                borderRadius: BorderRadius.circular(4),
+                              ),
+                              child: Row(
+                                mainAxisSize: MainAxisSize.min,
+                                children: [
+                                  const Icon(
+                                    Icons.star,
+                                    size: 14,
                                     color: Colors.black,
-                                    fontWeight: FontWeight.bold,
                                   ),
-                                ),
-                              ],
+                                  const SizedBox(width: 4),
+                                  Text(
+                                    review.authorDetails!.rating!.toStringAsFixed(1),
+                                    style: widget.theme.textTheme.bodySmall?.copyWith(
+                                      color: Colors.black,
+                                      fontWeight: FontWeight.bold,
+                                    ),
+                                  ),
+                                ],
+                              ),
+                            ),
+                          const SizedBox(width: 8),
+                          Expanded(
+                            child: Text(
+                              review.author,
+                              style: widget.theme.textTheme.titleSmall?.copyWith(
+                                fontWeight: FontWeight.bold,
+                              ),
+                              maxLines: 1,
+                              overflow: TextOverflow.ellipsis,
                             ),
                           ),
-                        const SizedBox(width: 8),
-                        Expanded(
-                          child: Text(
-                            review.author,
-                            style: widget.theme.textTheme.titleSmall?.copyWith(
-                              fontWeight: FontWeight.bold,
-                            ),
-                            maxLines: 1,
-                            overflow: TextOverflow.ellipsis,
-                          ),
-                        ),
-                      ],
-                    ),
-                    const SizedBox(height: 8),
-                    Expanded(
-                      child: Text(
-                        truncatedContent,
-                        style: widget.theme.textTheme.bodySmall,
-                        maxLines: 6,
-                        overflow: TextOverflow.ellipsis,
+                        ],
                       ),
-                    ),
-                  ],
+                      const SizedBox(height: 8),
+                      Expanded(
+                        child: Text(
+                          truncatedContent,
+                          style: widget.theme.textTheme.bodySmall,
+                          maxLines: 6,
+                          overflow: TextOverflow.ellipsis,
+                        ),
+                      ),
+                    ],
+                  ),
                 ),
               );
             },

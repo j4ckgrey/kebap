@@ -3,7 +3,6 @@ import 'dart:async';
 import 'package:flutter/material.dart';
 
 import 'package:auto_route/auto_route.dart';
-import 'package:collection/collection.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import 'package:kebap/jellyfin/jellyfin_open_api.enums.swagger.dart';
@@ -13,13 +12,10 @@ import 'package:kebap/models/item_base_model.dart';
 import 'package:kebap/models/library_search/library_search_options.dart';
 import 'package:kebap/models/settings/home_settings_model.dart';
 import 'package:kebap/providers/dashboard_provider.dart';
-import 'package:kebap/providers/focused_item_provider.dart';
-import 'package:kebap/providers/settings/client_settings_provider.dart';
 import 'package:kebap/providers/settings/home_settings_provider.dart';
 import 'package:kebap/providers/user_provider.dart';
 import 'package:kebap/providers/views_provider.dart';
 import 'package:kebap/routes/auto_router.gr.dart';
-import 'package:kebap/screens/home_screen.dart';
 import 'package:kebap/screens/shared/media/single_row_view.dart';
 import 'package:kebap/screens/shared/nested_scaffold.dart';
 import 'package:kebap/util/adaptive_layout/adaptive_layout.dart';
@@ -166,7 +162,6 @@ class _DashboardScreenState extends ConsumerState<DashboardScreen> {
                     ),
                   ),
             ];
-            debugPrint('[Dashboard] SingleRowView rows count: ${rows.length}');
             return SingleRowView(
               contentPadding: padding,
               rows: rows,

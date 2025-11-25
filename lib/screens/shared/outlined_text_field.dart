@@ -78,7 +78,12 @@ class _OutlinedTextFieldState extends ConsumerState<OutlinedTextField> {
         hasFocus = _wrapperFocus.hasFocus;
         if (hasFocus) {
           context.ensureVisible();
-          if (AdaptiveLayout.inputDeviceOf(context) == InputDevice.pointer) {
+          // Check if we're using custom keyboard
+          final useCustomKeyboard = AdaptiveLayout.inputDeviceOf(context) == InputDevice.dPad &&
+              ref.read(clientSettingsProvider.select((value) => !value.useSystemIME));
+          // If not using custom keyboard, always focus the text field
+          // This handles both mouse clicks AND keyboard navigation (Tab/Arrow keys)
+          if (!useCustomKeyboard) {
             _textFocus.requestFocus();
           }
         }
@@ -114,10 +119,13 @@ class _OutlinedTextFieldState extends ConsumerState<OutlinedTextField> {
       if (!mounted) return;
       final useCustomKeyboard = AdaptiveLayout.inputDeviceOf(context) == InputDevice.dPad &&
           ref.read(clientSettingsProvider.select((value) => !value.useSystemIME));
+      final isPointerDevice = AdaptiveLayout.inputDeviceOf(context) == InputDevice.pointer;
+      
       if (widget.autoFocus) {
         if (useCustomKeyboard) {
           _wrapperFocus.requestFocus();
         } else {
+          // For all non-custom-keyboard cases (mouse, keyboard nav, touch), focus text field
           _textFocus.requestFocus();
         }
       }
@@ -207,6 +215,12 @@ class _OutlinedTextFieldState extends ConsumerState<OutlinedTextField> {
                       _wrapperFocus.requestFocus();
                     } else if (_wrapperFocus.hasFocus) {
                       if (useCustomKeyboard) {
+                        // Double-check we're on dPad before opening keyboard
+                        if (AdaptiveLayout.inputDeviceOf(context) != InputDevice.dPad) {
+                          // Not on dPad, just focus the text field instead
+                          _textFocus.requestFocus();
+                          return;
+                        }
                         await openKeyboard(
                           context,
                           controller,
