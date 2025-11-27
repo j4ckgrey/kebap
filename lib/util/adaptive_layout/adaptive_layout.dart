@@ -13,7 +13,6 @@ import 'package:kebap/util/input_detector.dart';
 import 'package:kebap/util/localization_helper.dart';
 import 'package:kebap/util/poster_defaults.dart';
 import 'package:kebap/util/resolution_checker.dart';
-import 'package:kebap/widgets/keyboard/slide_in_keyboard.dart';
 
 enum InputDevice {
   touch,
@@ -211,45 +210,40 @@ class _AdaptiveLayoutBuilderState extends ConsumerState<AdaptiveLayoutBuilder> {
 
     final mediaQuery = MediaQuery.of(context);
 
-    return ValueListenableBuilder(
-      valueListenable: isKeyboardOpen,
-      builder: (context, value, child) {
-        return InputDetector(
-          isDesktop: isDesktop,
-          htpcMode: htpcMode,
-          child: (input) => MediaQuery(
-            data: mediaQuery.copyWith(
-              navigationMode: input == InputDevice.dPad ? NavigationMode.directional : NavigationMode.traditional,
-              padding: (isDesktop || kIsWeb
-                  ? const EdgeInsets.only(top: defaultTitleBarHeight, bottom: 16)
-                  : mediaQuery.padding),
-              viewPadding: isDesktop || kIsWeb ? const EdgeInsets.only(top: defaultTitleBarHeight, bottom: 16) : null,
-            ),
-            child: AdaptiveLayout(
-              data: currentLayout.copyWith(
-                viewSize: selectedViewSize,
-                layoutMode: selectedLayoutMode,
-                inputDevice: input,
-                platform: currentPlatform,
-                isDesktop: isDesktop,
-                controller: scrollControllers,
-                posterDefaults: posterDefaults,
-              ),
-              child: Builder(
-                builder: (context) => isDesktop
-                    ? ResolutionChecker(
-                        child: widget.adaptiveLayout == null
-                            ? DebugBanner(child: widget.child(context))
-                            : widget.child(context),
-                      )
-                    : widget.adaptiveLayout == null
+    return InputDetector(
+      isDesktop: isDesktop,
+      htpcMode: htpcMode,
+      child: (input) => MediaQuery(
+        data: mediaQuery.copyWith(
+          navigationMode: input == InputDevice.dPad ? NavigationMode.directional : NavigationMode.traditional,
+          padding: (isDesktop || kIsWeb
+              ? const EdgeInsets.only(top: defaultTitleBarHeight, bottom: 16)
+              : mediaQuery.padding),
+          viewPadding: isDesktop || kIsWeb ? const EdgeInsets.only(top: defaultTitleBarHeight, bottom: 16) : null,
+        ),
+        child: AdaptiveLayout(
+          data: currentLayout.copyWith(
+            viewSize: selectedViewSize,
+            layoutMode: selectedLayoutMode,
+            inputDevice: input,
+            platform: currentPlatform,
+            isDesktop: isDesktop,
+            controller: scrollControllers,
+            posterDefaults: posterDefaults,
+          ),
+          child: Builder(
+            builder: (context) => isDesktop
+                ? ResolutionChecker(
+                    child: widget.adaptiveLayout == null
                         ? DebugBanner(child: widget.child(context))
                         : widget.child(context),
-              ),
-            ),
+                  )
+                : widget.adaptiveLayout == null
+                    ? DebugBanner(child: widget.child(context))
+                    : widget.child(context),
           ),
-        );
-      },
+        ),
+      ),
     );
   }
 }

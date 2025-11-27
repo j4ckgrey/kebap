@@ -20,6 +20,7 @@ import 'package:kebap/util/localization_helper.dart';
 import 'package:kebap/widgets/navigation_scaffold/components/adaptive_fab.dart';
 import 'package:kebap/widgets/navigation_scaffold/components/destination_model.dart';
 import 'package:kebap/widgets/navigation_scaffold/components/drawer_list_button.dart';
+import 'package:kebap/widgets/navigation_scaffold/components/navigation_body.dart';
 import 'package:kebap/widgets/navigation_scaffold/components/settings_user_icon.dart';
 import 'package:kebap/widgets/requests/requests_sheet.dart';
 import 'package:kebap/widgets/shared/item_actions.dart';
@@ -61,21 +62,41 @@ class NestedNavigationDrawer extends ConsumerWidget {
               child: Row(
                 children: [
                   Expanded(
-                    child: Text(
-                      context.localized.navigation,
-                      style: Theme.of(context).textTheme.titleMedium,
+                    child: FocusButton(
+                      onTap: () {
+                        context.router.push(LibrarySearchRoute());
+                        Scaffold.of(context).closeDrawer();
+                      },
+                      borderRadius: BorderRadius.circular(12),
+                      child: Container(
+                        padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+                        decoration: BoxDecoration(
+                          color: Theme.of(context).colorScheme.surfaceContainerHighest.withValues(alpha: 0.5),
+                          borderRadius: BorderRadius.circular(12),
+                        ),
+                        child: Row(
+                          children: [
+                            Icon(
+                              IconsaxPlusLinear.search_normal,
+                              size: 20,
+                              color: Theme.of(context).colorScheme.onSurface.withValues(alpha: 0.7),
+                            ),
+                            const SizedBox(width: 12),
+                            Text(
+                              context.localized.search,
+                              style: Theme.of(context).textTheme.bodyMedium?.copyWith(
+                                color: Theme.of(context).colorScheme.onSurface.withValues(alpha: 0.7),
+                              ),
+                            ),
+                          ],
+                        ),
+                      ),
                     ),
                   ),
+                  const SizedBox(width: 8),
                   IconButton(
                     onPressed: () => toggleExpanded(false),
                     icon: const Icon(IconsaxPlusLinear.sidebar_left),
-                  ),
-                  IconButton(
-                    onPressed: () {
-                      context.router.push(LibrarySearchRoute());
-                      Scaffold.of(context).closeDrawer();
-                    },
-                    icon: const Icon(IconsaxPlusLinear.search_normal),
                   ),
                 ],
               ),

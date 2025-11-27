@@ -150,7 +150,7 @@ class _LibraryFilterChipsState extends ConsumerState<LibraryFilterChips> {
     ];
 
     return FocusTraversalGroup(
-      policy: ReadingOrderTraversalPolicy(),
+      policy: _BoundedRowTraversalPolicy(),
       child: Row(
         spacing: 4,
         children: chips.mapIndexed(
@@ -200,5 +200,37 @@ class _LibraryFilterChipsState extends ConsumerState<LibraryFilterChips> {
         );
       },
     );
+  }
+}
+
+// Custom traversal policy that stops at row boundaries
+class _BoundedRowTraversalPolicy extends ReadingOrderTraversalPolicy {
+  @override
+  bool inDirection(FocusNode currentNode, TraversalDirection direction) {
+    if (direction == TraversalDirection.left || direction == TraversalDirection.right) {
+      final parent = currentNode.parent;
+      if (parent == null) return super.inDirection(currentNode, direction);
+      
+      final nodes = parent.descendants.where((n) => n.canRequestFocus && n.context != null).toList()
+        ..sort((a, b) => a.rect.left.compareTo(b.rect.left));
+      
+      final currentIndex = nodes.indexOf(currentNode);
+      if (currentIndex == -1) return super.inDirection(currentNode, direction);
+      
+      if (direction == TraversalDirection.left) {
+        if (currentIndex > 0) {
+          nodes[currentIndex - 1].requestFocus();
+          return true;
+        }
+        return true; // Stay at first item
+      } else {
+        if (currentIndex < nodes.length - 1) {
+          nodes[currentIndex + 1].requestFocus();
+          return true;
+        }
+        return true; // Stay at last item
+      }
+    }
+    return super.inDirection(currentNode, direction);
   }
 }

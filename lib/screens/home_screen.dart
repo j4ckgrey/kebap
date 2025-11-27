@@ -16,7 +16,7 @@ import 'package:kebap/screens/shared/kebap_snackbar.dart';
 import 'package:kebap/util/input_handler.dart';
 import 'package:kebap/util/localization_helper.dart';
 import 'package:kebap/util/adaptive_layout/adaptive_layout.dart';
-import 'package:kebap/widgets/keyboard/slide_in_keyboard.dart';
+
 import 'package:kebap/widgets/navigation_scaffold/components/destination_model.dart';
 import 'package:kebap/widgets/navigation_scaffold/navigation_scaffold.dart';
 
@@ -180,12 +180,10 @@ class HomeScreen extends ConsumerWidget {
         controller: HeroController(),
         child: AutoRouter(
           builder: (context, child) {
-            return CustomKeyboardWrapper(
-              child: NavigationScaffold(
-                destinations: destinations.nonNulls.toList(),
-                currentRouteName: context.router.current.name,
-                nestedChild: child,
-              ),
+            return NavigationScaffold(
+              destinations: destinations.nonNulls.toList(),
+              currentRouteName: context.router.current.name,
+              nestedChild: child,
             );
           },
         ),

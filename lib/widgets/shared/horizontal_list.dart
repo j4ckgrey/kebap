@@ -436,8 +436,9 @@ class HorizontalRailFocus extends WidgetOrderTraversalPolicy {
         final target = rowNodes[index - 1];
         target.requestFocus();
         onFocused(target);
+        return true;
       }
-      return true;
+      return true; // Stay on first item
     }
 
     if (direction == TraversalDirection.right) {
@@ -445,8 +446,9 @@ class HorizontalRailFocus extends WidgetOrderTraversalPolicy {
         final target = rowNodes[index + 1];
         target.requestFocus();
         onFocused(target);
+        return true;
       }
-      return true;
+      return true; // Stay on last item instead of losing focus
     }
 
     return super.inDirection(currentNode, direction);

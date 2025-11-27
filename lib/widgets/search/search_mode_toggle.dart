@@ -16,47 +16,49 @@ class SearchModeToggle extends ConsumerWidget {
     final searchMode = ref.watch(searchModeNotifierProvider);
     final isLocalMode = searchMode == SearchMode.local;
 
-    return Tooltip(
-      message: searchMode.displayName,
-      child: InkWell(
-        onTap: () {
-          ref.read(searchModeNotifierProvider.notifier).toggleMode();
-          onModeChanged?.call();
-        },
-        borderRadius: BorderRadius.circular(8),
-        child: Padding(
-          padding: const EdgeInsets.all(8.0),
-          child: AnimatedSwitcher(
-            duration: const Duration(milliseconds: 250),
-            transitionBuilder: (child, animation) {
-              return FadeTransition(
-                opacity: animation,
-                child: ScaleTransition(
-                  scale: animation,
-                  child: child,
-                ),
-              );
+    return SizedBox.square(
+      dimension: 55.0, // Match toolbarHeight
+      child: Card(
+        elevation: 0,
+        child: Tooltip(
+          message: searchMode.displayName,
+          child: IconButton(
+            onPressed: () {
+              ref.read(searchModeNotifierProvider.notifier).toggleMode();
+              onModeChanged?.call();
             },
-            child: Stack(
-              key: ValueKey(isLocalMode),
-              alignment: Alignment.center,
-              children: [
-                Icon(
-                  Icons.public,
-                  size: 26,
-                  color: isLocalMode
-                      ? Theme.of(context).colorScheme.onSurface.withValues(alpha: 0.85)
-                      : Theme.of(context).colorScheme.onSurface.withValues(alpha: 0.7),
-                ),
-                if (isLocalMode)
-                  Positioned.fill(
-                    child: CustomPaint(
-                      painter: _SlashPainter(
-                        color: Theme.of(context).colorScheme.error,
+            icon: AnimatedSwitcher(
+              duration: const Duration(milliseconds: 250),
+              transitionBuilder: (child, animation) {
+                return FadeTransition(
+                  opacity: animation,
+                  child: ScaleTransition(
+                    scale: animation,
+                    child: child,
+                  ),
+                );
+              },
+              child: Stack(
+                key: ValueKey(isLocalMode),
+                alignment: Alignment.center,
+                children: [
+                  Icon(
+                    Icons.public,
+                    size: 24,
+                    color: isLocalMode
+                        ? Theme.of(context).colorScheme.onSurface.withValues(alpha: 0.85)
+                        : Theme.of(context).colorScheme.onSurface.withValues(alpha: 0.7),
+                  ),
+                  if (isLocalMode)
+                    Positioned.fill(
+                      child: CustomPaint(
+                        painter: _SlashPainter(
+                          color: Theme.of(context).colorScheme.error,
+                        ),
                       ),
                     ),
-                  ),
-              ],
+                ],
+              ),
             ),
           ),
         ),
