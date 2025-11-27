@@ -23,8 +23,13 @@ class DrawerListButton extends ConsumerStatefulWidget {
     this.actions = const [],
     this.selected = false,
     this.duration = const Duration(milliseconds: 125),
+    this.focusNode,
+    this.autofocus = false,
     super.key,
   });
+
+  final FocusNode? focusNode;
+  final bool autofocus;
 
   @override
   ConsumerState<ConsumerStatefulWidget> createState() => _DrawerListButtonState();
@@ -40,6 +45,8 @@ class _DrawerListButtonState extends ConsumerState<DrawerListButton> {
       child: Padding(
         padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 4),
         child: ListTile(
+          focusNode: widget.focusNode,
+          autofocus: widget.autofocus,
           onTap: widget.onPressed,
           horizontalTitleGap: 15,
           selected: widget.selected,

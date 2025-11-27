@@ -257,42 +257,48 @@ class _StreamOptionSelect<T> extends StatelessWidget {
                     ],
                   ),
                 )
-              : Card(
-                  color: itemList.length > 1 ? Theme.of(context).colorScheme.primaryContainer : Colors.transparent,
-                  shadowColor: Colors.transparent,
-                  elevation: 0,
-                  child: useBottomSheet
-                      ? FocusButton(
-                          darkOverlay: false,
-                          onTap: itemList.length > 1
-                              ? () => showBottomSheetPill(
-                                    context: context,
-                                    content: (context, scrollController) => ListView(
-                                      shrinkWrap: true,
-                                      controller: scrollController,
-                                      children: [
-                                        const SizedBox(height: 6),
-                                        ...itemList.map((e) => e.toListItem(context)),
-                                      ],
-                                    ),
-                                  )
-                              : null,
-                          child: _buildDropdownContent(context, itemList),
-                        )
-                      : LayoutBuilder(
-                          builder: (context, constraints) => PopupMenuButton(
-                            tooltip: '',
-                            shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
-                            enabled: itemList.length > 1,
-                            itemBuilder: (context) => itemList.map((e) => e.toPopupMenuItem()).toList(),
-                            padding: EdgeInsets.zero,
-                            constraints: BoxConstraints(
-                              minWidth: constraints.maxWidth,
-                              maxWidth: constraints.maxWidth,
-                            ),
+              : Align(
+                  alignment: Alignment.centerLeft,
+                  child: Card(
+                    color: itemList.length > 1 ? Theme.of(context).colorScheme.primaryContainer : Colors.transparent,
+                    shadowColor: Colors.transparent,
+                    elevation: 0,
+                    child: useBottomSheet
+                        ? FocusButton(
+                            darkOverlay: false,
+                            onTap: itemList.length > 1
+                                ? () => showBottomSheetPill(
+                                      context: context,
+                                      content: (context, scrollController) => ListView(
+                                        shrinkWrap: true,
+                                        controller: scrollController,
+                                        children: [
+                                          const SizedBox(height: 6),
+                                          ...itemList.map((e) => e.toListItem(context)),
+                                        ],
+                                      ),
+                                    )
+                                : null,
                             child: _buildDropdownContent(context, itemList),
-                          ),
+                          )
+                        : LayoutBuilder(
+                            builder: (context, constraints) {
+                            return PopupMenuButton(
+                              tooltip: '',
+                              shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
+                              enabled: itemList.length > 1,
+                              itemBuilder: (context) => itemList.map((e) => e.toPopupMenuItem()).toList(),
+                              padding: EdgeInsets.zero,
+                              position: PopupMenuPosition.under,
+                              constraints: BoxConstraints(
+                                minWidth: 400,
+                                maxWidth: 500,
+                              ),
+                              child: _buildDropdownContent(context, itemList),
+                            );
+                          },
                         ),
+                  ),
                 ),
       ),
     );

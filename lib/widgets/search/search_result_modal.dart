@@ -4,6 +4,8 @@ import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:iconsax_plus/iconsax_plus.dart';
 
+import 'package:flutter/services.dart';
+
 import 'package:kebap/models/item_base_model.dart';
 import 'package:kebap/models/tmdb_metadata_model.dart';
 import 'package:kebap/providers/baklava_metadata_provider.dart';
@@ -12,6 +14,8 @@ import 'package:kebap/providers/effective_baklava_config_provider.dart';
 import 'package:kebap/providers/user_provider.dart';
 import 'package:kebap/screens/shared/kebap_snackbar.dart';
 import 'package:kebap/util/adaptive_layout/adaptive_layout.dart';
+import 'package:kebap/util/focus_provider.dart';
+import 'package:kebap/widgets/shared/item_details_reviews_carousel.dart';
 
 class SearchResultModal extends ConsumerStatefulWidget {
   final ItemBaseModel item;
@@ -181,8 +185,13 @@ class _SearchResultModalState extends ConsumerState<SearchResultModal> {
       orElse: () => false,
     );
 
-    return LayoutBuilder(
-      builder: (context, constraints) {
+    return CallbackShortcuts(
+      bindings: {
+        const SingleActivator(LogicalKeyboardKey.backspace): () => Navigator.of(context).pop(),
+        const SingleActivator(LogicalKeyboardKey.escape): () => Navigator.of(context).pop(),
+      },
+      child: LayoutBuilder(
+        builder: (context, constraints) {
         final isMobile = constraints.maxWidth < 600;
 
         Widget content = Column(
@@ -492,6 +501,7 @@ class _SearchResultModalState extends ConsumerState<SearchResultModal> {
       ),
     );
   },
+),
 );
   }
 }
@@ -551,38 +561,14 @@ class _ReviewsCarouselState extends State<_ReviewsCarousel> {
 
   @override
   Widget build(BuildContext context) {
-    final layoutMode = AdaptiveLayout.layoutModeOf(context);
-    final isDesktop = layoutMode == LayoutMode.dual;
-
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        Row(
-          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-          children: [
-            Text(
-              'Reviews',
-              style: widget.theme.textTheme.titleMedium?.copyWith(
-                fontWeight: FontWeight.bold,
-              ),
-            ),
-            if (isDesktop)
-              Row(
-                mainAxisSize: MainAxisSize.min,
-                children: [
-                  IconButton(
-                    onPressed: _currentPage > 0 ? _scrollToPrevious : null,
-                    icon: const Icon(Icons.arrow_back_ios),
-                    iconSize: 20,
-                  ),
-                  IconButton(
-                    onPressed: _currentPage < widget.reviews.length - 1 ? _scrollToNext : null,
-                    icon: const Icon(Icons.arrow_forward_ios),
-                    iconSize: 20,
-                  ),
-                ],
-              ),
-          ],
+        Text(
+          'Reviews',
+          style: widget.theme.textTheme.titleMedium?.copyWith(
+            fontWeight: FontWeight.bold,
+          ),
         ),
         const SizedBox(height: 12),
         SizedBox(
@@ -596,98 +582,86 @@ class _ReviewsCarouselState extends State<_ReviewsCarousel> {
               final truncatedContent = review.content.length > 200
                   ? '${review.content.substring(0, 200)}...'
                   : review.content;
-              return Container(
-                width: _cardWidth,
-                margin: EdgeInsets.only(right: _cardMargin),
-                padding: const EdgeInsets.all(16),
-                decoration: BoxDecoration(
-                  color: widget.theme.colorScheme.surfaceContainerHighest,
-                  borderRadius: BorderRadius.circular(12),
-                ),
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Row(
-                      children: [
-                        if (review.authorDetails?.rating != null)
-                          Container(
-                            padding: const EdgeInsets.symmetric(
-                              horizontal: 8,
-                              vertical: 4,
-                            ),
-                            decoration: BoxDecoration(
-                              color: Colors.amber,
-                              borderRadius: BorderRadius.circular(4),
-                            ),
-                            child: Row(
-                              mainAxisSize: MainAxisSize.min,
-                              children: [
-                                const Icon(
-                                  Icons.star,
-                                  size: 14,
-                                  color: Colors.black,
-                                ),
-                                const SizedBox(width: 4),
-                                Text(
-                                  review.authorDetails!.rating!.toStringAsFixed(1),
-                                  style: widget.theme.textTheme.bodySmall?.copyWith(
+              return FocusButton(
+                onTap: () {
+                  showDialog(
+                    context: context,
+                    barrierDismissible: true,
+                    barrierColor: Colors.black.withOpacity(0.7),
+                    builder: (context) => ReviewModal(review: review, theme: widget.theme),
+                  );
+                },
+                child: Container(
+                  width: _cardWidth,
+                  margin: EdgeInsets.only(right: _cardMargin),
+                  padding: const EdgeInsets.all(16),
+                  decoration: BoxDecoration(
+                    color: widget.theme.colorScheme.surfaceContainerHighest,
+                    borderRadius: BorderRadius.circular(12),
+                  ),
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Row(
+                        children: [
+                          if (review.authorDetails?.rating != null)
+                            Container(
+                              padding: const EdgeInsets.symmetric(
+                                horizontal: 8,
+                                vertical: 4,
+                              ),
+                              decoration: BoxDecoration(
+                                color: Colors.amber,
+                                borderRadius: BorderRadius.circular(4),
+                              ),
+                              child: Row(
+                                mainAxisSize: MainAxisSize.min,
+                                children: [
+                                  const Icon(
+                                    Icons.star,
+                                    size: 14,
                                     color: Colors.black,
-                                    fontWeight: FontWeight.bold,
                                   ),
-                                ),
-                              ],
+                                  const SizedBox(width: 4),
+                                  Text(
+                                    review.authorDetails!.rating!.toStringAsFixed(1),
+                                    style: widget.theme.textTheme.bodySmall?.copyWith(
+                                      color: Colors.black,
+                                      fontWeight: FontWeight.bold,
+                                    ),
+                                  ),
+                                ],
+                              ),
+                            ),
+                          const SizedBox(width: 8),
+                          Expanded(
+                            child: Text(
+                              review.author,
+                              style: widget.theme.textTheme.titleSmall?.copyWith(
+                                fontWeight: FontWeight.bold,
+                              ),
+                              maxLines: 1,
+                              overflow: TextOverflow.ellipsis,
                             ),
                           ),
-                        const SizedBox(width: 8),
-                        Expanded(
-                          child: Text(
-                            review.author,
-                            style: widget.theme.textTheme.titleSmall?.copyWith(
-                              fontWeight: FontWeight.bold,
-                            ),
-                            maxLines: 1,
-                            overflow: TextOverflow.ellipsis,
-                          ),
-                        ),
-                      ],
-                    ),
-                    const SizedBox(height: 8),
-                    Expanded(
-                      child: Text(
-                        truncatedContent,
-                        style: widget.theme.textTheme.bodySmall,
-                        maxLines: 6,
-                        overflow: TextOverflow.ellipsis,
+                        ],
                       ),
-                    ),
-                  ],
+                      const SizedBox(height: 8),
+                      Expanded(
+                        child: Text(
+                          truncatedContent,
+                          style: widget.theme.textTheme.bodySmall,
+                          maxLines: 6,
+                          overflow: TextOverflow.ellipsis,
+                        ),
+                      ),
+                    ],
+                  ),
                 ),
               );
             },
           ),
         ),
-        if (!isDesktop) ...[
-          const SizedBox(height: 12),
-          Center(
-            child: Row(
-              mainAxisSize: MainAxisSize.min,
-              children: List.generate(
-                widget.reviews.length,
-                (index) => Container(
-                  width: 8,
-                  height: 8,
-                  margin: const EdgeInsets.symmetric(horizontal: 4),
-                  decoration: BoxDecoration(
-                    shape: BoxShape.circle,
-                    color: _currentPage == index
-                        ? widget.theme.colorScheme.primary
-                        : widget.theme.colorScheme.surfaceContainerHighest,
-                  ),
-                ),
-              ),
-            ),
-          ),
-        ],
       ],
     );
   }

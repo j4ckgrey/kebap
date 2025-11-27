@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
+import 'package:kebap/util/focus_provider.dart';
+
 import 'package:kebap/models/media_request_model.dart';
 
 class RequestCard extends ConsumerWidget {
@@ -36,33 +38,30 @@ class RequestCard extends ConsumerWidget {
             child: Stack(
               children: [
                 // Poster image
-                Material(
-                  color: Colors.transparent,
-                  child: InkWell(
-                    onTap: onTap,
-                    autofocus: autofocus,
-                    borderRadius: BorderRadius.circular(8),
-                    child: Container(
-                      decoration: BoxDecoration(
-                        borderRadius: BorderRadius.circular(8),
-                        image: request.img != null
-                            ? DecorationImage(
-                                image: NetworkImage(request.img!),
-                                fit: BoxFit.cover,
-                              )
-                            : null,
-                        color: theme.colorScheme.surfaceContainerHighest,
-                      ),
-                      child: request.img == null
-                          ? Center(
-                              child: Icon(
-                                Icons.movie,
-                                size: 48,
-                                color: theme.colorScheme.onSurfaceVariant,
-                              ),
+                FocusButton(
+                  onTap: onTap,
+                  autoFocus: autofocus,
+                  borderRadius: BorderRadius.circular(8),
+                  child: Container(
+                    decoration: BoxDecoration(
+                      borderRadius: BorderRadius.circular(8),
+                      image: request.img != null
+                          ? DecorationImage(
+                              image: NetworkImage(request.img!),
+                              fit: BoxFit.cover,
                             )
                           : null,
+                      color: theme.colorScheme.surfaceContainerHighest,
                     ),
+                    child: request.img == null
+                        ? Center(
+                            child: Icon(
+                              Icons.movie,
+                              size: 48,
+                              color: theme.colorScheme.onSurfaceVariant,
+                            ),
+                          )
+                        : null,
                   ),
                 ),
                 

@@ -25,7 +25,7 @@ class BaklavaService {
         throw Exception('Server URL not available');
       }
 
-      final url = '$serverUrl/api/baklava/config';
+      final url = '${serverUrl}api/baklava/config';
       final request = Request('GET', Uri.parse(url), Uri.parse(serverUrl));
 
       final response = await api.client.send(request);

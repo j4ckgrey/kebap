@@ -25,7 +25,7 @@ class MediaPlayButton extends ConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final progress = (item?.progress ?? 0) / 100.0;
-    final theme = Theme.of(context);
+    final theme = Theme.of(context).colorScheme;
 
     if (progress > 0) {
       return Row(
@@ -33,31 +33,64 @@ class MediaPlayButton extends ConsumerWidget {
         spacing: 8,
         children: [
           // Resume Button (Primary)
-          FilledButton(
-            focusNode: focusNode,
-            autofocus: autofocus,
-            onPressed: onPressed == null ? null : () => onPressed?.call(false),
-            onLongPress: onLongPressed == null ? null : () => onLongPressed?.call(false),
-            child: Text(context.localized.resumeLabel),
+          Tooltip(
+            message: context.localized.resumeLabel,
+            child: ElevatedButton(
+              focusNode: focusNode,
+              autofocus: autofocus,
+              style: ButtonStyle(
+                elevation: const WidgetStatePropertyAll(0),
+                backgroundColor: WidgetStatePropertyAll(theme.primaryContainer),
+                iconColor: WidgetStatePropertyAll(theme.onPrimaryContainer),
+                foregroundColor: WidgetStatePropertyAll(theme.onPrimaryContainer),
+                padding: const WidgetStatePropertyAll(EdgeInsets.all(12)),
+                minimumSize: const WidgetStatePropertyAll(Size(48, 48)),
+              ),
+              onPressed: onPressed == null ? null : () => onPressed?.call(false),
+              onLongPress: onLongPressed == null ? null : () => onLongPressed?.call(false),
+              child: const Icon(Icons.replay, size: 24),
+            ),
           ),
           // Play from Start Button (Secondary)
-          FilledButton(
-            onPressed: onPressed == null ? null : () => onPressed?.call(true),
-            onLongPress: onLongPressed == null ? null : () => onLongPressed?.call(true),
-            child: Text(context.localized.playFromStartLabel),
+          Tooltip(
+            message: context.localized.playFromStartLabel,
+            child: ElevatedButton(
+              style: ButtonStyle(
+                elevation: const WidgetStatePropertyAll(0),
+                backgroundColor: WidgetStatePropertyAll(theme.surfaceContainerLow),
+                padding: const WidgetStatePropertyAll(EdgeInsets.all(12)),
+                minimumSize: const WidgetStatePropertyAll(Size(48, 48)),
+              ),
+              onPressed: onPressed == null ? null : () => onPressed?.call(true),
+              onLongPress: onLongPressed == null ? null : () => onLongPressed?.call(true),
+              child: Opacity(
+                opacity: 0.65,
+                child: const Icon(Icons.play_arrow, size: 24),
+              ),
+            ),
           ),
         ],
       );
     }
 
     // Default Play Button (No progress)
-    return FilledButton.icon(
-      focusNode: focusNode,
-      autofocus: autofocus,
-      onPressed: onPressed == null ? null : () => onPressed?.call(false),
-      onLongPress: onLongPressed == null ? null : () => onLongPressed?.call(false),
-      icon: const Icon(IconsaxPlusBold.play),
-      label: Text(item?.playButtonLabel(context) ?? context.localized.playLabel),
+    return Tooltip(
+      message: item?.playButtonLabel(context) ?? context.localized.playLabel,
+      child: ElevatedButton(
+        focusNode: focusNode,
+        autofocus: autofocus,
+        style: ButtonStyle(
+          elevation: const WidgetStatePropertyAll(0),
+          backgroundColor: WidgetStatePropertyAll(theme.primaryContainer),
+          iconColor: WidgetStatePropertyAll(theme.onPrimaryContainer),
+          foregroundColor: WidgetStatePropertyAll(theme.onPrimaryContainer),
+          padding: const WidgetStatePropertyAll(EdgeInsets.all(12)),
+          minimumSize: const WidgetStatePropertyAll(Size(48, 48)),
+        ),
+        onPressed: onPressed == null ? null : () => onPressed?.call(false),
+        onLongPress: onLongPressed == null ? null : () => onLongPressed?.call(false),
+        child: const Icon(Icons.play_arrow, size: 24),
+      ),
     );
   }
 }

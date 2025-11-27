@@ -89,6 +89,8 @@ class Genres extends StatelessWidget {
             (genre) => ChipButton(
               onPressed: null,
               label: genre.name.capitalize(),
+              borderColor: Colors.black,
+              foregroundColor: Colors.black,
             ),
           )
           .toList(),

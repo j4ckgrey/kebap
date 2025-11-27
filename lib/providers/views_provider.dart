@@ -71,6 +71,7 @@ class ViewsNotifier extends StateNotifier<ViewsModel> {
             ItemFields.candownload,
             ItemFields.primaryimageaspectratio,
             ItemFields.overview,
+            ItemFields.providerids,
           ],
         );
         debugPrint('[ViewsProvider] View ${e.name} returned ${recents.body?.length ?? 0} items');

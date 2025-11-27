@@ -105,7 +105,8 @@ class MediaStreamsModel {
   ) {
     return MediaStreamsModel(
         defaultAudioStreamIndex: mediaSource?.firstOrNull?.defaultAudioStreamIndex,
-        defaultSubStreamIndex: mediaSource?.firstOrNull?.defaultSubtitleStreamIndex,
+        // Default to -1 (None) for subtitles
+        defaultSubStreamIndex: -1,
         versionStreams: mediaSource?.mapIndexed(
               (index, element) {
                 final streams = element.mediaStreams ?? [];
@@ -114,7 +115,7 @@ class MediaStreamsModel {
                     index: index,
                     id: element.id,
                     defaultAudioStreamIndex: element.defaultAudioStreamIndex,
-                    defaultSubStreamIndex: element.defaultSubtitleStreamIndex,
+                    defaultSubStreamIndex: -1, // Default to None for subtitles
                     videoStreams: streams
                         .where((element) => element.type == dto.MediaStreamType.video)
                         .map(
@@ -129,6 +130,18 @@ class MediaStreamsModel {
                         .sortByExternal(),
                     subStreams: streams
                         .where((element) => element.type == dto.MediaStreamType.subtitle)
+                        // Filter out FORCED subtitles (case-insensitive)
+                        .where((element) {
+                          final displayTitle = element.displayTitle?.toLowerCase() ?? '';
+                          final title = element.title?.toLowerCase() ?? '';
+                          final language = element.language?.toLowerCase() ?? '';
+                          final codec = element.codec?.toLowerCase() ?? '';
+                          
+                          return !displayTitle.contains('forced') && 
+                                 !title.contains('forced') &&
+                                 !language.contains('forced') &&
+                                 !codec.contains('forced');
+                        })
                         .map(
                           (sub) => SubStreamModel.fromMediaStream(sub, ref),
                         )

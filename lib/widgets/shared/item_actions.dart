@@ -107,11 +107,12 @@ class ItemActionButton extends ItemAction {
         backgroundColor: WidgetStatePropertyAll(
           selected ? Theme.of(context).colorScheme.primaryContainer : Colors.transparent,
         ),
-        padding: const WidgetStatePropertyAll(EdgeInsets.symmetric(horizontal: 12)),
+        padding: const WidgetStatePropertyAll(EdgeInsets.symmetric(horizontal: 16, vertical: 12)),
         minimumSize: const WidgetStatePropertyAll(Size(50, 50)),
         elevation: const WidgetStatePropertyAll(0),
         foregroundColor: WidgetStatePropertyAll(foregroundColor),
         iconColor: WidgetStatePropertyAll(foregroundColor),
+        alignment: Alignment.centerLeft,
       ),
       onPressed: () {
         if (shouldPop) {
