@@ -186,6 +186,8 @@ class GlobalFallbackTraversalPolicy extends ReadingOrderTraversalPolicy {
 
   @override
   bool inDirection(FocusNode currentNode, TraversalDirection direction) {
+    debugPrint('GlobalFallbackTraversalPolicy: inDirection called. Direction: $direction, CurrentNode: $currentNode');
+
     if (currentNode == navBarNode && direction == TraversalDirection.right) {
       if (lastMainFocus != null && lastMainFocus!.context != null && lastMainFocus!.canRequestFocus) {
         lastMainFocus!.requestFocus();
@@ -194,11 +196,20 @@ class GlobalFallbackTraversalPolicy extends ReadingOrderTraversalPolicy {
     }
 
     if (direction == TraversalDirection.left && currentNode != navBarNode) {
+      debugPrint('GlobalFallbackTraversalPolicy: Intercepting Left navigation. Key hash: ${drawerKey?.hashCode}');
       lastMainFocus = currentNode;
 
       if (showHamburger && drawerKey != null) {
-        drawerKey!.currentState?.openDrawer();
+        debugPrint('GlobalFallbackTraversalPolicy: Opening drawer');
+        if (drawerKey!.currentState == null) {
+           debugPrint('GlobalFallbackTraversalPolicy: drawerKey.currentState is NULL');
+        } else {
+           debugPrint('GlobalFallbackTraversalPolicy: Calling openDrawer. HasDrawer: ${drawerKey!.currentState!.hasDrawer}');
+           drawerKey!.currentState?.openDrawer();
+        }
         return true;
+      } else {
+         debugPrint('GlobalFallbackTraversalPolicy: showHamburger: $showHamburger, drawerKey: $drawerKey');
       }
     }
 
