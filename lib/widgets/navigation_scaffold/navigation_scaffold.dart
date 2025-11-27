@@ -9,6 +9,7 @@ import 'package:kebap/providers/connectivity_provider.dart';
 import 'package:kebap/providers/video_player_provider.dart';
 import 'package:kebap/providers/views_provider.dart';
 import 'package:kebap/routes/auto_router.dart';
+import 'package:kebap/routes/auto_router.gr.dart';
 import 'package:kebap/screens/shared/animated_fade_size.dart';
 import 'package:kebap/util/adaptive_layout/adaptive_layout.dart';
 import 'package:kebap/widgets/navigation_scaffold/components/destination_model.dart';
@@ -16,6 +17,7 @@ import 'package:kebap/widgets/navigation_scaffold/components/kebap_app_bar.dart'
 import 'package:kebap/widgets/navigation_scaffold/components/floating_player_bar.dart';
 import 'package:kebap/widgets/navigation_scaffold/components/navigation_body.dart';
 import 'package:kebap/widgets/navigation_scaffold/components/navigation_drawer.dart';
+import 'package:kebap/widgets/shared/clock_badge.dart';
 import 'package:kebap/widgets/shared/offline_banner.dart';
 
 class NavigationScaffold extends ConsumerStatefulWidget {
@@ -76,8 +78,6 @@ class _NavigationScaffoldState extends ConsumerState<NavigationScaffold> {
         showPlayerBar ? floatingPlayerHeight(context) + bottomViewPadding : bottomViewPadding;
 
     final fullScreenChildRoute = fullScreenRoutes.contains(context.router.current.name);
-
-    debugPrint('NavigationScaffold: Key hash: ${_key.hashCode}');
 
     return PopScope(
       canPop: currentIndex == 0,
@@ -179,6 +179,20 @@ class _NavigationScaffoldState extends ConsumerState<NavigationScaffold> {
                   ),
                 ),
               ),
+            ),
+          if (AdaptiveLayout.viewSizeOf(context) == ViewSize.television &&
+              [
+                DashboardRoute.name,
+                LibraryRoute.name,
+                DetailsRoute.name,
+                FavouritesRoute.name,
+                RequestsRoute.name,
+                SyncedRoute.name,
+              ].contains(currentLocation))
+            const Positioned(
+              top: 24,
+              left: 24,
+              child: ClockBadge(),
             ),
         ],
       ),
