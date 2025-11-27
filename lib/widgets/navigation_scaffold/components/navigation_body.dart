@@ -8,6 +8,7 @@ import 'package:iconsax_plus/iconsax_plus.dart';
 import 'package:kebap/providers/arguments_provider.dart';
 import 'package:kebap/providers/settings/client_settings_provider.dart';
 import 'package:kebap/providers/views_provider.dart';
+import 'package:kebap/util/adaptive_layout/adaptive_layout.dart';
 import 'package:kebap/widgets/navigation_scaffold/components/destination_model.dart';
 import 'package:kebap/widgets/shared/back_intent_dpad.dart';
 
@@ -58,6 +59,7 @@ class _NavigationBodyState extends ConsumerState<NavigationBody> {
 
     // Check if running on TV
     final isTV = ref.watch(argumentsStateProvider.select((args) => args.leanBackMode));
+    final currentInputDevice = AdaptiveLayout.inputDeviceOf(context);
 
     // Navigation visibility logic
     final isSettingsPage = widget.currentLocation.toLowerCase().contains('settings');
@@ -83,7 +85,7 @@ class _NavigationBodyState extends ConsumerState<NavigationBody> {
         policy: GlobalFallbackTraversalPolicy(
           fallbackNode: navBarNode,
           drawerKey: widget.drawerKey,
-          isTV: isTV,
+          inputDevice: currentInputDevice,
           showHamburger: !isDetailsPage && !isSettingsPage && !isSearchPage,
         ),
         child: Stack(
@@ -172,13 +174,13 @@ FocusNode? lastMainFocus;
 class GlobalFallbackTraversalPolicy extends ReadingOrderTraversalPolicy {
   final FocusNode fallbackNode;
   final GlobalKey<ScaffoldState>? drawerKey;
-  final bool isTV;
+  final InputDevice inputDevice;
   final bool showHamburger;
 
   GlobalFallbackTraversalPolicy({
     required this.fallbackNode,
     this.drawerKey,
-    this.isTV = false,
+    this.inputDevice = InputDevice.pointer,
     this.showHamburger = false,
   }) : super();
 
@@ -195,8 +197,9 @@ class GlobalFallbackTraversalPolicy extends ReadingOrderTraversalPolicy {
     if (!handled && direction == TraversalDirection.left) {
       lastMainFocus = currentNode;
 
-      // On TV, open drawer instead of focusing hamburger button (if drawer is available)
-      if (isTV && showHamburger && drawerKey != null) {
+      // When using dPad/keyboard navigation, open drawer directly instead of focusing hamburger button
+      // This provides better UX for keyboard and TV remote users
+      if (inputDevice == InputDevice.dPad && showHamburger && drawerKey != null) {
         drawerKey!.currentState?.openDrawer();
         return true;
       }
