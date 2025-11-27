@@ -87,7 +87,9 @@ class _SearchScreenState extends ConsumerState<SearchScreen> {
           },
         ),
       ),
-      body: ListView(
+      body: Padding(
+        padding: const EdgeInsets.only(top: 60),
+        child: ListView(
         children: searchResults.results.entries
             .map(
               (e) => PosterGrid(
