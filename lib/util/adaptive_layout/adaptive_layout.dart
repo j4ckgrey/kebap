@@ -194,7 +194,15 @@ class _AdaptiveLayoutBuilderState extends ConsumerState<AdaptiveLayoutBuilder> {
     final selectedViewSize = selectAvailableOrSmaller<ViewSize>(viewSize, acceptedViewSizes, ViewSize.values);
     final selectedLayoutMode = selectAvailableOrSmaller<LayoutMode>(layoutMode, acceptedLayouts, LayoutMode.values);
 
-    final posterDefaults = const PosterDefaults(size: 350, ratio: 0.55);
+    final mediaQuery = MediaQuery.of(context);
+    final screenWidth = mediaQuery.size.width;
+    final referenceWidth = 1920.0;
+    final originalSize = 350.0;
+    
+    double calculatedSize = (screenWidth / referenceWidth) * originalSize;
+    if (calculatedSize > originalSize) calculatedSize = originalSize;
+
+    final posterDefaults = PosterDefaults(size: calculatedSize, ratio: 0.55);
 
     final currentLayout = widget.adaptiveLayout ??
         AdaptiveLayoutModel(
