@@ -52,6 +52,7 @@ class _SearchBarState extends ConsumerState<SuggestionSearchBar> {
       shadowColor: Colors.transparent,
       child: OutlinedTextField(
         focusNode: focusNode,
+        useFocusWrapper: true,
         autoFocus: widget.autoFocus,
         controller: textEditingController,
         onSubmitted: (value) {

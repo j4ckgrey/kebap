@@ -77,6 +77,8 @@ class _NavigationScaffoldState extends ConsumerState<NavigationScaffold> {
 
     final fullScreenChildRoute = fullScreenRoutes.contains(context.router.current.name);
 
+    debugPrint('NavigationScaffold: Key hash: ${_key.hashCode}');
+
     return PopScope(
       canPop: currentIndex == 0,
       onPopInvokedWithResult: (didPop, result) {
