@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:flutter/services.dart';
 
 import 'package:kebap/models/item_base_model.dart';
 import 'package:kebap/models/tmdb_metadata_model.dart';
@@ -33,23 +34,36 @@ class _ItemDetailsReviewsCarouselState extends ConsumerState<ItemDetailsReviewsC
     _fetchReviews();
   }
 
+  @override
+  void didUpdateWidget(ItemDetailsReviewsCarousel oldWidget) {
+    super.didUpdateWidget(oldWidget);
+    if (widget.item.overview.providerIds?['Tmdb'] != oldWidget.item.overview.providerIds?['Tmdb']) {
+      _fetchReviews();
+    }
+  }
+
   Future<void> _fetchReviews() async {
     final config = await ref.read(effectiveBaklavaConfigProvider.future);
     
     // Don't show if reviews carousel is disabled in config
     if (config.showReviewsCarousel != true) {
-      setState(() {
-        _loading = false;
-      });
+      if (mounted) {
+        setState(() {
+          _loading = false;
+        });
+      }
       return;
     }
 
     // Get TMDB ID from item
     final tmdbId = widget.item.overview.providerIds?['Tmdb'];
+    
     if (tmdbId == null) {
-      setState(() {
-        _loading = false;
-      });
+      if (mounted) {
+        setState(() {
+          _loading = false;
+        });
+      }
       return;
     }
 
@@ -64,7 +78,10 @@ class _ItemDetailsReviewsCarouselState extends ConsumerState<ItemDetailsReviewsC
       includeReviews: true,
     );
 
+    if (!mounted) return;
+
     final metadataState = ref.read(baklavaMetadataProvider);
+    
     setState(() {
       _reviews = metadataState.reviews;
       _loading = false;
@@ -191,7 +208,14 @@ class _ReviewsCarouselWidgetState extends State<_ReviewsCarouselWidget> {
                   ? '${review.content.substring(0, 200)}...'
                   : review.content;
               return FocusButton(
-                onTap: () {}, // Make it focusable
+                onTap: () {
+                  showDialog(
+                    context: context,
+                    barrierDismissible: true, // Dismiss on outside click
+                    barrierColor: Colors.black.withOpacity(0.7), // Blur background
+                    builder: (context) => ReviewModal(review: review, theme: widget.theme),
+                  );
+                },
                 child: Container(
                   width: _cardWidth,
                   margin: EdgeInsets.only(right: _cardMargin),
@@ -286,6 +310,151 @@ class _ReviewsCarouselWidgetState extends State<_ReviewsCarouselWidget> {
           ),
         ],
       ].addPadding(const EdgeInsets.symmetric(vertical: 8)),
+    );
+  }
+}
+
+class ReviewModal extends StatefulWidget {
+  final TMDBReview review;
+  final ThemeData theme;
+
+  const ReviewModal({
+    required this.review,
+    required this.theme,
+  });
+
+  @override
+  State<ReviewModal> createState() => _ReviewModalState();
+}
+
+class _ReviewModalState extends State<ReviewModal> {
+  final ScrollController _scrollController = ScrollController();
+  final double _scrollAmount = 50.0;
+
+  @override
+  void dispose() {
+    _scrollController.dispose();
+    super.dispose();
+  }
+
+  void _scrollUp() {
+    _scrollController.animateTo(
+      (_scrollController.offset - _scrollAmount).clamp(0.0, _scrollController.position.maxScrollExtent),
+      duration: const Duration(milliseconds: 100),
+      curve: Curves.easeOut,
+    );
+  }
+
+  void _scrollDown() {
+    _scrollController.animateTo(
+      (_scrollController.offset + _scrollAmount).clamp(0.0, _scrollController.position.maxScrollExtent),
+      duration: const Duration(milliseconds: 100),
+      curve: Curves.easeOut,
+    );
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return PopScope(
+      canPop: true,
+      onPopInvokedWithResult: (didPop, result) {
+        // Modal will be dismissed automatically
+      },
+      child: CallbackShortcuts(
+        bindings: {
+          const SingleActivator(LogicalKeyboardKey.backspace): () => Navigator.of(context).pop(),
+          const SingleActivator(LogicalKeyboardKey.escape): () => Navigator.of(context).pop(),
+          const SingleActivator(LogicalKeyboardKey.arrowUp): _scrollUp,
+          const SingleActivator(LogicalKeyboardKey.arrowDown): _scrollDown,
+        },
+        child: Focus(
+          autofocus: true,
+          child: Dialog(
+            backgroundColor: Colors.transparent,
+            insetPadding: const EdgeInsets.all(24),
+            child: Container(
+              constraints: const BoxConstraints(maxWidth: 600, maxHeight: 700),
+              decoration: BoxDecoration(
+                color: widget.theme.colorScheme.surface,
+                borderRadius: BorderRadius.circular(16),
+              ),
+              child: Column(
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  // Header with author and close button
+                  Padding(
+                    padding: const EdgeInsets.all(20),
+                    child: Row(
+                      children: [
+                        if (widget.review.authorDetails?.rating != null)
+                          Container(
+                            padding: const EdgeInsets.symmetric(
+                              horizontal: 10,
+                              vertical: 6,
+                            ),
+                            decoration: BoxDecoration(
+                              color: Colors.amber,
+                              borderRadius: BorderRadius.circular(6),
+                            ),
+                            child: Row(
+                              mainAxisSize: MainAxisSize.min,
+                              children: [
+                                const Icon(
+                                  Icons.star,
+                                  size: 18,
+                                  color: Colors.black,
+                                ),
+                                const SizedBox(width: 6),
+                                Text(
+                                  widget.review.authorDetails!.rating!.toStringAsFixed(1),
+                                  style: widget.theme.textTheme.titleMedium?.copyWith(
+                                    color: Colors.black,
+                                    fontWeight: FontWeight.bold,
+                                  ),
+                                ),
+                              ],
+                            ),
+                          ),
+                        const SizedBox(width: 12),
+                        Expanded(
+                          child: Text(
+                            widget.review.author,
+                            style: widget.theme.textTheme.titleLarge?.copyWith(
+                              fontWeight: FontWeight.bold,
+                            ),
+                            maxLines: 1,
+                            overflow: TextOverflow.ellipsis,
+                          ),
+                        ),
+                        IconButton(
+                          onPressed: () => Navigator.of(context).pop(),
+                          icon: const Icon(Icons.close),
+                          iconSize: 28,
+                        ),
+                      ],
+                    ),
+                  ),
+                  const Divider(height: 1),
+                  // Scrollable content
+                  Expanded(
+                    child: SingleChildScrollView(
+                      controller: _scrollController,
+                      padding: const EdgeInsets.all(24),
+                      child: Text(
+                        widget.review.content,
+                        style: widget.theme.textTheme.bodyLarge?.copyWith(
+                          fontSize: 16,
+                          height: 1.6,
+                        ),
+                      ),
+                    ),
+                  ),
+                ],
+              ),
+            ),
+          ),
+        ),
+      ),
     );
   }
 }

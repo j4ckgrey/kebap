@@ -312,7 +312,9 @@ class PlaybackModelHelper {
 
       if (playbackInfo == null) return null;
 
-      final mediaSource = playbackInfo.mediaSources?[newStreamModel?.versionStreamIndex ?? 0];
+      // When mediaSourceId is specified in the request, the server returns only that specific
+      // media source at index 0, regardless of its original versionStreamIndex
+      final mediaSource = playbackInfo.mediaSources?.first;
 
       if (mediaSource == null) return null;
 

@@ -20,6 +20,7 @@ import 'package:kebap/util/focus_provider.dart';
 
 import 'package:kebap/util/sliver_list_padding.dart';
 import 'package:kebap/widgets/navigation_scaffold/components/navigation_body.dart';
+import 'package:kebap/widgets/shared/horizontal_list.dart';
 
 @RoutePage()
 class RequestsScreen extends ConsumerStatefulWidget {
@@ -30,8 +31,6 @@ class RequestsScreen extends ConsumerStatefulWidget {
 }
 
 class _RequestsScreenState extends ConsumerState<RequestsScreen> {
-  final FocusScopeNode _contentFocusNode = FocusScopeNode();
-
   @override
   void initState() {
     super.initState();
@@ -43,7 +42,6 @@ class _RequestsScreenState extends ConsumerState<RequestsScreen> {
 
   @override
   void dispose() {
-    _contentFocusNode.dispose();
     super.dispose();
   }
 
@@ -92,12 +90,7 @@ class _RequestsScreenState extends ConsumerState<RequestsScreen> {
             .nonNulls
             .toList(),
       ),
-      body: FocusTraversalGroup(
-        policy: GlobalFallbackTraversalPolicy(fallbackNode: navBarNode),
-        child: FocusScope(
-        autofocus: true,
-        node: _contentFocusNode,
-        child: CustomScrollView(
+      body: CustomScrollView(
         slivers: [
           const DefaultSliverTopBadding(),
           SliverAppBar(
@@ -209,8 +202,6 @@ class _RequestsScreenState extends ConsumerState<RequestsScreen> {
                     ),
         ],
       ),
-    ),
-  ),
 );
   }
 }
@@ -273,55 +264,55 @@ class _RequestSection extends ConsumerWidget {
           ],
         ),
         const SizedBox(height: 12),
+        const SizedBox(height: 12),
         requests.isEmpty
             ? _EmptyPlaceholder(theme: theme)
-            : SizedBox(
+            : HorizontalList(
+                hideLabel: true,
+                items: requests,
                 height: 200,
-                child: ListView.builder(
-                  scrollDirection: Axis.horizontal,
-                  itemCount: requests.length,
-                  itemBuilder: (context, index) {
-                    final request = requests[index];
-                    return RequestCard(
-                      request: request,
-                      isAdminView: isAdminView,
-                      autofocus: shouldAutoFocus && index == 0,
-                      onTap: () {
-                        _showRequestDetail(context, ref, request);
-                      },
-                      onDelete: request.status == 'rejected' && isAdminView
-                          ? () async {
-                              final confirmed = await showDialog<bool>(
-                                context: context,
-                                builder: (context) => AlertDialog(
-                                  title: const Text('Delete Request'),
-                                  content: Text(
-                                      'Delete rejected request for "${request.title}"?'),
-                                  actions: [
-                                    TextButton(
-                                      onPressed: () =>
-                                          Navigator.of(context).pop(false),
-                                      child: const Text('Cancel'),
-                                    ),
-                                    TextButton(
-                                      onPressed: () =>
-                                          Navigator.of(context).pop(true),
-                                      child: const Text('Delete'),
-                                    ),
-                                  ],
-                                ),
-                              );
+                autoFocus: shouldAutoFocus,
+                itemBuilder: (context, index) {
+                  final request = requests[index];
+                  return RequestCard(
+                    request: request,
+                    isAdminView: isAdminView,
+                    autofocus: shouldAutoFocus && index == 0,
+                    onTap: () {
+                      _showRequestDetail(context, ref, request);
+                    },
+                    onDelete: request.status == 'rejected' && isAdminView
+                        ? () async {
+                            final confirmed = await showDialog<bool>(
+                              context: context,
+                              builder: (context) => AlertDialog(
+                                title: const Text('Delete Request'),
+                                content: Text(
+                                    'Delete rejected request for "${request.title}"?'),
+                                actions: [
+                                  TextButton(
+                                    onPressed: () =>
+                                        Navigator.of(context).pop(false),
+                                    child: const Text('Cancel'),
+                                  ),
+                                  TextButton(
+                                    onPressed: () =>
+                                        Navigator.of(context).pop(true),
+                                    child: const Text('Delete'),
+                                  ),
+                                ],
+                              ),
+                            );
 
-                              if (confirmed == true) {
-                                await ref
-                                    .read(baklavaRequestsProvider.notifier)
-                                    .deleteRequest(request.id);
-                              }
+                            if (confirmed == true) {
+                              await ref
+                                  .read(baklavaRequestsProvider.notifier)
+                                  .deleteRequest(request.id);
                             }
-                          : null,
-                    );
-                  },
-                ),
+                          }
+                        : null,
+                  );
+                },
               ),
       ],
     );

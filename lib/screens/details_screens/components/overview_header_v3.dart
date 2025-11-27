@@ -114,12 +114,14 @@ class OverviewHeaderV3 extends ConsumerWidget {
                     if (officialRating != null)
                       ChipButton(
                         label: officialRating.toString(),
+                        borderColor: Colors.black,
+                        foregroundColor: Colors.black,
                       ),
                     if (productionYear != null)
-                      Text(
-                        productionYear.toString(),
-                        textAlign: TextAlign.center,
-                        style: subStyle,
+                      ChipButton(
+                        label: productionYear.toString(),
+                        borderColor: Colors.black,
+                        foregroundColor: Colors.black,
                       ),
                     Builder(
                       builder: (context) {
@@ -130,33 +132,24 @@ class OverviewHeaderV3 extends ConsumerWidget {
                           d = duration;
                         }
                         if (d != null && d.inSeconds > 1) {
-                          return Text(
-                            d.humanize.toString(),
-                            textAlign: TextAlign.center,
-                            style: subStyle,
+                          return ChipButton(
+                            label: d.humanize.toString(),
+                            backgroundColor: Colors.green.withOpacity(0.3),
+                            foregroundColor: Colors.black,
+                            borderColor: Colors.black,
                           );
                         }
                         return const SizedBox.shrink();
                       },
                     ),
                     if (communityRating != null)
-                      Row(
-                        mainAxisSize: MainAxisSize.min,
-                        children: [
-                          Icon(
-                            Icons.star_rate_rounded,
-                            color: Theme.of(context).colorScheme.primary,
-                          ),
-                          Text(
-                            communityRating?.toStringAsFixed(2) ?? "",
-                            style: subStyle,
-                          ),
-                        ],
+                      ChipButton(
+                        label: '★ ${communityRating?.toStringAsFixed(1)}',
+                        backgroundColor: Colors.amber.withOpacity(0.3),
+                        foregroundColor: Colors.black,
+                        borderColor: Colors.black,
                       ),
-                  ].addInBetween(CircleAvatar(
-                    radius: 3,
-                    backgroundColor: Theme.of(context).colorScheme.onSurface,
-                  )),
+                  ],
                 ),
                 if (summary?.isNotEmpty == true)
                   Text(

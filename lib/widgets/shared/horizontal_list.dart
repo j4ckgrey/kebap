@@ -449,7 +449,6 @@ class HorizontalRailFocus extends WidgetOrderTraversalPolicy {
       return true;
     }
 
-    parentNode.requestFocus();
     return super.inDirection(currentNode, direction);
   }
 }

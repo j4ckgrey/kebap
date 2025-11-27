@@ -107,7 +107,6 @@ class _ItemDetailScreenState extends ConsumerState<MovieDetailScreen> {
                               showPlaybackOption: true,
                               startPosition: restart ? Duration.zero : null,
                             );
-                            ref.read(providerInstance.notifier).fetchDetails(widget.item);
                           },
                           onPressed: (restart) async {
                             await details.play(
@@ -115,7 +114,6 @@ class _ItemDetailScreenState extends ConsumerState<MovieDetailScreen> {
                               ref,
                               startPosition: restart ? Duration.zero : null,
                             );
-                            ref.read(providerInstance.notifier).fetchDetails(widget.item);
                           },
                         ),
                         SelectableIconButton(
@@ -177,6 +175,10 @@ class _ItemDetailScreenState extends ConsumerState<MovieDetailScreen> {
                     ExpandingOverview(
                       text: details.overview.summary,
                     ).padding(padding),
+                  ItemDetailsReviewsCarousel(
+                    item: details,
+                    contentPadding: padding,
+                  ),
                   if (details.chapters.isNotEmpty)
                     ChapterRow(
                       chapters: details.chapters,
@@ -194,10 +196,7 @@ class _ItemDetailScreenState extends ConsumerState<MovieDetailScreen> {
                       people: details.overview.people,
                       contentPadding: padding,
                     ),
-                  ItemDetailsReviewsCarousel(
-                    item: details,
-                    contentPadding: padding,
-                  ),
+
                   if (details.related.isNotEmpty)
                     PosterRow(posters: details.related, contentPadding: padding, label: "Related"),
                   if (details.overview.externalUrls?.isNotEmpty == true)

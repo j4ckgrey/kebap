@@ -367,16 +367,15 @@ class _LibrarySearchScreenState extends ConsumerState<LibrarySearchScreen> {
                             children: [
                               const SizedBox(width: 2),
                               const SizedBox(width: 2),
-                              if (AdaptiveLayout.inputDeviceOf(context) != InputDevice.dPad)
-                                Center(
-                                  child: SizedBox.square(
-                                    dimension: toolbarHeight,
-                                    child: Card(
-                                      elevation: 0,
-                                      child: context.router.backButton(),
-                                    ),
+                              Center(
+                                child: SizedBox.square(
+                                  dimension: toolbarHeight,
+                                  child: Card(
+                                    elevation: 0,
+                                    child: context.router.backButton(),
                                   ),
                                 ),
+                              ),
                               Flexible(
                                 child: Hero(
                                   tag: "PrimarySearch",

@@ -259,7 +259,7 @@ class PosterImage extends ConsumerWidget {
                 child: IconButton.filledTonal(
                   onPressed: () => playVideo?.call(false),
                   icon: const Icon(
-                    IconsaxPlusBold.play,
+                    Icons.play_arrow_rounded,
                     size: 32,
                   ),
                 ),

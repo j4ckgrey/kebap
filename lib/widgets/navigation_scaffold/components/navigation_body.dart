@@ -166,7 +166,13 @@ class GlobalFallbackTraversalPolicy extends ReadingOrderTraversalPolicy {
 
   @override
   bool inDirection(FocusNode currentNode, TraversalDirection direction) {
-    lastMainFocus = null;
+    if (currentNode == navBarNode && direction == TraversalDirection.right) {
+      if (lastMainFocus != null && lastMainFocus!.context != null && lastMainFocus!.canRequestFocus) {
+        lastMainFocus!.requestFocus();
+        return true;
+      }
+    }
+
     final handled = super.inDirection(currentNode, direction);
     if (!handled && direction == TraversalDirection.left) {
       lastMainFocus = currentNode;

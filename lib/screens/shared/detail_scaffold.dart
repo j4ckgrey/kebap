@@ -151,7 +151,9 @@ class _DetailScaffoldState extends ConsumerState<DetailScaffold> {
                         Align(
                           alignment: Alignment.topCenter,
                           child: Padding(
-                            padding: EdgeInsets.only(left: 25.0),
+                            padding: EdgeInsets.only(
+                              left: AdaptiveLayout.layoutModeOf(context) != LayoutMode.single ? 25.0 : 0.0,
+                            ),
                             child: FadeEdges(
                               leftFade: AdaptiveLayout.layoutModeOf(context) != LayoutMode.single ? 0.05 : 0.0,
                               bottomFade: 0.3,

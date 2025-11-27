@@ -44,7 +44,7 @@ class MediaStreamCarousel extends ConsumerWidget {
             ),
           ),
           SizedBox(
-            height: 120,
+            height: 110,
             child: ListView.builder(
               scrollDirection: Axis.horizontal,
               padding: const EdgeInsets.symmetric(horizontal: 16),
@@ -86,34 +86,19 @@ class MediaStreamCarousel extends ConsumerWidget {
             )
           else
             SizedBox(
-              height: 100,
+              height: 75,
               child: ListView.builder(
                 scrollDirection: Axis.horizontal,
                 padding: const EdgeInsets.symmetric(horizontal: 16),
-                itemCount: mediaStream.audioStreams.length + 1,
+                itemCount: mediaStream.audioStreams.length,
                 itemBuilder: (context, index) {
-                  if (index == 0) {
-                    // "None" option
-                    final noAudio = AudioStreamModel.no();
-                    final isSelected = mediaStream.currentAudioStream == null;
-                    return Padding(
-                      padding: const EdgeInsets.only(right: 12),
-                      child: _CarouselCard(
-                        title: context.localized.none,
-                        isSelected: isSelected,
-                        onTap: () => onAudioIndexChanged?.call(noAudio.index),
-                      ),
-                    );
-                  }
-                  
-                  final audio = mediaStream.audioStreams[index - 1];
+                  final audio = mediaStream.audioStreams[index];
                   final isSelected = mediaStream.currentAudioStream?.index == audio.index;
                   
                   return Padding(
                     padding: const EdgeInsets.only(right: 12),
                     child: _CarouselCard(
                       title: audio.displayTitle,
-                      subtitle: audio.language,
                       isSelected: isSelected,
                       onTap: () => onAudioIndexChanged?.call(audio.index),
                     ),
@@ -141,7 +126,7 @@ class MediaStreamCarousel extends ConsumerWidget {
             )
           else
             SizedBox(
-              height: 100,
+              height: 75,
               child: ListView.builder(
                 scrollDirection: Axis.horizontal,
                 padding: const EdgeInsets.symmetric(horizontal: 16),
@@ -150,7 +135,10 @@ class MediaStreamCarousel extends ConsumerWidget {
                   if (index == 0) {
                     // "None" option
                     final noSub = SubStreamModel.no();
-                    final isSelected = mediaStream.currentSubStream == null;
+                    // Selected if currentSubStream is null OR index is -1
+                    final isSelected = mediaStream.currentSubStream == null || 
+                                     mediaStream.currentSubStream?.index == -1 ||
+                                     mediaStream.defaultSubStreamIndex == -1;
                     return Padding(
                       padding: const EdgeInsets.only(right: 12),
                       child: _CarouselCard(
@@ -168,7 +156,6 @@ class MediaStreamCarousel extends ConsumerWidget {
                     padding: const EdgeInsets.only(right: 12),
                     child: _CarouselCard(
                       title: sub.displayTitle,
-                      subtitle: sub.language,
                       isSelected: isSelected,
                       onTap: () => onSubIndexChanged?.call(sub.index),
                     ),
@@ -202,7 +189,7 @@ class _CarouselCard extends StatelessWidget {
       onTap: onTap,
       borderRadius: BorderRadius.circular(12),
       child: Container(
-        width: 160,
+        width: 250,
         padding: const EdgeInsets.all(12),
         decoration: BoxDecoration(
           color: isSelected
@@ -219,29 +206,34 @@ class _CarouselCard extends StatelessWidget {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           mainAxisAlignment: MainAxisAlignment.center,
+          mainAxisSize: MainAxisSize.min,
           children: [
-            Text(
-              title,
-              style: Theme.of(context).textTheme.bodyMedium?.copyWith(
-                    fontWeight: isSelected ? FontWeight.bold : FontWeight.normal,
-                    color: isSelected
-                        ? Theme.of(context).colorScheme.onPrimaryContainer
-                        : Theme.of(context).colorScheme.onSurface,
-                  ),
-              maxLines: 2,
-              overflow: TextOverflow.ellipsis,
+            Flexible(
+              child: Text(
+                title,
+                style: Theme.of(context).textTheme.bodyMedium?.copyWith(
+                      fontWeight: isSelected ? FontWeight.bold : FontWeight.normal,
+                      color: isSelected
+                          ? Theme.of(context).colorScheme.onPrimaryContainer
+                          : Theme.of(context).colorScheme.onSurface,
+                    ),
+                overflow: TextOverflow.fade,
+                softWrap: true,
+              ),
             ),
             if (subtitle != null) ...[
               const SizedBox(height: 4),
-              Text(
-                subtitle!,
-                style: Theme.of(context).textTheme.bodySmall?.copyWith(
-                      color: isSelected
-                          ? Theme.of(context).colorScheme.onPrimaryContainer.withValues(alpha: 0.7)
-                          : Theme.of(context).colorScheme.onSurfaceVariant,
-                    ),
-                maxLines: 1,
-                overflow: TextOverflow.ellipsis,
+              Flexible(
+                child: Text(
+                  subtitle!,
+                  style: Theme.of(context).textTheme.bodySmall?.copyWith(
+                        color: isSelected
+                            ? Theme.of(context).colorScheme.onPrimaryContainer.withValues(alpha: 0.7)
+                            : Theme.of(context).colorScheme.onSurfaceVariant,
+                      ),
+                  overflow: TextOverflow.fade,
+                  softWrap: true,
+                ),
               ),
             ],
           ],

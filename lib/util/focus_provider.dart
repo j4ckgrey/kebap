@@ -245,3 +245,28 @@ class FocusButtonState extends State<FocusButton> {
     );
   }
 }
+
+class CyclicTraversalPolicy extends ReadingOrderTraversalPolicy {
+  @override
+  bool inDirection(FocusNode currentNode, TraversalDirection direction) {
+    if (super.inDirection(currentNode, direction)) {
+      return true;
+    }
+
+    if (direction == TraversalDirection.down) {
+      final first = findFirstFocus(currentNode, ignoreCurrentFocus: true);
+      if (first != null) {
+        first.requestFocus();
+        return true;
+      }
+    } else if (direction == TraversalDirection.up) {
+      final descendants = currentNode.enclosingScope?.descendants ?? [];
+      final sorted = sortDescendants(descendants, currentNode);
+      if (sorted.isNotEmpty) {
+        sorted.last.requestFocus();
+        return true;
+      }
+    }
+    return false;
+  }
+}

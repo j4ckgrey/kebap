@@ -110,7 +110,6 @@ class _SeriesDetailScreenState extends ConsumerState<SeriesDetailScreen> {
                                 ref,
                                 startPosition: restart ? Duration.zero : null,
                               );
-                              ref.read(providerId.notifier).fetchDetails(widget.item);
                             },
                             onLongPressed: (restart) async {
                               await details.nextUp.play(
@@ -119,7 +118,6 @@ class _SeriesDetailScreenState extends ConsumerState<SeriesDetailScreen> {
                                 showPlaybackOption: true,
                                 startPosition: restart ? Duration.zero : null,
                               );
-                              ref.read(providerId.notifier).fetchDetails(widget.item);
                             },
                           ),
                         SelectableIconButton(
@@ -174,6 +172,10 @@ class _SeriesDetailScreenState extends ConsumerState<SeriesDetailScreen> {
                     ExpandingOverview(
                       text: details.overview.summary,
                     ).padding(padding),
+                  ItemDetailsReviewsCarousel(
+                    item: details,
+                    contentPadding: padding,
+                  ),
                   if (details.availableEpisodes?.isNotEmpty ?? false)
                     EpisodePosters(
                       contentPadding: padding,
@@ -197,10 +199,7 @@ class _SeriesDetailScreenState extends ConsumerState<SeriesDetailScreen> {
                       people: details.overview.people,
                       contentPadding: padding,
                     ),
-                  ItemDetailsReviewsCarousel(
-                    item: details,
-                    contentPadding: padding,
-                  ),
+
                   if (details.related.isNotEmpty)
                     PosterRow(posters: details.related, contentPadding: padding, label: context.localized.related),
                   if (details.overview.externalUrls?.isNotEmpty == true)
