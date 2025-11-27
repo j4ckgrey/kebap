@@ -36,8 +36,10 @@ class SettingsScaffold extends ConsumerWidget {
     return Scaffold(
       floatingActionButtonLocation: FloatingActionButtonLocation.centerFloat,
       floatingActionButton: floatingActionButton,
-      body: Column(
-        children: [
+      body: Padding(
+        padding: const EdgeInsets.only(top: 60),
+        child: Column(
+          children: [
           Flexible(
             child: CustomScrollView(
               controller: scrollController,
@@ -107,6 +109,7 @@ class SettingsScaffold extends ConsumerWidget {
             const SizedBox(height: kBottomNavigationBarHeight + 40),
           },
         ],
+      ),
       ),
     );
   }

@@ -94,10 +94,11 @@ class NestedNavigationDrawer extends ConsumerWidget {
                     ),
                   ),
                   const SizedBox(width: 8),
-                  IconButton(
-                    onPressed: () => toggleExpanded(false),
-                    icon: const Icon(IconsaxPlusLinear.sidebar_left),
-                  ),
+                  if (AdaptiveLayout.viewSizeOf(context) != ViewSize.television)
+                    IconButton(
+                      onPressed: () => toggleExpanded(false),
+                      icon: const Icon(IconsaxPlusLinear.sidebar_left),
+                    ),
                 ],
               ),
             ),

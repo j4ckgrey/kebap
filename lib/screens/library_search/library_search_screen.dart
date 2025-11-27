@@ -155,7 +155,7 @@ class _LibrarySearchScreenState extends ConsumerState<LibrarySearchScreen> {
       child: NestedScaffold(
         background: BackgroundImage(images: postersList.map((e) => e.images).nonNulls.toList()),
         body: Padding(
-          padding: EdgeInsets.only(left: 16),
+          padding: EdgeInsets.only(left: 16, top: 60),
           child: Scaffold(
             extendBody: true,
             backgroundColor: Colors.transparent,
@@ -379,7 +379,7 @@ class _LibrarySearchScreenState extends ConsumerState<LibrarySearchScreen> {
                                     ),
                                   ),
                                 ),
-                              Flexible(
+                              Expanded(
                                 child: Hero(
                                   tag: "PrimarySearch",
                                   child: SuggestionSearchBar(

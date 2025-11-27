@@ -16,6 +16,7 @@ import 'package:kebap/widgets/navigation_scaffold/components/kebap_app_bar.dart'
 import 'package:kebap/widgets/navigation_scaffold/components/floating_player_bar.dart';
 import 'package:kebap/widgets/navigation_scaffold/components/navigation_body.dart';
 import 'package:kebap/widgets/navigation_scaffold/components/navigation_drawer.dart';
+import 'package:kebap/widgets/shared/clock_badge.dart';
 import 'package:kebap/widgets/shared/offline_banner.dart';
 
 class NavigationScaffold extends ConsumerStatefulWidget {
@@ -76,8 +77,6 @@ class _NavigationScaffoldState extends ConsumerState<NavigationScaffold> {
         showPlayerBar ? floatingPlayerHeight(context) + bottomViewPadding : bottomViewPadding;
 
     final fullScreenChildRoute = fullScreenRoutes.contains(context.router.current.name);
-
-    debugPrint('NavigationScaffold: Key hash: ${_key.hashCode}');
 
     return PopScope(
       canPop: currentIndex == 0,
@@ -180,6 +179,16 @@ class _NavigationScaffoldState extends ConsumerState<NavigationScaffold> {
                 ),
               ),
             ),
+
+          const Align(
+            alignment: Alignment.topCenter,
+            child: SafeArea(
+              child: Padding(
+                padding: EdgeInsets.only(top: 8.0),
+                child: ClockBadge(),
+              ),
+            ),
+          ),
         ],
       ),
     );
