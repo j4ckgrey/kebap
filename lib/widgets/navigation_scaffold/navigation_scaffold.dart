@@ -107,6 +107,17 @@ class _NavigationScaffoldState extends ConsumerState<NavigationScaffold> {
                   extendBodyBehindAppBar: false,
                   resizeToAvoidBottomInset: false,
                   extendBody: true,
+                  onDrawerChanged: (isOpened) {
+                    // When drawer closes, restore focus to the previously focused content item
+                    if (!isOpened && lastMainFocus != null && lastMainFocus!.context != null && lastMainFocus!.canRequestFocus) {
+                      // Use a short delay to ensure drawer animation completes
+                      Future.delayed(const Duration(milliseconds: 100), () {
+                        if (lastMainFocus != null && lastMainFocus!.context != null && lastMainFocus!.canRequestFocus) {
+                          lastMainFocus!.requestFocus();
+                        }
+                      });
+                    }
+                  },
                   floatingActionButton: AdaptiveLayout.layoutModeOf(context) == LayoutMode.single && isHomeScreen
                       ? widget.destinations.elementAtOrNull(currentIndex)?.floatingActionButton?.normal
                       : null,

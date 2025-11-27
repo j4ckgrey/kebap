@@ -42,19 +42,7 @@ class _GridFocusTravelerState extends ConsumerState<GridFocusTraveler> {
       ),
       child: Builder(
         builder: (context) {
-          if (!_initializedFocus && AdaptiveLayout.inputDeviceOf(context) == InputDevice.dPad) {
-            WidgetsBinding.instance.addPostFrameCallback((_) {
-              final parent = Focus.of(context);
-              final nodes = _childNodes(parent);
-              if (nodes.isNotEmpty) {
-                nodes.first.requestFocus();
-                setState(() {
-                  selectedIndex = 0;
-                  _initializedFocus = true;
-                });
-              }
-            });
-          }
+
 
           return SliverGrid.builder(
             gridDelegate: widget.gridDelegate,
@@ -114,11 +102,19 @@ class GridFocusTravelerPolicy extends WidgetOrderTraversalPolicy {
     int? next;
     switch (direction) {
       case TraversalDirection.left:
-        if (col > 0) next = current - 1;
+        if (col > 0) {
+          next = current - 1;
+        } else {
+          // At left edge, stay on current item
+          return true;
+        }
         break;
       case TraversalDirection.right:
         if (col < crossAxisCount - 1 && current + 1 < itemCount) {
           next = current + 1;
+        } else {
+          // At right edge, stay on current item
+          return true;
         }
         break;
       case TraversalDirection.up:
@@ -139,7 +135,7 @@ class GridFocusTravelerPolicy extends WidgetOrderTraversalPolicy {
       return true;
     }
 
-    // Let GlobalFallbackTraversalPolicy handle edge cases
+    // Let GlobalFallbackTraversalPolicy handle up/down edge cases
     return super.inDirection(currentNode, direction);
   }
 }

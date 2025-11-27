@@ -5,6 +5,7 @@ import 'package:auto_route/auto_route.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:iconsax_plus/iconsax_plus.dart';
 
+import 'package:kebap/providers/arguments_provider.dart';
 import 'package:kebap/providers/settings/client_settings_provider.dart';
 import 'package:kebap/providers/views_provider.dart';
 import 'package:kebap/widgets/navigation_scaffold/components/destination_model.dart';
@@ -55,6 +56,9 @@ class _NavigationBodyState extends ConsumerState<NavigationBody> {
       },
     );
 
+    // Check if running on TV
+    final isTV = ref.watch(argumentsStateProvider.select((args) => args.leanBackMode));
+
     // Navigation visibility logic
     final isSettingsPage = widget.currentLocation.toLowerCase().contains('settings');
     final isDetailsPage = widget.currentLocation.toLowerCase().contains('details');
@@ -63,6 +67,7 @@ class _NavigationBodyState extends ConsumerState<NavigationBody> {
     // Settings & Search: No navigation
     // Details: Back button on left, no hamburger
     // Others: Hamburger on left, Back on right
+    // TV: No buttons shown (remote has back button), left navigation opens drawer
     
     final showNavigation = !isSettingsPage && !isSearchPage;
     final showHamburger = !isDetailsPage && showNavigation;
@@ -75,15 +80,20 @@ class _NavigationBodyState extends ConsumerState<NavigationBody> {
 
     return BackIntentDpad(
       child: FocusTraversalGroup(
-        policy: GlobalFallbackTraversalPolicy(fallbackNode: navBarNode),
+        policy: GlobalFallbackTraversalPolicy(
+          fallbackNode: navBarNode,
+          drawerKey: widget.drawerKey,
+          isTV: isTV,
+          showHamburger: !isDetailsPage && !isSettingsPage && !isSearchPage,
+        ),
         child: Stack(
           children: [
             // Main content - full screen
             Positioned.fill(
               child: widget.child,
             ),
-            // Floating navigation buttons
-            if (showNavigation)
+            // Floating navigation buttons (hidden on TV since remotes have back buttons)
+            if (showNavigation && !isTV)
               Positioned(
                 top: 0,
                 left: 0,
@@ -161,8 +171,16 @@ FocusNode? lastMainFocus;
 
 class GlobalFallbackTraversalPolicy extends ReadingOrderTraversalPolicy {
   final FocusNode fallbackNode;
+  final GlobalKey<ScaffoldState>? drawerKey;
+  final bool isTV;
+  final bool showHamburger;
 
-  GlobalFallbackTraversalPolicy({required this.fallbackNode}) : super();
+  GlobalFallbackTraversalPolicy({
+    required this.fallbackNode,
+    this.drawerKey,
+    this.isTV = false,
+    this.showHamburger = false,
+  }) : super();
 
   @override
   bool inDirection(FocusNode currentNode, TraversalDirection direction) {
@@ -176,6 +194,12 @@ class GlobalFallbackTraversalPolicy extends ReadingOrderTraversalPolicy {
     final handled = super.inDirection(currentNode, direction);
     if (!handled && direction == TraversalDirection.left) {
       lastMainFocus = currentNode;
+
+      // On TV, open drawer instead of focusing hamburger button (if drawer is available)
+      if (isTV && showHamburger && drawerKey != null) {
+        drawerKey!.currentState?.openDrawer();
+        return true;
+      }
 
       if (fallbackNode.canRequestFocus && fallbackNode.context?.mounted == true) {
         final cb = FocusTraversalPolicy.defaultTraversalRequestFocusCallback;

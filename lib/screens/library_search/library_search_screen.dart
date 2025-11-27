@@ -70,9 +70,10 @@ class LibrarySearchScreen extends ConsumerStatefulWidget {
 }
 
 class _LibrarySearchScreenState extends ConsumerState<LibrarySearchScreen> {
-  final Debouncer debouncer = Debouncer(const Duration(seconds: 1));
+  final Debouncer debouncer = Debouncer(const Duration(milliseconds: 500));
   final GlobalKey<RefreshIndicatorState> refreshKey = GlobalKey<RefreshIndicatorState>();
   final ScrollController scrollController = ScrollController();
+  final FocusNode resultsFocusNode = FocusNode();
   late double lastScale = 0;
 
   bool loadOnStart = false;
@@ -367,15 +368,16 @@ class _LibrarySearchScreenState extends ConsumerState<LibrarySearchScreen> {
                             children: [
                               const SizedBox(width: 2),
                               const SizedBox(width: 2),
-                              Center(
-                                child: SizedBox.square(
-                                  dimension: toolbarHeight,
-                                  child: Card(
-                                    elevation: 0,
-                                    child: context.router.backButton(),
+                              if (AdaptiveLayout.inputDeviceOf(context) != InputDevice.dPad)
+                                Center(
+                                  child: SizedBox.square(
+                                    dimension: toolbarHeight,
+                                    child: Card(
+                                      elevation: 0,
+                                      child: context.router.backButton(),
+                                    ),
                                   ),
                                 ),
-                              ),
                               Flexible(
                                 child: Hero(
                                   tag: "PrimarySearch",
@@ -383,13 +385,21 @@ class _LibrarySearchScreenState extends ConsumerState<LibrarySearchScreen> {
                                     autoFocus: isEmptySearchScreen,
                                     key: uniqueKey,
                                     title: librarySearchResults.searchBarTitle(context),
-                                    debounceDuration: const Duration(seconds: 1),
-                                    // Removed onItem callback - let SuggestionSearchBar handle it based on search mode
+                                    debounceDuration: const Duration(milliseconds: 500),
+                                    onChanged: (value) {
+                                      if (librarySearchResults.searchQuery != value) {
+                                        debouncer.run(() {
+                                          libraryProvider.setSearch(value);
+                                          refreshKey.currentState?.show();
+                                        });
+                                      }
+                                    },
                                     onSubmited: (value) async {
                                       if (librarySearchResults.searchQuery != value) {
                                         libraryProvider.setSearch(value);
                                         refreshKey.currentState?.show();
                                       }
+                                      resultsFocusNode.requestFocus();
                                     },
                                   ),
                                 ),
@@ -399,35 +409,32 @@ class _LibrarySearchScreenState extends ConsumerState<LibrarySearchScreen> {
                         ),
                         bottom: PreferredSize(
                           preferredSize: Size(0, AdaptiveLayout.inputDeviceOf(context) == InputDevice.dPad ? 105 : 50),
-                          child: Transform.translate(
-                            offset: Offset(0, AdaptiveLayout.of(context).isDesktop ? -20 : -15),
-                            child: IgnorePointer(
-                              ignoring: librarySearchResults.loading,
-                              child: Column(
-                                mainAxisSize: MainAxisSize.min,
-                                crossAxisAlignment: CrossAxisAlignment.stretch,
-                                children: [
-                                  Opacity(
-                                    opacity: librarySearchResults.loading ? 0.5 : 1,
-                                    child: SingleChildScrollView(
-                                      padding: const EdgeInsets.all(8),
-                                      scrollDirection: Axis.horizontal,
-                                      child: LibraryFilterChips(
-                                        key: uniqueKey,
-                                      ),
+                          child: IgnorePointer(
+                            ignoring: librarySearchResults.loading,
+                            child: Column(
+                              mainAxisSize: MainAxisSize.min,
+                              crossAxisAlignment: CrossAxisAlignment.stretch,
+                              children: [
+                                Opacity(
+                                  opacity: librarySearchResults.loading ? 0.5 : 1,
+                                  child: SingleChildScrollView(
+                                    padding: const EdgeInsets.all(8),
+                                    scrollDirection: Axis.horizontal,
+                                    child: LibraryFilterChips(
+                                      key: uniqueKey,
                                     ),
                                   ),
-                                  if (AdaptiveLayout.inputDeviceOf(context) == InputDevice.dPad)
-                                    _LibrarySearchBottomBar(
-                                      uniqueKey: uniqueKey,
-                                      refreshKey: refreshKey,
-                                      scrollController: scrollController,
-                                      libraryProvider: libraryProvider,
-                                      postersList: postersList,
-                                      isDPadBar: true,
-                                    ),
-                                ],
-                              ),
+                                ),
+                                if (AdaptiveLayout.inputDeviceOf(context) == InputDevice.dPad)
+                                  _LibrarySearchBottomBar(
+                                    uniqueKey: uniqueKey,
+                                    refreshKey: refreshKey,
+                                    scrollController: scrollController,
+                                    libraryProvider: libraryProvider,
+                                    postersList: postersList,
+                                    isDPadBar: true,
+                                  ),
+                              ],
                             ),
                           ),
                         ),
@@ -450,6 +457,7 @@ class _LibrarySearchScreenState extends ConsumerState<LibrarySearchScreen> {
                           sliver: LibraryViews(
                             key: uniqueKey,
                             items: postersList,
+                            firstItemFocusNode: resultsFocusNode,
                             groupByType: librarySearchResults.filters.groupBy,
                             onPressed: (item) {
                               showBottomSheetPill(
@@ -600,109 +608,111 @@ class _LibrarySearchBottomBar extends ConsumerWidget {
         mainAxisAlignment: MainAxisAlignment.end,
         mainAxisSize: MainAxisSize.min,
         children: [
-          Row(
-            spacing: 6,
-            children: [
-              if (!isDPadBar)
-                ScrollStatePosition(
-                  controller: scrollController,
-                  positionBuilder: (state) => AnimatedFadeSize(
-                    child: state != ScrollState.top
-                        ? Tooltip(
-                            message: context.localized.scrollToTop,
-                            child: IconButton.filled(
-                              onPressed: () => scrollController.animateTo(0,
-                                  duration: const Duration(milliseconds: 500), curve: Curves.easeInOutCubic),
-                              icon: const Icon(
-                                IconsaxPlusLinear.arrow_up,
+          FocusTraversalGroup(
+            policy: _BoundedRowTraversalPolicy(),
+            child: Row(
+              spacing: 6,
+              children: [
+                if (!isDPadBar)
+                  ScrollStatePosition(
+                    controller: scrollController,
+                    positionBuilder: (state) => AnimatedFadeSize(
+                      child: state != ScrollState.top
+                          ? Tooltip(
+                              message: context.localized.scrollToTop,
+                              child: IconButton.filled(
+                                onPressed: () => scrollController.animateTo(0,
+                                    duration: const Duration(milliseconds: 500), curve: Curves.easeInOutCubic),
+                                icon: const Icon(
+                                  IconsaxPlusLinear.arrow_up,
+                                ),
                               ),
-                            ),
-                          )
-                        : const SizedBox(),
+                            )
+                          : const SizedBox(),
+                    ),
                   ),
-                ),
-              if (!librarySearchResults.selecteMode) ...{
-                IconButton(
-                  tooltip: context.localized.sortBy,
-                  onPressed: () async {
-                    final newOptions = await openSortByDialogue(
-                      context,
-                      libraryProvider: libraryProvider,
-                      uniqueKey: uniqueKey,
-                      options: (librarySearchResults.filters.sortingOption, librarySearchResults.filters.sortOrder),
-                    );
-                    if (newOptions != null) {
-                      if (newOptions.$1 != null) {
-                        libraryProvider.setSortBy(newOptions.$1!);
-                      }
-                      if (newOptions.$2 != null) {
-                        libraryProvider.setSortOrder(newOptions.$2!);
-                      }
-                    }
-                  },
-                  icon: const Icon(IconsaxPlusLinear.sort),
-                ),
-                if (librarySearchResults.hasActiveFilters) ...{
+                if (!librarySearchResults.selecteMode) ...{
                   IconButton(
-                    tooltip: context.localized.disableFilters,
-                    onPressed: disableFilters(librarySearchResults, libraryProvider),
-                    icon: const Icon(IconsaxPlusLinear.filter_remove),
+                    tooltip: context.localized.sortBy,
+                    onPressed: () async {
+                      final newOptions = await openSortByDialogue(
+                        context,
+                        libraryProvider: libraryProvider,
+                        uniqueKey: uniqueKey,
+                        options: (librarySearchResults.filters.sortingOption, librarySearchResults.filters.sortOrder),
+                      );
+                      if (newOptions != null) {
+                        if (newOptions.$1 != null) {
+                          libraryProvider.setSortBy(newOptions.$1!);
+                        }
+                        if (newOptions.$2 != null) {
+                          libraryProvider.setSortOrder(newOptions.$2!);
+                        }
+                      }
+                    },
+                    icon: const Icon(IconsaxPlusLinear.sort),
                   ),
+                  if (librarySearchResults.hasActiveFilters) ...{
+                    IconButton(
+                      tooltip: context.localized.disableFilters,
+                      onPressed: disableFilters(librarySearchResults, libraryProvider),
+                      icon: const Icon(IconsaxPlusLinear.filter_remove),
+                    ),
+                  },
                 },
-              },
-              IconButton(
-                onPressed: () => libraryProvider.toggleSelectMode(),
-                color: librarySearchResults.selecteMode ? Theme.of(context).colorScheme.primary : null,
-                icon: const Icon(IconsaxPlusLinear.category_2),
-              ),
-              AnimatedFadeSize(
-                child: librarySearchResults.selecteMode
-                    ? Container(
-                        decoration: BoxDecoration(
-                            color: Theme.of(context).colorScheme.primaryContainer,
-                            borderRadius: BorderRadius.circular(16)),
-                        child: Row(
-                          spacing: 6,
-                          children: [
-                            Tooltip(
-                              message: context.localized.selectAll,
-                              child: IconButton(
-                                onPressed: () => libraryProvider.selectAll(true),
-                                icon: const Icon(IconsaxPlusLinear.box_add),
+                IconButton(
+                  onPressed: () => libraryProvider.toggleSelectMode(),
+                  color: librarySearchResults.selecteMode ? Theme.of(context).colorScheme.primary : null,
+                  icon: const Icon(IconsaxPlusLinear.category_2),
+                ),
+                AnimatedFadeSize(
+                  child: librarySearchResults.selecteMode
+                      ? Container(
+                          decoration: BoxDecoration(
+                              color: Theme.of(context).colorScheme.primaryContainer,
+                              borderRadius: BorderRadius.circular(16)),
+                          child: Row(
+                            spacing: 6,
+                            children: [
+                              Tooltip(
+                                message: context.localized.selectAll,
+                                child: IconButton(
+                                  onPressed: () => libraryProvider.selectAll(true),
+                                  icon: const Icon(IconsaxPlusLinear.box_add),
+                                ),
                               ),
-                            ),
-                            Tooltip(
-                              message: context.localized.clearSelection,
-                              child: IconButton(
-                                onPressed: () => libraryProvider.selectAll(false),
-                                icon: const Icon(IconsaxPlusLinear.box_remove),
+                              Tooltip(
+                                message: context.localized.clearSelection,
+                                child: IconButton(
+                                  onPressed: () => libraryProvider.selectAll(false),
+                                  icon: const Icon(IconsaxPlusLinear.box_remove),
+                                ),
                               ),
-                            ),
-                            if (librarySearchResults.selectedPosters.isNotEmpty) ...{
-                              if (AdaptiveLayout.of(context).isDesktop)
-                                PopupMenuButton(
-                                  itemBuilder: (context) => actions.popupMenuItems(useIcons: true),
-                                )
-                              else
-                                IconButton(
-                                    onPressed: () {
-                                      showBottomSheetPill(
-                                        context: context,
-                                        content: (context, scrollController) => ListView(
-                                          shrinkWrap: true,
-                                          controller: scrollController,
-                                          children: actions.listTileItems(context, useIcons: true),
-                                        ),
-                                      );
-                                    },
-                                    icon: const Icon(IconsaxPlusLinear.more))
-                            },
-                          ],
-                        ),
-                      )
-                    : const SizedBox(),
-              ),
-              if (!isDPadBar) const Spacer(),
+                              if (librarySearchResults.selectedPosters.isNotEmpty) ...{
+                                if (AdaptiveLayout.of(context).isDesktop)
+                                  PopupMenuButton(
+                                    itemBuilder: (context) => actions.popupMenuItems(useIcons: true),
+                                  )
+                                else
+                                  IconButton(
+                                      onPressed: () {
+                                        showBottomSheetPill(
+                                          context: context,
+                                          content: (context, scrollController) => ListView(
+                                            shrinkWrap: true,
+                                            controller: scrollController,
+                                            children: actions.listTileItems(context, useIcons: true),
+                                          ),
+                                        );
+                                      },
+                                      icon: const Icon(IconsaxPlusLinear.more))
+                              },
+                            ],
+                          ),
+                        )
+                      : const SizedBox(),
+                ),
+                if (!isDPadBar) const Spacer(),
               if (librarySearchResults.activePosters.isNotEmpty)
                 IconButton(
                   tooltip: context.localized.random,
@@ -738,6 +748,7 @@ class _LibrarySearchBottomBar extends ConsumerWidget {
                 ),
             ],
           ),
+        ),
         ],
       ),
     );
@@ -758,5 +769,37 @@ class _LibrarySearchBottomBar extends ConsumerWidget {
       libraryProvider.clearAllFilters();
       refreshKey.currentState?.show();
     };
+  }
+}
+
+// Custom traversal policy that stops at row boundaries
+class _BoundedRowTraversalPolicy extends ReadingOrderTraversalPolicy {
+  @override
+  bool inDirection(FocusNode currentNode, TraversalDirection direction) {
+    if (direction == TraversalDirection.left || direction == TraversalDirection.right) {
+      final parent = currentNode.parent;
+      if (parent == null) return super.inDirection(currentNode, direction);
+      
+      final nodes = parent.descendants.where((n) => n.canRequestFocus && n.context != null).toList()
+        ..sort((a, b) => a.rect.left.compareTo(b.rect.left));
+      
+      final currentIndex = nodes.indexOf(currentNode);
+      if (currentIndex == -1) return super.inDirection(currentNode, direction);
+      
+      if (direction == TraversalDirection.left) {
+        if (currentIndex > 0) {
+          nodes[currentIndex - 1].requestFocus();
+          return true;
+        }
+        return true; // Stay at first item
+      } else {
+        if (currentIndex < nodes.length - 1) {
+          nodes[currentIndex + 1].requestFocus();
+          return true;
+        }
+        return true; // Stay at last item
+      }
+    }
+    return super.inDirection(currentNode, direction);
   }
 }

@@ -30,6 +30,7 @@ class PosterListItem extends ConsumerWidget {
   final Function(String id, UserData? newData)? onUserDataChanged;
   final Function(ItemBaseModel newItem)? onItemUpdated;
   final Function(ItemBaseModel oldItem)? onItemRemoved;
+  final FocusNode? focusNode;
 
   const PosterListItem({
     super.key,
@@ -42,6 +43,7 @@ class PosterListItem extends ConsumerWidget {
     this.onItemUpdated,
     this.onItemRemoved,
     this.onUserDataChanged,
+    this.focusNode,
   });
 
   void pressedWidget(BuildContext context) {
@@ -68,6 +70,7 @@ class PosterListItem extends ConsumerWidget {
               borderRadius: BorderRadius.circular(6),
             ),
             child: FocusButton(
+              focusNode: focusNode,
               onTap: () => pressedWidget(context),
               autoFocus:
                   FocusProvider.autoFocusOf(context) && AdaptiveLayout.inputDeviceOf(context) == InputDevice.dPad,

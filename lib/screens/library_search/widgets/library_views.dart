@@ -57,8 +57,9 @@ class LibraryViews extends ConsumerWidget {
   final List<ItemBaseModel> items;
   final GroupBy groupByType;
   final Function(ItemBaseModel)? onPressed;
+  final FocusNode? firstItemFocusNode;
   final Set<ItemActions> excludeActions = const {ItemActions.openParent};
-  const LibraryViews({required this.items, required this.groupByType, this.onPressed, super.key});
+  const LibraryViews({required this.items, required this.groupByType, this.onPressed, this.firstItemFocusNode, super.key});
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
@@ -133,6 +134,7 @@ class LibraryViews extends ConsumerWidget {
               final item = items[index];
               return PosterWidget(
                 key: Key(item.id),
+                focusNode: index == 0 ? firstItemFocusNode : null,
                 poster: item,
                 maxLines: 2,
                 subTitle: item.subTitle(sortingOptions),
@@ -180,8 +182,9 @@ class LibraryViews extends ConsumerWidget {
             itemBuilder: (context, index) {
               final poster = items[index];
               return FocusProvider(
-                autoFocus: index == 0,
+                autoFocus: false,
                 child: PosterListItem(
+                  focusNode: index == 0 ? firstItemFocusNode : null,
                   poster: poster,
                   selected: selected.contains(poster),
                   excludeActions: excludeActions,
@@ -269,6 +272,7 @@ class LibraryViews extends ConsumerWidget {
               final item = items[index];
               return PosterWidget(
                 poster: item,
+                focusNode: index == 0 ? firstItemFocusNode : null,
                 key: Key(item.id),
                 aspectRatio: item.primaryRatio,
                 selected: selected.contains(item),
