@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:iconsax_plus/iconsax_plus.dart';
@@ -16,6 +17,7 @@ class SuggestionSearchBar extends ConsumerStatefulWidget {
   final Duration debounceDuration;
   final Function(String value)? onSubmited;
   final Function(String value)? onChanged;
+  final FocusNode? focusNode;
   const SuggestionSearchBar({
     this.title,
     this.autoFocus = false,
@@ -23,6 +25,7 @@ class SuggestionSearchBar extends ConsumerStatefulWidget {
     this.debounceDuration = const Duration(milliseconds: 250),
     this.onSubmited,
     this.onChanged,
+    this.focusNode,
     super.key,
   });
 
@@ -33,7 +36,8 @@ class SuggestionSearchBar extends ConsumerStatefulWidget {
 class _SearchBarState extends ConsumerState<SuggestionSearchBar> {
   late final TextEditingController textEditingController = widget.textEditingController ?? TextEditingController();
   bool isEmpty = true;
-  final FocusNode focusNode = FocusNode();
+  late final FocusNode wrapperFocusNode = widget.focusNode ?? FocusNode();
+  final FocusNode internalFocusNode = FocusNode();
 
   @override
   Widget build(BuildContext context) {
@@ -44,42 +48,55 @@ class _SearchBarState extends ConsumerState<SuggestionSearchBar> {
         });
       }
     });
-    return Card(
-      elevation: 2,
-      shape: RoundedRectangleBorder(
-        borderRadius: KebapTheme.smallShape.borderRadius,
-      ),
-      shadowColor: Colors.transparent,
-      child: OutlinedTextField(
-        focusNode: focusNode,
-        autoFocus: widget.autoFocus,
-        controller: textEditingController,
-        onSubmitted: (value) {
-          widget.onSubmited?.call(value);
-        },
-        onChanged: (value) {
-          widget.onChanged?.call(value);
-          setState(() {
-            isEmpty = value.isEmpty;
-          });
-        },
-        placeHolder: widget.title ?? "${context.localized.search}...",
-        decoration: InputDecoration(
-          hintText: widget.title ?? "${context.localized.search}...",
-          prefixIcon: const Icon(IconsaxPlusLinear.search_normal),
-          contentPadding: const EdgeInsets.only(top: 13),
-          suffixIcon: textEditingController.text.isNotEmpty
-              ? IconButton(
-                  onPressed: () {
-                    widget.onSubmited?.call('');
-                    textEditingController.text = '';
-                    setState(() {
-                      isEmpty = true;
-                    });
-                  },
-                  icon: const Icon(Icons.clear))
-              : null,
-          border: InputBorder.none,
+    return Focus(
+      focusNode: wrapperFocusNode,
+      onKeyEvent: (node, event) {
+        if (event is KeyDownEvent) {
+          // On Enter key, activate the text field for input
+          if (event.logicalKey == LogicalKeyboardKey.enter || event.logicalKey == LogicalKeyboardKey.select) {
+            internalFocusNode.requestFocus();
+            return KeyEventResult.handled;
+          }
+        }
+        return KeyEventResult.ignored;
+      },
+      child: Card(
+        elevation: 2,
+        shape: RoundedRectangleBorder(
+          borderRadius: KebapTheme.smallShape.borderRadius,
+        ),
+        shadowColor: Colors.transparent,
+        child: OutlinedTextField(
+          focusNode: internalFocusNode,
+          autoFocus: widget.autoFocus,
+          controller: textEditingController,
+          onSubmitted: (value) {
+            widget.onSubmited?.call(value);
+          },
+          onChanged: (value) {
+            widget.onChanged?.call(value);
+            setState(() {
+              isEmpty = value.isEmpty;
+            });
+          },
+          placeHolder: widget.title ?? "${context.localized.search}...",
+          decoration: InputDecoration(
+            hintText: widget.title ?? "${context.localized.search}...",
+            prefixIcon: const Icon(IconsaxPlusLinear.search_normal),
+            contentPadding: const EdgeInsets.only(top: 13),
+            suffixIcon: textEditingController.text.isNotEmpty
+                ? IconButton(
+                    onPressed: () {
+                      widget.onSubmited?.call('');
+                      textEditingController.text = '';
+                      setState(() {
+                        isEmpty = true;
+                      });
+                    },
+                    icon: const Icon(Icons.clear))
+                : null,
+            border: InputBorder.none,
+          ),
         ),
       ),
     );
