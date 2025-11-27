@@ -74,6 +74,10 @@ class _LibrarySearchScreenState extends ConsumerState<LibrarySearchScreen> {
   final GlobalKey<RefreshIndicatorState> refreshKey = GlobalKey<RefreshIndicatorState>();
   final ScrollController scrollController = ScrollController();
   final FocusNode resultsFocusNode = FocusNode();
+  final FocusNode searchBarFocusNode = FocusNode();
+  final FocusNode libraryButtonFocusNode = FocusNode();
+  final FocusNode searchModeToggleFocusNode = FocusNode();
+  final GlobalKey filterChipsKey = GlobalKey();
   late double lastScale = 0;
 
   bool loadOnStart = false;
@@ -312,36 +316,58 @@ class _LibrarySearchScreenState extends ConsumerState<LibrarySearchScreen> {
                               dimension: toolbarHeight,
                               child: Card(
                                 elevation: 0,
-                                child: Tooltip(
-                                  message: librarySearchResults.nestedCurrentItem?.type.label(context) ??
-                                      context.localized.library(1),
-                                  child: IconButton(
-                                    onPressed: () async {
-                                      await showBottomSheetPill(
-                                        context: context,
-                                        content: (context, scrollController) => ListView(
-                                          shrinkWrap: true,
-                                          controller: scrollController,
-                                          children: [
-                                            itemCountWidget.toListItem(context, useIcons: true),
-                                            refreshAction.toListItem(context, useIcons: true),
-                                            itemViewAction.toListItem(context, useIcons: true),
-                                            if (librarySearchResults.views.hasEnabled == true)
-                                              showSavedFiltersDialogue.toListItem(context, useIcons: true),
-                                            if (itemActions.isNotEmpty) ItemActionDivider().toListItem(context),
-                                            ...itemActions.listTileItems(context, useIcons: true),
-                                          ],
+                                child: Focus(
+                                  focusNode: libraryButtonFocusNode,
+                                  onKeyEvent: (node, event) {
+                                    if (event is KeyDownEvent) {
+                                      if (event.logicalKey == LogicalKeyboardKey.arrowLeft) {
+                                        searchBarFocusNode.requestFocus();
+                                        return KeyEventResult.handled;
+                                      }
+                                      if (event.logicalKey == LogicalKeyboardKey.arrowDown) {
+                                        // Navigate to first filter chip
+                                        final filterChipsContext = filterChipsKey.currentContext;
+                                        if (filterChipsContext != null) {
+                                          final scope = FocusScope.of(filterChipsContext);
+                                          final firstChild = scope.children.firstOrNull;
+                                          firstChild?.requestFocus();
+                                        }
+                                        return KeyEventResult.handled;
+                                      }
+                                    }
+                                    return KeyEventResult.ignored;
+                                  },
+                                  child: Tooltip(
+                                    message: librarySearchResults.nestedCurrentItem?.type.label(context) ??
+                                        context.localized.library(1),
+                                    child: IconButton(
+                                      onPressed: () async {
+                                        await showBottomSheetPill(
+                                          context: context,
+                                          content: (context, scrollController) => ListView(
+                                            shrinkWrap: true,
+                                            controller: scrollController,
+                                            children: [
+                                              itemCountWidget.toListItem(context, useIcons: true),
+                                              refreshAction.toListItem(context, useIcons: true),
+                                              itemViewAction.toListItem(context, useIcons: true),
+                                              if (librarySearchResults.views.hasEnabled == true)
+                                                showSavedFiltersDialogue.toListItem(context, useIcons: true),
+                                              if (itemActions.isNotEmpty) ItemActionDivider().toListItem(context),
+                                              ...itemActions.listTileItems(context, useIcons: true),
+                                            ],
+                                          ),
+                                        );
+                                      },
+                                      icon: Padding(
+                                        padding: const EdgeInsets.all(6),
+                                        child: Icon(
+                                          isFavorite
+                                              ? librarySearchResults.nestedCurrentItem?.type.selectedicon
+                                              : librarySearchResults.nestedCurrentItem?.type.icon ??
+                                                  IconsaxPlusLinear.document,
+                                          color: isFavorite ? Theme.of(context).colorScheme.primary : null,
                                         ),
-                                      );
-                                    },
-                                    icon: Padding(
-                                      padding: const EdgeInsets.all(6),
-                                      child: Icon(
-                                        isFavorite
-                                            ? librarySearchResults.nestedCurrentItem?.type.selectedicon
-                                            : librarySearchResults.nestedCurrentItem?.type.icon ??
-                                                IconsaxPlusLinear.document,
-                                        color: isFavorite ? Theme.of(context).colorScheme.primary : null,
                                       ),
                                     ),
                                   ),
@@ -350,6 +376,9 @@ class _LibrarySearchScreenState extends ConsumerState<LibrarySearchScreen> {
                             );
                           }),
                           SearchModeToggle(
+                            focusNode: searchModeToggleFocusNode,
+                            searchBarFocusNode: searchBarFocusNode,
+                            filterChipsKey: filterChipsKey,
                             onModeChanged: () {
                               // Trigger search refresh when mode changes
                               refreshKey.currentState?.show();
@@ -368,7 +397,9 @@ class _LibrarySearchScreenState extends ConsumerState<LibrarySearchScreen> {
                             children: [
                               const SizedBox(width: 2),
                               const SizedBox(width: 2),
-                              if (AdaptiveLayout.inputDeviceOf(context) != InputDevice.dPad)
+                              if (AdaptiveLayout.inputDeviceOf(context) == InputDevice.dPad)
+                                const SizedBox(width: 2)
+                              else
                                 Center(
                                   child: SizedBox.square(
                                     dimension: toolbarHeight,
@@ -382,6 +413,7 @@ class _LibrarySearchScreenState extends ConsumerState<LibrarySearchScreen> {
                                 child: Hero(
                                   tag: "PrimarySearch",
                                   child: SuggestionSearchBar(
+                                    focusNode: searchBarFocusNode,
                                     autoFocus: isEmptySearchScreen,
                                     key: uniqueKey,
                                     title: librarySearchResults.searchBarTitle(context),
@@ -421,7 +453,7 @@ class _LibrarySearchScreenState extends ConsumerState<LibrarySearchScreen> {
                                     padding: const EdgeInsets.all(8),
                                     scrollDirection: Axis.horizontal,
                                     child: LibraryFilterChips(
-                                      key: uniqueKey,
+                                      key: filterChipsKey,
                                     ),
                                   ),
                                 ),
