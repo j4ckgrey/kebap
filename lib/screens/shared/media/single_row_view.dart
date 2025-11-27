@@ -5,7 +5,10 @@ import 'package:kebap/models/item_base_model.dart';
 import 'package:kebap/providers/focused_item_provider.dart';
 import 'package:kebap/screens/shared/media/compact_item_banner.dart';
 import 'package:kebap/screens/shared/media/poster_row.dart';
+import 'dart:math' as math;
+
 import 'package:kebap/util/adaptive_layout/adaptive_layout.dart';
+import 'package:kebap/providers/settings/client_settings_provider.dart';
 import 'package:kebap/util/focus_provider.dart';
 
 
@@ -61,49 +64,72 @@ class _SingleRowViewState extends ConsumerState<SingleRowView> {
   Widget build(BuildContext context) {
     final size = MediaQuery.sizeOf(context);
     final viewSize = AdaptiveLayout.viewSizeOf(context);
-    final navbarHeight = MediaQuery.paddingOf(context).top + 56.0;
-    final availableHeight = size.height - navbarHeight;
-    
-    // Universal sizing for all devices
-    final titleHeight = 30.0;
-    
-    // Adjust based on screen size - reduced card height to prevent overflow
-    final cardHeight = viewSize <= ViewSize.phone 
-        ? 250.0 - titleHeight  // Reduced from 280 to prevent overflow
-        : 220.0 - titleHeight; // Reduced from 240 to prevent overflow
-        
-    final bannerHeight = viewSize <= ViewSize.phone
-        ? availableHeight * 0.60  // 60% for phones
-        : availableHeight * 0.58;  // 58% for larger screens
+    final topPadding = MediaQuery.paddingOf(context).top;
+    final bottomPadding = MediaQuery.paddingOf(context).bottom;
+    final navbarHeight = topPadding + 56.0;
+    // Add a little extra bottom padding to avoid content clipping under system bars
+    final extraBottomPadding = bottomPadding + 12.0;
+    // Subtract bottom safe area as well to avoid clipping on devices with navigation bars
+    final availableHeight = size.height - navbarHeight - extraBottomPadding;
 
-    // Universal scrollable layout for all devices
+    // Universal sizing for all devices - compute title height dynamically
+    final titleStyle = Theme.of(context).textTheme.titleMedium;
+    final titleHeight = (titleStyle?.fontSize ?? 18) + 12; // font size + top/bottom padding (8 + 4)
+    // poster size multiplier from settings
+    final posterSizeMultiplier = ref.watch(clientSettingsProvider.select((value) => value.posterSize));
+
+    final defaultCardHeight = ((AdaptiveLayout.poster(context).size * posterSizeMultiplier) /
+            math.pow(AdaptiveLayout.poster(context).ratio, 0.55)) *
+        0.72;
+
+    final bannerHeight = viewSize <= ViewSize.phone ? availableHeight * 0.60 : availableHeight * 0.58;
+
+    // default scale; reduce size when required heights exceed available height
+    double scale = 1.0;
+    final rowExtent = defaultCardHeight + titleHeight + 16;
+    final requiredHeight = bannerHeight + rowExtent + 16;
+    if (requiredHeight > availableHeight) {
+      scale = (availableHeight / requiredHeight).clamp(0.6, 1.0);
+    }
+
+    final scaledCardHeight = defaultCardHeight * scale;
+    final scaledBannerHeight = (bannerHeight * ((scale + 1) / 2)).clamp(availableHeight * 0.28, bannerHeight);
+
+    // Fixed banner (non-scrollable) and rows - return the Column
     return Column(
       children: [
-        // Fixed banner (non-scrollable)
         SizedBox(
-          height: bannerHeight,
-          child: CompactItemBanner(
+          height: scaledBannerHeight,
+            child: CompactItemBanner(
             item: ref.watch(focusedItemProvider),
-            maxHeight: bannerHeight,
+            maxHeight: scaledBannerHeight,
           ),
         ),
         // Scrollable rows
         Expanded(
-          child: ListView.builder(
+            child: ListView.builder(
             controller: _scrollController,
             primary: false,
             physics: const ClampingScrollPhysics(), // Proper scroll physics
-            padding: EdgeInsets.zero,
+            padding: EdgeInsets.only(bottom: extraBottomPadding),
             itemCount: widget.rows.length,
-            itemExtent: cardHeight + titleHeight + 16, // Fixed height for performance and scrollbar stability
-            itemBuilder: (context, index) {
+            // We compute itemExtent per-row inside itemBuilder; fallback to default estimated size
+            itemExtent: scaledCardHeight + titleHeight + 16,
+                itemBuilder: (context, index) {
               final row = widget.rows[index];
               final isFirstRow = index == 0;
               
-              return FocusProvider(
+                  // compute dominant ratio per row like PosterRow does
+                    final dominantRatio = row.aspectRatio ?? AdaptiveLayout.poster(context).ratio;
+                    final cardHeight = (((AdaptiveLayout.poster(context).size * posterSizeMultiplier) /
+                        math.pow(dominantRatio, 0.55)) *
+                      0.72) *
+                    scale;
+
+                  return FocusProvider(
                 autoFocus: isFirstRow,
                 child: SizedBox(
-                  height: cardHeight + titleHeight + 16, // Added 16px padding to prevent overflow
+                  height: cardHeight + titleHeight + 16, // Height matches PosterRow defaults + title
                   child: Column(
                     mainAxisSize: MainAxisSize.min,
                     crossAxisAlignment: CrossAxisAlignment.start,

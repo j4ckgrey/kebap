@@ -36,6 +36,7 @@ class OutlinedTextField extends ConsumerStatefulWidget {
   final String? suffix;
   final String? errorText;
   final bool? enabled;
+  final bool useFocusWrapper;
 
   const OutlinedTextField({
     this.label,
@@ -61,6 +62,7 @@ class OutlinedTextField extends ConsumerStatefulWidget {
     this.decoration,
     this.suffix,
     this.enabled,
+    this.useFocusWrapper = false,
     super.key,
   });
 
@@ -77,9 +79,6 @@ class _OutlinedTextFieldState extends ConsumerState<OutlinedTextField> {
         hasFocus = _wrapperFocus.hasFocus;
         if (hasFocus) {
           context.ensureVisible();
-          if (AdaptiveLayout.inputDeviceOf(context) == InputDevice.pointer) {
-            _textFocus.requestFocus();
-          }
         }
       });
     });
@@ -89,7 +88,7 @@ class _OutlinedTextFieldState extends ConsumerState<OutlinedTextField> {
 
   @override
   void dispose() {
-    _textFocus.dispose();
+    if (widget.focusNode == null) _textFocus.dispose();
     _wrapperFocus.dispose();
     super.dispose();
   }
@@ -109,10 +108,17 @@ class _OutlinedTextFieldState extends ConsumerState<OutlinedTextField> {
   @override
   void initState() {
     super.initState();
+    if (widget.useFocusWrapper) {
+      _textFocus.skipTraversal = true;
+    }
     WidgetsBinding.instance.addPostFrameCallback((_) {
       if (!mounted) return;
       if (widget.autoFocus) {
-        _textFocus.requestFocus();
+        if (widget.useFocusWrapper) {
+          _wrapperFocus.requestFocus();
+        } else {
+          _textFocus.requestFocus();
+        }
       }
     });
   }
@@ -133,10 +139,6 @@ class _OutlinedTextFieldState extends ConsumerState<OutlinedTextField> {
       onSubmitted: widget.onSubmitted != null
           ? (value) {
               widget.onSubmitted?.call(value);
-              Future.microtask(() async {
-                await Future.delayed(const Duration(milliseconds: 125));
-                _wrapperFocus.requestFocus();
-              });
             }
           : null,
       textInputAction: widget.textInputAction,
@@ -173,28 +175,43 @@ class _OutlinedTextFieldState extends ConsumerState<OutlinedTextField> {
           ),
     );
 
+    final container = AnimatedContainer(
+      duration: const Duration(milliseconds: 175),
+      decoration: BoxDecoration(
+        color: widget.decoration == null ? widget.fillColor ?? getColor() : null,
+        borderRadius: KebapTheme.smallShape.borderRadius,
+        border: BoxBorder.all(
+          width: 2,
+          color: hasFocus || keyboardFocus ? Theme.of(context).colorScheme.primaryFixed : Colors.transparent,
+        ),
+      ),
+      child: Padding(
+        padding: const EdgeInsets.symmetric(horizontal: 8),
+        child: IgnorePointer(
+          ignoring: widget.enabled == false,
+          child: textField,
+        ),
+      ),
+    );
+
     return Column(
       children: [
-        AnimatedContainer(
-          duration: const Duration(milliseconds: 175),
-          decoration: BoxDecoration(
-            color: widget.decoration == null ? widget.fillColor ?? getColor() : null,
-            borderRadius: KebapTheme.smallShape.borderRadius,
-            border: BoxBorder.all(
-              width: 2,
-              color: hasFocus || keyboardFocus ? Theme.of(context).colorScheme.primaryFixed : Colors.transparent,
-            ),
-          ),
-          child: Padding(
-            padding: const EdgeInsets.symmetric(horizontal: 8),
-            child: IgnorePointer(
-              ignoring: widget.enabled == false,
-              child: ExcludeFocusTraversal(
-                child: textField,
-              ),
-            ),
-          ),
-        ),
+        if (widget.useFocusWrapper)
+          Focus(
+            focusNode: _wrapperFocus,
+            onKeyEvent: (node, event) {
+              if (event is KeyDownEvent &&
+                  (event.logicalKey == LogicalKeyboardKey.select ||
+                      event.logicalKey == LogicalKeyboardKey.enter)) {
+                _textFocus.requestFocus();
+                return KeyEventResult.handled;
+              }
+              return KeyEventResult.ignored;
+            },
+            child: container,
+          )
+        else
+          container,
         AnimatedFadeSize(
           child: widget.errorText != null
               ? Align(

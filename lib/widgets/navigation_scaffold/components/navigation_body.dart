@@ -186,6 +186,8 @@ class GlobalFallbackTraversalPolicy extends ReadingOrderTraversalPolicy {
 
   @override
   bool inDirection(FocusNode currentNode, TraversalDirection direction) {
+    debugPrint('GlobalFallbackTraversalPolicy: inDirection called. Direction: $direction, CurrentNode: $currentNode');
+
     if (currentNode == navBarNode && direction == TraversalDirection.right) {
       if (lastMainFocus != null && lastMainFocus!.context != null && lastMainFocus!.canRequestFocus) {
         lastMainFocus!.requestFocus();
@@ -193,16 +195,27 @@ class GlobalFallbackTraversalPolicy extends ReadingOrderTraversalPolicy {
       }
     }
 
+    if (direction == TraversalDirection.left && currentNode != navBarNode) {
+      debugPrint('GlobalFallbackTraversalPolicy: Intercepting Left navigation. Key hash: ${drawerKey?.hashCode}');
+      lastMainFocus = currentNode;
+
+      if (showHamburger && drawerKey != null) {
+        debugPrint('GlobalFallbackTraversalPolicy: Opening drawer');
+        if (drawerKey!.currentState == null) {
+           debugPrint('GlobalFallbackTraversalPolicy: drawerKey.currentState is NULL');
+        } else {
+           debugPrint('GlobalFallbackTraversalPolicy: Calling openDrawer. HasDrawer: ${drawerKey!.currentState!.hasDrawer}');
+           drawerKey!.currentState?.openDrawer();
+        }
+        return true;
+      } else {
+         debugPrint('GlobalFallbackTraversalPolicy: showHamburger: $showHamburger, drawerKey: $drawerKey');
+      }
+    }
+
     final handled = super.inDirection(currentNode, direction);
     if (!handled && direction == TraversalDirection.left) {
       lastMainFocus = currentNode;
-
-      // When using dPad/keyboard navigation, open drawer directly instead of focusing hamburger button
-      // This provides better UX for keyboard and TV remote users
-      if (inputDevice == InputDevice.dPad && showHamburger && drawerKey != null) {
-        drawerKey!.currentState?.openDrawer();
-        return true;
-      }
 
       if (fallbackNode.canRequestFocus && fallbackNode.context?.mounted == true) {
         final cb = FocusTraversalPolicy.defaultTraversalRequestFocusCallback;
@@ -210,7 +223,6 @@ class GlobalFallbackTraversalPolicy extends ReadingOrderTraversalPolicy {
         return true;
       }
     }
-
     return handled;
   }
 }

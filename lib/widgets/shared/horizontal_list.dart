@@ -272,6 +272,10 @@ class _HorizontalListState extends ConsumerState<HorizontalList> with TickerProv
           onFocusChange: (value) {
             if (value && hasFocus != value) {
               hasFocus = value;
+              
+              var scope = FocusScope.of(context);
+              debugPrint('HorizontalList: Focused. Scope: ${scope.debugLabel}, Parent: ${scope.parent?.debugLabel}');
+              
               final nodesOnSameRow = _nodesInRow(parentNode);
               final currentNode =
                   nodesOnSameRow.contains(lastFocused) ? lastFocused : _firstFullyVisibleNode(context, nodesOnSameRow);
@@ -423,12 +427,9 @@ class HorizontalRailFocus extends WidgetOrderTraversalPolicy {
     if (index == -1) return false;
 
     if (direction == TraversalDirection.left) {
-      final shouldAllowNavBarFocus =
-          scrollController.hasClients && (scrollController.offset <= firstItemWidth * 0.5) && (index == 0);
-
-      if (shouldAllowNavBarFocus) {
-        lastMainFocus = currentNode;
-        navBarNode.requestFocus();
+      if (index == 0) {
+        debugPrint('HorizontalRailFocus: Opening Drawer directly');
+        Scaffold.of(parentNode.context!).openDrawer();
         return true;
       }
 
