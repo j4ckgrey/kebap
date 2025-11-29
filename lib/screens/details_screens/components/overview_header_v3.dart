@@ -114,14 +114,10 @@ class OverviewHeaderV3 extends ConsumerWidget {
                     if (officialRating != null)
                       ChipButton(
                         label: officialRating.toString(),
-                        borderColor: Colors.black,
-                        foregroundColor: Colors.black,
                       ),
                     if (productionYear != null)
                       ChipButton(
                         label: productionYear.toString(),
-                        borderColor: Colors.black,
-                        foregroundColor: Colors.black,
                       ),
                     Builder(
                       builder: (context) {
@@ -134,9 +130,7 @@ class OverviewHeaderV3 extends ConsumerWidget {
                         if (d != null && d.inSeconds > 1) {
                           return ChipButton(
                             label: d.humanize.toString(),
-                            backgroundColor: Colors.green.withOpacity(0.3),
-                            foregroundColor: Colors.black,
-                            borderColor: Colors.black,
+                            backgroundColor: Colors.green,
                           );
                         }
                         return const SizedBox.shrink();
@@ -145,9 +139,7 @@ class OverviewHeaderV3 extends ConsumerWidget {
                     if (communityRating != null)
                       ChipButton(
                         label: '★ ${communityRating?.toStringAsFixed(1)}',
-                        backgroundColor: Colors.amber.withOpacity(0.3),
-                        foregroundColor: Colors.black,
-                        borderColor: Colors.black,
+                        backgroundColor: Colors.amber,
                       ),
                   ],
                 ),

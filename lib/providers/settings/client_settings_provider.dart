@@ -100,5 +100,9 @@ class ClientSettingsNotifier extends StateNotifier<ClientSettingsModel> {
   void setShortcuts(MapEntry<GlobalHotKeys, KeyCombination> newEntry) =>
       state = state.copyWith(shortcuts: state.shortcuts.setOrRemove(newEntry, state.defaultShortCuts));
 
+  void setShowClock(bool value) => state = state.copyWith(showClock: value);
+
+  void setUse12HourClock(bool value) => state = state.copyWith(use12HourClock: value);
+
   Future<void> closeDirectory() => DirectoryBookmark().closeDirectory(syncPathKey);
 }

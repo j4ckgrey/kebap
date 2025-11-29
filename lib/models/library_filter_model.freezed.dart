@@ -445,7 +445,7 @@ class _LibraryFilterModel extends LibraryFilterModel
       this.favourites = false,
       this.hideEmptyShows = true,
       this.recursive = true,
-      this.groupBy = GroupBy.none})
+      this.groupBy = GroupBy.type})
       : _genres = genres,
         _itemFilters = itemFilters,
         _studios = studios,

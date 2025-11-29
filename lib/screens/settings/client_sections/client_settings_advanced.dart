@@ -80,18 +80,7 @@ List<Widget> buildClientSettingsAdvanced(BuildContext context, WidgetRef ref) {
           ),
         ),
       ),
-      if (AdaptiveLayout.inputDeviceOf(context) == InputDevice.dPad)
-        SettingsListTile(
-          label: Text(context.localized.clientSettingsUseSystemIMETitle),
-          subLabel: Text(context.localized.clientSettingsUseSystemIMEDesc),
-          onTap: () => ref
-              .read(clientSettingsProvider.notifier)
-              .useSystemIME(!ref.read(clientSettingsProvider.select((value) => value.useSystemIME))),
-          trailing: Switch(
-            value: ref.watch(clientSettingsProvider.select((value) => value.useSystemIME)),
-            onChanged: (value) => ref.read(clientSettingsProvider.notifier).useSystemIME(value),
-          ),
-        ),
+
     ],
   );
 }

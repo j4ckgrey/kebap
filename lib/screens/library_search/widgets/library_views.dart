@@ -34,13 +34,14 @@ import 'package:kebap/widgets/shared/grid_focus_traveler.dart';
 import 'package:kebap/widgets/shared/item_actions.dart';
 
 final libraryViewTypeProvider = StateProvider<LibraryViewTypes>((ref) {
-  return LibraryViewTypes.grid;
+  return LibraryViewTypes.carousel;
 });
 
 enum LibraryViewTypes {
   grid(icon: IconsaxPlusLinear.grid_2),
   list(icon: IconsaxPlusLinear.grid_6),
-  masonry(icon: IconsaxPlusLinear.grid_3);
+  masonry(icon: IconsaxPlusLinear.grid_3),
+  carousel(icon: IconsaxPlusLinear.row_horizontal);
 
   const LibraryViewTypes({required this.icon});
 
@@ -48,6 +49,7 @@ enum LibraryViewTypes {
         LibraryViewTypes.grid => context.localized.grid,
         LibraryViewTypes.list => context.localized.list,
         LibraryViewTypes.masonry => context.localized.masonry,
+        LibraryViewTypes.carousel => 'Carousel',
       };
 
   final IconData icon;
@@ -286,6 +288,74 @@ class LibraryViews extends ConsumerWidget {
                 onPressed: (action, item) async => onItemPressed(action, key, item, ref, context),
               );
             },
+          );
+        }
+      case LibraryViewTypes.carousel:
+        if (groupByType != GroupBy.none) {
+          final groupedItems = groupItemsBy(context, items, groupByType);
+          return MultiSliver(
+            children: groupedItems.entries.map((element) {
+              final name = element.key;
+              final group = element.value;
+              return MultiSliver(
+                children: [
+                  SliverPadding(
+                    padding: const EdgeInsets.only(left: 16, top: 16, bottom: 8),
+                    sliver: SliverToBoxAdapter(
+                      child: Text(
+                        name,
+                        style: Theme.of(context).textTheme.titleLarge?.copyWith(
+                          fontWeight: FontWeight.bold,
+                        ),
+                      ),
+                    ),
+                  ),
+                  SliverToBoxAdapter(
+                    child: SizedBox(
+                      height: 280,
+                      child: ListView.builder(
+                        scrollDirection: Axis.horizontal,
+                        padding: const EdgeInsets.symmetric(horizontal: 16),
+                        itemCount: group.length,
+                        itemBuilder: (context, index) {
+                          final item = group[index];
+                          return Padding(
+                            padding: const EdgeInsets.only(right: 12),
+                            child: SizedBox(
+                              width: 150,
+                              child: PosterWidget(
+                                key: Key(item.id),
+                                focusNode: index == 0 && element.key == groupedItems.keys.first ? firstItemFocusNode : null,
+                                poster: item,
+                                maxLines: 2,
+                                subTitle: item.subTitle(sortingOptions),
+                                excludeActions: excludeActions,
+                                otherActions: otherActions(item),
+                                selected: selected.contains(item),
+                                onUserDataChanged: (id, newData) => libraryProvider.updateUserData(id, newData),
+                                onItemRemoved: (oldItem) => libraryProvider.removeFromPosters([oldItem.id]),
+                                onItemUpdated: (newItem) => libraryProvider.updateItem(newItem),
+                                onPressed: (action, item) async => onItemPressed(action, key, item, ref, context),
+                              ),
+                            ),
+                          );
+                        },
+                      ),
+                    ),
+                  ),
+                ],
+              );
+            }).toList(),
+          );
+        } else {
+          // Carousel requires grouping to be enabled
+          return SliverFillRemaining(
+            child: Center(
+              child: Text(
+                'Enable grouping to use carousel view',
+                style: Theme.of(context).textTheme.titleMedium,
+              ),
+            ),
           );
         }
     }

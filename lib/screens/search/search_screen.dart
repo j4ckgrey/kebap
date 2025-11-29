@@ -1,5 +1,4 @@
 import 'package:kebap/providers/search_provider.dart';
-import 'package:kebap/screens/shared/media/poster_grid.dart';
 import 'package:kebap/util/debouncer.dart';
 import 'package:kebap/util/string_extensions.dart';
 import 'package:kebap/widgets/search/search_mode_toggle.dart';
@@ -90,38 +89,101 @@ class _SearchScreenState extends ConsumerState<SearchScreen> {
       body: Padding(
         padding: const EdgeInsets.only(top: 60),
         child: ListView(
-        children: searchResults.results.entries
-            .map(
-              (e) => PosterGrid(
-                stickyHeader: false,
-                name: e.key.name.capitalize(),
-                posters: e.value,
-                onPressed: (action, item) {
-                  showBottomSheetPill(
-                    context: context,
-                    content: (context, scrollController) {
-                      final actions = item.generateActions(context, ref);
-                      return Column(
-                        mainAxisSize: MainAxisSize.min,
-                        children: [
-                          ItemActionButton(
-                            label: Text('View Details'),
-                            icon: const Icon(Icons.info_outline),
-                            action: () {
-                              Navigator.of(context).pop();
-                              action();
-                            },
-                          ).toListItem(context, useIcons: true),
-                          const Divider(),
-                          ...actions.listTileItems(context, useIcons: true),
-                        ],
-                      );
-                    },
-                  );
-                },
-              ),
-            )
-            .toList(),
+          children: searchResults.results.entries
+              .map(
+                (e) => Padding(
+                  padding: const EdgeInsets.only(bottom: 16),
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Padding(
+                        padding: const EdgeInsets.only(left: 16, bottom: 8),
+                        child: Text(
+                          e.key.name.capitalize(),
+                          style: Theme.of(context).textTheme.titleLarge?.copyWith(
+                            fontWeight: FontWeight.bold,
+                          ),
+                        ),
+                      ),
+                      SizedBox(
+                        height: 280, // Height for horizontal carousel
+                        child: ListView.builder(
+                          scrollDirection: Axis.horizontal,
+                          padding: const EdgeInsets.symmetric(horizontal: 16),
+                          itemCount: e.value.length,
+                          itemBuilder: (context, index) {
+                            final item = e.value[index];
+                            return Padding(
+                              padding: const EdgeInsets.only(right: 12),
+                              child: SizedBox(
+                                width: 150,
+                                child: InkWell(
+                                  onTap: () {
+                                    showBottomSheetPill(
+                                      context: context,
+                                      content: (context, scrollController) {
+                                        final actions = item.generateActions(context, ref);
+                                        return Column(
+                                          mainAxisSize: MainAxisSize.min,
+                                          children: [
+                                            ItemActionButton(
+                                              label: Text('View Details'),
+                                              icon: const Icon(Icons.info_outline),
+                                              action: () {
+                                                Navigator.of(context).pop();
+                                                item.navigateTo(context, ref: ref);
+                                              },
+                                            ).toListItem(context, useIcons: true),
+                                            const Divider(),
+                                            ...actions.listTileItems(context, useIcons: true),
+                                          ],
+                                        );
+                                      },
+                                    );
+                                  },
+                                  child: Column(
+                                    crossAxisAlignment: CrossAxisAlignment.start,
+                                    children: [
+                                      Expanded(
+                                        child: ClipRRect(
+                                          borderRadius: BorderRadius.circular(8),
+                                          child: item.images?.primary != null
+                                              ? Image.network(
+                                                  item.images!.primary!,
+                                                  fit: BoxFit.cover,
+                                                  width: double.infinity,
+                                                )
+                                              : Container(
+                                                  color: Theme.of(context).colorScheme.surfaceContainerHighest,
+                                                  child: Icon(
+                                                    Icons.movie,
+                                                    size: 48,
+                                                    color: Theme.of(context).colorScheme.onSurfaceVariant,
+                                                  ),
+                                                ),
+                                        ),
+                                      ),
+                                      const SizedBox(height: 8),
+                                      Text(
+                                        item.name,
+                                        maxLines: 2,
+                                        overflow: TextOverflow.ellipsis,
+                                        style: Theme.of(context).textTheme.bodyMedium,
+                                      ),
+                                    ],
+                                  ),
+                                ),
+                              ),
+                            );
+                          },
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+              )
+              .toList(),
+        ),
       ),
     );
   }

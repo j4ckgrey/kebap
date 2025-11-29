@@ -28,6 +28,25 @@ List<Widget> buildClientSettingsVisual(
     SettingsLabelDivider(label: context.localized.settingsVisual),
     [
       SettingsListTile(
+        label: const Text("Show Clock"),
+        subLabel: const Text("Show the current time in the top right corner"),
+        onTap: () => ref.read(clientSettingsProvider.notifier).setShowClock(!clientSettings.showClock),
+        trailing: Switch(
+          value: clientSettings.showClock,
+          onChanged: (value) => ref.read(clientSettingsProvider.notifier).setShowClock(value),
+        ),
+      ),
+      if (clientSettings.showClock)
+        SettingsListTile(
+          label: const Text("Use 12-Hour Format"),
+          subLabel: const Text("Display time in 12-hour format (AM/PM)"),
+          onTap: () => ref.read(clientSettingsProvider.notifier).setUse12HourClock(!clientSettings.use12HourClock),
+          trailing: Switch(
+            value: clientSettings.use12HourClock,
+            onChanged: (value) => ref.read(clientSettingsProvider.notifier).setUse12HourClock(value),
+          ),
+        ),
+      SettingsListTile(
         label: Text(context.localized.displayLanguage),
         trailing: Localizations.override(
           context: context,

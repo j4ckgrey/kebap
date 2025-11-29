@@ -155,7 +155,7 @@ class _LibrarySearchScreenState extends ConsumerState<LibrarySearchScreen> {
       child: NestedScaffold(
         background: BackgroundImage(images: postersList.map((e) => e.images).nonNulls.toList()),
         body: Padding(
-          padding: EdgeInsets.only(left: 16, top: 60),
+          padding: const EdgeInsets.only(top: 60),
           child: Scaffold(
             extendBody: true,
             backgroundColor: Colors.transparent,
@@ -205,21 +205,7 @@ class _LibrarySearchScreenState extends ConsumerState<LibrarySearchScreen> {
                         shadowColor: Colors.transparent,
                         backgroundColor: Colors.transparent,
                         titleSpacing: 4,
-                        flexibleSpace: AdaptiveLayout.layoutModeOf(context) != LayoutMode.dual
-                            ? Container(
-                                decoration: BoxDecoration(
-                                    gradient: LinearGradient(
-                                  colors: [
-                                    surfaceColor.withValues(alpha: 0.8),
-                                    surfaceColor.withValues(alpha: 0.75),
-                                    surfaceColor.withValues(alpha: 0.5),
-                                    surfaceColor.withValues(alpha: 0),
-                                  ],
-                                  begin: Alignment.topCenter,
-                                  end: Alignment.bottomCenter,
-                                )),
-                              )
-                            : null,
+                        flexibleSpace: null,
                         actions: [
                           Builder(builder: (context) {
                             final isFavorite = librarySearchResults.nestedCurrentItem?.userData.isFavourite == true;
