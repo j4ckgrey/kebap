@@ -4,7 +4,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:iconsax_plus/iconsax_plus.dart';
 import 'package:kebap/models/item_base_model.dart';
 import 'package:kebap/providers/library_search_provider.dart';
-import 'package:kebap/screens/shared/outlined_text_field.dart';
+import 'package:kebap/screens/shared/adaptive_text_field.dart';
 import 'package:kebap/theme.dart';
 import 'package:kebap/util/debouncer.dart';
 import 'package:kebap/util/localization_helper.dart';
@@ -50,7 +50,7 @@ class _SearchBarState extends ConsumerState<SuggestionSearchBar> {
         borderRadius: KebapTheme.smallShape.borderRadius,
       ),
       shadowColor: Colors.transparent,
-      child: OutlinedTextField(
+      child: AdaptiveTextField(
         focusNode: focusNode,
         useFocusWrapper: true,
         autoFocus: widget.autoFocus,

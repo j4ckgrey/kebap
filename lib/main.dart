@@ -336,51 +336,56 @@ class _MainState extends ConsumerState<Main> with WindowListener, WidgetsBinding
         return ThemesData(
           light: lightTheme,
           dark: darkTheme,
-          child: MaterialApp.router(
-            onGenerateTitle: (context) => ref.watch(currentTitleProvider),
-            theme: lightTheme,
-            scrollBehavior: scrollBehaviour.copyWith(
-              dragDevices: {
-                ...scrollBehaviour.dragDevices,
-                mouseDrag ? PointerDeviceKind.mouse : null,
-              }.nonNulls.toSet(),
-            ),
-            localizationsDelegates: KebapLocalizations.localizationsDelegates,
-            supportedLocales: AppLocalizations.supportedLocales,
-            locale: language,
-            localeResolutionCallback: (locale, supportedLocales) {
-              const fallback = Locale('en');
-              if (locale == null) return fallback;
-              if (supportedLocales.contains(locale)) {
-                return locale;
-              }
-              final matchByLanguage = supportedLocales.firstWhere(
-                (l) => l.languageCode == locale.languageCode,
-                orElse: () => fallback,
-              );
-
-              return matchByLanguage;
+          child: Shortcuts(
+            shortcuts: <LogicalKeySet, Intent>{
+              LogicalKeySet(LogicalKeyboardKey.select): const ActivateIntent(),
             },
-            builder: (context, child) => MediaQueryScaler(
-              child: LocalizationContextWrapper(
-                child: ScaffoldMessenger(child: child ?? Container()),
-                currentLocale: language,
+            child: MaterialApp.router(
+              onGenerateTitle: (context) => ref.watch(currentTitleProvider),
+              theme: lightTheme,
+              scrollBehavior: scrollBehaviour.copyWith(
+                dragDevices: {
+                  ...scrollBehaviour.dragDevices,
+                  mouseDrag ? PointerDeviceKind.mouse : null,
+                }.nonNulls.toSet(),
               ),
-              enable: ref.read(argumentsStateProvider).leanBackMode,
-            ),
-            debugShowCheckedModeBanner: false,
-            darkTheme: darkTheme.copyWith(
-              scaffoldBackgroundColor: amoledOverwrite,
-              cardColor: amoledOverwrite,
-              canvasColor: amoledOverwrite,
-              colorScheme: darkTheme.colorScheme.copyWith(
-                surface: amoledOverwrite,
-                surfaceContainerHighest: amoledOverwrite,
-                surfaceContainerLow: amoledOverwrite,
+              localizationsDelegates: KebapLocalizations.localizationsDelegates,
+              supportedLocales: AppLocalizations.supportedLocales,
+              locale: language,
+              localeResolutionCallback: (locale, supportedLocales) {
+                const fallback = Locale('en');
+                if (locale == null) return fallback;
+                if (supportedLocales.contains(locale)) {
+                  return locale;
+                }
+                final matchByLanguage = supportedLocales.firstWhere(
+                  (l) => l.languageCode == locale.languageCode,
+                  orElse: () => fallback,
+                );
+
+                return matchByLanguage;
+              },
+              builder: (context, child) => MediaQueryScaler(
+                child: LocalizationContextWrapper(
+                  child: ScaffoldMessenger(child: child ?? Container()),
+                  currentLocale: language,
+                ),
+                enable: ref.read(argumentsStateProvider).leanBackMode,
               ),
+              debugShowCheckedModeBanner: false,
+              darkTheme: darkTheme.copyWith(
+                scaffoldBackgroundColor: amoledOverwrite,
+                cardColor: amoledOverwrite,
+                canvasColor: amoledOverwrite,
+                colorScheme: darkTheme.colorScheme.copyWith(
+                  surface: amoledOverwrite,
+                  surfaceContainerHighest: amoledOverwrite,
+                  surfaceContainerLow: amoledOverwrite,
+                ),
+              ),
+              themeMode: themeMode,
+              routerConfig: autoRouter.config(),
             ),
-            themeMode: themeMode,
-            routerConfig: autoRouter.config(),
           ),
         );
       },

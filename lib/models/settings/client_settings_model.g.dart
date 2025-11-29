@@ -49,6 +49,8 @@ _ClientSettingsModel _$ClientSettingsModelFromJson(Map<String, dynamic> json) =>
       useSystemIME: json['useSystemIME'] as bool? ?? false,
       lastViewedUpdate: json['lastViewedUpdate'] as String?,
       libraryPageSize: (json['libraryPageSize'] as num?)?.toInt(),
+      showClock: json['showClock'] as bool? ?? true,
+      use12HourClock: json['use12HourClock'] as bool? ?? false,
       shortcuts: (json['shortcuts'] as Map<String, dynamic>?)?.map(
             (k, e) => MapEntry($enumDecode(_$GlobalHotKeysEnumMap, k),
                 KeyCombination.fromJson(e as Map<String, dynamic>)),
@@ -85,6 +87,8 @@ Map<String, dynamic> _$ClientSettingsModelToJson(
       'useSystemIME': instance.useSystemIME,
       'lastViewedUpdate': instance.lastViewedUpdate,
       'libraryPageSize': instance.libraryPageSize,
+      'showClock': instance.showClock,
+      'use12HourClock': instance.use12HourClock,
       'shortcuts': instance.shortcuts
           .map((k, e) => MapEntry(_$GlobalHotKeysEnumMap[k]!, e)),
     };

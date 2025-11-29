@@ -10,6 +10,7 @@ import 'package:kebap/screens/shared/animated_fade_size.dart';
 import 'package:kebap/theme.dart';
 import 'package:kebap/util/adaptive_layout/adaptive_layout.dart';
 import 'package:kebap/util/focus_provider.dart';
+import 'package:kebap/widgets/keyboard/slide_in_keyboard.dart';
 import 'package:kebap/widgets/shared/ensure_visible.dart';
 
 class OutlinedTextField extends ConsumerStatefulWidget {
@@ -123,22 +124,69 @@ class _OutlinedTextFieldState extends ConsumerState<OutlinedTextField> {
     });
   }
 
+  final acceptKeys = [
+    LogicalKeyboardKey.select,
+    LogicalKeyboardKey.enter,
+    LogicalKeyboardKey.space,
+    LogicalKeyboardKey.digit0,
+    LogicalKeyboardKey.digit1,
+    LogicalKeyboardKey.digit2,
+    LogicalKeyboardKey.digit3,
+    LogicalKeyboardKey.digit4,
+    LogicalKeyboardKey.digit5,
+    LogicalKeyboardKey.digit6,
+    LogicalKeyboardKey.digit7,
+    LogicalKeyboardKey.digit8,
+    LogicalKeyboardKey.digit9,
+    LogicalKeyboardKey.keyA,
+    LogicalKeyboardKey.keyB,
+    LogicalKeyboardKey.keyC,
+    LogicalKeyboardKey.keyD,
+    LogicalKeyboardKey.keyE,
+    LogicalKeyboardKey.keyF,
+    LogicalKeyboardKey.keyG,
+    LogicalKeyboardKey.keyH,
+    LogicalKeyboardKey.keyI,
+    LogicalKeyboardKey.keyJ,
+    LogicalKeyboardKey.keyK,
+    LogicalKeyboardKey.keyL,
+    LogicalKeyboardKey.keyM,
+    LogicalKeyboardKey.keyN,
+    LogicalKeyboardKey.keyO,
+    LogicalKeyboardKey.keyP,
+    LogicalKeyboardKey.keyQ,
+    LogicalKeyboardKey.keyR,
+    LogicalKeyboardKey.keyS,
+    LogicalKeyboardKey.keyT,
+    LogicalKeyboardKey.keyU,
+    LogicalKeyboardKey.keyV,
+    LogicalKeyboardKey.keyW,
+    LogicalKeyboardKey.keyX,
+    LogicalKeyboardKey.keyY,
+    LogicalKeyboardKey.keyZ,
+  ];
+
   @override
   Widget build(BuildContext context) {
     final isPasswordField = widget.keyboardType == TextInputType.visiblePassword;
-
+    final useCustomKeyboard = AdaptiveLayout.inputDeviceOf(context) == InputDevice.dPad;
 
     final textField = TextField(
       controller: controller,
       onChanged: widget.onChanged,
       focusNode: _textFocus,
       onTap: widget.onTap,
+      readOnly: useCustomKeyboard,
       autofillHints: widget.autoFillHints,
       keyboardType: widget.keyboardType,
       autocorrect: widget.autocorrect,
       onSubmitted: widget.onSubmitted != null
           ? (value) {
               widget.onSubmitted?.call(value);
+              Future.microtask(() async {
+                await Future.delayed(const Duration(milliseconds: 125));
+                _wrapperFocus.requestFocus();
+              });
             }
           : null,
       textInputAction: widget.textInputAction,
@@ -159,59 +207,74 @@ class _OutlinedTextFieldState extends ConsumerState<OutlinedTextField> {
                     padding: const EdgeInsets.only(right: 6),
                     child: Text(widget.suffix!),
                   )
-                : null,
+                : isPasswordField
+                    ? InkWell(
+                        onTap: _toggle,
+                        borderRadius: BorderRadius.circular(5),
+                        child: Icon(
+                          _obscureText ? Icons.visibility : Icons.visibility_off,
+                          size: 16.0,
+                        ),
+                      )
+                    : null,
             hintText: widget.placeHolder,
             // errorText: widget.errorText,
-            suffixIcon: isPasswordField
-                ? InkWell(
-                    onTap: _toggle,
-                    borderRadius: BorderRadius.circular(5),
-                    child: Icon(
-                      _obscureText ? Icons.visibility : Icons.visibility_off,
-                      size: 16.0,
-                    ),
-                  )
-                : null,
           ),
-    );
-
-    final container = AnimatedContainer(
-      duration: const Duration(milliseconds: 175),
-      decoration: BoxDecoration(
-        color: widget.decoration == null ? widget.fillColor ?? getColor() : null,
-        borderRadius: KebapTheme.smallShape.borderRadius,
-        border: BoxBorder.all(
-          width: 2,
-          color: hasFocus || keyboardFocus ? Theme.of(context).colorScheme.primaryFixed : Colors.transparent,
-        ),
-      ),
-      child: Padding(
-        padding: const EdgeInsets.symmetric(horizontal: 8),
-        child: IgnorePointer(
-          ignoring: widget.enabled == false,
-          child: textField,
-        ),
-      ),
     );
 
     return Column(
       children: [
-        if (widget.useFocusWrapper)
-          Focus(
-            focusNode: _wrapperFocus,
-            onKeyEvent: (node, event) {
-              if (event is KeyDownEvent &&
-                  (event.logicalKey == LogicalKeyboardKey.select ||
-                      event.logicalKey == LogicalKeyboardKey.enter)) {
-                _textFocus.requestFocus();
-                return KeyEventResult.handled;
-              }
-              return KeyEventResult.ignored;
-            },
-            child: container,
-          )
-        else
-          container,
+        AnimatedContainer(
+          duration: const Duration(milliseconds: 175),
+          decoration: BoxDecoration(
+            color: widget.decoration == null ? widget.fillColor ?? getColor() : null,
+            borderRadius: KebapTheme.smallShape.borderRadius,
+            border: BoxBorder.all(
+              width: 2,
+              color: hasFocus || keyboardFocus ? Theme.of(context).colorScheme.primaryFixed : Colors.transparent,
+            ),
+          ),
+          child: Padding(
+            padding: const EdgeInsets.symmetric(horizontal: 8),
+            child: IgnorePointer(
+              ignoring: widget.enabled == false,
+              child: KeyboardListener(
+                focusNode: _wrapperFocus,
+                onKeyEvent: (KeyEvent event) async {
+                  if (keyboardFocus || AdaptiveLayout.inputDeviceOf(context) != InputDevice.dPad) return;
+                  if (event is KeyDownEvent && acceptKeys.contains(event.logicalKey)) {
+                    if (_textFocus.hasFocus) {
+                      _wrapperFocus.requestFocus();
+                    } else if (_wrapperFocus.hasFocus) {
+                      if (useCustomKeyboard) {
+                        await openKeyboard(
+                          context,
+                          controller,
+                          inputType: widget.keyboardType,
+                          inputAction: widget.textInputAction,
+                          searchQuery: widget.searchQuery,
+                          onChanged: () {
+                            widget.onChanged?.call(controller.text);
+                          },
+                        );
+                        widget.onSubmitted?.call(controller.text);
+                        setState(() {
+                          keyboardFocus = false;
+                        });
+                        _wrapperFocus.requestFocus();
+                      } else {
+                        _textFocus.requestFocus();
+                      }
+                    }
+                  }
+                },
+                child: ExcludeFocusTraversal(
+                  child: textField,
+                ),
+              ),
+            ),
+          ),
+        ),
         AnimatedFadeSize(
           child: widget.errorText != null
               ? Align(

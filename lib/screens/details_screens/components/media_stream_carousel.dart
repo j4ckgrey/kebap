@@ -5,7 +5,7 @@ import 'package:kebap/models/items/media_streams_model.dart';
 import 'package:kebap/screens/details_screens/components/media_stream_information.dart';
 import 'package:kebap/util/localization_helper.dart';
 
-class MediaStreamCarousel extends ConsumerWidget {
+class MediaStreamCarousel extends ConsumerStatefulWidget {
   final MediaStreamsModel mediaStream;
   final Function(int index)? onVersionIndexChanged;
   final Function(int index)? onAudioIndexChanged;
@@ -20,7 +20,17 @@ class MediaStreamCarousel extends ConsumerWidget {
   });
 
   @override
-  Widget build(BuildContext context, WidgetRef ref) {
+  ConsumerState<MediaStreamCarousel> createState() => _MediaStreamCarouselState();
+}
+
+class _MediaStreamCarouselState extends ConsumerState<MediaStreamCarousel> {
+  int? _focusedVersionIndex;
+  int? _focusedAudioIndex;
+  int? _focusedSubIndex;
+
+  @override
+  Widget build(BuildContext context) {
+    final mediaStream = widget.mediaStream;
     final hasAnyAudioStreams = mediaStream.versionStreams.any((v) => v.audioStreams.isNotEmpty);
     final hasAnySubStreams = mediaStream.versionStreams.any((v) => v.subStreams.isNotEmpty);
     
@@ -37,7 +47,7 @@ class MediaStreamCarousel extends ConsumerWidget {
           Padding(
             padding: const EdgeInsets.only(left: 16, top: 8, bottom: 8),
             child: Text(
-              context.localized.version,
+              "${context.localized.version} (${(_focusedVersionIndex ?? mediaStream.versionStreams.indexWhere((v) => mediaStream.currentVersionStream == v)).clamp(0, mediaStream.versionStreams.length - 1) + 1}/${mediaStream.versionStreams.length})",
               style: Theme.of(context).textTheme.titleMedium?.copyWith(
                 fontWeight: FontWeight.bold,
               ),
@@ -45,9 +55,7 @@ class MediaStreamCarousel extends ConsumerWidget {
           ),
           SizedBox(
             height: 110,
-            child: ListView.builder(
-              scrollDirection: Axis.horizontal,
-              padding: const EdgeInsets.symmetric(horizontal: 16),
+            child: _CarouselSection(
               itemCount: mediaStream.versionStreams.length,
               itemBuilder: (context, index) {
                 final version = mediaStream.versionStreams[index];
@@ -60,7 +68,10 @@ class MediaStreamCarousel extends ConsumerWidget {
                     title: parsed.quality,
                     subtitle: parsed.filename,
                     isSelected: isSelected,
-                    onTap: () => onVersionIndexChanged?.call(version.index),
+                    onTap: () => widget.onVersionIndexChanged?.call(version.index),
+                    onFocused: (value) {
+                      if (value) setState(() => _focusedVersionIndex = index);
+                    },
                   ),
                 );
               },
@@ -73,7 +84,7 @@ class MediaStreamCarousel extends ConsumerWidget {
           Padding(
             padding: const EdgeInsets.only(left: 16, top: 16, bottom: 8),
             child: Text(
-              context.localized.audio,
+              "${context.localized.audio} (${(_focusedAudioIndex ?? mediaStream.audioStreams.indexWhere((a) => mediaStream.currentAudioStream?.index == a.index)).clamp(0, mediaStream.audioStreams.length - 1) + 1}/${mediaStream.audioStreams.length})",
               style: Theme.of(context).textTheme.titleMedium?.copyWith(
                 fontWeight: FontWeight.bold,
               ),
@@ -87,9 +98,7 @@ class MediaStreamCarousel extends ConsumerWidget {
           else
             SizedBox(
               height: 75,
-              child: ListView.builder(
-                scrollDirection: Axis.horizontal,
-                padding: const EdgeInsets.symmetric(horizontal: 16),
+              child: _CarouselSection(
                 itemCount: mediaStream.audioStreams.length,
                 itemBuilder: (context, index) {
                   final audio = mediaStream.audioStreams[index];
@@ -100,7 +109,10 @@ class MediaStreamCarousel extends ConsumerWidget {
                     child: _CarouselCard(
                       title: audio.displayTitle,
                       isSelected: isSelected,
-                      onTap: () => onAudioIndexChanged?.call(audio.index),
+                      onTap: () => widget.onAudioIndexChanged?.call(audio.index),
+                      onFocused: (value) {
+                        if (value) setState(() => _focusedAudioIndex = index);
+                      },
                     ),
                   );
                 },
@@ -113,7 +125,7 @@ class MediaStreamCarousel extends ConsumerWidget {
           Padding(
             padding: const EdgeInsets.only(left: 16, top: 16, bottom: 8),
             child: Text(
-              context.localized.subtitles,
+              "${context.localized.subtitles} (${(_focusedSubIndex ?? (mediaStream.currentSubStream == null ? 0 : mediaStream.subStreams.indexWhere((s) => mediaStream.currentSubStream?.index == s.index) + 1)).clamp(0, mediaStream.subStreams.length)}/${mediaStream.subStreams.length + 1})",
               style: Theme.of(context).textTheme.titleMedium?.copyWith(
                 fontWeight: FontWeight.bold,
               ),
@@ -127,9 +139,7 @@ class MediaStreamCarousel extends ConsumerWidget {
           else
             SizedBox(
               height: 75,
-              child: ListView.builder(
-                scrollDirection: Axis.horizontal,
-                padding: const EdgeInsets.symmetric(horizontal: 16),
+              child: _CarouselSection(
                 itemCount: mediaStream.subStreams.length + 1,
                 itemBuilder: (context, index) {
                   if (index == 0) {
@@ -144,7 +154,10 @@ class MediaStreamCarousel extends ConsumerWidget {
                       child: _CarouselCard(
                         title: context.localized.none,
                         isSelected: isSelected,
-                        onTap: () => onSubIndexChanged?.call(noSub.index),
+                        onTap: () => widget.onSubIndexChanged?.call(noSub.index),
+                        onFocused: (value) {
+                          if (value) setState(() => _focusedSubIndex = index);
+                        },
                       ),
                     );
                   }
@@ -157,7 +170,10 @@ class MediaStreamCarousel extends ConsumerWidget {
                     child: _CarouselCard(
                       title: sub.displayTitle,
                       isSelected: isSelected,
-                      onTap: () => onSubIndexChanged?.call(sub.index),
+                      onTap: () => widget.onSubIndexChanged?.call(sub.index),
+                      onFocused: (value) {
+                        if (value) setState(() => _focusedSubIndex = index);
+                      },
                     ),
                   );
                 },
@@ -170,37 +186,62 @@ class MediaStreamCarousel extends ConsumerWidget {
   }
 }
 
-class _CarouselCard extends StatelessWidget {
+class _CarouselCard extends StatefulWidget {
   final String title;
   final String? subtitle;
   final bool isSelected;
   final VoidCallback? onTap;
+  final ValueChanged<bool>? onFocused;
 
   const _CarouselCard({
     required this.title,
     this.subtitle,
     required this.isSelected,
     this.onTap,
+    this.onFocused,
   });
 
   @override
+  State<_CarouselCard> createState() => _CarouselCardState();
+}
+
+class _CarouselCardState extends State<_CarouselCard> {
+  bool _isFocused = false;
+
+  @override
   Widget build(BuildContext context) {
+    final isSelected = widget.isSelected;
+    final isFocused = _isFocused;
+
     return InkWell(
-      onTap: onTap,
+      onTap: widget.onTap,
+      onFocusChange: (value) {
+        setState(() => _isFocused = value);
+        widget.onFocused?.call(value);
+      },
       borderRadius: BorderRadius.circular(12),
       child: Container(
         width: 250,
         padding: const EdgeInsets.all(12),
         decoration: BoxDecoration(
           color: isSelected
-              ? Theme.of(context).colorScheme.primaryContainer
+              ? Colors.green
               : Theme.of(context).colorScheme.surfaceContainerHighest,
           borderRadius: BorderRadius.circular(12),
-          border: isSelected
+          border: isFocused
               ? Border.all(
                   color: Theme.of(context).colorScheme.primary,
-                  width: 2,
+                  width: 3,
                 )
+              : null,
+          boxShadow: isFocused
+              ? [
+                  BoxShadow(
+                    color: Theme.of(context).shadowColor.withValues(alpha: 0.2),
+                    blurRadius: 8,
+                    offset: const Offset(0, 4),
+                  )
+                ]
               : null,
         ),
         child: Column(
@@ -210,25 +251,25 @@ class _CarouselCard extends StatelessWidget {
           children: [
             Flexible(
               child: Text(
-                title,
+                widget.title,
                 style: Theme.of(context).textTheme.bodyMedium?.copyWith(
-                      fontWeight: isSelected ? FontWeight.bold : FontWeight.normal,
+                      fontWeight: isSelected || isFocused ? FontWeight.bold : FontWeight.normal,
                       color: isSelected
-                          ? Theme.of(context).colorScheme.onPrimaryContainer
+                          ? Colors.white
                           : Theme.of(context).colorScheme.onSurface,
                     ),
                 overflow: TextOverflow.fade,
                 softWrap: true,
               ),
             ),
-            if (subtitle != null) ...[
+            if (widget.subtitle != null) ...[
               const SizedBox(height: 4),
               Flexible(
                 child: Text(
-                  subtitle!,
+                  widget.subtitle!,
                   style: Theme.of(context).textTheme.bodySmall?.copyWith(
                         color: isSelected
-                            ? Theme.of(context).colorScheme.onPrimaryContainer.withValues(alpha: 0.7)
+                            ? Colors.white70
                             : Theme.of(context).colorScheme.onSurfaceVariant,
                       ),
                   overflow: TextOverflow.fade,
@@ -255,7 +296,7 @@ class _LoadingCard extends StatelessWidget {
       height: 100,
       padding: const EdgeInsets.all(12),
       decoration: BoxDecoration(
-        color: Theme.of(context).colorScheme.surfaceContainerHighest.withValues(alpha: 0.5),
+        color: Theme.of(context).colorScheme.surfaceContainerHighest,
         borderRadius: BorderRadius.circular(12),
       ),
       child: Column(
@@ -279,5 +320,79 @@ class _LoadingCard extends StatelessWidget {
         ],
       ),
     );
+  }
+}
+
+class _CarouselSection extends StatefulWidget {
+  final int itemCount;
+  final IndexedWidgetBuilder itemBuilder;
+
+  const _CarouselSection({
+    required this.itemCount,
+    required this.itemBuilder,
+  });
+
+  @override
+  State<_CarouselSection> createState() => _CarouselSectionState();
+}
+
+class _CarouselSectionState extends State<_CarouselSection> {
+  final FocusNode _parentNode = FocusNode();
+
+  @override
+  void dispose() {
+    _parentNode.dispose();
+    super.dispose();
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return Focus(
+      focusNode: _parentNode,
+      skipTraversal: true,
+      child: FocusTraversalGroup(
+        policy: _CarouselFocusPolicy(parentNode: _parentNode),
+        child: ListView.builder(
+          scrollDirection: Axis.horizontal,
+          padding: const EdgeInsets.symmetric(horizontal: 16),
+          itemCount: widget.itemCount,
+          itemBuilder: widget.itemBuilder,
+        ),
+      ),
+    );
+  }
+}
+
+class _CarouselFocusPolicy extends WidgetOrderTraversalPolicy {
+  final FocusNode parentNode;
+
+  _CarouselFocusPolicy({required this.parentNode});
+
+  @override
+  bool inDirection(FocusNode currentNode, TraversalDirection direction) {
+    if (direction != TraversalDirection.left && direction != TraversalDirection.right) {
+      return super.inDirection(currentNode, direction);
+    }
+
+    final sortedNodes = parentNode.descendants
+        .where((n) => n.canRequestFocus && n.context != null)
+        .toList()
+      ..sort((a, b) => a.rect.left.compareTo(b.rect.left));
+
+    final index = sortedNodes.indexOf(currentNode);
+
+    if (index == -1) return super.inDirection(currentNode, direction);
+
+    if (direction == TraversalDirection.left) {
+      if (index == 0) {
+        return true; // Block left on first item
+      }
+    } else if (direction == TraversalDirection.right) {
+      if (index == sortedNodes.length - 1) {
+        return true; // Block right on last item
+      }
+    }
+
+    return super.inDirection(currentNode, direction);
   }
 }

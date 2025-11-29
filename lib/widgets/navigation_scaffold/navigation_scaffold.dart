@@ -132,13 +132,27 @@ class _NavigationScaffoldState extends ConsumerState<NavigationScaffold> {
                         )
                       : null,
                   body: widget.nestedChild != null
-                      ? NavigationBody(
-                          child: widget.nestedChild!,
-                          parentContext: context,
-                          currentIndex: currentIndex,
-                          destinations: widget.destinations,
-                          currentLocation: currentLocation,
-                          drawerKey: _key,
+                      ? Stack(
+                          children: [
+                            NavigationBody(
+                              child: widget.nestedChild!,
+                              parentContext: context,
+                              currentIndex: currentIndex,
+                              destinations: widget.destinations,
+                              currentLocation: currentLocation,
+                              drawerKey: _key,
+                            ),
+                            if (!currentLocation.contains("Settings"))
+                              const Align(
+                                alignment: Alignment.topCenter,
+                                child: SafeArea(
+                                  child: Padding(
+                                    padding: EdgeInsets.only(top: 8.0),
+                                    child: ClockBadge(),
+                                  ),
+                                ),
+                              ),
+                          ],
                         )
                       : null,
                 );
@@ -180,15 +194,7 @@ class _NavigationScaffoldState extends ConsumerState<NavigationScaffold> {
               ),
             ),
 
-          const Align(
-            alignment: Alignment.topCenter,
-            child: SafeArea(
-              child: Padding(
-                padding: EdgeInsets.only(top: 8.0),
-                child: ClockBadge(),
-              ),
-            ),
-          ),
+
         ],
       ),
     );

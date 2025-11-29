@@ -41,6 +41,8 @@ mixin _$ClientSettingsModel implements DiagnosticableTreeMixin {
   bool get useSystemIME;
   String? get lastViewedUpdate;
   int? get libraryPageSize;
+  bool get showClock;
+  bool get use12HourClock;
   Map<GlobalHotKeys, KeyCombination> get shortcuts;
 
   /// Create a copy of ClientSettingsModel
@@ -128,6 +130,8 @@ abstract mixin class $ClientSettingsModelCopyWith<$Res> {
       bool useSystemIME,
       String? lastViewedUpdate,
       int? libraryPageSize,
+      bool showClock,
+      bool use12HourClock,
       Map<GlobalHotKeys, KeyCombination> shortcuts});
 }
 
@@ -170,6 +174,8 @@ class _$ClientSettingsModelCopyWithImpl<$Res>
     Object? useSystemIME = null,
     Object? lastViewedUpdate = freezed,
     Object? libraryPageSize = freezed,
+    Object? showClock = null,
+    Object? use12HourClock = null,
     Object? shortcuts = null,
   }) {
     return _then(_self.copyWith(
@@ -277,6 +283,14 @@ class _$ClientSettingsModelCopyWithImpl<$Res>
           ? _self.libraryPageSize
           : libraryPageSize // ignore: cast_nullable_to_non_nullable
               as int?,
+      showClock: null == showClock
+          ? _self.showClock
+          : showClock // ignore: cast_nullable_to_non_nullable
+              as bool,
+      use12HourClock: null == use12HourClock
+          ? _self.use12HourClock
+          : use12HourClock // ignore: cast_nullable_to_non_nullable
+              as bool,
       shortcuts: null == shortcuts
           ? _self.shortcuts
           : shortcuts // ignore: cast_nullable_to_non_nullable
@@ -638,6 +652,8 @@ class _ClientSettingsModel extends ClientSettingsModel
       this.useSystemIME = false,
       this.lastViewedUpdate,
       this.libraryPageSize,
+      this.showClock = true,
+      this.use12HourClock = false,
       final Map<GlobalHotKeys, KeyCombination> shortcuts = const {}})
       : _shortcuts = shortcuts,
         super._();
@@ -717,6 +733,12 @@ class _ClientSettingsModel extends ClientSettingsModel
   final String? lastViewedUpdate;
   @override
   final int? libraryPageSize;
+  @override
+  @JsonKey()
+  final bool showClock;
+  @override
+  @JsonKey()
+  final bool use12HourClock;
   final Map<GlobalHotKeys, KeyCombination> _shortcuts;
   @override
   @JsonKey()
@@ -818,6 +840,8 @@ abstract mixin class _$ClientSettingsModelCopyWith<$Res>
       bool useSystemIME,
       String? lastViewedUpdate,
       int? libraryPageSize,
+      bool showClock,
+      bool use12HourClock,
       Map<GlobalHotKeys, KeyCombination> shortcuts});
 }
 
@@ -860,6 +884,8 @@ class __$ClientSettingsModelCopyWithImpl<$Res>
     Object? useSystemIME = null,
     Object? lastViewedUpdate = freezed,
     Object? libraryPageSize = freezed,
+    Object? showClock = null,
+    Object? use12HourClock = null,
     Object? shortcuts = null,
   }) {
     return _then(_ClientSettingsModel(
@@ -967,6 +993,15 @@ class __$ClientSettingsModelCopyWithImpl<$Res>
           ? _self.libraryPageSize
           : libraryPageSize // ignore: cast_nullable_to_non_nullable
               as int?,
+
+      showClock: null == showClock
+          ? _self.showClock
+          : showClock // ignore: cast_nullable_to_non_nullable
+              as bool,
+      use12HourClock: null == use12HourClock
+          ? _self.use12HourClock
+          : use12HourClock // ignore: cast_nullable_to_non_nullable
+              as bool,
       shortcuts: null == shortcuts
           ? _self._shortcuts
           : shortcuts // ignore: cast_nullable_to_non_nullable

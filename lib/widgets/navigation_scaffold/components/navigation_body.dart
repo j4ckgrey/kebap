@@ -143,7 +143,7 @@ class _NavigationBodyState extends ConsumerState<NavigationBody> {
                         const SizedBox(width: 48), // Spacer if nothing on left
 
                       // Right Button Slot (Back button for non-details pages)
-                      if (!isDetailsPage && showBackButton)
+                      if (!isDetailsPage && showBackButton && widget.currentIndex != 0)
                         Container(
                           decoration: BoxDecoration(
                             color: Theme.of(context).colorScheme.surface.withValues(alpha: 0.8),

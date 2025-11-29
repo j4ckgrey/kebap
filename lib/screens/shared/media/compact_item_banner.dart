@@ -40,11 +40,11 @@ class CompactItemBanner extends ConsumerWidget {
           // Backdrop image - full width
           ExcludeFocus(
             child: Align(
-              alignment: viewSize <= ViewSize.phone ? Alignment.center : Alignment.centerRight,
+              alignment: viewSize < ViewSize.desktop ? Alignment.center : Alignment.centerRight,
               child: FractionallySizedBox(
-                widthFactor: viewSize <= ViewSize.phone ? 1.0 : 0.8, // Full width on phone, 80% on desktop
+                widthFactor: viewSize < ViewSize.desktop ? 1.0 : 0.8, // Full width on phone/tablet, 80% on desktop
                 child: AspectRatio(
-                  aspectRatio: viewSize <= ViewSize.phone ? 0.7 : 0.75, // Taller aspect ratio
+                  aspectRatio: viewSize < ViewSize.desktop ? 0.7 : 0.75, // Taller aspect ratio
                   child: CustomShaderMask(
                     child: KebapImage(
                       image: item!.images?.backDrop?.firstOrNull ?? item!.images?.primary,
@@ -58,12 +58,12 @@ class CompactItemBanner extends ConsumerWidget {
           Padding(
             padding: EdgeInsets.symmetric(
               horizontal: 16,
-              vertical: viewSize <= ViewSize.phone ? 8 : 12,
+              vertical: viewSize < ViewSize.desktop ? 8 : 12,
             ),
             child: Align(
               alignment: Alignment.centerLeft,
               child: FractionallySizedBox(
-                widthFactor: viewSize <= ViewSize.phone ? 1.0 : 0.33,
+                widthFactor: viewSize < ViewSize.desktop ? 1.0 : 0.33,
                 child: Container(
                   height: double.infinity,
                   padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
@@ -87,40 +87,41 @@ class CompactItemBanner extends ConsumerWidget {
                           communityRating: item!.overview.communityRating,
                         ),
                       ),
-                      // Open button - keep focusable for mouse/touch but allow keyboard navigation past it
-                      Padding(
-                        padding: const EdgeInsets.only(top: 8, bottom: 4),
-                        child: FocusButton(
-                          onTap: () async {
-                            await item!.navigateTo(context, ref: ref);
-                          },
-                          child: Container(
-                            padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
-                            decoration: BoxDecoration(
-                              color: Theme.of(context).colorScheme.primary,
-                              borderRadius: BorderRadius.circular(8),
-                            ),
-                            child: Row(
-                              mainAxisSize: MainAxisSize.min,
-                              children: [
-                                Icon(
-                                  IconsaxPlusBold.play_circle,
-                                  color: Theme.of(context).colorScheme.onPrimary,
-                                  size: 16,
-                                ),
-                                const SizedBox(width: 6),
-                                Text(
-                                  'Open',
-                                  style: Theme.of(context).textTheme.titleSmall?.copyWith(
+                      // Open button - hide on TV, keep focusable for mouse/touch on other devices
+                      if (viewSize != ViewSize.television)
+                        Padding(
+                          padding: const EdgeInsets.only(top: 8, bottom: 4),
+                          child: FocusButton(
+                            onTap: () async {
+                              await item!.navigateTo(context, ref: ref);
+                            },
+                            child: Container(
+                              padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+                              decoration: BoxDecoration(
+                                color: Theme.of(context).colorScheme.primary,
+                                borderRadius: BorderRadius.circular(8),
+                              ),
+                              child: Row(
+                                mainAxisSize: MainAxisSize.min,
+                                children: [
+                                  Icon(
+                                    IconsaxPlusBold.play_circle,
                                     color: Theme.of(context).colorScheme.onPrimary,
-                                    fontWeight: FontWeight.bold,
+                                    size: 16,
                                   ),
-                                ),
-                              ],
+                                  const SizedBox(width: 6),
+                                  Text(
+                                    'Open',
+                                    style: Theme.of(context).textTheme.titleSmall?.copyWith(
+                                      color: Theme.of(context).colorScheme.onPrimary,
+                                      fontWeight: FontWeight.bold,
+                                    ),
+                                  ),
+                                ],
+                              ),
                             ),
                           ),
                         ),
-                      ),
                     ],
                   ),
                 ),

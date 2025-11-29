@@ -85,6 +85,8 @@ abstract class ClientSettingsModel with _$ClientSettingsModel {
     @Default(false) bool useSystemIME,
     String? lastViewedUpdate,
     int? libraryPageSize,
+    @Default(true) bool showClock,
+    @Default(false) bool use12HourClock,
     @Default({}) Map<GlobalHotKeys, KeyCombination> shortcuts,
   }) = _ClientSettingsModel;
 

@@ -52,7 +52,7 @@ abstract class LibraryFilterModel with _$LibraryFilterModel {
     @Default(false) bool? favourites,
     @Default(true) bool hideEmptyShows,
     @Default(true) bool? recursive,
-    @Default(GroupBy.none) GroupBy groupBy,
+    @Default(GroupBy.type) GroupBy groupBy,
   }) = _LibraryFilterModel;
 
   bool get hasActiveFilters {

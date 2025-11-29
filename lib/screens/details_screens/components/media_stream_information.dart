@@ -234,7 +234,7 @@ class _StreamOptionSelect<T> extends StatelessWidget {
               ? Container(
                   padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
                   decoration: BoxDecoration(
-                    color: Theme.of(context).colorScheme.surfaceContainerHighest.withValues(alpha: 0.5),
+                    color: Theme.of(context).colorScheme.surfaceContainerHighest,
                     borderRadius: BorderRadius.circular(8),
                   ),
                   child: Row(
@@ -328,7 +328,7 @@ class _StreamOptionSelect<T> extends StatelessWidget {
                         textAlign: TextAlign.start,
                         style: Theme.of(context).textTheme.bodySmall?.copyWith(
                           color: itemList.length > 1 
-                              ? Theme.of(context).colorScheme.onPrimaryContainer.withValues(alpha: 0.7)
+                              ? Theme.of(context).colorScheme.onPrimaryContainer
                               : Theme.of(context).colorScheme.onSurfaceVariant,
                         ),
                         maxLines: 1,

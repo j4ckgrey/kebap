@@ -3,14 +3,17 @@ import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 
-class ClockBadge extends StatefulWidget {
+import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:kebap/providers/settings/client_settings_provider.dart';
+
+class ClockBadge extends ConsumerStatefulWidget {
   const ClockBadge({super.key});
 
   @override
-  State<ClockBadge> createState() => _ClockBadgeState();
+  ConsumerState<ClockBadge> createState() => _ClockBadgeState();
 }
 
-class _ClockBadgeState extends State<ClockBadge> {
+class _ClockBadgeState extends ConsumerState<ClockBadge> {
   late final Timer _timer;
   late DateTime _currentTime;
 
@@ -34,14 +37,21 @@ class _ClockBadgeState extends State<ClockBadge> {
   }
 
   @override
+  @override
   Widget build(BuildContext context) {
+    final showClock = ref.watch(clientSettingsProvider.select((s) => s.showClock));
+    if (!showClock) return const SizedBox.shrink();
+
+    final use12HourClock = ref.watch(clientSettingsProvider.select((s) => s.use12HourClock));
     final theme = Theme.of(context);
-    final timeString = DateFormat.Hm().format(_currentTime);
+    final timeString = use12HourClock
+        ? DateFormat('hh:mm a').format(_currentTime)
+        : DateFormat.Hm().format(_currentTime);
 
     return Container(
       padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
       decoration: BoxDecoration(
-        color: theme.colorScheme.surfaceContainer.withValues(alpha: 0.8),
+        color: Colors.green,
         borderRadius: BorderRadius.circular(20),
         border: Border.all(
           color: theme.colorScheme.outline.withValues(alpha: 0.2),
@@ -50,9 +60,9 @@ class _ClockBadgeState extends State<ClockBadge> {
       ),
       child: Text(
         timeString,
-        style: theme.textTheme.labelMedium?.copyWith(
+        style: theme.textTheme.titleSmall?.copyWith(
           fontWeight: FontWeight.bold,
-          color: theme.colorScheme.onSurface,
+          color: Colors.black,
         ),
       ),
     );

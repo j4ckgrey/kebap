@@ -23,14 +23,8 @@ class ChipButton extends ConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     return Card(
-      color: backgroundColor ?? Theme.of(context).colorScheme.onSurface.withValues(alpha: 0.15),
+      color: backgroundColor ?? Theme.of(context).colorScheme.onSurface,
       shadowColor: Colors.transparent,
-      shape: borderColor != null 
-          ? RoundedRectangleBorder(
-              borderRadius: BorderRadius.circular(12),
-              side: BorderSide(color: borderColor!, width: 1.5),
-            )
-          : null,
       child: FlatButton(
         onTap: onPressed,
         child: Padding(
@@ -39,7 +33,7 @@ class ChipButton extends ConsumerWidget {
             label,
             style: Theme.of(context).textTheme.bodyMedium?.copyWith(
               fontWeight: FontWeight.w600,
-              color: foregroundColor,
+              color: foregroundColor ?? Colors.black,
             ),
           ),
         ),
