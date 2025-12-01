@@ -24,7 +24,8 @@
   - More platform builds coming soon
 - **Docker Support**
   - Multi-arch images (AMD64, ARM64, ARMv7) available
-  - Run with: `docker run -d -p 80:80 kebap:alpha` (after loading/pulling)
+  - **Docker Hub**: `docker pull YOUR_USERNAME/kebap:alpha`
+  - **GHCR**: `docker pull ghcr.io/YOUR_USERNAME/kebap:alpha`
 
 ---
 

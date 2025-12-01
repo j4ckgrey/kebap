@@ -107,18 +107,33 @@ echo "Loading images..."
 docker load -i kebap-docker-alpha-amd64.tar
 docker load -i kebap-docker-alpha-arm64.tar
 docker load -i kebap-docker-alpha-armv7.tar
-echo "Pushing images..."
+
+echo "Pushing images to Docker Hub..."
 for ARCH in amd64 arm64 armv7; do
   docker tag kebap:alpha-$ARCH $USERNAME/kebap:$VERSION-$ARCH
   docker push $USERNAME/kebap:$VERSION-$ARCH
 done
-echo "Creating Manifest..."
+echo "Creating Docker Hub Manifest..."
 docker manifest create $USERNAME/kebap:$VERSION \
     $USERNAME/kebap:$VERSION-amd64 \
     $USERNAME/kebap:$VERSION-arm64 \
     $USERNAME/kebap:$VERSION-armv7
 docker manifest push $USERNAME/kebap:$VERSION
-echo "Done! Published $USERNAME/kebap:$VERSION"
+
+echo "Pushing images to GHCR..."
+GHCR_IMAGE="ghcr.io/$USERNAME/kebap"
+for ARCH in amd64 arm64 armv7; do
+  docker tag kebap:alpha-$ARCH $GHCR_IMAGE:$VERSION-$ARCH
+  docker push $GHCR_IMAGE:$VERSION-$ARCH
+done
+echo "Creating GHCR Manifest..."
+docker manifest create $GHCR_IMAGE:$VERSION \
+    $GHCR_IMAGE:$VERSION-amd64 \
+    $GHCR_IMAGE:$VERSION-arm64 \
+    $GHCR_IMAGE:$VERSION-armv7
+docker manifest push $GHCR_IMAGE:$VERSION
+
+echo "Done! Published to Docker Hub and GHCR."
 EOL
 chmod +x builds/publish_docker.sh
 
@@ -186,16 +201,9 @@ Choose the file matching your architecture:
    docker run -d -p 80:80 kebap:alpha-amd64
    ```
 
-**Option 2: Publish to Registry (Easy)**
-1. Run the included script to publish all architectures to Docker Hub:
-   ```bash
-   ./publish_docker.sh
-   ```
-   (Enter your Docker Hub username when prompted)
-2. Users can then pull the multi-arch image:
-   ```bash
-   docker pull YOUR_USERNAME/kebap:alpha
-   ```
+**Option 2: Pull from Registry**
+- **Docker Hub**: `docker pull YOUR_USERNAME/kebap:alpha`
+- **GHCR**: `docker pull ghcr.io/YOUR_USERNAME/kebap:alpha`
 
 ### Linux (ARM/32-bit)
 **Note**: The provided Linux installer (`.deb`) is for **x86_64 (AMD64)** only.
@@ -209,6 +217,33 @@ git commit -m "Release Alpha 0.8.0-alpha+1" || echo "Nothing to commit"
 git tag -f v0.8.0-alpha+1
 git push origin HEAD
 git push -f origin v0.8.0-alpha+1
+
+# 8. Web Repo Push
+echo "🌐 Pushing Web Build to kebap-web..."
+cd builds/web
+git init
+git add .
+git commit -m "Release Alpha 0.8.0-alpha+1"
+git remote add origin git@github.com:j4ckgrey/kebap-web.git
+git push -f origin master
+cd ../..
+
+# 9. GitHub Release Upload (if gh installed)
+if command -v gh &> /dev/null; then
+    echo "🚀 Creating GitHub Release and Uploading Artifacts..."
+    gh release create v0.8.0-alpha+1 \
+        --title "Kebap Alpha 0.8.0-alpha+1" \
+        --notes "Alpha release with Web, Linux, and Docker support." \
+        builds/kebap-linux-alpha.zip \
+        builds/kebap_0.8.0-alpha_amd64.deb \
+        builds/kebap-web-alpha.zip \
+        builds/kebap-docker-alpha-amd64.tar \
+        builds/kebap-docker-alpha-arm64.tar \
+        builds/kebap-docker-alpha-armv7.tar
+else
+    echo "⚠️ 'gh' CLI not found. Please upload artifacts manually:"
+    echo "gh release create v0.8.0-alpha+1 builds/*"
+fi
 
 echo "✅ Release Process Complete!"
 echo "Artifacts are in 'builds/'."
