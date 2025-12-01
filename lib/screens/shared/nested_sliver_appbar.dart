@@ -44,10 +44,7 @@ class NestedSliverAppBar extends ConsumerWidget {
               child: Row(
                 crossAxisAlignment: CrossAxisAlignment.stretch,
                 spacing: 12,
-                children: [
-                  const Spacer(),
-                  const SettingsUserIcon()
-                ],
+                children: [],
               ),
             ),
           ),

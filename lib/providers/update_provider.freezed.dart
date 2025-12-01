@@ -16,6 +16,14 @@ T _$identity<T>(T value) => value;
 mixin _$UpdatesModel implements DiagnosticableTreeMixin {
   List<ReleaseInfo> get lastRelease;
 
+  /// Create a copy of UpdatesModel
+  /// with the given fields replaced by the non-null parameter values.
+  @JsonKey(includeFromJson: false, includeToJson: false)
+  @pragma('vm:prefer-inline')
+  $UpdatesModelCopyWith<UpdatesModel> get copyWith =>
+      _$UpdatesModelCopyWithImpl<UpdatesModel>(
+          this as UpdatesModel, _$identity);
+
   @override
   void debugFillProperties(DiagnosticPropertiesBuilder properties) {
     properties
@@ -24,8 +32,53 @@ mixin _$UpdatesModel implements DiagnosticableTreeMixin {
   }
 
   @override
+  bool operator ==(Object other) {
+    return identical(this, other) ||
+        (other.runtimeType == runtimeType &&
+            other is UpdatesModel &&
+            const DeepCollectionEquality()
+                .equals(other.lastRelease, lastRelease));
+  }
+
+  @override
+  int get hashCode => Object.hash(
+      runtimeType, const DeepCollectionEquality().hash(lastRelease));
+
+  @override
   String toString({DiagnosticLevel minLevel = DiagnosticLevel.info}) {
     return 'UpdatesModel(lastRelease: $lastRelease)';
+  }
+}
+
+/// @nodoc
+abstract mixin class $UpdatesModelCopyWith<$Res> {
+  factory $UpdatesModelCopyWith(
+          UpdatesModel value, $Res Function(UpdatesModel) _then) =
+      _$UpdatesModelCopyWithImpl;
+  @useResult
+  $Res call({List<ReleaseInfo> lastRelease});
+}
+
+/// @nodoc
+class _$UpdatesModelCopyWithImpl<$Res> implements $UpdatesModelCopyWith<$Res> {
+  _$UpdatesModelCopyWithImpl(this._self, this._then);
+
+  final UpdatesModel _self;
+  final $Res Function(UpdatesModel) _then;
+
+  /// Create a copy of UpdatesModel
+  /// with the given fields replaced by the non-null parameter values.
+  @pragma('vm:prefer-inline')
+  @override
+  $Res call({
+    Object? lastRelease = null,
+  }) {
+    return _then(_self.copyWith(
+      lastRelease: null == lastRelease
+          ? _self.lastRelease
+          : lastRelease // ignore: cast_nullable_to_non_nullable
+              as List<ReleaseInfo>,
+    ));
   }
 }
 
@@ -202,6 +255,14 @@ class _UpdatesModel extends UpdatesModel with DiagnosticableTreeMixin {
     return EqualUnmodifiableListView(_lastRelease);
   }
 
+  /// Create a copy of UpdatesModel
+  /// with the given fields replaced by the non-null parameter values.
+  @override
+  @JsonKey(includeFromJson: false, includeToJson: false)
+  @pragma('vm:prefer-inline')
+  _$UpdatesModelCopyWith<_UpdatesModel> get copyWith =>
+      __$UpdatesModelCopyWithImpl<_UpdatesModel>(this, _$identity);
+
   @override
   void debugFillProperties(DiagnosticPropertiesBuilder properties) {
     properties
@@ -210,8 +271,56 @@ class _UpdatesModel extends UpdatesModel with DiagnosticableTreeMixin {
   }
 
   @override
+  bool operator ==(Object other) {
+    return identical(this, other) ||
+        (other.runtimeType == runtimeType &&
+            other is _UpdatesModel &&
+            const DeepCollectionEquality()
+                .equals(other._lastRelease, _lastRelease));
+  }
+
+  @override
+  int get hashCode => Object.hash(
+      runtimeType, const DeepCollectionEquality().hash(_lastRelease));
+
+  @override
   String toString({DiagnosticLevel minLevel = DiagnosticLevel.info}) {
     return 'UpdatesModel(lastRelease: $lastRelease)';
+  }
+}
+
+/// @nodoc
+abstract mixin class _$UpdatesModelCopyWith<$Res>
+    implements $UpdatesModelCopyWith<$Res> {
+  factory _$UpdatesModelCopyWith(
+          _UpdatesModel value, $Res Function(_UpdatesModel) _then) =
+      __$UpdatesModelCopyWithImpl;
+  @override
+  @useResult
+  $Res call({List<ReleaseInfo> lastRelease});
+}
+
+/// @nodoc
+class __$UpdatesModelCopyWithImpl<$Res>
+    implements _$UpdatesModelCopyWith<$Res> {
+  __$UpdatesModelCopyWithImpl(this._self, this._then);
+
+  final _UpdatesModel _self;
+  final $Res Function(_UpdatesModel) _then;
+
+  /// Create a copy of UpdatesModel
+  /// with the given fields replaced by the non-null parameter values.
+  @override
+  @pragma('vm:prefer-inline')
+  $Res call({
+    Object? lastRelease = null,
+  }) {
+    return _then(_UpdatesModel(
+      lastRelease: null == lastRelease
+          ? _self._lastRelease
+          : lastRelease // ignore: cast_nullable_to_non_nullable
+              as List<ReleaseInfo>,
+    ));
   }
 }
 

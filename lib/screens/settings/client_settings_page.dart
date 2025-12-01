@@ -22,6 +22,7 @@ import 'package:kebap/screens/settings/settings_list_tile.dart';
 import 'package:kebap/screens/settings/settings_scaffold.dart';
 import 'package:kebap/screens/settings/widgets/settings_label_divider.dart';
 import 'package:kebap/screens/settings/widgets/settings_list_group.dart';
+import 'package:kebap/screens/shared/adaptive_text_field.dart';
 import 'package:kebap/util/adaptive_layout/adaptive_layout.dart';
 import 'package:kebap/util/localization_helper.dart';
 import 'package:kebap/util/simple_duration_picker.dart';
@@ -107,8 +108,10 @@ class _ClientSettingsPageState extends ConsumerState<ClientSettingsPage> {
           [
             SettingsListTile(
               label: const Text('TMDB API Key (Fallback)'),
-              subLabel: TextField(
+              subLabel: AdaptiveTextField(
                 controller: tmdbApiKeyController,
+                useFocusWrapper: true,
+                placeHolder: 'Used for metadata when Baklava plugin is unavailable',
                 decoration: const InputDecoration(
                   hintText: 'Used for metadata when Baklava plugin is unavailable',
                   border: InputBorder.none,

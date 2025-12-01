@@ -23,6 +23,7 @@ mixin _$SyncedItem {
   String? get sortName;
   int? get fileSize;
   String? get videoFileName;
+  String? get mediaSourceId; // Selected version/media source ID
   MediaSegmentsModel? get mediaSegments;
   TrickPlayModel? get fTrickPlayModel;
   ImagesData? get fImages;
@@ -42,8 +43,66 @@ mixin _$SyncedItem {
       _$SyncedItemCopyWithImpl<SyncedItem>(this as SyncedItem, _$identity);
 
   @override
+  bool operator ==(Object other) {
+    return identical(this, other) ||
+        (other.runtimeType == runtimeType &&
+            other is SyncedItem &&
+            (identical(other.id, id) || other.id == id) &&
+            (identical(other.syncing, syncing) || other.syncing == syncing) &&
+            (identical(other.parentId, parentId) ||
+                other.parentId == parentId) &&
+            (identical(other.userId, userId) || other.userId == userId) &&
+            (identical(other.path, path) || other.path == path) &&
+            (identical(other.markedForDelete, markedForDelete) ||
+                other.markedForDelete == markedForDelete) &&
+            (identical(other.sortName, sortName) ||
+                other.sortName == sortName) &&
+            (identical(other.fileSize, fileSize) ||
+                other.fileSize == fileSize) &&
+            (identical(other.videoFileName, videoFileName) ||
+                other.videoFileName == videoFileName) &&
+            (identical(other.mediaSourceId, mediaSourceId) ||
+                other.mediaSourceId == mediaSourceId) &&
+            (identical(other.mediaSegments, mediaSegments) ||
+                other.mediaSegments == mediaSegments) &&
+            (identical(other.fTrickPlayModel, fTrickPlayModel) ||
+                other.fTrickPlayModel == fTrickPlayModel) &&
+            (identical(other.fImages, fImages) || other.fImages == fImages) &&
+            const DeepCollectionEquality().equals(other.fChapters, fChapters) &&
+            const DeepCollectionEquality().equals(other.subtitles, subtitles) &&
+            (identical(other.unSyncedData, unSyncedData) ||
+                other.unSyncedData == unSyncedData) &&
+            (identical(other.userData, userData) ||
+                other.userData == userData) &&
+            (identical(other.itemModel, itemModel) ||
+                other.itemModel == itemModel));
+  }
+
+  @override
+  int get hashCode => Object.hash(
+      runtimeType,
+      id,
+      syncing,
+      parentId,
+      userId,
+      path,
+      markedForDelete,
+      sortName,
+      fileSize,
+      videoFileName,
+      mediaSourceId,
+      mediaSegments,
+      fTrickPlayModel,
+      fImages,
+      const DeepCollectionEquality().hash(fChapters),
+      const DeepCollectionEquality().hash(subtitles),
+      unSyncedData,
+      userData,
+      itemModel);
+
+  @override
   String toString() {
-    return 'SyncedItem(id: $id, syncing: $syncing, parentId: $parentId, userId: $userId, path: $path, markedForDelete: $markedForDelete, sortName: $sortName, fileSize: $fileSize, videoFileName: $videoFileName, mediaSegments: $mediaSegments, fTrickPlayModel: $fTrickPlayModel, fImages: $fImages, fChapters: $fChapters, subtitles: $subtitles, unSyncedData: $unSyncedData, userData: $userData, itemModel: $itemModel)';
+    return 'SyncedItem(id: $id, syncing: $syncing, parentId: $parentId, userId: $userId, path: $path, markedForDelete: $markedForDelete, sortName: $sortName, fileSize: $fileSize, videoFileName: $videoFileName, mediaSourceId: $mediaSourceId, mediaSegments: $mediaSegments, fTrickPlayModel: $fTrickPlayModel, fImages: $fImages, fChapters: $fChapters, subtitles: $subtitles, unSyncedData: $unSyncedData, userData: $userData, itemModel: $itemModel)';
   }
 }
 
@@ -63,6 +122,7 @@ abstract mixin class $SyncedItemCopyWith<$Res> {
       String? sortName,
       int? fileSize,
       String? videoFileName,
+      String? mediaSourceId,
       MediaSegmentsModel? mediaSegments,
       TrickPlayModel? fTrickPlayModel,
       ImagesData? fImages,
@@ -73,6 +133,7 @@ abstract mixin class $SyncedItemCopyWith<$Res> {
       @JsonKey(includeFromJson: false, includeToJson: false)
       ItemBaseModel? itemModel});
 
+  $MediaSegmentsModelCopyWith<$Res>? get mediaSegments;
   $TrickPlayModelCopyWith<$Res>? get fTrickPlayModel;
 }
 
@@ -97,6 +158,7 @@ class _$SyncedItemCopyWithImpl<$Res> implements $SyncedItemCopyWith<$Res> {
     Object? sortName = freezed,
     Object? fileSize = freezed,
     Object? videoFileName = freezed,
+    Object? mediaSourceId = freezed,
     Object? mediaSegments = freezed,
     Object? fTrickPlayModel = freezed,
     Object? fImages = freezed,
@@ -143,6 +205,10 @@ class _$SyncedItemCopyWithImpl<$Res> implements $SyncedItemCopyWith<$Res> {
           ? _self.videoFileName
           : videoFileName // ignore: cast_nullable_to_non_nullable
               as String?,
+      mediaSourceId: freezed == mediaSourceId
+          ? _self.mediaSourceId
+          : mediaSourceId // ignore: cast_nullable_to_non_nullable
+              as String?,
       mediaSegments: freezed == mediaSegments
           ? _self.mediaSegments
           : mediaSegments // ignore: cast_nullable_to_non_nullable
@@ -176,6 +242,20 @@ class _$SyncedItemCopyWithImpl<$Res> implements $SyncedItemCopyWith<$Res> {
           : itemModel // ignore: cast_nullable_to_non_nullable
               as ItemBaseModel?,
     ));
+  }
+
+  /// Create a copy of SyncedItem
+  /// with the given fields replaced by the non-null parameter values.
+  @override
+  @pragma('vm:prefer-inline')
+  $MediaSegmentsModelCopyWith<$Res>? get mediaSegments {
+    if (_self.mediaSegments == null) {
+      return null;
+    }
+
+    return $MediaSegmentsModelCopyWith<$Res>(_self.mediaSegments!, (value) {
+      return _then(_self.copyWith(mediaSegments: value));
+    });
   }
 
   /// Create a copy of SyncedItem
@@ -296,6 +376,7 @@ extension SyncedItemPatterns on SyncedItem {
             String? sortName,
             int? fileSize,
             String? videoFileName,
+            String? mediaSourceId,
             MediaSegmentsModel? mediaSegments,
             TrickPlayModel? fTrickPlayModel,
             ImagesData? fImages,
@@ -321,6 +402,7 @@ extension SyncedItemPatterns on SyncedItem {
             _that.sortName,
             _that.fileSize,
             _that.videoFileName,
+            _that.mediaSourceId,
             _that.mediaSegments,
             _that.fTrickPlayModel,
             _that.fImages,
@@ -359,6 +441,7 @@ extension SyncedItemPatterns on SyncedItem {
             String? sortName,
             int? fileSize,
             String? videoFileName,
+            String? mediaSourceId,
             MediaSegmentsModel? mediaSegments,
             TrickPlayModel? fTrickPlayModel,
             ImagesData? fImages,
@@ -383,6 +466,7 @@ extension SyncedItemPatterns on SyncedItem {
             _that.sortName,
             _that.fileSize,
             _that.videoFileName,
+            _that.mediaSourceId,
             _that.mediaSegments,
             _that.fTrickPlayModel,
             _that.fImages,
@@ -420,6 +504,7 @@ extension SyncedItemPatterns on SyncedItem {
             String? sortName,
             int? fileSize,
             String? videoFileName,
+            String? mediaSourceId,
             MediaSegmentsModel? mediaSegments,
             TrickPlayModel? fTrickPlayModel,
             ImagesData? fImages,
@@ -444,6 +529,7 @@ extension SyncedItemPatterns on SyncedItem {
             _that.sortName,
             _that.fileSize,
             _that.videoFileName,
+            _that.mediaSourceId,
             _that.mediaSegments,
             _that.fTrickPlayModel,
             _that.fImages,
@@ -471,6 +557,7 @@ class _SyncItem extends SyncedItem {
       this.sortName,
       this.fileSize,
       this.videoFileName,
+      this.mediaSourceId,
       this.mediaSegments,
       this.fTrickPlayModel,
       this.fImages,
@@ -503,6 +590,9 @@ class _SyncItem extends SyncedItem {
   final int? fileSize;
   @override
   final String? videoFileName;
+  @override
+  final String? mediaSourceId;
+// Selected version/media source ID
   @override
   final MediaSegmentsModel? mediaSegments;
   @override
@@ -547,8 +637,68 @@ class _SyncItem extends SyncedItem {
       __$SyncItemCopyWithImpl<_SyncItem>(this, _$identity);
 
   @override
+  bool operator ==(Object other) {
+    return identical(this, other) ||
+        (other.runtimeType == runtimeType &&
+            other is _SyncItem &&
+            (identical(other.id, id) || other.id == id) &&
+            (identical(other.syncing, syncing) || other.syncing == syncing) &&
+            (identical(other.parentId, parentId) ||
+                other.parentId == parentId) &&
+            (identical(other.userId, userId) || other.userId == userId) &&
+            (identical(other.path, path) || other.path == path) &&
+            (identical(other.markedForDelete, markedForDelete) ||
+                other.markedForDelete == markedForDelete) &&
+            (identical(other.sortName, sortName) ||
+                other.sortName == sortName) &&
+            (identical(other.fileSize, fileSize) ||
+                other.fileSize == fileSize) &&
+            (identical(other.videoFileName, videoFileName) ||
+                other.videoFileName == videoFileName) &&
+            (identical(other.mediaSourceId, mediaSourceId) ||
+                other.mediaSourceId == mediaSourceId) &&
+            (identical(other.mediaSegments, mediaSegments) ||
+                other.mediaSegments == mediaSegments) &&
+            (identical(other.fTrickPlayModel, fTrickPlayModel) ||
+                other.fTrickPlayModel == fTrickPlayModel) &&
+            (identical(other.fImages, fImages) || other.fImages == fImages) &&
+            const DeepCollectionEquality()
+                .equals(other._fChapters, _fChapters) &&
+            const DeepCollectionEquality()
+                .equals(other._subtitles, _subtitles) &&
+            (identical(other.unSyncedData, unSyncedData) ||
+                other.unSyncedData == unSyncedData) &&
+            (identical(other.userData, userData) ||
+                other.userData == userData) &&
+            (identical(other.itemModel, itemModel) ||
+                other.itemModel == itemModel));
+  }
+
+  @override
+  int get hashCode => Object.hash(
+      runtimeType,
+      id,
+      syncing,
+      parentId,
+      userId,
+      path,
+      markedForDelete,
+      sortName,
+      fileSize,
+      videoFileName,
+      mediaSourceId,
+      mediaSegments,
+      fTrickPlayModel,
+      fImages,
+      const DeepCollectionEquality().hash(_fChapters),
+      const DeepCollectionEquality().hash(_subtitles),
+      unSyncedData,
+      userData,
+      itemModel);
+
+  @override
   String toString() {
-    return 'SyncedItem(id: $id, syncing: $syncing, parentId: $parentId, userId: $userId, path: $path, markedForDelete: $markedForDelete, sortName: $sortName, fileSize: $fileSize, videoFileName: $videoFileName, mediaSegments: $mediaSegments, fTrickPlayModel: $fTrickPlayModel, fImages: $fImages, fChapters: $fChapters, subtitles: $subtitles, unSyncedData: $unSyncedData, userData: $userData, itemModel: $itemModel)';
+    return 'SyncedItem(id: $id, syncing: $syncing, parentId: $parentId, userId: $userId, path: $path, markedForDelete: $markedForDelete, sortName: $sortName, fileSize: $fileSize, videoFileName: $videoFileName, mediaSourceId: $mediaSourceId, mediaSegments: $mediaSegments, fTrickPlayModel: $fTrickPlayModel, fImages: $fImages, fChapters: $fChapters, subtitles: $subtitles, unSyncedData: $unSyncedData, userData: $userData, itemModel: $itemModel)';
   }
 }
 
@@ -569,6 +719,7 @@ abstract mixin class _$SyncItemCopyWith<$Res>
       String? sortName,
       int? fileSize,
       String? videoFileName,
+      String? mediaSourceId,
       MediaSegmentsModel? mediaSegments,
       TrickPlayModel? fTrickPlayModel,
       ImagesData? fImages,
@@ -579,6 +730,8 @@ abstract mixin class _$SyncItemCopyWith<$Res>
       @JsonKey(includeFromJson: false, includeToJson: false)
       ItemBaseModel? itemModel});
 
+  @override
+  $MediaSegmentsModelCopyWith<$Res>? get mediaSegments;
   @override
   $TrickPlayModelCopyWith<$Res>? get fTrickPlayModel;
 }
@@ -604,6 +757,7 @@ class __$SyncItemCopyWithImpl<$Res> implements _$SyncItemCopyWith<$Res> {
     Object? sortName = freezed,
     Object? fileSize = freezed,
     Object? videoFileName = freezed,
+    Object? mediaSourceId = freezed,
     Object? mediaSegments = freezed,
     Object? fTrickPlayModel = freezed,
     Object? fImages = freezed,
@@ -650,6 +804,10 @@ class __$SyncItemCopyWithImpl<$Res> implements _$SyncItemCopyWith<$Res> {
           ? _self.videoFileName
           : videoFileName // ignore: cast_nullable_to_non_nullable
               as String?,
+      mediaSourceId: freezed == mediaSourceId
+          ? _self.mediaSourceId
+          : mediaSourceId // ignore: cast_nullable_to_non_nullable
+              as String?,
       mediaSegments: freezed == mediaSegments
           ? _self.mediaSegments
           : mediaSegments // ignore: cast_nullable_to_non_nullable
@@ -683,6 +841,20 @@ class __$SyncItemCopyWithImpl<$Res> implements _$SyncItemCopyWith<$Res> {
           : itemModel // ignore: cast_nullable_to_non_nullable
               as ItemBaseModel?,
     ));
+  }
+
+  /// Create a copy of SyncedItem
+  /// with the given fields replaced by the non-null parameter values.
+  @override
+  @pragma('vm:prefer-inline')
+  $MediaSegmentsModelCopyWith<$Res>? get mediaSegments {
+    if (_self.mediaSegments == null) {
+      return null;
+    }
+
+    return $MediaSegmentsModelCopyWith<$Res>(_self.mediaSegments!, (value) {
+      return _then(_self.copyWith(mediaSegments: value));
+    });
   }
 
   /// Create a copy of SyncedItem

@@ -25,6 +25,18 @@ mixin _$SyncSettingsModel {
           this as SyncSettingsModel, _$identity);
 
   @override
+  bool operator ==(Object other) {
+    return identical(this, other) ||
+        (other.runtimeType == runtimeType &&
+            other is SyncSettingsModel &&
+            const DeepCollectionEquality().equals(other.items, items));
+  }
+
+  @override
+  int get hashCode =>
+      Object.hash(runtimeType, const DeepCollectionEquality().hash(items));
+
+  @override
   String toString() {
     return 'SyncSettingsModel(items: $items)';
   }
@@ -243,6 +255,18 @@ class _SyncSettignsModel extends SyncSettingsModel {
   @pragma('vm:prefer-inline')
   _$SyncSettignsModelCopyWith<_SyncSettignsModel> get copyWith =>
       __$SyncSettignsModelCopyWithImpl<_SyncSettignsModel>(this, _$identity);
+
+  @override
+  bool operator ==(Object other) {
+    return identical(this, other) ||
+        (other.runtimeType == runtimeType &&
+            other is _SyncSettignsModel &&
+            const DeepCollectionEquality().equals(other._items, _items));
+  }
+
+  @override
+  int get hashCode =>
+      Object.hash(runtimeType, const DeepCollectionEquality().hash(_items));
 
   @override
   String toString() {

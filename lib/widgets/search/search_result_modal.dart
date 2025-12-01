@@ -7,6 +7,8 @@ import 'package:iconsax_plus/iconsax_plus.dart';
 import 'package:flutter/services.dart';
 
 import 'package:kebap/models/item_base_model.dart';
+import 'package:kebap/jellyfin/jellyfin_open_api.swagger.dart';
+import 'package:kebap/providers/api_provider.dart';
 import 'package:kebap/models/tmdb_metadata_model.dart';
 import 'package:kebap/providers/baklava_metadata_provider.dart';
 import 'package:kebap/providers/baklava_requests_provider.dart';
@@ -63,17 +65,23 @@ class _SearchResultModalState extends ConsumerState<SearchResultModal> {
     );
 
     if (metadata != null) {
+      var effectiveTmdbId = tmdbId ?? metadata.id.toString();
+      var effectiveImdbId = imdbId ?? metadata.imdbId;
+
       // Fetch external IDs if needed
-      if (imdbId == null && tmdbId != null) {
-        await metadataNotifier.fetchExternalIds(
-          tmdbId,
+      if (effectiveImdbId == null && effectiveTmdbId != null) {
+        final externalIds = await metadataNotifier.fetchExternalIds(
+          effectiveTmdbId,
           itemType == 'series' ? 'tv' : 'movie',
         );
         // Update IMDB ID if found
+        if (externalIds?.imdbId != null) {
+          effectiveImdbId = externalIds!.imdbId;
+        }
       }
 
-      // Check library status
-      await metadataNotifier.checkLibraryStatus(imdbId, tmdbId, itemType);
+      // Check library status (includes request status check)
+      await metadataNotifier.checkLibraryStatus(effectiveImdbId, effectiveTmdbId, itemType);
     }
   }
 
@@ -114,32 +122,101 @@ class _SearchResultModalState extends ConsumerState<SearchResultModal> {
     return 'movie';
   }
 
-  Future<void> _handleImport() async {
-    setState(() => _importing = true);
-
+  Future<bool> _performImport() async {
     final metadataState = ref.read(baklavaMetadataProvider);
     final imdbId = metadataState.metadata?.imdbId ?? _extractIMDBId(widget.item);
+    final tmdbId = metadataState.metadata?.id.toString() ?? _extractTMDBId(widget.item);
 
-    if (imdbId == null) {
+    if (imdbId == null && tmdbId == null) {
       if (mounted) {
         kebapSnackbar(context, title: 'Cannot import: No IMDB ID found');
       }
-      setState(() => _importing = false);
-      return;
+      return false;
     }
 
     final itemType = _detectItemType(widget.item);
-    final success = await ref.read(baklavaMetadataProvider.notifier).importToLibrary(imdbId, itemType);
+    
+    try {
+      // 1. Search for the item by title to trigger Stremio search and caching
+      final api = ref.read(jellyApiProvider).api;
+      final user = ref.read(userProvider);
+      final userId = user?.id;
+      if (userId == null) throw Exception('User not found');
 
-    setState(() => _importing = false);
+      final searchResults = await api.usersUserIdItemsGet(
+        userId: userId,
+        searchTerm: widget.item.name,
+        includeItemTypes: [
+          BaseItemKind.values.firstWhere(
+            (e) => e.value?.toLowerCase() == itemType.toLowerCase(),
+            orElse: () => BaseItemKind.movie,
+          )
+        ],
+        recursive: true,
+        limit: 20,
+        fields: [ItemFields.providerids],
+      );
 
-    if (mounted) {
-      if (success) {
-        kebapSnackbar(context, title: 'Import started successfully');
-        Navigator.of(context).pop();
-      } else {
-        kebapSnackbar(context, title: 'Import failed');
+      if (!mounted) return false;
+
+      // 2. Find the matching item in the search results
+      String? stremioItemId;
+      if (searchResults.body != null) {
+        for (final item in searchResults.body!.items ?? []) {
+          final providers = item.providerIds;
+          if (providers == null) continue;
+
+          if (imdbId != null && providers['Imdb'] == imdbId) {
+            stremioItemId = item.id;
+            break;
+          }
+          if (tmdbId != null && providers['Tmdb'] == tmdbId) {
+            stremioItemId = item.id;
+            break;
+          }
+        }
       }
+
+      if (stremioItemId != null) {
+          // 3. Trigger import via API
+          try {
+            await api.itemsItemIdGet(
+              userId: userId,
+              itemId: stremioItemId,
+            );
+            
+            if (mounted) {
+              // Refresh library status
+              ref.read(baklavaMetadataProvider.notifier).setLibraryStatus(stremioItemId);
+              return true;
+            }
+          } catch (e) {
+            print('DEBUG: Background import failed: $e');
+          }
+      } else {
+        // Fallback: Poll
+        String? newItemId;
+        for (var i = 0; i < 5; i++) {
+          await Future.delayed(const Duration(seconds: 1));
+          if (!mounted) return false;
+          
+          newItemId = await ref.read(baklavaMetadataProvider.notifier).checkLibraryStatus(imdbId, tmdbId, itemType);
+          if (newItemId != null) return true;
+        }
+      }
+    } catch (e) {
+      print('DEBUG: Search-based import failed: $e');
+    }
+    
+    return false;
+  }
+
+  Future<void> _handleImport() async {
+    setState(() => _importing = true);
+    try {
+      await _performImport();
+    } finally {
+      if (mounted) setState(() => _importing = false);
     }
   }
 
@@ -184,6 +261,8 @@ class _SearchResultModalState extends ConsumerState<SearchResultModal> {
       data: (cfg) => cfg.disableNonAdminRequests == true,
       orElse: () => false,
     );
+
+    print('DEBUG: SearchResultModal build - inLibrary: ${metadataState.inLibrary}, existingRequestId: ${metadataState.existingRequestId}, isAdmin: $isAdmin');
 
     return CallbackShortcuts(
       bindings: {
@@ -366,10 +445,25 @@ class _SearchResultModalState extends ConsumerState<SearchResultModal> {
                   FilledButton.icon(
                     onPressed: () {
                       Navigator.of(context).pop();
-                      // Navigate to item details
+                      if (metadataState.jellyfinItemId != null) {
+                        final item = widget.item.copyWith(id: metadataState.jellyfinItemId);
+                        item.navigateTo(context, ref: ref);
+                      } else {
+                        widget.item.navigateTo(context, ref: ref);
+                      }
                     },
                     icon: const Icon(IconsaxPlusLinear.play),
                     label: const Text('Open'),
+                  )
+                else if (metadataState.existingRequestId != null)
+                  FilledButton.icon(
+                    onPressed: null, // TODO: Open request details
+                    icon: const Icon(IconsaxPlusLinear.clock),
+                    label: const Text('Requested'),
+                    style: FilledButton.styleFrom(
+                      backgroundColor: theme.colorScheme.tertiaryContainer,
+                      foregroundColor: theme.colorScheme.onTertiaryContainer,
+                    ),
                   )
                 else if (isAdmin)
                   FilledButton.icon(
@@ -387,6 +481,101 @@ class _SearchResultModalState extends ConsumerState<SearchResultModal> {
                   Builder(builder: (context) {
                     final isConfigLoading = effectiveConfigAsync is AsyncLoading;
                     final isAdminUser = isAdmin;
+
+                    // If request exists and user is admin, show Approve/Reject
+                    if (metadataState.existingRequestId != null && isAdminUser) {
+                      return Row(
+                        mainAxisSize: MainAxisSize.min,
+                        children: [
+                          OutlinedButton.icon(
+                            onPressed: _requesting ? null : () async {
+                              setState(() => _requesting = true);
+                              try {
+                                await ref.read(baklavaRequestsProvider.notifier).rejectRequest(metadataState.existingRequestId!);
+                                if (context.mounted) {
+                                  kebapSnackbar(context, title: 'Request rejected');
+                                  Navigator.of(context).pop();
+                                }
+                              } catch (e) {
+                                if (context.mounted) {
+                                  kebapSnackbar(context, title: 'Failed to reject request');
+                                }
+                              } finally {
+                                if (mounted) setState(() => _requesting = false);
+                              }
+                            },
+                            icon: _requesting
+                                ? const SizedBox(
+                                    width: 16,
+                                    height: 16,
+                                    child: CircularProgressIndicator(strokeWidth: 2),
+                                  )
+                                : const Icon(IconsaxPlusLinear.close_circle),
+                            label: const Text('Reject'),
+                            style: OutlinedButton.styleFrom(
+                              foregroundColor: theme.colorScheme.error,
+                            ),
+                          ),
+                          const SizedBox(width: 8),
+                          FilledButton.icon(
+                            onPressed: _importing ? null : () async {
+                              setState(() => _importing = true);
+                              try {
+                                // 1. Trigger Import using robust method
+                                final success = await _performImport();
+                                
+                                if (success) {
+                                  // 2. Approve Request
+                                  final user = ref.read(userProvider);
+                                  await ref.read(baklavaRequestsProvider.notifier).approveRequest(
+                                    metadataState.existingRequestId!,
+                                    user?.name ?? 'admin',
+                                  );
+
+                                  if (context.mounted) {
+                                    kebapSnackbar(context, title: 'Request approved');
+                                  }
+                                } else {
+                                  if (context.mounted) {
+                                    kebapSnackbar(context, title: 'Import failed, request not approved');
+                                  }
+                                }
+                              } catch (e) {
+                                if (context.mounted) {
+                                  kebapSnackbar(context, title: 'Failed to approve request');
+                                }
+                              } finally {
+                                if (mounted) setState(() => _importing = false);
+                              }
+                            },
+                            icon: _importing
+                                ? const SizedBox(
+                                    width: 16,
+                                    height: 16,
+                                    child: CircularProgressIndicator(strokeWidth: 2),
+                                  )
+                                : const Icon(IconsaxPlusLinear.tick_circle),
+                            label: const Text('Approve'),
+                          ),
+                        ],
+                      );
+                    }
+
+
+                    // If no request exists but user is admin, show Import
+                    if (isAdminUser) {
+                      return FilledButton.icon(
+                        onPressed: _importing ? null : _handleImport,
+                        icon: _importing
+                            ? const SizedBox(
+                                width: 16,
+                                height: 16,
+                                child: CircularProgressIndicator(strokeWidth: 2),
+                              )
+                            : const Icon(IconsaxPlusLinear.import),
+                        label: Text(_importing ? 'Importing...' : 'Import'),
+                      );
+                    }
 
                     final allowRequest = !disableNonAdminRequests || isAdminUser;
 
@@ -446,20 +635,63 @@ class _SearchResultModalState extends ConsumerState<SearchResultModal> {
                           crossAxisAlignment: CrossAxisAlignment.stretch,
                           children: [
                             // Top: Poster
-                            Container(
-                              height: 200,
-                              decoration: BoxDecoration(
-                                borderRadius: const BorderRadius.vertical(top: Radius.circular(12)),
-                                image: DecorationImage(
-                                  image: CachedNetworkImageProvider(
-                                    metadata?.posterPath != null
-                                        ? 'https://image.tmdb.org/t/p/w500${metadata!.posterPath}'
-                                        : widget.item.images?.primary?.path ?? '',
+                            Stack(
+                              children: [
+                                Container(
+                                  height: 200,
+                                  decoration: BoxDecoration(
+                                    borderRadius: const BorderRadius.vertical(top: Radius.circular(12)),
+                                    image: DecorationImage(
+                                      image: CachedNetworkImageProvider(
+                                        metadata?.posterPath != null
+                                            ? 'https://image.tmdb.org/t/p/w500${metadata!.posterPath}'
+                                            : widget.item.images?.primary?.path ?? '',
+                                      ),
+                                      fit: BoxFit.cover,
+                                      alignment: Alignment.topCenter,
+                                    ),
                                   ),
-                                  fit: BoxFit.cover,
-                                  alignment: Alignment.topCenter,
                                 ),
-                              ),
+                                if (metadataState.existingRequestId != null) ...[
+                                  Positioned(
+                                    top: 8,
+                                    left: 8,
+                                    child: Container(
+                                      padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+                                      decoration: BoxDecoration(
+                                        color: Colors.black.withOpacity(0.7),
+                                        borderRadius: BorderRadius.circular(4),
+                                      ),
+                                      child: Text(
+                                        metadataState.requestUsername ?? 'Unknown',
+                                        style: theme.textTheme.bodySmall?.copyWith(color: Colors.white),
+                                      ),
+                                    ),
+                                  ),
+                                  Positioned(
+                                    top: 8,
+                                    right: 8,
+                                    child: Container(
+                                      padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+                                      decoration: BoxDecoration(
+                                        color: metadataState.requestStatus?.toLowerCase() == 'approved'
+                                            ? Colors.green.withOpacity(0.8)
+                                            : metadataState.requestStatus?.toLowerCase() == 'rejected'
+                                                ? Colors.red.withOpacity(0.8)
+                                                : Colors.orange.withOpacity(0.8),
+                                        borderRadius: BorderRadius.circular(4),
+                                      ),
+                                      child: Text(
+                                        metadataState.requestStatus ?? 'Pending',
+                                        style: theme.textTheme.bodySmall?.copyWith(
+                                          color: Colors.white,
+                                          fontWeight: FontWeight.bold,
+                                        ),
+                                      ),
+                                    ),
+                                  ),
+                                ],
+                              ],
                             ),
                             Padding(
                               padding: const EdgeInsets.all(16),
@@ -474,17 +706,60 @@ class _SearchResultModalState extends ConsumerState<SearchResultModal> {
                           // Left: Poster - show item poster immediately, fallback to TMDB
                           Expanded(
                             flex: 1,
-                            child: Container(
-                              decoration: BoxDecoration(
-                                image: DecorationImage(
-                                  image: CachedNetworkImageProvider(
-                                    metadata?.posterPath != null
-                                        ? 'https://image.tmdb.org/t/p/w500${metadata!.posterPath}'
-                                        : widget.item.images?.primary?.path ?? '',
+                            child: Stack(
+                              children: [
+                                Container(
+                                  decoration: BoxDecoration(
+                                    image: DecorationImage(
+                                      image: CachedNetworkImageProvider(
+                                        metadata?.posterPath != null
+                                            ? 'https://image.tmdb.org/t/p/w500${metadata!.posterPath}'
+                                            : widget.item.images?.primary?.path ?? '',
+                                      ),
+                                      fit: BoxFit.cover,
+                                    ),
                                   ),
-                                  fit: BoxFit.cover,
                                 ),
-                              ),
+                                if (metadataState.existingRequestId != null) ...[
+                                  Positioned(
+                                    top: 8,
+                                    left: 8,
+                                    child: Container(
+                                      padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+                                      decoration: BoxDecoration(
+                                        color: Colors.black.withOpacity(0.7),
+                                        borderRadius: BorderRadius.circular(4),
+                                      ),
+                                      child: Text(
+                                        metadataState.requestUsername ?? 'Unknown',
+                                        style: theme.textTheme.bodySmall?.copyWith(color: Colors.white),
+                                      ),
+                                    ),
+                                  ),
+                                  Positioned(
+                                    top: 8,
+                                    right: 8,
+                                    child: Container(
+                                      padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+                                      decoration: BoxDecoration(
+                                        color: metadataState.requestStatus?.toLowerCase() == 'approved'
+                                            ? Colors.green.withOpacity(0.8)
+                                            : metadataState.requestStatus?.toLowerCase() == 'rejected'
+                                                ? Colors.red.withOpacity(0.8)
+                                                : Colors.orange.withOpacity(0.8),
+                                        borderRadius: BorderRadius.circular(4),
+                                      ),
+                                      child: Text(
+                                        metadataState.requestStatus ?? 'Pending',
+                                        style: theme.textTheme.bodySmall?.copyWith(
+                                          color: Colors.white,
+                                          fontWeight: FontWeight.bold,
+                                        ),
+                                      ),
+                                    ),
+                                  ),
+                                ],
+                              ],
                             ),
                           ),
 

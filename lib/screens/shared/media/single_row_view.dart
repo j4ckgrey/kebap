@@ -30,11 +30,15 @@ class SingleRowView extends ConsumerStatefulWidget {
 
 class _SingleRowViewState extends ConsumerState<SingleRowView> {
   final ScrollController _scrollController = ScrollController();
+  bool _hasAutoFocused = false;
 
   @override
   void initState() {
     super.initState();
     _initializeFocus();
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      _hasAutoFocused = true;
+    });
   }
 
   @override
@@ -100,9 +104,13 @@ class _SingleRowViewState extends ConsumerState<SingleRowView> {
       children: [
         SizedBox(
           height: scaledBannerHeight,
-            child: CompactItemBanner(
-            item: ref.watch(focusedItemProvider),
-            maxHeight: scaledBannerHeight,
+          child: Consumer(
+            builder: (context, ref, child) {
+              return CompactItemBanner(
+                item: ref.watch(focusedItemProvider),
+                maxHeight: scaledBannerHeight,
+              );
+            },
           ),
         ),
         // Scrollable rows
@@ -114,7 +122,7 @@ class _SingleRowViewState extends ConsumerState<SingleRowView> {
             padding: EdgeInsets.only(bottom: extraBottomPadding),
             itemCount: widget.rows.length,
             // We compute itemExtent per-row inside itemBuilder; fallback to default estimated size
-            itemExtent: scaledCardHeight + titleHeight + 16,
+            // itemExtent: scaledCardHeight + titleHeight + 16,
                 itemBuilder: (context, index) {
               final row = widget.rows[index];
               final isFirstRow = index == 0;
@@ -127,7 +135,7 @@ class _SingleRowViewState extends ConsumerState<SingleRowView> {
                     scale;
 
                   return FocusProvider(
-                autoFocus: isFirstRow,
+                autoFocus: isFirstRow && !_hasAutoFocused,
                 child: SizedBox(
                   height: cardHeight + titleHeight + 16, // Height matches PosterRow defaults + title
                   child: Column(

@@ -33,6 +33,28 @@ mixin _$CredentialsModel {
   Map<String, dynamic> toJson();
 
   @override
+  bool operator ==(Object other) {
+    return identical(this, other) ||
+        (other.runtimeType == runtimeType &&
+            other is CredentialsModel &&
+            (identical(other.token, token) || other.token == token) &&
+            (identical(other.url, url) || other.url == url) &&
+            (identical(other.localUrl, localUrl) ||
+                other.localUrl == localUrl) &&
+            (identical(other.serverName, serverName) ||
+                other.serverName == serverName) &&
+            (identical(other.serverId, serverId) ||
+                other.serverId == serverId) &&
+            (identical(other.deviceId, deviceId) ||
+                other.deviceId == deviceId));
+  }
+
+  @JsonKey(includeFromJson: false, includeToJson: false)
+  @override
+  int get hashCode => Object.hash(
+      runtimeType, token, url, localUrl, serverName, serverId, deviceId);
+
+  @override
   String toString() {
     return 'CredentialsModel(token: $token, url: $url, localUrl: $localUrl, serverName: $serverName, serverId: $serverId, deviceId: $deviceId)';
   }
@@ -314,6 +336,28 @@ class _CredentialsModel extends CredentialsModel {
       this,
     );
   }
+
+  @override
+  bool operator ==(Object other) {
+    return identical(this, other) ||
+        (other.runtimeType == runtimeType &&
+            other is _CredentialsModel &&
+            (identical(other.token, token) || other.token == token) &&
+            (identical(other.url, url) || other.url == url) &&
+            (identical(other.localUrl, localUrl) ||
+                other.localUrl == localUrl) &&
+            (identical(other.serverName, serverName) ||
+                other.serverName == serverName) &&
+            (identical(other.serverId, serverId) ||
+                other.serverId == serverId) &&
+            (identical(other.deviceId, deviceId) ||
+                other.deviceId == deviceId));
+  }
+
+  @JsonKey(includeFromJson: false, includeToJson: false)
+  @override
+  int get hashCode => Object.hash(
+      runtimeType, token, url, localUrl, serverName, serverId, deviceId);
 
   @override
   String toString() {

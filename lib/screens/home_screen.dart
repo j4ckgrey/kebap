@@ -135,7 +135,7 @@ class HomeScreen extends ConsumerWidget {
                         final isAdmin = user.policy?.isAdministrator ?? false;
                         final filtered = state.filterByUser(user.name, isAdmin: isAdmin);
 
-                        return filtered.where((r) => r.status == 'pending').length;
+                        return filtered.where((r) => r.status == (isAdmin ? 'pending' : 'approved')).length;
                       }),
                     );
                     return pendingCount != 0

@@ -8,6 +8,7 @@ import 'package:kebap/providers/settings/kebap_settings_provider.dart';
 import 'package:kebap/screens/settings/settings_list_tile.dart';
 import 'package:kebap/screens/settings/settings_scaffold.dart';
 import 'package:kebap/screens/settings/widgets/settings_label_divider.dart';
+import 'package:kebap/screens/shared/adaptive_text_field.dart';
 
 @RoutePage()
 class KebapSettingsPage extends ConsumerStatefulWidget {
@@ -144,10 +145,11 @@ class _KebapSettingsPageState extends ConsumerState<KebapSettingsPage> {
             children: [
               SettingsListTile(
                 label: const Text('TMDB API Key (Fallback)'),
-                subLabel: TextField(
+                subLabel: AdaptiveTextField(
                   controller: tmdbController,
+                  useFocusWrapper: true,
+                  placeHolder: 'Enter your TMDB API key for metadata when Baklava is disabled',
                   decoration: const InputDecoration(
-                    hintText: 'Enter your TMDB API key for metadata when Baklava is disabled',
                     border: InputBorder.none,
                   ),
                   onChanged: (v) => ref.read(kebapSettingsProvider.notifier).setTmdbApiKey(v),

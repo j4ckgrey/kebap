@@ -16,12 +16,66 @@ T _$identity<T>(T value) => value;
 mixin _$MediaSegmentsModel {
   List<MediaSegment> get segments;
 
+  /// Create a copy of MediaSegmentsModel
+  /// with the given fields replaced by the non-null parameter values.
+  @JsonKey(includeFromJson: false, includeToJson: false)
+  @pragma('vm:prefer-inline')
+  $MediaSegmentsModelCopyWith<MediaSegmentsModel> get copyWith =>
+      _$MediaSegmentsModelCopyWithImpl<MediaSegmentsModel>(
+          this as MediaSegmentsModel, _$identity);
+
   /// Serializes this MediaSegmentsModel to a JSON map.
   Map<String, dynamic> toJson();
 
   @override
+  bool operator ==(Object other) {
+    return identical(this, other) ||
+        (other.runtimeType == runtimeType &&
+            other is MediaSegmentsModel &&
+            const DeepCollectionEquality().equals(other.segments, segments));
+  }
+
+  @JsonKey(includeFromJson: false, includeToJson: false)
+  @override
+  int get hashCode =>
+      Object.hash(runtimeType, const DeepCollectionEquality().hash(segments));
+
+  @override
   String toString() {
     return 'MediaSegmentsModel(segments: $segments)';
+  }
+}
+
+/// @nodoc
+abstract mixin class $MediaSegmentsModelCopyWith<$Res> {
+  factory $MediaSegmentsModelCopyWith(
+          MediaSegmentsModel value, $Res Function(MediaSegmentsModel) _then) =
+      _$MediaSegmentsModelCopyWithImpl;
+  @useResult
+  $Res call({List<MediaSegment> segments});
+}
+
+/// @nodoc
+class _$MediaSegmentsModelCopyWithImpl<$Res>
+    implements $MediaSegmentsModelCopyWith<$Res> {
+  _$MediaSegmentsModelCopyWithImpl(this._self, this._then);
+
+  final MediaSegmentsModel _self;
+  final $Res Function(MediaSegmentsModel) _then;
+
+  /// Create a copy of MediaSegmentsModel
+  /// with the given fields replaced by the non-null parameter values.
+  @pragma('vm:prefer-inline')
+  @override
+  $Res call({
+    Object? segments = null,
+  }) {
+    return _then(_self.copyWith(
+      segments: null == segments
+          ? _self.segments
+          : segments // ignore: cast_nullable_to_non_nullable
+              as List<MediaSegment>,
+    ));
   }
 }
 
@@ -200,6 +254,14 @@ class _MediaSegmentsModel extends MediaSegmentsModel {
     return EqualUnmodifiableListView(_segments);
   }
 
+  /// Create a copy of MediaSegmentsModel
+  /// with the given fields replaced by the non-null parameter values.
+  @override
+  @JsonKey(includeFromJson: false, includeToJson: false)
+  @pragma('vm:prefer-inline')
+  _$MediaSegmentsModelCopyWith<_MediaSegmentsModel> get copyWith =>
+      __$MediaSegmentsModelCopyWithImpl<_MediaSegmentsModel>(this, _$identity);
+
   @override
   Map<String, dynamic> toJson() {
     return _$MediaSegmentsModelToJson(
@@ -208,8 +270,56 @@ class _MediaSegmentsModel extends MediaSegmentsModel {
   }
 
   @override
+  bool operator ==(Object other) {
+    return identical(this, other) ||
+        (other.runtimeType == runtimeType &&
+            other is _MediaSegmentsModel &&
+            const DeepCollectionEquality().equals(other._segments, _segments));
+  }
+
+  @JsonKey(includeFromJson: false, includeToJson: false)
+  @override
+  int get hashCode =>
+      Object.hash(runtimeType, const DeepCollectionEquality().hash(_segments));
+
+  @override
   String toString() {
     return 'MediaSegmentsModel(segments: $segments)';
+  }
+}
+
+/// @nodoc
+abstract mixin class _$MediaSegmentsModelCopyWith<$Res>
+    implements $MediaSegmentsModelCopyWith<$Res> {
+  factory _$MediaSegmentsModelCopyWith(
+          _MediaSegmentsModel value, $Res Function(_MediaSegmentsModel) _then) =
+      __$MediaSegmentsModelCopyWithImpl;
+  @override
+  @useResult
+  $Res call({List<MediaSegment> segments});
+}
+
+/// @nodoc
+class __$MediaSegmentsModelCopyWithImpl<$Res>
+    implements _$MediaSegmentsModelCopyWith<$Res> {
+  __$MediaSegmentsModelCopyWithImpl(this._self, this._then);
+
+  final _MediaSegmentsModel _self;
+  final $Res Function(_MediaSegmentsModel) _then;
+
+  /// Create a copy of MediaSegmentsModel
+  /// with the given fields replaced by the non-null parameter values.
+  @override
+  @pragma('vm:prefer-inline')
+  $Res call({
+    Object? segments = null,
+  }) {
+    return _then(_MediaSegmentsModel(
+      segments: null == segments
+          ? _self._segments
+          : segments // ignore: cast_nullable_to_non_nullable
+              as List<MediaSegment>,
+    ));
   }
 }
 
@@ -219,12 +329,76 @@ mixin _$MediaSegment {
   Duration get start;
   Duration get end;
 
+  /// Create a copy of MediaSegment
+  /// with the given fields replaced by the non-null parameter values.
+  @JsonKey(includeFromJson: false, includeToJson: false)
+  @pragma('vm:prefer-inline')
+  $MediaSegmentCopyWith<MediaSegment> get copyWith =>
+      _$MediaSegmentCopyWithImpl<MediaSegment>(
+          this as MediaSegment, _$identity);
+
   /// Serializes this MediaSegment to a JSON map.
   Map<String, dynamic> toJson();
 
   @override
+  bool operator ==(Object other) {
+    return identical(this, other) ||
+        (other.runtimeType == runtimeType &&
+            other is MediaSegment &&
+            (identical(other.type, type) || other.type == type) &&
+            (identical(other.start, start) || other.start == start) &&
+            (identical(other.end, end) || other.end == end));
+  }
+
+  @JsonKey(includeFromJson: false, includeToJson: false)
+  @override
+  int get hashCode => Object.hash(runtimeType, type, start, end);
+
+  @override
   String toString() {
     return 'MediaSegment(type: $type, start: $start, end: $end)';
+  }
+}
+
+/// @nodoc
+abstract mixin class $MediaSegmentCopyWith<$Res> {
+  factory $MediaSegmentCopyWith(
+          MediaSegment value, $Res Function(MediaSegment) _then) =
+      _$MediaSegmentCopyWithImpl;
+  @useResult
+  $Res call({MediaSegmentType type, Duration start, Duration end});
+}
+
+/// @nodoc
+class _$MediaSegmentCopyWithImpl<$Res> implements $MediaSegmentCopyWith<$Res> {
+  _$MediaSegmentCopyWithImpl(this._self, this._then);
+
+  final MediaSegment _self;
+  final $Res Function(MediaSegment) _then;
+
+  /// Create a copy of MediaSegment
+  /// with the given fields replaced by the non-null parameter values.
+  @pragma('vm:prefer-inline')
+  @override
+  $Res call({
+    Object? type = null,
+    Object? start = null,
+    Object? end = null,
+  }) {
+    return _then(_self.copyWith(
+      type: null == type
+          ? _self.type
+          : type // ignore: cast_nullable_to_non_nullable
+              as MediaSegmentType,
+      start: null == start
+          ? _self.start
+          : start // ignore: cast_nullable_to_non_nullable
+              as Duration,
+      end: null == end
+          ? _self.end
+          : end // ignore: cast_nullable_to_non_nullable
+              as Duration,
+    ));
   }
 }
 
@@ -403,6 +577,14 @@ class _MediaSegment extends MediaSegment {
   @override
   final Duration end;
 
+  /// Create a copy of MediaSegment
+  /// with the given fields replaced by the non-null parameter values.
+  @override
+  @JsonKey(includeFromJson: false, includeToJson: false)
+  @pragma('vm:prefer-inline')
+  _$MediaSegmentCopyWith<_MediaSegment> get copyWith =>
+      __$MediaSegmentCopyWithImpl<_MediaSegment>(this, _$identity);
+
   @override
   Map<String, dynamic> toJson() {
     return _$MediaSegmentToJson(
@@ -411,8 +593,67 @@ class _MediaSegment extends MediaSegment {
   }
 
   @override
+  bool operator ==(Object other) {
+    return identical(this, other) ||
+        (other.runtimeType == runtimeType &&
+            other is _MediaSegment &&
+            (identical(other.type, type) || other.type == type) &&
+            (identical(other.start, start) || other.start == start) &&
+            (identical(other.end, end) || other.end == end));
+  }
+
+  @JsonKey(includeFromJson: false, includeToJson: false)
+  @override
+  int get hashCode => Object.hash(runtimeType, type, start, end);
+
+  @override
   String toString() {
     return 'MediaSegment(type: $type, start: $start, end: $end)';
+  }
+}
+
+/// @nodoc
+abstract mixin class _$MediaSegmentCopyWith<$Res>
+    implements $MediaSegmentCopyWith<$Res> {
+  factory _$MediaSegmentCopyWith(
+          _MediaSegment value, $Res Function(_MediaSegment) _then) =
+      __$MediaSegmentCopyWithImpl;
+  @override
+  @useResult
+  $Res call({MediaSegmentType type, Duration start, Duration end});
+}
+
+/// @nodoc
+class __$MediaSegmentCopyWithImpl<$Res>
+    implements _$MediaSegmentCopyWith<$Res> {
+  __$MediaSegmentCopyWithImpl(this._self, this._then);
+
+  final _MediaSegment _self;
+  final $Res Function(_MediaSegment) _then;
+
+  /// Create a copy of MediaSegment
+  /// with the given fields replaced by the non-null parameter values.
+  @override
+  @pragma('vm:prefer-inline')
+  $Res call({
+    Object? type = null,
+    Object? start = null,
+    Object? end = null,
+  }) {
+    return _then(_MediaSegment(
+      type: null == type
+          ? _self.type
+          : type // ignore: cast_nullable_to_non_nullable
+              as MediaSegmentType,
+      start: null == start
+          ? _self.start
+          : start // ignore: cast_nullable_to_non_nullable
+              as Duration,
+      end: null == end
+          ? _self.end
+          : end // ignore: cast_nullable_to_non_nullable
+              as Duration,
+    ));
   }
 }
 

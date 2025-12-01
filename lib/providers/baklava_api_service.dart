@@ -303,8 +303,49 @@ class BaklavaService {
     }
   }
 
+
+  /// Check library status via Baklava
+  Future<Response<Map<String, dynamic>>> checkLibraryStatus({
+    String? imdbId,
+    String? tmdbId,
+    required String itemType,
+    String? jellyfinId,
+  }) async {
+    try {
+      final api = ref.read(jellyApiProvider).api;
+      final serverUrl = ref.read(serverUrlProvider);
+
+      if (serverUrl == null || serverUrl.isEmpty) {
+        throw Exception('Server URL not available');
+      }
+
+      final params = <String, String>{};
+      if (imdbId != null) params['imdbId'] = imdbId;
+      if (tmdbId != null) params['tmdbId'] = tmdbId;
+      params['itemType'] = itemType;
+      if (jellyfinId != null) params['jellyfinId'] = jellyfinId;
+
+      final queryString = params.entries.map((e) => '${e.key}=${Uri.encodeComponent(e.value)}').join('&');
+      final cleanServerUrl = serverUrl.endsWith('/') 
+          ? serverUrl.substring(0, serverUrl.length - 1) 
+          : serverUrl;
+      final url = '$cleanServerUrl/api/baklava/metadata/library-status?$queryString';
+
+      final request = Request('GET', Uri.parse(url), Uri.parse(serverUrl));
+      final response = await api.client.send(request);
+
+      if (response.isSuccessful && response.body != null) {
+        return Response(response.base, response.body as Map<String, dynamic>);
+      }
+
+      throw Exception('Failed to check library status: ${response.statusCode}');
+    } catch (e) {
+      throw Exception('Failed to check library status: $e');
+    }
+  }
+
   /// Import item to library via Gelato
-  Future<Response<void>> importToLibrary(String imdbId, String itemType) async {
+  Future<Response<String>> importToLibrary(String imdbId, String itemType) async {
     try {
       final api = ref.read(jellyApiProvider).api;
       final serverUrl = ref.read(serverUrlProvider);
@@ -314,17 +355,25 @@ class BaklavaService {
       }
 
       final isSeries = itemType.toLowerCase().contains('series') || itemType.toLowerCase() == 'tv';
-      final endpoint = isSeries ? '/api/gelato/tv/$imdbId' : '/api/gelato/movie/$imdbId';
-      final url = '$serverUrl$endpoint';
+      // Use the direct Gelato endpoint as seen in RequestsController.cs and GelatoApiController.cs
+      // Note: GelatoApiController defines [HttpGet("meta/{stremioMetaType}/{Id}")]
+      // and RequestsController uses /gelato/meta/{type}/{id}
+      final endpoint = isSeries ? '/gelato/meta/tv/$imdbId' : '/gelato/meta/movie/$imdbId';
+      
+      final cleanServerUrl = serverUrl.endsWith('/') 
+          ? serverUrl.substring(0, serverUrl.length - 1) 
+          : serverUrl;
+      final url = '$cleanServerUrl$endpoint';
 
-      final request = Request('POST', Uri.parse(url), Uri.parse(serverUrl));
+      // Use GET as per GelatoApiController definition
+      final request = Request('GET', Uri.parse(url), Uri.parse(serverUrl));
       final response = await api.client.send(request);
 
       if (!response.isSuccessful) {
         throw Exception('Failed to import: ${response.statusCode}');
       }
 
-      return Response(response.base, null);
+      return Response(response.base, response.bodyString);
     } catch (e) {
       throw Exception('Failed to import: $e');
     }

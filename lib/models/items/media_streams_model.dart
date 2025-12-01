@@ -112,6 +112,7 @@ class MediaStreamsModel {
                 final streams = element.mediaStreams ?? [];
                 return VersionStreamModel(
                     name: element.name ?? "",
+                    size: element.size,
                     index: index,
                     id: element.id,
                     defaultAudioStreamIndex: element.defaultAudioStreamIndex,
@@ -210,6 +211,7 @@ class AudioAndSubStreamModel extends StreamModel {
 
 class VersionStreamModel {
   final String name;
+  final int? size;
   final int index;
   final String? id;
   final int? defaultAudioStreamIndex;
@@ -220,6 +222,7 @@ class VersionStreamModel {
 
   VersionStreamModel({
     required this.name,
+    this.size,
     required this.index,
     this.id,
     required this.defaultAudioStreamIndex,

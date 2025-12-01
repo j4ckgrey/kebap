@@ -53,8 +53,6 @@ class UserDataMapper extends ClassMapperBase<UserData> {
     #lastPlayed: _f$lastPlayed,
     #played: _f$played,
   };
-  @override
-  final bool ignoreNull = true;
 
   static UserData _instantiate(DecodingData data) {
     return UserData(

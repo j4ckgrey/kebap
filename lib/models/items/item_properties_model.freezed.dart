@@ -17,9 +17,69 @@ mixin _$ItemPropertiesModel {
   bool get canDelete;
   bool get canDownload;
 
+  /// Create a copy of ItemPropertiesModel
+  /// with the given fields replaced by the non-null parameter values.
+  @JsonKey(includeFromJson: false, includeToJson: false)
+  @pragma('vm:prefer-inline')
+  $ItemPropertiesModelCopyWith<ItemPropertiesModel> get copyWith =>
+      _$ItemPropertiesModelCopyWithImpl<ItemPropertiesModel>(
+          this as ItemPropertiesModel, _$identity);
+
+  @override
+  bool operator ==(Object other) {
+    return identical(this, other) ||
+        (other.runtimeType == runtimeType &&
+            other is ItemPropertiesModel &&
+            (identical(other.canDelete, canDelete) ||
+                other.canDelete == canDelete) &&
+            (identical(other.canDownload, canDownload) ||
+                other.canDownload == canDownload));
+  }
+
+  @override
+  int get hashCode => Object.hash(runtimeType, canDelete, canDownload);
+
   @override
   String toString() {
     return 'ItemPropertiesModel(canDelete: $canDelete, canDownload: $canDownload)';
+  }
+}
+
+/// @nodoc
+abstract mixin class $ItemPropertiesModelCopyWith<$Res> {
+  factory $ItemPropertiesModelCopyWith(
+          ItemPropertiesModel value, $Res Function(ItemPropertiesModel) _then) =
+      _$ItemPropertiesModelCopyWithImpl;
+  @useResult
+  $Res call({bool canDelete, bool canDownload});
+}
+
+/// @nodoc
+class _$ItemPropertiesModelCopyWithImpl<$Res>
+    implements $ItemPropertiesModelCopyWith<$Res> {
+  _$ItemPropertiesModelCopyWithImpl(this._self, this._then);
+
+  final ItemPropertiesModel _self;
+  final $Res Function(ItemPropertiesModel) _then;
+
+  /// Create a copy of ItemPropertiesModel
+  /// with the given fields replaced by the non-null parameter values.
+  @pragma('vm:prefer-inline')
+  @override
+  $Res call({
+    Object? canDelete = null,
+    Object? canDownload = null,
+  }) {
+    return _then(_self.copyWith(
+      canDelete: null == canDelete
+          ? _self.canDelete
+          : canDelete // ignore: cast_nullable_to_non_nullable
+              as bool,
+      canDownload: null == canDownload
+          ? _self.canDownload
+          : canDownload // ignore: cast_nullable_to_non_nullable
+              as bool,
+    ));
   }
 }
 
@@ -191,9 +251,72 @@ class _ItemPropertiesModel extends ItemPropertiesModel {
   @override
   final bool canDownload;
 
+  /// Create a copy of ItemPropertiesModel
+  /// with the given fields replaced by the non-null parameter values.
+  @override
+  @JsonKey(includeFromJson: false, includeToJson: false)
+  @pragma('vm:prefer-inline')
+  _$ItemPropertiesModelCopyWith<_ItemPropertiesModel> get copyWith =>
+      __$ItemPropertiesModelCopyWithImpl<_ItemPropertiesModel>(
+          this, _$identity);
+
+  @override
+  bool operator ==(Object other) {
+    return identical(this, other) ||
+        (other.runtimeType == runtimeType &&
+            other is _ItemPropertiesModel &&
+            (identical(other.canDelete, canDelete) ||
+                other.canDelete == canDelete) &&
+            (identical(other.canDownload, canDownload) ||
+                other.canDownload == canDownload));
+  }
+
+  @override
+  int get hashCode => Object.hash(runtimeType, canDelete, canDownload);
+
   @override
   String toString() {
     return 'ItemPropertiesModel._internal(canDelete: $canDelete, canDownload: $canDownload)';
+  }
+}
+
+/// @nodoc
+abstract mixin class _$ItemPropertiesModelCopyWith<$Res>
+    implements $ItemPropertiesModelCopyWith<$Res> {
+  factory _$ItemPropertiesModelCopyWith(_ItemPropertiesModel value,
+          $Res Function(_ItemPropertiesModel) _then) =
+      __$ItemPropertiesModelCopyWithImpl;
+  @override
+  @useResult
+  $Res call({bool canDelete, bool canDownload});
+}
+
+/// @nodoc
+class __$ItemPropertiesModelCopyWithImpl<$Res>
+    implements _$ItemPropertiesModelCopyWith<$Res> {
+  __$ItemPropertiesModelCopyWithImpl(this._self, this._then);
+
+  final _ItemPropertiesModel _self;
+  final $Res Function(_ItemPropertiesModel) _then;
+
+  /// Create a copy of ItemPropertiesModel
+  /// with the given fields replaced by the non-null parameter values.
+  @override
+  @pragma('vm:prefer-inline')
+  $Res call({
+    Object? canDelete = null,
+    Object? canDownload = null,
+  }) {
+    return _then(_ItemPropertiesModel(
+      canDelete: null == canDelete
+          ? _self.canDelete
+          : canDelete // ignore: cast_nullable_to_non_nullable
+              as bool,
+      canDownload: null == canDownload
+          ? _self.canDownload
+          : canDownload // ignore: cast_nullable_to_non_nullable
+              as bool,
+    ));
   }
 }
 

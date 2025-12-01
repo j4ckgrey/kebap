@@ -36,6 +36,46 @@ mixin _$BaklavaConfig {
   Map<String, dynamic> toJson();
 
   @override
+  bool operator ==(Object other) {
+    return identical(this, other) ||
+        (other.runtimeType == runtimeType &&
+            other is BaklavaConfig &&
+            (identical(other.defaultTmdbId, defaultTmdbId) ||
+                other.defaultTmdbId == defaultTmdbId) &&
+            (identical(
+                    other.disableNonAdminRequests, disableNonAdminRequests) ||
+                other.disableNonAdminRequests == disableNonAdminRequests) &&
+            (identical(other.showReviewsCarousel, showReviewsCarousel) ||
+                other.showReviewsCarousel == showReviewsCarousel) &&
+            (identical(other.tmdbApiKey, tmdbApiKey) ||
+                other.tmdbApiKey == tmdbApiKey) &&
+            (identical(other.enableSearchFilter, enableSearchFilter) ||
+                other.enableSearchFilter == enableSearchFilter) &&
+            (identical(
+                    other.forceTVClientLocalSearch, forceTVClientLocalSearch) ||
+                other.forceTVClientLocalSearch == forceTVClientLocalSearch) &&
+            (identical(other.versionUi, versionUi) ||
+                other.versionUi == versionUi) &&
+            (identical(other.audioUi, audioUi) || other.audioUi == audioUi) &&
+            (identical(other.subtitleUi, subtitleUi) ||
+                other.subtitleUi == subtitleUi));
+  }
+
+  @JsonKey(includeFromJson: false, includeToJson: false)
+  @override
+  int get hashCode => Object.hash(
+      runtimeType,
+      defaultTmdbId,
+      disableNonAdminRequests,
+      showReviewsCarousel,
+      tmdbApiKey,
+      enableSearchFilter,
+      forceTVClientLocalSearch,
+      versionUi,
+      audioUi,
+      subtitleUi);
+
+  @override
   String toString() {
     return 'BaklavaConfig(defaultTmdbId: $defaultTmdbId, disableNonAdminRequests: $disableNonAdminRequests, showReviewsCarousel: $showReviewsCarousel, tmdbApiKey: $tmdbApiKey, enableSearchFilter: $enableSearchFilter, forceTVClientLocalSearch: $forceTVClientLocalSearch, versionUi: $versionUi, audioUi: $audioUi, subtitleUi: $subtitleUi)';
   }
@@ -389,6 +429,46 @@ class _BaklavaConfig implements BaklavaConfig {
       this,
     );
   }
+
+  @override
+  bool operator ==(Object other) {
+    return identical(this, other) ||
+        (other.runtimeType == runtimeType &&
+            other is _BaklavaConfig &&
+            (identical(other.defaultTmdbId, defaultTmdbId) ||
+                other.defaultTmdbId == defaultTmdbId) &&
+            (identical(
+                    other.disableNonAdminRequests, disableNonAdminRequests) ||
+                other.disableNonAdminRequests == disableNonAdminRequests) &&
+            (identical(other.showReviewsCarousel, showReviewsCarousel) ||
+                other.showReviewsCarousel == showReviewsCarousel) &&
+            (identical(other.tmdbApiKey, tmdbApiKey) ||
+                other.tmdbApiKey == tmdbApiKey) &&
+            (identical(other.enableSearchFilter, enableSearchFilter) ||
+                other.enableSearchFilter == enableSearchFilter) &&
+            (identical(
+                    other.forceTVClientLocalSearch, forceTVClientLocalSearch) ||
+                other.forceTVClientLocalSearch == forceTVClientLocalSearch) &&
+            (identical(other.versionUi, versionUi) ||
+                other.versionUi == versionUi) &&
+            (identical(other.audioUi, audioUi) || other.audioUi == audioUi) &&
+            (identical(other.subtitleUi, subtitleUi) ||
+                other.subtitleUi == subtitleUi));
+  }
+
+  @JsonKey(includeFromJson: false, includeToJson: false)
+  @override
+  int get hashCode => Object.hash(
+      runtimeType,
+      defaultTmdbId,
+      disableNonAdminRequests,
+      showReviewsCarousel,
+      tmdbApiKey,
+      enableSearchFilter,
+      forceTVClientLocalSearch,
+      versionUi,
+      audioUi,
+      subtitleUi);
 
   @override
   String toString() {

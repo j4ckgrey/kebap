@@ -6,14 +6,14 @@
 
 part of 'photos_model.dart';
 
-class PhotoAlbumModelMapper extends SubClassMapperBase<PhotoAlbumModel> {
+class PhotoAlbumModelMapper extends ClassMapperBase<PhotoAlbumModel> {
   PhotoAlbumModelMapper._();
 
   static PhotoAlbumModelMapper? _instance;
   static PhotoAlbumModelMapper ensureInitialized() {
     if (_instance == null) {
       MapperContainer.globals.use(_instance = PhotoAlbumModelMapper._());
-      ItemBaseModelMapper.ensureInitialized().addSubMapper(_instance!);
+      ItemBaseModelMapper.ensureInitialized();
       ItemBaseModelMapper.ensureInitialized();
       OverviewModelMapper.ensureInitialized();
       UserDataMapper.ensureInitialized();
@@ -78,16 +78,6 @@ class PhotoAlbumModelMapper extends SubClassMapperBase<PhotoAlbumModel> {
     #canDownload: _f$canDownload,
     #jellyType: _f$jellyType,
   };
-  @override
-  final bool ignoreNull = true;
-
-  @override
-  final String discriminatorKey = 'type';
-  @override
-  final dynamic discriminatorValue = 'PhotoAlbumModel';
-  @override
-  late final ClassMapperBase superMapper =
-      ItemBaseModelMapper.ensureInitialized();
 
   static PhotoAlbumModel _instantiate(DecodingData data) {
     return PhotoAlbumModel(
@@ -108,13 +98,48 @@ class PhotoAlbumModelMapper extends SubClassMapperBase<PhotoAlbumModel> {
 
   @override
   final Function instantiate = _instantiate;
+
+  static PhotoAlbumModel fromMap(Map<String, dynamic> map) {
+    return ensureInitialized().decodeMap<PhotoAlbumModel>(map);
+  }
+
+  static PhotoAlbumModel fromJson(String json) {
+    return ensureInitialized().decodeJson<PhotoAlbumModel>(json);
+  }
 }
 
 mixin PhotoAlbumModelMappable {
+  String toJson() {
+    return PhotoAlbumModelMapper.ensureInitialized()
+        .encodeJson<PhotoAlbumModel>(this as PhotoAlbumModel);
+  }
+
+  Map<String, dynamic> toMap() {
+    return PhotoAlbumModelMapper.ensureInitialized()
+        .encodeMap<PhotoAlbumModel>(this as PhotoAlbumModel);
+  }
+
   PhotoAlbumModelCopyWith<PhotoAlbumModel, PhotoAlbumModel, PhotoAlbumModel>
       get copyWith =>
           _PhotoAlbumModelCopyWithImpl<PhotoAlbumModel, PhotoAlbumModel>(
               this as PhotoAlbumModel, $identity, $identity);
+  @override
+  String toString() {
+    return PhotoAlbumModelMapper.ensureInitialized()
+        .stringifyValue(this as PhotoAlbumModel);
+  }
+
+  @override
+  bool operator ==(Object other) {
+    return PhotoAlbumModelMapper.ensureInitialized()
+        .equalsValue(this as PhotoAlbumModel, other);
+  }
+
+  @override
+  int get hashCode {
+    return PhotoAlbumModelMapper.ensureInitialized()
+        .hashValue(this as PhotoAlbumModel);
+  }
 }
 
 extension PhotoAlbumModelValueCopy<$R, $Out>
@@ -221,14 +246,14 @@ class _PhotoAlbumModelCopyWithImpl<$R, $Out>
       _PhotoAlbumModelCopyWithImpl<$R2, $Out2>($value, $cast, t);
 }
 
-class PhotoModelMapper extends SubClassMapperBase<PhotoModel> {
+class PhotoModelMapper extends ClassMapperBase<PhotoModel> {
   PhotoModelMapper._();
 
   static PhotoModelMapper? _instance;
   static PhotoModelMapper ensureInitialized() {
     if (_instance == null) {
       MapperContainer.globals.use(_instance = PhotoModelMapper._());
-      ItemBaseModelMapper.ensureInitialized().addSubMapper(_instance!);
+      ItemBaseModelMapper.ensureInitialized();
       OverviewModelMapper.ensureInitialized();
       UserDataMapper.ensureInitialized();
     }
@@ -304,16 +329,6 @@ class PhotoModelMapper extends SubClassMapperBase<PhotoModel> {
     #canDelete: _f$canDelete,
     #jellyType: _f$jellyType,
   };
-  @override
-  final bool ignoreNull = true;
-
-  @override
-  final String discriminatorKey = 'type';
-  @override
-  final dynamic discriminatorValue = 'PhotoModel';
-  @override
-  late final ClassMapperBase superMapper =
-      ItemBaseModelMapper.ensureInitialized();
 
   static PhotoModel _instantiate(DecodingData data) {
     return PhotoModel(
@@ -337,12 +352,46 @@ class PhotoModelMapper extends SubClassMapperBase<PhotoModel> {
 
   @override
   final Function instantiate = _instantiate;
+
+  static PhotoModel fromMap(Map<String, dynamic> map) {
+    return ensureInitialized().decodeMap<PhotoModel>(map);
+  }
+
+  static PhotoModel fromJson(String json) {
+    return ensureInitialized().decodeJson<PhotoModel>(json);
+  }
 }
 
 mixin PhotoModelMappable {
+  String toJson() {
+    return PhotoModelMapper.ensureInitialized()
+        .encodeJson<PhotoModel>(this as PhotoModel);
+  }
+
+  Map<String, dynamic> toMap() {
+    return PhotoModelMapper.ensureInitialized()
+        .encodeMap<PhotoModel>(this as PhotoModel);
+  }
+
   PhotoModelCopyWith<PhotoModel, PhotoModel, PhotoModel> get copyWith =>
       _PhotoModelCopyWithImpl<PhotoModel, PhotoModel>(
           this as PhotoModel, $identity, $identity);
+  @override
+  String toString() {
+    return PhotoModelMapper.ensureInitialized()
+        .stringifyValue(this as PhotoModel);
+  }
+
+  @override
+  bool operator ==(Object other) {
+    return PhotoModelMapper.ensureInitialized()
+        .equalsValue(this as PhotoModel, other);
+  }
+
+  @override
+  int get hashCode {
+    return PhotoModelMapper.ensureInitialized().hashValue(this as PhotoModel);
+  }
 }
 
 extension PhotoModelValueCopy<$R, $Out>

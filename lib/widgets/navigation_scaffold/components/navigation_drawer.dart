@@ -174,6 +174,8 @@ class NestedNavigationDrawer extends ConsumerWidget {
               }),
             },
 
+            const Divider(indent: 28, endIndent: 28),
+
             if (isExpanded)
               Transform.translate(
                 offset: const Offset(-8, 0),

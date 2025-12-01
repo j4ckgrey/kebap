@@ -6,14 +6,14 @@
 
 part of 'episode_model.dart';
 
-class EpisodeModelMapper extends SubClassMapperBase<EpisodeModel> {
+class EpisodeModelMapper extends ClassMapperBase<EpisodeModel> {
   EpisodeModelMapper._();
 
   static EpisodeModelMapper? _instance;
   static EpisodeModelMapper ensureInitialized() {
     if (_instance == null) {
       MapperContainer.globals.use(_instance = EpisodeModelMapper._());
-      ItemStreamModelMapper.ensureInitialized().addSubMapper(_instance!);
+      ItemStreamModelMapper.ensureInitialized();
       OverviewModelMapper.ensureInitialized();
       UserDataMapper.ensureInitialized();
     }
@@ -108,16 +108,6 @@ class EpisodeModelMapper extends SubClassMapperBase<EpisodeModel> {
     #canDownload: _f$canDownload,
     #jellyType: _f$jellyType,
   };
-  @override
-  final bool ignoreNull = true;
-
-  @override
-  final String discriminatorKey = 'type';
-  @override
-  final dynamic discriminatorValue = 'EpisodeModel';
-  @override
-  late final ClassMapperBase superMapper =
-      ItemStreamModelMapper.ensureInitialized();
 
   static EpisodeModel _instantiate(DecodingData data) {
     return EpisodeModel(
@@ -146,12 +136,47 @@ class EpisodeModelMapper extends SubClassMapperBase<EpisodeModel> {
 
   @override
   final Function instantiate = _instantiate;
+
+  static EpisodeModel fromMap(Map<String, dynamic> map) {
+    return ensureInitialized().decodeMap<EpisodeModel>(map);
+  }
+
+  static EpisodeModel fromJson(String json) {
+    return ensureInitialized().decodeJson<EpisodeModel>(json);
+  }
 }
 
 mixin EpisodeModelMappable {
+  String toJson() {
+    return EpisodeModelMapper.ensureInitialized()
+        .encodeJson<EpisodeModel>(this as EpisodeModel);
+  }
+
+  Map<String, dynamic> toMap() {
+    return EpisodeModelMapper.ensureInitialized()
+        .encodeMap<EpisodeModel>(this as EpisodeModel);
+  }
+
   EpisodeModelCopyWith<EpisodeModel, EpisodeModel, EpisodeModel> get copyWith =>
       _EpisodeModelCopyWithImpl<EpisodeModel, EpisodeModel>(
           this as EpisodeModel, $identity, $identity);
+  @override
+  String toString() {
+    return EpisodeModelMapper.ensureInitialized()
+        .stringifyValue(this as EpisodeModel);
+  }
+
+  @override
+  bool operator ==(Object other) {
+    return EpisodeModelMapper.ensureInitialized()
+        .equalsValue(this as EpisodeModel, other);
+  }
+
+  @override
+  int get hashCode {
+    return EpisodeModelMapper.ensureInitialized()
+        .hashValue(this as EpisodeModel);
+  }
 }
 
 extension EpisodeModelValueCopy<$R, $Out>

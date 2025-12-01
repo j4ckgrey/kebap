@@ -88,12 +88,111 @@ mixin _$ClientSettingsModel implements DiagnosticableTreeMixin {
       ..add(DiagnosticsProperty('useSystemIME', useSystemIME))
       ..add(DiagnosticsProperty('lastViewedUpdate', lastViewedUpdate))
       ..add(DiagnosticsProperty('libraryPageSize', libraryPageSize))
+      ..add(DiagnosticsProperty('showClock', showClock))
+      ..add(DiagnosticsProperty('use12HourClock', use12HourClock))
       ..add(DiagnosticsProperty('shortcuts', shortcuts));
   }
 
   @override
+  bool operator ==(Object other) {
+    return identical(this, other) ||
+        (other.runtimeType == runtimeType &&
+            other is ClientSettingsModel &&
+            (identical(other.syncPath, syncPath) ||
+                other.syncPath == syncPath) &&
+            (identical(other.position, position) ||
+                other.position == position) &&
+            (identical(other.size, size) || other.size == size) &&
+            (identical(other.timeOut, timeOut) || other.timeOut == timeOut) &&
+            (identical(other.nextUpDateCutoff, nextUpDateCutoff) ||
+                other.nextUpDateCutoff == nextUpDateCutoff) &&
+            (identical(other.themeMode, themeMode) ||
+                other.themeMode == themeMode) &&
+            (identical(other.themeColor, themeColor) ||
+                other.themeColor == themeColor) &&
+            (identical(other.deriveColorsFromItem, deriveColorsFromItem) ||
+                other.deriveColorsFromItem == deriveColorsFromItem) &&
+            (identical(other.amoledBlack, amoledBlack) ||
+                other.amoledBlack == amoledBlack) &&
+            (identical(other.blurPlaceHolders, blurPlaceHolders) ||
+                other.blurPlaceHolders == blurPlaceHolders) &&
+            (identical(other.blurUpcomingEpisodes, blurUpcomingEpisodes) ||
+                other.blurUpcomingEpisodes == blurUpcomingEpisodes) &&
+            (identical(other.selectedLocale, selectedLocale) ||
+                other.selectedLocale == selectedLocale) &&
+            (identical(other.enableMediaKeys, enableMediaKeys) ||
+                other.enableMediaKeys == enableMediaKeys) &&
+            (identical(other.posterSize, posterSize) ||
+                other.posterSize == posterSize) &&
+            (identical(other.pinchPosterZoom, pinchPosterZoom) ||
+                other.pinchPosterZoom == pinchPosterZoom) &&
+            (identical(other.mouseDragSupport, mouseDragSupport) ||
+                other.mouseDragSupport == mouseDragSupport) &&
+            (identical(other.requireWifi, requireWifi) ||
+                other.requireWifi == requireWifi) &&
+            (identical(other.showAllCollectionTypes, showAllCollectionTypes) ||
+                other.showAllCollectionTypes == showAllCollectionTypes) &&
+            (identical(other.maxConcurrentDownloads, maxConcurrentDownloads) ||
+                other.maxConcurrentDownloads == maxConcurrentDownloads) &&
+            (identical(other.schemeVariant, schemeVariant) ||
+                other.schemeVariant == schemeVariant) &&
+            (identical(other.backgroundImage, backgroundImage) ||
+                other.backgroundImage == backgroundImage) &&
+            (identical(other.checkForUpdates, checkForUpdates) ||
+                other.checkForUpdates == checkForUpdates) &&
+            (identical(other.usePosterForLibrary, usePosterForLibrary) ||
+                other.usePosterForLibrary == usePosterForLibrary) &&
+            (identical(other.useSystemIME, useSystemIME) ||
+                other.useSystemIME == useSystemIME) &&
+            (identical(other.lastViewedUpdate, lastViewedUpdate) ||
+                other.lastViewedUpdate == lastViewedUpdate) &&
+            (identical(other.libraryPageSize, libraryPageSize) ||
+                other.libraryPageSize == libraryPageSize) &&
+            (identical(other.showClock, showClock) ||
+                other.showClock == showClock) &&
+            (identical(other.use12HourClock, use12HourClock) ||
+                other.use12HourClock == use12HourClock) &&
+            const DeepCollectionEquality().equals(other.shortcuts, shortcuts));
+  }
+
+  @JsonKey(includeFromJson: false, includeToJson: false)
+  @override
+  int get hashCode => Object.hashAll([
+        runtimeType,
+        syncPath,
+        position,
+        size,
+        timeOut,
+        nextUpDateCutoff,
+        themeMode,
+        themeColor,
+        deriveColorsFromItem,
+        amoledBlack,
+        blurPlaceHolders,
+        blurUpcomingEpisodes,
+        selectedLocale,
+        enableMediaKeys,
+        posterSize,
+        pinchPosterZoom,
+        mouseDragSupport,
+        requireWifi,
+        showAllCollectionTypes,
+        maxConcurrentDownloads,
+        schemeVariant,
+        backgroundImage,
+        checkForUpdates,
+        usePosterForLibrary,
+        useSystemIME,
+        lastViewedUpdate,
+        libraryPageSize,
+        showClock,
+        use12HourClock,
+        const DeepCollectionEquality().hash(shortcuts)
+      ]);
+
+  @override
   String toString({DiagnosticLevel minLevel = DiagnosticLevel.info}) {
-    return 'ClientSettingsModel(syncPath: $syncPath, position: $position, size: $size, timeOut: $timeOut, nextUpDateCutoff: $nextUpDateCutoff, themeMode: $themeMode, themeColor: $themeColor, deriveColorsFromItem: $deriveColorsFromItem, amoledBlack: $amoledBlack, blurPlaceHolders: $blurPlaceHolders, blurUpcomingEpisodes: $blurUpcomingEpisodes, selectedLocale: $selectedLocale, enableMediaKeys: $enableMediaKeys, posterSize: $posterSize, pinchPosterZoom: $pinchPosterZoom, mouseDragSupport: $mouseDragSupport, requireWifi: $requireWifi, showAllCollectionTypes: $showAllCollectionTypes, maxConcurrentDownloads: $maxConcurrentDownloads, schemeVariant: $schemeVariant, backgroundImage: $backgroundImage, checkForUpdates: $checkForUpdates, usePosterForLibrary: $usePosterForLibrary, useSystemIME: $useSystemIME, lastViewedUpdate: $lastViewedUpdate, libraryPageSize: $libraryPageSize, shortcuts: $shortcuts)';
+    return 'ClientSettingsModel(syncPath: $syncPath, position: $position, size: $size, timeOut: $timeOut, nextUpDateCutoff: $nextUpDateCutoff, themeMode: $themeMode, themeColor: $themeColor, deriveColorsFromItem: $deriveColorsFromItem, amoledBlack: $amoledBlack, blurPlaceHolders: $blurPlaceHolders, blurUpcomingEpisodes: $blurUpcomingEpisodes, selectedLocale: $selectedLocale, enableMediaKeys: $enableMediaKeys, posterSize: $posterSize, pinchPosterZoom: $pinchPosterZoom, mouseDragSupport: $mouseDragSupport, requireWifi: $requireWifi, showAllCollectionTypes: $showAllCollectionTypes, maxConcurrentDownloads: $maxConcurrentDownloads, schemeVariant: $schemeVariant, backgroundImage: $backgroundImage, checkForUpdates: $checkForUpdates, usePosterForLibrary: $usePosterForLibrary, useSystemIME: $useSystemIME, lastViewedUpdate: $lastViewedUpdate, libraryPageSize: $libraryPageSize, showClock: $showClock, use12HourClock: $use12HourClock, shortcuts: $shortcuts)';
   }
 }
 
@@ -419,6 +518,8 @@ extension ClientSettingsModelPatterns on ClientSettingsModel {
             bool useSystemIME,
             String? lastViewedUpdate,
             int? libraryPageSize,
+            bool showClock,
+            bool use12HourClock,
             Map<GlobalHotKeys, KeyCombination> shortcuts)?
         $default, {
     required TResult orElse(),
@@ -453,6 +554,8 @@ extension ClientSettingsModelPatterns on ClientSettingsModel {
             _that.useSystemIME,
             _that.lastViewedUpdate,
             _that.libraryPageSize,
+            _that.showClock,
+            _that.use12HourClock,
             _that.shortcuts);
       case _:
         return orElse();
@@ -501,6 +604,8 @@ extension ClientSettingsModelPatterns on ClientSettingsModel {
             bool useSystemIME,
             String? lastViewedUpdate,
             int? libraryPageSize,
+            bool showClock,
+            bool use12HourClock,
             Map<GlobalHotKeys, KeyCombination> shortcuts)
         $default,
   ) {
@@ -534,6 +639,8 @@ extension ClientSettingsModelPatterns on ClientSettingsModel {
             _that.useSystemIME,
             _that.lastViewedUpdate,
             _that.libraryPageSize,
+            _that.showClock,
+            _that.use12HourClock,
             _that.shortcuts);
       case _:
         throw StateError('Unexpected subclass');
@@ -581,6 +688,8 @@ extension ClientSettingsModelPatterns on ClientSettingsModel {
             bool useSystemIME,
             String? lastViewedUpdate,
             int? libraryPageSize,
+            bool showClock,
+            bool use12HourClock,
             Map<GlobalHotKeys, KeyCombination> shortcuts)?
         $default,
   ) {
@@ -614,6 +723,8 @@ extension ClientSettingsModelPatterns on ClientSettingsModel {
             _that.useSystemIME,
             _that.lastViewedUpdate,
             _that.libraryPageSize,
+            _that.showClock,
+            _that.use12HourClock,
             _that.shortcuts);
       case _:
         return null;
@@ -796,12 +907,112 @@ class _ClientSettingsModel extends ClientSettingsModel
       ..add(DiagnosticsProperty('useSystemIME', useSystemIME))
       ..add(DiagnosticsProperty('lastViewedUpdate', lastViewedUpdate))
       ..add(DiagnosticsProperty('libraryPageSize', libraryPageSize))
+      ..add(DiagnosticsProperty('showClock', showClock))
+      ..add(DiagnosticsProperty('use12HourClock', use12HourClock))
       ..add(DiagnosticsProperty('shortcuts', shortcuts));
   }
 
   @override
+  bool operator ==(Object other) {
+    return identical(this, other) ||
+        (other.runtimeType == runtimeType &&
+            other is _ClientSettingsModel &&
+            (identical(other.syncPath, syncPath) ||
+                other.syncPath == syncPath) &&
+            (identical(other.position, position) ||
+                other.position == position) &&
+            (identical(other.size, size) || other.size == size) &&
+            (identical(other.timeOut, timeOut) || other.timeOut == timeOut) &&
+            (identical(other.nextUpDateCutoff, nextUpDateCutoff) ||
+                other.nextUpDateCutoff == nextUpDateCutoff) &&
+            (identical(other.themeMode, themeMode) ||
+                other.themeMode == themeMode) &&
+            (identical(other.themeColor, themeColor) ||
+                other.themeColor == themeColor) &&
+            (identical(other.deriveColorsFromItem, deriveColorsFromItem) ||
+                other.deriveColorsFromItem == deriveColorsFromItem) &&
+            (identical(other.amoledBlack, amoledBlack) ||
+                other.amoledBlack == amoledBlack) &&
+            (identical(other.blurPlaceHolders, blurPlaceHolders) ||
+                other.blurPlaceHolders == blurPlaceHolders) &&
+            (identical(other.blurUpcomingEpisodes, blurUpcomingEpisodes) ||
+                other.blurUpcomingEpisodes == blurUpcomingEpisodes) &&
+            (identical(other.selectedLocale, selectedLocale) ||
+                other.selectedLocale == selectedLocale) &&
+            (identical(other.enableMediaKeys, enableMediaKeys) ||
+                other.enableMediaKeys == enableMediaKeys) &&
+            (identical(other.posterSize, posterSize) ||
+                other.posterSize == posterSize) &&
+            (identical(other.pinchPosterZoom, pinchPosterZoom) ||
+                other.pinchPosterZoom == pinchPosterZoom) &&
+            (identical(other.mouseDragSupport, mouseDragSupport) ||
+                other.mouseDragSupport == mouseDragSupport) &&
+            (identical(other.requireWifi, requireWifi) ||
+                other.requireWifi == requireWifi) &&
+            (identical(other.showAllCollectionTypes, showAllCollectionTypes) ||
+                other.showAllCollectionTypes == showAllCollectionTypes) &&
+            (identical(other.maxConcurrentDownloads, maxConcurrentDownloads) ||
+                other.maxConcurrentDownloads == maxConcurrentDownloads) &&
+            (identical(other.schemeVariant, schemeVariant) ||
+                other.schemeVariant == schemeVariant) &&
+            (identical(other.backgroundImage, backgroundImage) ||
+                other.backgroundImage == backgroundImage) &&
+            (identical(other.checkForUpdates, checkForUpdates) ||
+                other.checkForUpdates == checkForUpdates) &&
+            (identical(other.usePosterForLibrary, usePosterForLibrary) ||
+                other.usePosterForLibrary == usePosterForLibrary) &&
+            (identical(other.useSystemIME, useSystemIME) ||
+                other.useSystemIME == useSystemIME) &&
+            (identical(other.lastViewedUpdate, lastViewedUpdate) ||
+                other.lastViewedUpdate == lastViewedUpdate) &&
+            (identical(other.libraryPageSize, libraryPageSize) ||
+                other.libraryPageSize == libraryPageSize) &&
+            (identical(other.showClock, showClock) ||
+                other.showClock == showClock) &&
+            (identical(other.use12HourClock, use12HourClock) ||
+                other.use12HourClock == use12HourClock) &&
+            const DeepCollectionEquality()
+                .equals(other._shortcuts, _shortcuts));
+  }
+
+  @JsonKey(includeFromJson: false, includeToJson: false)
+  @override
+  int get hashCode => Object.hashAll([
+        runtimeType,
+        syncPath,
+        position,
+        size,
+        timeOut,
+        nextUpDateCutoff,
+        themeMode,
+        themeColor,
+        deriveColorsFromItem,
+        amoledBlack,
+        blurPlaceHolders,
+        blurUpcomingEpisodes,
+        selectedLocale,
+        enableMediaKeys,
+        posterSize,
+        pinchPosterZoom,
+        mouseDragSupport,
+        requireWifi,
+        showAllCollectionTypes,
+        maxConcurrentDownloads,
+        schemeVariant,
+        backgroundImage,
+        checkForUpdates,
+        usePosterForLibrary,
+        useSystemIME,
+        lastViewedUpdate,
+        libraryPageSize,
+        showClock,
+        use12HourClock,
+        const DeepCollectionEquality().hash(_shortcuts)
+      ]);
+
+  @override
   String toString({DiagnosticLevel minLevel = DiagnosticLevel.info}) {
-    return 'ClientSettingsModel(syncPath: $syncPath, position: $position, size: $size, timeOut: $timeOut, nextUpDateCutoff: $nextUpDateCutoff, themeMode: $themeMode, themeColor: $themeColor, deriveColorsFromItem: $deriveColorsFromItem, amoledBlack: $amoledBlack, blurPlaceHolders: $blurPlaceHolders, blurUpcomingEpisodes: $blurUpcomingEpisodes, selectedLocale: $selectedLocale, enableMediaKeys: $enableMediaKeys, posterSize: $posterSize, pinchPosterZoom: $pinchPosterZoom, mouseDragSupport: $mouseDragSupport, requireWifi: $requireWifi, showAllCollectionTypes: $showAllCollectionTypes, maxConcurrentDownloads: $maxConcurrentDownloads, schemeVariant: $schemeVariant, backgroundImage: $backgroundImage, checkForUpdates: $checkForUpdates, usePosterForLibrary: $usePosterForLibrary, useSystemIME: $useSystemIME, lastViewedUpdate: $lastViewedUpdate, libraryPageSize: $libraryPageSize, shortcuts: $shortcuts)';
+    return 'ClientSettingsModel(syncPath: $syncPath, position: $position, size: $size, timeOut: $timeOut, nextUpDateCutoff: $nextUpDateCutoff, themeMode: $themeMode, themeColor: $themeColor, deriveColorsFromItem: $deriveColorsFromItem, amoledBlack: $amoledBlack, blurPlaceHolders: $blurPlaceHolders, blurUpcomingEpisodes: $blurUpcomingEpisodes, selectedLocale: $selectedLocale, enableMediaKeys: $enableMediaKeys, posterSize: $posterSize, pinchPosterZoom: $pinchPosterZoom, mouseDragSupport: $mouseDragSupport, requireWifi: $requireWifi, showAllCollectionTypes: $showAllCollectionTypes, maxConcurrentDownloads: $maxConcurrentDownloads, schemeVariant: $schemeVariant, backgroundImage: $backgroundImage, checkForUpdates: $checkForUpdates, usePosterForLibrary: $usePosterForLibrary, useSystemIME: $useSystemIME, lastViewedUpdate: $lastViewedUpdate, libraryPageSize: $libraryPageSize, showClock: $showClock, use12HourClock: $use12HourClock, shortcuts: $shortcuts)';
   }
 }
 
@@ -993,7 +1204,6 @@ class __$ClientSettingsModelCopyWithImpl<$Res>
           ? _self.libraryPageSize
           : libraryPageSize // ignore: cast_nullable_to_non_nullable
               as int?,
-
       showClock: null == showClock
           ? _self.showClock
           : showClock // ignore: cast_nullable_to_non_nullable

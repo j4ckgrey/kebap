@@ -169,9 +169,15 @@ class SyncNotifier extends StateNotifier<SyncSettingsModel> {
 
   late final JellyService api = ref.read(jellyApiProvider);
 
-  String? get _savePath => !kIsWeb && (Platform.isWindows || Platform.isLinux || Platform.isMacOS)
-      ? ref.read(clientSettingsProvider.select((value) => value.syncPath))
-      : mobileDirectory.path;
+  String? get _savePath {
+    // Use user-selected path on all platforms, fallback to app directory if not set
+    final userPath = ref.read(clientSettingsProvider.select((value) => value.syncPath));
+    if (userPath != null && userPath.isNotEmpty) {
+      return userPath;
+    }
+    // Fallback to app directory only if no path is set
+    return kIsWeb ? null : mobileDirectory.path;
+  }
 
   String? get savePath => _savePath;
 
@@ -479,6 +485,7 @@ class SyncNotifier extends StateNotifier<SyncSettingsModel> {
         enableDirectStream: true,
         enableTranscoding: false,
         deviceProfile: ref.read(videoProfileProvider),
+        mediaSourceId: syncItem.mediaSourceId, // Use selected version
       ),
     );
 
@@ -506,22 +513,55 @@ class SyncNotifier extends StateNotifier<SyncSettingsModel> {
 
     if (user == null) return null;
 
-    final downloadUrl = path.joinAll([ref.read(serverUrlProvider) ?? "", "Items", syncItem.id, "Download"]);
+    // Get the actual stream URL from playback info
+    final mediaSource = playbackResponse.bodyOrThrow.mediaSources?.firstOrNull;
+    final streamUrl = mediaSource?.path;
+    final fileSize = mediaSource?.size;
+    
+    // Update syncItem with file size if available
+    if (fileSize != null && fileSize > 0) {
+      syncItem = syncItem.copyWith(fileSize: fileSize);
+      await updateItem(syncItem);
+    }
+    
+    // Use direct stream URL if available (for remote streams) and valid, otherwise use Jellyfin download endpoint
+    final bool isValidStreamUrl = streamUrl != null && (streamUrl.startsWith('http://') || streamUrl.startsWith('https://'));
+    final downloadUrl = isValidStreamUrl ? streamUrl! : path.joinAll([ref.read(serverUrlProvider) ?? "", "Items", syncItem.id, "Download"]);
 
     try {
       if (currentTask.task != null) {
         await ref.read(backgroundDownloaderProvider).cancelTaskWithId(currentTask.id);
       }
       if (!skipDownload) {
+        // Calculate display name
+        String displayName = syncItem.videoFileName ?? syncItem.itemModel?.name ?? "Unknown";
+        final item = syncItem.itemModel;
+        if (item is EpisodeModel) {
+          final s = item.season.toString().padLeft(2, '0');
+          final e = item.episode.toString().padLeft(2, '0');
+          displayName = "${item.seriesName} - S${s}E${e} - ${item.name}";
+        } else if (item != null) {
+          displayName = item.name;
+          if (item.overview.yearAired != null) {
+            displayName += " (${item.overview.yearAired})";
+          }
+        }
+
         final downloadTask = DownloadTask(
           taskId: syncItem.id,
+          displayName: displayName,
           url: Uri.parse(downloadUrl).toString(),
           directory: syncItem.directory.path,
           filename: syncItem.videoFileName,
           updates: Updates.statusAndProgress,
           baseDirectory: BaseDirectory.root,
-          urlQueryParameters: {"api_key": user.credentials.token},
-          headers: user.credentials.header(ref),
+          urlQueryParameters: isValidStreamUrl
+              ? {}
+              : {
+                  "api_key": user.credentials.token,
+                  if (syncItem.mediaSourceId != null) "mediaSourceId": syncItem.mediaSourceId!,
+                },
+          headers: isValidStreamUrl ? {} : user.credentials.header(ref),
           requiresWiFi: ref.read(clientSettingsProvider.select((value) => value.requireWifi)),
           retries: 3,
           allowPause: true,
@@ -640,6 +680,7 @@ extension SyncNotifierHelpers on SyncNotifier {
       fileSize: response.mediaSources?.firstOrNull?.size ?? 0,
       syncing: false,
       videoFileName: response.path?.universalBasename ?? "",
+      mediaSourceId: item.streamModel?.currentVersionStream?.id ?? response.mediaSources?.firstOrNull?.id,
     );
   }
 

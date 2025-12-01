@@ -14,6 +14,7 @@ import 'package:kebap/models/library_search/library_search_options.dart';
 import 'package:kebap/models/playlist_model.dart';
 import 'package:kebap/providers/arguments_provider.dart';
 import 'package:kebap/providers/library_search_provider.dart';
+import 'package:kebap/providers/search_mode_provider.dart';
 import 'package:kebap/providers/settings/client_settings_provider.dart';
 import 'package:kebap/screens/collections/add_to_collection.dart';
 import 'package:kebap/screens/library_search/widgets/library_filter_chips.dart';
@@ -26,6 +27,7 @@ import 'package:kebap/screens/playlists/add_to_playlists.dart';
 import 'package:kebap/screens/shared/animated_fade_size.dart';
 import 'package:kebap/screens/shared/nested_bottom_appbar.dart';
 import 'package:kebap/screens/shared/nested_scaffold.dart';
+import 'package:kebap/widgets/search/search_result_modal.dart';
 import 'package:kebap/util/adaptive_layout/adaptive_layout.dart';
 import 'package:kebap/util/debouncer.dart';
 import 'package:kebap/util/item_base_model/item_base_model_extensions.dart';
@@ -95,6 +97,12 @@ class _LibrarySearchScreenState extends ConsumerState<LibrarySearchScreen> {
   @override
   void initState() {
     super.initState();
+    // Force local search mode for library-specific searches (Movies, Shows)
+    if (widget.viewModelId != null) {
+      WidgetsBinding.instance.addPostFrameCallback((_) {
+        ref.read(searchModeNotifierProvider.notifier).setMode(SearchMode.local);
+      });
+    }
     WidgetsBinding.instance.addPostFrameCallback((value) {
       initLibrary();
     });
@@ -447,28 +455,27 @@ class _LibrarySearchScreenState extends ConsumerState<LibrarySearchScreen> {
                             firstItemFocusNode: resultsFocusNode,
                             groupByType: librarySearchResults.filters.groupBy,
                             onPressed: (item) {
-                              showBottomSheetPill(
-                                context: context,
-                                item: item,
-                                content: (context, scrollController) {
-                                  final actions = item.generateActions(context, ref);
-                                  return Column(
-                                    mainAxisSize: MainAxisSize.min,
-                                    children: [
-                                      ItemActionButton(
-                                        label: Text("View Details"),
-                                        icon: const Icon(IconsaxPlusLinear.info_circle),
-                                        action: () {
-                                          Navigator.of(context).pop();
-                                          item.navigateTo(context, ref: ref);
-                                        },
-                                      ).toListItem(context, useIcons: true),
-                                      const Divider(),
-                                      ...actions.listTileItems(context, useIcons: true),
-                                    ],
-                                  );
-                                },
-                              );
+                              // Check if this is a library-specific search (has viewModelId)
+                              // or if we're in local search mode
+                              final isLibrarySearch = widget.viewModelId != null;
+                              final searchMode = ref.read(searchModeNotifierProvider);
+                              final isLocalMode = searchMode == SearchMode.local;
+                              
+                              // Only show modal for global search from sidebar (no viewModelId and global mode)
+                              if (!isLibrarySearch && !isLocalMode) {
+                                showDialog(
+                                  context: context,
+                                  builder: (context) => Dialog(
+                                    shape: RoundedRectangleBorder(
+                                      borderRadius: BorderRadius.circular(12),
+                                    ),
+                                    child: SearchResultModal(item: item),
+                                  ),
+                                );
+                              } else {
+                                // For library searches or local mode, navigate directly
+                                item.navigateTo(context, ref: ref);
+                              }
                             },
                           ),
                         )

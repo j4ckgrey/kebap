@@ -30,6 +30,32 @@ mixin _$LoginScreenModel {
           this as LoginScreenModel, _$identity);
 
   @override
+  bool operator ==(Object other) {
+    return identical(this, other) ||
+        (other.runtimeType == runtimeType &&
+            other is LoginScreenModel &&
+            const DeepCollectionEquality().equals(other.accounts, accounts) &&
+            (identical(other.screen, screen) || other.screen == screen) &&
+            (identical(other.serverLoginModel, serverLoginModel) ||
+                other.serverLoginModel == serverLoginModel) &&
+            (identical(other.errorMessage, errorMessage) ||
+                other.errorMessage == errorMessage) &&
+            (identical(other.hasBaseUrl, hasBaseUrl) ||
+                other.hasBaseUrl == hasBaseUrl) &&
+            (identical(other.loading, loading) || other.loading == loading));
+  }
+
+  @override
+  int get hashCode => Object.hash(
+      runtimeType,
+      const DeepCollectionEquality().hash(accounts),
+      screen,
+      serverLoginModel,
+      errorMessage,
+      hasBaseUrl,
+      loading);
+
+  @override
   String toString() {
     return 'LoginScreenModel(accounts: $accounts, screen: $screen, serverLoginModel: $serverLoginModel, errorMessage: $errorMessage, hasBaseUrl: $hasBaseUrl, loading: $loading)';
   }
@@ -340,6 +366,32 @@ class _LoginScreenModel implements LoginScreenModel {
       __$LoginScreenModelCopyWithImpl<_LoginScreenModel>(this, _$identity);
 
   @override
+  bool operator ==(Object other) {
+    return identical(this, other) ||
+        (other.runtimeType == runtimeType &&
+            other is _LoginScreenModel &&
+            const DeepCollectionEquality().equals(other._accounts, _accounts) &&
+            (identical(other.screen, screen) || other.screen == screen) &&
+            (identical(other.serverLoginModel, serverLoginModel) ||
+                other.serverLoginModel == serverLoginModel) &&
+            (identical(other.errorMessage, errorMessage) ||
+                other.errorMessage == errorMessage) &&
+            (identical(other.hasBaseUrl, hasBaseUrl) ||
+                other.hasBaseUrl == hasBaseUrl) &&
+            (identical(other.loading, loading) || other.loading == loading));
+  }
+
+  @override
+  int get hashCode => Object.hash(
+      runtimeType,
+      const DeepCollectionEquality().hash(_accounts),
+      screen,
+      serverLoginModel,
+      errorMessage,
+      hasBaseUrl,
+      loading);
+
+  @override
   String toString() {
     return 'LoginScreenModel(accounts: $accounts, screen: $screen, serverLoginModel: $serverLoginModel, errorMessage: $errorMessage, hasBaseUrl: $hasBaseUrl, loading: $loading)';
   }
@@ -442,6 +494,28 @@ mixin _$ServerLoginModel {
   $ServerLoginModelCopyWith<ServerLoginModel> get copyWith =>
       _$ServerLoginModelCopyWithImpl<ServerLoginModel>(
           this as ServerLoginModel, _$identity);
+
+  @override
+  bool operator ==(Object other) {
+    return identical(this, other) ||
+        (other.runtimeType == runtimeType &&
+            other is ServerLoginModel &&
+            (identical(other.tempCredentials, tempCredentials) ||
+                other.tempCredentials == tempCredentials) &&
+            const DeepCollectionEquality().equals(other.accounts, accounts) &&
+            (identical(other.serverMessage, serverMessage) ||
+                other.serverMessage == serverMessage) &&
+            (identical(other.hasQuickConnect, hasQuickConnect) ||
+                other.hasQuickConnect == hasQuickConnect));
+  }
+
+  @override
+  int get hashCode => Object.hash(
+      runtimeType,
+      tempCredentials,
+      const DeepCollectionEquality().hash(accounts),
+      serverMessage,
+      hasQuickConnect);
 
   @override
   String toString() {
@@ -722,6 +796,28 @@ class _ServerLoginModel implements ServerLoginModel {
   @pragma('vm:prefer-inline')
   _$ServerLoginModelCopyWith<_ServerLoginModel> get copyWith =>
       __$ServerLoginModelCopyWithImpl<_ServerLoginModel>(this, _$identity);
+
+  @override
+  bool operator ==(Object other) {
+    return identical(this, other) ||
+        (other.runtimeType == runtimeType &&
+            other is _ServerLoginModel &&
+            (identical(other.tempCredentials, tempCredentials) ||
+                other.tempCredentials == tempCredentials) &&
+            const DeepCollectionEquality().equals(other._accounts, _accounts) &&
+            (identical(other.serverMessage, serverMessage) ||
+                other.serverMessage == serverMessage) &&
+            (identical(other.hasQuickConnect, hasQuickConnect) ||
+                other.hasQuickConnect == hasQuickConnect));
+  }
+
+  @override
+  int get hashCode => Object.hash(
+      runtimeType,
+      tempCredentials,
+      const DeepCollectionEquality().hash(_accounts),
+      serverMessage,
+      hasQuickConnect);
 
   @override
   String toString() {

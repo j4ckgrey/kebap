@@ -17,12 +17,73 @@ mixin _$SessionInfoModel {
   String? get playbackModel;
   TranscodingInfo? get transCodeInfo;
 
+  /// Create a copy of SessionInfoModel
+  /// with the given fields replaced by the non-null parameter values.
+  @JsonKey(includeFromJson: false, includeToJson: false)
+  @pragma('vm:prefer-inline')
+  $SessionInfoModelCopyWith<SessionInfoModel> get copyWith =>
+      _$SessionInfoModelCopyWithImpl<SessionInfoModel>(
+          this as SessionInfoModel, _$identity);
+
   /// Serializes this SessionInfoModel to a JSON map.
   Map<String, dynamic> toJson();
 
   @override
+  bool operator ==(Object other) {
+    return identical(this, other) ||
+        (other.runtimeType == runtimeType &&
+            other is SessionInfoModel &&
+            (identical(other.playbackModel, playbackModel) ||
+                other.playbackModel == playbackModel) &&
+            (identical(other.transCodeInfo, transCodeInfo) ||
+                other.transCodeInfo == transCodeInfo));
+  }
+
+  @JsonKey(includeFromJson: false, includeToJson: false)
+  @override
+  int get hashCode => Object.hash(runtimeType, playbackModel, transCodeInfo);
+
+  @override
   String toString() {
     return 'SessionInfoModel(playbackModel: $playbackModel, transCodeInfo: $transCodeInfo)';
+  }
+}
+
+/// @nodoc
+abstract mixin class $SessionInfoModelCopyWith<$Res> {
+  factory $SessionInfoModelCopyWith(
+          SessionInfoModel value, $Res Function(SessionInfoModel) _then) =
+      _$SessionInfoModelCopyWithImpl;
+  @useResult
+  $Res call({String? playbackModel, TranscodingInfo? transCodeInfo});
+}
+
+/// @nodoc
+class _$SessionInfoModelCopyWithImpl<$Res>
+    implements $SessionInfoModelCopyWith<$Res> {
+  _$SessionInfoModelCopyWithImpl(this._self, this._then);
+
+  final SessionInfoModel _self;
+  final $Res Function(SessionInfoModel) _then;
+
+  /// Create a copy of SessionInfoModel
+  /// with the given fields replaced by the non-null parameter values.
+  @pragma('vm:prefer-inline')
+  @override
+  $Res call({
+    Object? playbackModel = freezed,
+    Object? transCodeInfo = freezed,
+  }) {
+    return _then(_self.copyWith(
+      playbackModel: freezed == playbackModel
+          ? _self.playbackModel
+          : playbackModel // ignore: cast_nullable_to_non_nullable
+              as String?,
+      transCodeInfo: freezed == transCodeInfo
+          ? _self.transCodeInfo
+          : transCodeInfo // ignore: cast_nullable_to_non_nullable
+              as TranscodingInfo?,
+    ));
   }
 }
 
@@ -198,6 +259,14 @@ class _SessionInfoModel extends SessionInfoModel {
   @override
   final TranscodingInfo? transCodeInfo;
 
+  /// Create a copy of SessionInfoModel
+  /// with the given fields replaced by the non-null parameter values.
+  @override
+  @JsonKey(includeFromJson: false, includeToJson: false)
+  @pragma('vm:prefer-inline')
+  _$SessionInfoModelCopyWith<_SessionInfoModel> get copyWith =>
+      __$SessionInfoModelCopyWithImpl<_SessionInfoModel>(this, _$identity);
+
   @override
   Map<String, dynamic> toJson() {
     return _$SessionInfoModelToJson(
@@ -206,8 +275,63 @@ class _SessionInfoModel extends SessionInfoModel {
   }
 
   @override
+  bool operator ==(Object other) {
+    return identical(this, other) ||
+        (other.runtimeType == runtimeType &&
+            other is _SessionInfoModel &&
+            (identical(other.playbackModel, playbackModel) ||
+                other.playbackModel == playbackModel) &&
+            (identical(other.transCodeInfo, transCodeInfo) ||
+                other.transCodeInfo == transCodeInfo));
+  }
+
+  @JsonKey(includeFromJson: false, includeToJson: false)
+  @override
+  int get hashCode => Object.hash(runtimeType, playbackModel, transCodeInfo);
+
+  @override
   String toString() {
     return 'SessionInfoModel(playbackModel: $playbackModel, transCodeInfo: $transCodeInfo)';
+  }
+}
+
+/// @nodoc
+abstract mixin class _$SessionInfoModelCopyWith<$Res>
+    implements $SessionInfoModelCopyWith<$Res> {
+  factory _$SessionInfoModelCopyWith(
+          _SessionInfoModel value, $Res Function(_SessionInfoModel) _then) =
+      __$SessionInfoModelCopyWithImpl;
+  @override
+  @useResult
+  $Res call({String? playbackModel, TranscodingInfo? transCodeInfo});
+}
+
+/// @nodoc
+class __$SessionInfoModelCopyWithImpl<$Res>
+    implements _$SessionInfoModelCopyWith<$Res> {
+  __$SessionInfoModelCopyWithImpl(this._self, this._then);
+
+  final _SessionInfoModel _self;
+  final $Res Function(_SessionInfoModel) _then;
+
+  /// Create a copy of SessionInfoModel
+  /// with the given fields replaced by the non-null parameter values.
+  @override
+  @pragma('vm:prefer-inline')
+  $Res call({
+    Object? playbackModel = freezed,
+    Object? transCodeInfo = freezed,
+  }) {
+    return _then(_SessionInfoModel(
+      playbackModel: freezed == playbackModel
+          ? _self.playbackModel
+          : playbackModel // ignore: cast_nullable_to_non_nullable
+              as String?,
+      transCodeInfo: freezed == transCodeInfo
+          ? _self.transCodeInfo
+          : transCodeInfo // ignore: cast_nullable_to_non_nullable
+              as TranscodingInfo?,
+    ));
   }
 }
 

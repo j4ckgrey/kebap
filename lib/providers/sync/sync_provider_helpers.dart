@@ -44,7 +44,13 @@ class SyncDownloadStatus extends _$SyncDownloadStatus {
 
     DownloadStream mainStream = ref.read(downloadTasksProvider(arg.id));
     int downloadCount = 0;
-    double fullProgress = mainStream.hasDownload ? mainStream.progress : 0.0;
+    double fullProgress = 0.0;
+
+    // Count main stream if it's downloading
+    if (mainStream.isEnqueuedOrDownloading) {
+      downloadCount++;
+      fullProgress += mainStream.progress.clamp(0.0, 1.0);
+    }
 
     int fullySyncedChildren = 0;
 
@@ -67,9 +73,13 @@ class SyncDownloadStatus extends _$SyncDownloadStatus {
     int syncAbleChildren = nestedChildren.where((element) => element.hasVideoFile).length;
 
     var fullySynced = nestedChildren.isNotEmpty ? fullySyncedChildren == syncAbleChildren : arg.videoFile.existsSync();
+    
+    // Calculate average progress, or 1.0 if fully synced
+    double finalProgress = fullySynced ? 1.0 : (downloadCount > 0 ? fullProgress / downloadCount : 0.0);
+    
     return mainStream.copyWith(
       status: fullySynced ? TaskStatus.complete : mainStream.status,
-      progress: fullProgress / downloadCount.clamp(1, double.infinity).toInt(),
+      progress: finalProgress,
     );
   }
 }
@@ -88,9 +98,7 @@ class SyncSize extends _$SyncSize {
         ref.watch(downloadTasksProvider(element.id));
       }
       for (var element in nestedChildren) {
-        if (element.videoFile.existsSync()) {
-          size += element.fileSize ?? 0;
-        }
+        size += element.fileSize ?? 0;
       }
     }
 

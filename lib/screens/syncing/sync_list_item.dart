@@ -1,8 +1,12 @@
 import 'package:flutter/material.dart';
 
 import 'package:background_downloader/background_downloader.dart';
+import 'package:collection/collection.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:iconsax_plus/iconsax_plus.dart';
+
+import 'package:kebap/models/item_base_model.dart';
+import 'package:kebap/models/items/item_stream_model.dart';
 
 import 'package:kebap/models/syncing/sync_item.dart';
 import 'package:kebap/providers/sync/sync_provider_helpers.dart';
@@ -66,7 +70,29 @@ class SyncListItem extends ConsumerWidget {
             return false;
           },
           child: FocusButton(
-            onTap: () => baseItem?.navigateTo(context),
+            onTap: () {
+              if (baseItem == null) return;
+              
+              ItemBaseModel navItem = baseItem;
+              
+              // If we have a selected version, filter the item's streams to only show that version
+              if (syncedItem.mediaSourceId != null && baseItem is ItemStreamModel) {
+                final streamItem = baseItem;
+                final allStreams = streamItem.mediaStreams;
+                final matchingVersion = allStreams.versionStreams.firstWhereOrNull((v) => v.id == syncedItem.mediaSourceId);
+                
+                if (matchingVersion != null) {
+                  final filteredStreams = allStreams.copyWith(
+                    versionStreams: [matchingVersion],
+                    versionStreamIndex: 0,
+                  );
+                  // Use copyWith from mappable to create a new item with filtered streams
+                  navItem = streamItem.copyWith(mediaStreams: filteredStreams);
+                }
+              }
+              
+              navItem.navigateTo(context);
+            },
             onLongPress: () => showSyncItemDetails(context, syncedItem, ref),
             onSecondaryTapDown: (_) => showSyncItemDetails(context, syncedItem, ref),
             autoFocus: FocusProvider.autoFocusOf(context) && AdaptiveLayout.inputDeviceOf(context) == InputDevice.dPad,
