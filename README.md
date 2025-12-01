@@ -20,14 +20,17 @@
   - Remote streaming support  
   - Stremio search engine integration
 - **Alpha Version Notice**
-  - Only the clients currently listed on the Releases page are available  
+  - Only the clients currently available in the Releases section are provided  
   - More platform builds coming soon
+- **Docker Support**
+  - Multi-arch images (AMD64, ARM64, ARMv7) available
+  - Run with: `docker run -d -p 80:80 kebap:alpha` (after loading/pulling)
 
 ---
 
 ## 🔧 Requirements
 
-Before using Kebap, make sure these two plugins are installed, configured, and running:
+Before using **Kebap**, make sure you have these two plugins installed, configured, and running:
 
 - **Gelato** → https://github.com/lostb1t/Gelato  
 - **Baklava** → https://github.com/j4ckgrey/Baklava  
@@ -36,20 +39,20 @@ Before using Kebap, make sure these two plugins are installed, configured, and r
 
 ## 🙌 Credits
 
-Kebap is a fork of **Fladder**, a Jellyfin client built with Flutter.  
+Kebap is a fork of **Fladder**, an open-source Jellyfin client built with Flutter.  
 Original project: https://github.com/DonutWare/Fladder
 
-Huge thanks to the Fladder team and all open-source contributors.
+Huge thanks to the Fladder team and the open-source community.
 
 ---
 
 ## 💬 Support
 
-- **Discord:**  
-  https://discordapp.com/channels/1433689453158862943/1441378427239137300  
+If you like my work and want to support development, consider **buying me a coffee**:  
+👉 **https://ko-fi.com/j4ckgrey**
 
-- **Ko-fi:**  
-  https://ko-fi.com/j4ckgrey  
+Join the community and stay updated on Discord:  
+👉 https://discordapp.com/channels/1433689453158862943/1441378427239137300
 
 ---
 
@@ -57,6 +60,6 @@ Huge thanks to the Fladder team and all open-source contributors.
 
 This project is licensed under the **GNU General Public License v3.0 (GPL-3.0)**.  
 The full license text is available in the root of this repository:  
-**[`LICENSE`](./LICENSE)**
+📄 **[`LICENSE`](./LICENSE)**
 
 ---
