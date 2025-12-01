@@ -40,8 +40,6 @@ class DiscoveryInfoMapper extends ClassMapperBase<DiscoveryInfo> {
     #address: _f$address,
     #endPointAddress: _f$endPointAddress,
   };
-  @override
-  final bool ignoreNull = true;
 
   static DiscoveryInfo _instantiate(DecodingData data) {
     return DiscoveryInfo(

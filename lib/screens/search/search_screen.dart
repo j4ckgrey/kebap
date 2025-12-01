@@ -2,10 +2,10 @@ import 'package:kebap/providers/search_provider.dart';
 import 'package:kebap/util/debouncer.dart';
 import 'package:kebap/util/string_extensions.dart';
 import 'package:kebap/widgets/search/search_mode_toggle.dart';
+import 'package:kebap/widgets/search/search_result_modal.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:kebap/widgets/shared/modal_bottom_sheet.dart';
-import 'package:kebap/widgets/shared/item_actions.dart';
+import 'package:kebap/util/item_base_model/item_base_model_extensions.dart';
 
 class SearchScreen extends ConsumerStatefulWidget {
   const SearchScreen({super.key});
@@ -117,39 +117,30 @@ class _SearchScreenState extends ConsumerState<SearchScreen> {
                               padding: const EdgeInsets.only(right: 12),
                               child: SizedBox(
                                 width: 150,
-                                child: InkWell(
+                                child: GestureDetector(
+                                  behavior: HitTestBehavior.opaque,
                                   onTap: () {
-                                    showBottomSheetPill(
+                                    print('DEBUG: Search item tapped, showing modal');
+                                    showDialog(
                                       context: context,
-                                      content: (context, scrollController) {
-                                        final actions = item.generateActions(context, ref);
-                                        return Column(
-                                          mainAxisSize: MainAxisSize.min,
-                                          children: [
-                                            ItemActionButton(
-                                              label: Text('View Details'),
-                                              icon: const Icon(Icons.info_outline),
-                                              action: () {
-                                                Navigator.of(context).pop();
-                                                item.navigateTo(context, ref: ref);
-                                              },
-                                            ).toListItem(context, useIcons: true),
-                                            const Divider(),
-                                            ...actions.listTileItems(context, useIcons: true),
-                                          ],
-                                        );
-                                      },
+                                      builder: (context) => Dialog(
+                                        shape: RoundedRectangleBorder(
+                                          borderRadius: BorderRadius.circular(12),
+                                        ),
+                                        child: SearchResultModal(item: item),
+                                      ),
                                     );
                                   },
                                   child: Column(
                                     crossAxisAlignment: CrossAxisAlignment.start,
                                     children: [
-                                      Expanded(
+                                      SizedBox(
+                                        height: 225,
                                         child: ClipRRect(
                                           borderRadius: BorderRadius.circular(8),
                                           child: item.images?.primary != null
                                               ? Image.network(
-                                                  item.images!.primary!,
+                                                  item.images!.primary!.path,
                                                   fit: BoxFit.cover,
                                                   width: double.infinity,
                                                 )

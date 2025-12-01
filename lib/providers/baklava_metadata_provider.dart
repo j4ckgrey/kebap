@@ -1,5 +1,6 @@
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
+import 'package:kebap/jellyfin/jellyfin_open_api.swagger.dart';
 import 'package:kebap/models/tmdb_metadata_model.dart';
 import 'package:kebap/providers/api_provider.dart';
 import 'package:kebap/providers/effective_baklava_config_provider.dart';
@@ -19,6 +20,9 @@ class BaklavaMetadataState {
   final String? error;
   final bool inLibrary;
   final String? existingRequestId;
+  final String? jellyfinItemId;
+  final String? requestStatus;
+  final String? requestUsername;
 
   BaklavaMetadataState({
     this.metadata,
@@ -28,6 +32,9 @@ class BaklavaMetadataState {
     this.error,
     this.inLibrary = false,
     this.existingRequestId,
+    this.jellyfinItemId,
+    this.requestStatus,
+    this.requestUsername,
   });
 
   BaklavaMetadataState copyWith({
@@ -38,6 +45,9 @@ class BaklavaMetadataState {
     String? error,
     bool? inLibrary,
     String? existingRequestId,
+    String? jellyfinItemId,
+    String? requestStatus,
+    String? requestUsername,
   }) {
     return BaklavaMetadataState(
       metadata: metadata ?? this.metadata,
@@ -47,6 +57,9 @@ class BaklavaMetadataState {
       error: error ?? this.error,
       inLibrary: inLibrary ?? this.inLibrary,
       existingRequestId: existingRequestId ?? this.existingRequestId,
+      jellyfinItemId: jellyfinItemId ?? this.jellyfinItemId,
+      requestStatus: requestStatus ?? this.requestStatus,
+      requestUsername: requestUsername ?? this.requestUsername,
     );
   }
 }
@@ -66,7 +79,14 @@ class BaklavaMetadataNotifier extends StateNotifier<BaklavaMetadataState> {
     bool includeCredits = true,
     bool includeReviews = true,
   }) async {
-    state = state.copyWith(loading: true, error: null);
+    state = state.copyWith(
+      loading: true, 
+      error: null,
+      inLibrary: false, // Reset library status
+      existingRequestId: null, // Reset request status
+      requestStatus: null,
+      requestUsername: null,
+    );
 
     try {
       Map<String, dynamic> data;
@@ -142,35 +162,88 @@ class BaklavaMetadataNotifier extends StateNotifier<BaklavaMetadataState> {
     }
   }
 
-  /// Check if item exists in Jellyfin library
-  Future<bool> checkLibraryStatus(
+  /// Check if item exists in Jellyfin library and return its ID
+  Future<String?> checkLibraryStatus(
       String? imdbId, String? tmdbId, String itemType) async {
     try {
-      final api = ref.read(jellyApiProvider);
-
-      // Search for item by IMDB ID or TMDB ID
-      String? searchTerm;
-      if (imdbId != null && imdbId.isNotEmpty) {
-        searchTerm = imdbId;
-      } else if (tmdbId != null && tmdbId.isNotEmpty) {
-        searchTerm = 'tmdb_$tmdbId';
-      }
-
-      if (searchTerm == null) return false;
-
-      final response = await api.itemsGet(
-        searchTerm: searchTerm,
-        recursive: true,
-        limit: 1,
+      final service = ref.read(baklavaServiceProvider);
+      
+      final response = await service.checkLibraryStatus(
+        imdbId: imdbId,
+        tmdbId: tmdbId,
+        itemType: itemType,
       );
 
-      final inLibrary = (response.body?.items.isNotEmpty ?? false);
-      state = state.copyWith(inLibrary: inLibrary);
+      if (response.isSuccessful && response.body != null) {
+        final data = response.body!;
+        final inLibrary = data['inLibrary'] as bool? ?? false;
+        
+        // Handle existing request
+        String? requestId;
+        String? requestStatus;
+        String? requestUsername;
 
-      return inLibrary;
+        if (data['existingRequest'] != null) {
+          final req = data['existingRequest'] as Map<String, dynamic>;
+          requestId = req['id'] as String?;
+          requestStatus = req['status'] as String?;
+          requestUsername = req['username'] as String?;
+        }
+
+        // If in library, try to find the Jellyfin ID so we can navigate to it
+        String? foundItemId;
+        if (inLibrary) {
+          try {
+            final api = ref.read(jellyApiProvider);
+            // Search for item by IMDB ID or TMDB ID to get the Jellyfin ID
+            String? searchTerm;
+            if (imdbId != null && imdbId.isNotEmpty) {
+              searchTerm = imdbId;
+            } else if (tmdbId != null && tmdbId.isNotEmpty) {
+              searchTerm = 'tmdb_$tmdbId';
+            }
+
+            if (searchTerm != null) {
+              final searchResponse = await api.itemsGet(
+                searchTerm: searchTerm,
+                recursive: true,
+                limit: 1,
+                includeItemTypes: itemType.toLowerCase().contains('series') ? [BaseItemKind.series] : [BaseItemKind.movie],
+              );
+              if (searchResponse.body?.items?.isNotEmpty ?? false) {
+                foundItemId = searchResponse.body!.items!.first.id;
+              }
+            }
+          } catch (e) {
+            print('DEBUG: Failed to fetch Jellyfin ID after confirmed in library: $e');
+          }
+        }
+        
+        state = state.copyWith(
+          inLibrary: inLibrary,
+          existingRequestId: requestId,
+          jellyfinItemId: foundItemId,
+          requestStatus: requestStatus,
+          requestUsername: requestUsername,
+        );
+        
+        print('DEBUG: checkLibraryStatus result: inLibrary=$inLibrary, requestId=$requestId, jellyfinId=$foundItemId, status=$requestStatus');
+        return foundItemId;
+      }
+      return null;
     } catch (e) {
-      return false;
+      print('DEBUG: checkLibraryStatus error: $e');
+      return null;
     }
+  }
+
+  /// Manually set library status (e.g. after successful import)
+  void setLibraryStatus(String itemId) {
+    print('DEBUG: setLibraryStatus called with $itemId');
+    state = state.copyWith(
+      inLibrary: true,
+      jellyfinItemId: itemId,
+    );
   }
 
   /// Fetch external IDs (IMDB ID from TMDB ID)
@@ -208,14 +281,18 @@ class BaklavaMetadataNotifier extends StateNotifier<BaklavaMetadataState> {
   }
 
   /// Import item to library via Gelato
-  Future<bool> importToLibrary(String imdbId, String itemType) async {
+  Future<String?> importToLibrary(String imdbId, String itemType) async {
     try {
       final service = ref.read(baklavaServiceProvider);
       final response = await service.importToLibrary(imdbId, itemType);
-
-      return response.isSuccessful;
+      
+      if (response.isSuccessful) {
+        return response.body;
+      }
+      return null;
     } catch (e) {
-      return false;
+      print('DEBUG: importToLibrary error: $e');
+      return null;
     }
   }
 

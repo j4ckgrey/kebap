@@ -6,14 +6,14 @@
 
 part of 'movie_model.dart';
 
-class MovieModelMapper extends SubClassMapperBase<MovieModel> {
+class MovieModelMapper extends ClassMapperBase<MovieModel> {
   MovieModelMapper._();
 
   static MovieModelMapper? _instance;
   static MovieModelMapper ensureInitialized() {
     if (_instance == null) {
       MapperContainer.globals.use(_instance = MovieModelMapper._());
-      ItemStreamModelMapper.ensureInitialized().addSubMapper(_instance!);
+      ItemStreamModelMapper.ensureInitialized();
       ItemBaseModelMapper.ensureInitialized();
       OverviewModelMapper.ensureInitialized();
       UserDataMapper.ensureInitialized();
@@ -109,16 +109,6 @@ class MovieModelMapper extends SubClassMapperBase<MovieModel> {
     #canDelete: _f$canDelete,
     #jellyType: _f$jellyType,
   };
-  @override
-  final bool ignoreNull = true;
-
-  @override
-  final String discriminatorKey = 'type';
-  @override
-  final dynamic discriminatorValue = 'MovieModel';
-  @override
-  late final ClassMapperBase superMapper =
-      ItemStreamModelMapper.ensureInitialized();
 
   static MovieModel _instantiate(DecodingData data) {
     return MovieModel(
@@ -147,12 +137,46 @@ class MovieModelMapper extends SubClassMapperBase<MovieModel> {
 
   @override
   final Function instantiate = _instantiate;
+
+  static MovieModel fromMap(Map<String, dynamic> map) {
+    return ensureInitialized().decodeMap<MovieModel>(map);
+  }
+
+  static MovieModel fromJson(String json) {
+    return ensureInitialized().decodeJson<MovieModel>(json);
+  }
 }
 
 mixin MovieModelMappable {
+  String toJson() {
+    return MovieModelMapper.ensureInitialized()
+        .encodeJson<MovieModel>(this as MovieModel);
+  }
+
+  Map<String, dynamic> toMap() {
+    return MovieModelMapper.ensureInitialized()
+        .encodeMap<MovieModel>(this as MovieModel);
+  }
+
   MovieModelCopyWith<MovieModel, MovieModel, MovieModel> get copyWith =>
       _MovieModelCopyWithImpl<MovieModel, MovieModel>(
           this as MovieModel, $identity, $identity);
+  @override
+  String toString() {
+    return MovieModelMapper.ensureInitialized()
+        .stringifyValue(this as MovieModel);
+  }
+
+  @override
+  bool operator ==(Object other) {
+    return MovieModelMapper.ensureInitialized()
+        .equalsValue(this as MovieModel, other);
+  }
+
+  @override
+  int get hashCode {
+    return MovieModelMapper.ensureInitialized().hashValue(this as MovieModel);
+  }
 }
 
 extension MovieModelValueCopy<$R, $Out>

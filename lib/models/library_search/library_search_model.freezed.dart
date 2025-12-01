@@ -52,6 +52,46 @@ mixin _$LibrarySearchModel implements DiagnosticableTreeMixin {
   }
 
   @override
+  bool operator ==(Object other) {
+    return identical(this, other) ||
+        (other.runtimeType == runtimeType &&
+            other is LibrarySearchModel &&
+            (identical(other.loading, loading) || other.loading == loading) &&
+            (identical(other.selecteMode, selecteMode) ||
+                other.selecteMode == selecteMode) &&
+            const DeepCollectionEquality()
+                .equals(other.folderOverwrite, folderOverwrite) &&
+            (identical(other.searchQuery, searchQuery) ||
+                other.searchQuery == searchQuery) &&
+            const DeepCollectionEquality().equals(other.views, views) &&
+            const DeepCollectionEquality().equals(other.posters, posters) &&
+            const DeepCollectionEquality()
+                .equals(other.selectedPosters, selectedPosters) &&
+            (identical(other.filters, filters) || other.filters == filters) &&
+            const DeepCollectionEquality()
+                .equals(other.lastIndices, lastIndices) &&
+            const DeepCollectionEquality()
+                .equals(other.libraryItemCounts, libraryItemCounts) &&
+            (identical(other.fetchingItems, fetchingItems) ||
+                other.fetchingItems == fetchingItems));
+  }
+
+  @override
+  int get hashCode => Object.hash(
+      runtimeType,
+      loading,
+      selecteMode,
+      const DeepCollectionEquality().hash(folderOverwrite),
+      searchQuery,
+      const DeepCollectionEquality().hash(views),
+      const DeepCollectionEquality().hash(posters),
+      const DeepCollectionEquality().hash(selectedPosters),
+      filters,
+      const DeepCollectionEquality().hash(lastIndices),
+      const DeepCollectionEquality().hash(libraryItemCounts),
+      fetchingItems);
+
+  @override
   String toString({DiagnosticLevel minLevel = DiagnosticLevel.info}) {
     return 'LibrarySearchModel(loading: $loading, selecteMode: $selecteMode, folderOverwrite: $folderOverwrite, searchQuery: $searchQuery, views: $views, posters: $posters, selectedPosters: $selectedPosters, filters: $filters, lastIndices: $lastIndices, libraryItemCounts: $libraryItemCounts, fetchingItems: $fetchingItems)';
   }
@@ -508,6 +548,46 @@ class _LibrarySearchModel
       ..add(DiagnosticsProperty('libraryItemCounts', libraryItemCounts))
       ..add(DiagnosticsProperty('fetchingItems', fetchingItems));
   }
+
+  @override
+  bool operator ==(Object other) {
+    return identical(this, other) ||
+        (other.runtimeType == runtimeType &&
+            other is _LibrarySearchModel &&
+            (identical(other.loading, loading) || other.loading == loading) &&
+            (identical(other.selecteMode, selecteMode) ||
+                other.selecteMode == selecteMode) &&
+            const DeepCollectionEquality()
+                .equals(other._folderOverwrite, _folderOverwrite) &&
+            (identical(other.searchQuery, searchQuery) ||
+                other.searchQuery == searchQuery) &&
+            const DeepCollectionEquality().equals(other._views, _views) &&
+            const DeepCollectionEquality().equals(other._posters, _posters) &&
+            const DeepCollectionEquality()
+                .equals(other._selectedPosters, _selectedPosters) &&
+            (identical(other.filters, filters) || other.filters == filters) &&
+            const DeepCollectionEquality()
+                .equals(other._lastIndices, _lastIndices) &&
+            const DeepCollectionEquality()
+                .equals(other._libraryItemCounts, _libraryItemCounts) &&
+            (identical(other.fetchingItems, fetchingItems) ||
+                other.fetchingItems == fetchingItems));
+  }
+
+  @override
+  int get hashCode => Object.hash(
+      runtimeType,
+      loading,
+      selecteMode,
+      const DeepCollectionEquality().hash(_folderOverwrite),
+      searchQuery,
+      const DeepCollectionEquality().hash(_views),
+      const DeepCollectionEquality().hash(_posters),
+      const DeepCollectionEquality().hash(_selectedPosters),
+      filters,
+      const DeepCollectionEquality().hash(_lastIndices),
+      const DeepCollectionEquality().hash(_libraryItemCounts),
+      fetchingItems);
 
   @override
   String toString({DiagnosticLevel minLevel = DiagnosticLevel.info}) {

@@ -34,7 +34,7 @@ class BackgroundDownloader extends _$BackgroundDownloader {
     return downloader;
   }
 
-  void updateTask(TaskUpdate update) {
+  void updateTask(TaskUpdate update) async {
     switch (update) {
       case TaskStatusUpdate():
         final status = update.status;
@@ -43,6 +43,18 @@ class BackgroundDownloader extends _$BackgroundDownloader {
             );
 
         if (status == TaskStatus.complete || status == TaskStatus.canceled) {
+          // Update file size from actual downloaded file when complete
+          if (status == TaskStatus.complete) {
+            final syncItem = await ref.read(syncProvider.notifier).getSyncedItem(update.task.taskId);
+            if (syncItem != null && syncItem.videoFile.existsSync()) {
+              final actualFileSize = await syncItem.videoFile.length();
+              if (actualFileSize > 0) {
+                final updatedItem = syncItem.copyWith(fileSize: actualFileSize);
+                await ref.read(syncProvider.notifier).updateItem(updatedItem);
+              }
+            }
+          }
+          
           ref.read(downloadTasksProvider(update.task.taskId).notifier).update((state) => DownloadStream.empty());
           ref
               .read(activeDownloadTasksProvider.notifier)

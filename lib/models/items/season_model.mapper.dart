@@ -6,14 +6,14 @@
 
 part of 'season_model.dart';
 
-class SeasonModelMapper extends SubClassMapperBase<SeasonModel> {
+class SeasonModelMapper extends ClassMapperBase<SeasonModel> {
   SeasonModelMapper._();
 
   static SeasonModelMapper? _instance;
   static SeasonModelMapper ensureInitialized() {
     if (_instance == null) {
       MapperContainer.globals.use(_instance = SeasonModelMapper._());
-      ItemBaseModelMapper.ensureInitialized().addSubMapper(_instance!);
+      ItemBaseModelMapper.ensureInitialized();
       EpisodeModelMapper.ensureInitialized();
       OverviewModelMapper.ensureInitialized();
       UserDataMapper.ensureInitialized();
@@ -101,16 +101,6 @@ class SeasonModelMapper extends SubClassMapperBase<SeasonModel> {
     #canDownload: _f$canDownload,
     #jellyType: _f$jellyType,
   };
-  @override
-  final bool ignoreNull = true;
-
-  @override
-  final String discriminatorKey = 'type';
-  @override
-  final dynamic discriminatorValue = 'SeasonModel';
-  @override
-  late final ClassMapperBase superMapper =
-      ItemBaseModelMapper.ensureInitialized();
 
   static SeasonModel _instantiate(DecodingData data) {
     return SeasonModel(
@@ -137,12 +127,46 @@ class SeasonModelMapper extends SubClassMapperBase<SeasonModel> {
 
   @override
   final Function instantiate = _instantiate;
+
+  static SeasonModel fromMap(Map<String, dynamic> map) {
+    return ensureInitialized().decodeMap<SeasonModel>(map);
+  }
+
+  static SeasonModel fromJson(String json) {
+    return ensureInitialized().decodeJson<SeasonModel>(json);
+  }
 }
 
 mixin SeasonModelMappable {
+  String toJson() {
+    return SeasonModelMapper.ensureInitialized()
+        .encodeJson<SeasonModel>(this as SeasonModel);
+  }
+
+  Map<String, dynamic> toMap() {
+    return SeasonModelMapper.ensureInitialized()
+        .encodeMap<SeasonModel>(this as SeasonModel);
+  }
+
   SeasonModelCopyWith<SeasonModel, SeasonModel, SeasonModel> get copyWith =>
       _SeasonModelCopyWithImpl<SeasonModel, SeasonModel>(
           this as SeasonModel, $identity, $identity);
+  @override
+  String toString() {
+    return SeasonModelMapper.ensureInitialized()
+        .stringifyValue(this as SeasonModel);
+  }
+
+  @override
+  bool operator ==(Object other) {
+    return SeasonModelMapper.ensureInitialized()
+        .equalsValue(this as SeasonModel, other);
+  }
+
+  @override
+  int get hashCode {
+    return SeasonModelMapper.ensureInitialized().hashValue(this as SeasonModel);
+  }
 }
 
 extension SeasonModelValueCopy<$R, $Out>

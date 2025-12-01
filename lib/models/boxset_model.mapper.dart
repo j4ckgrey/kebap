@@ -6,14 +6,14 @@
 
 part of 'boxset_model.dart';
 
-class BoxSetModelMapper extends SubClassMapperBase<BoxSetModel> {
+class BoxSetModelMapper extends ClassMapperBase<BoxSetModel> {
   BoxSetModelMapper._();
 
   static BoxSetModelMapper? _instance;
   static BoxSetModelMapper ensureInitialized() {
     if (_instance == null) {
       MapperContainer.globals.use(_instance = BoxSetModelMapper._());
-      ItemBaseModelMapper.ensureInitialized().addSubMapper(_instance!);
+      ItemBaseModelMapper.ensureInitialized();
       ItemBaseModelMapper.ensureInitialized();
       OverviewModelMapper.ensureInitialized();
       UserDataMapper.ensureInitialized();
@@ -78,16 +78,6 @@ class BoxSetModelMapper extends SubClassMapperBase<BoxSetModel> {
     #canDownload: _f$canDownload,
     #jellyType: _f$jellyType,
   };
-  @override
-  final bool ignoreNull = true;
-
-  @override
-  final String discriminatorKey = 'type';
-  @override
-  final dynamic discriminatorValue = 'BoxSetModel';
-  @override
-  late final ClassMapperBase superMapper =
-      ItemBaseModelMapper.ensureInitialized();
 
   static BoxSetModel _instantiate(DecodingData data) {
     return BoxSetModel(
@@ -108,12 +98,46 @@ class BoxSetModelMapper extends SubClassMapperBase<BoxSetModel> {
 
   @override
   final Function instantiate = _instantiate;
+
+  static BoxSetModel fromMap(Map<String, dynamic> map) {
+    return ensureInitialized().decodeMap<BoxSetModel>(map);
+  }
+
+  static BoxSetModel fromJson(String json) {
+    return ensureInitialized().decodeJson<BoxSetModel>(json);
+  }
 }
 
 mixin BoxSetModelMappable {
+  String toJson() {
+    return BoxSetModelMapper.ensureInitialized()
+        .encodeJson<BoxSetModel>(this as BoxSetModel);
+  }
+
+  Map<String, dynamic> toMap() {
+    return BoxSetModelMapper.ensureInitialized()
+        .encodeMap<BoxSetModel>(this as BoxSetModel);
+  }
+
   BoxSetModelCopyWith<BoxSetModel, BoxSetModel, BoxSetModel> get copyWith =>
       _BoxSetModelCopyWithImpl<BoxSetModel, BoxSetModel>(
           this as BoxSetModel, $identity, $identity);
+  @override
+  String toString() {
+    return BoxSetModelMapper.ensureInitialized()
+        .stringifyValue(this as BoxSetModel);
+  }
+
+  @override
+  bool operator ==(Object other) {
+    return BoxSetModelMapper.ensureInitialized()
+        .equalsValue(this as BoxSetModel, other);
+  }
+
+  @override
+  int get hashCode {
+    return BoxSetModelMapper.ensureInitialized().hashValue(this as BoxSetModel);
+  }
 }
 
 extension BoxSetModelValueCopy<$R, $Out>

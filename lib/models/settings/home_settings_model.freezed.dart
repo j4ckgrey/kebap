@@ -30,6 +30,26 @@ mixin _$HomeSettingsModel {
   Map<String, dynamic> toJson();
 
   @override
+  bool operator ==(Object other) {
+    return identical(this, other) ||
+        (other.runtimeType == runtimeType &&
+            other is HomeSettingsModel &&
+            const DeepCollectionEquality()
+                .equals(other.screenLayouts, screenLayouts) &&
+            const DeepCollectionEquality()
+                .equals(other.layoutStates, layoutStates) &&
+            (identical(other.nextUp, nextUp) || other.nextUp == nextUp));
+  }
+
+  @JsonKey(includeFromJson: false, includeToJson: false)
+  @override
+  int get hashCode => Object.hash(
+      runtimeType,
+      const DeepCollectionEquality().hash(screenLayouts),
+      const DeepCollectionEquality().hash(layoutStates),
+      nextUp);
+
+  @override
   String toString() {
     return 'HomeSettingsModel(screenLayouts: $screenLayouts, layoutStates: $layoutStates, nextUp: $nextUp)';
   }
@@ -293,6 +313,26 @@ class _HomeSettingsModel extends HomeSettingsModel {
       this,
     );
   }
+
+  @override
+  bool operator ==(Object other) {
+    return identical(this, other) ||
+        (other.runtimeType == runtimeType &&
+            other is _HomeSettingsModel &&
+            const DeepCollectionEquality()
+                .equals(other._screenLayouts, _screenLayouts) &&
+            const DeepCollectionEquality()
+                .equals(other._layoutStates, _layoutStates) &&
+            (identical(other.nextUp, nextUp) || other.nextUp == nextUp));
+  }
+
+  @JsonKey(includeFromJson: false, includeToJson: false)
+  @override
+  int get hashCode => Object.hash(
+      runtimeType,
+      const DeepCollectionEquality().hash(_screenLayouts),
+      const DeepCollectionEquality().hash(_layoutStates),
+      nextUp);
 
   @override
   String toString() {

@@ -6,14 +6,14 @@
 
 part of 'series_model.dart';
 
-class SeriesModelMapper extends SubClassMapperBase<SeriesModel> {
+class SeriesModelMapper extends ClassMapperBase<SeriesModel> {
   SeriesModelMapper._();
 
   static SeriesModelMapper? _instance;
   static SeriesModelMapper ensureInitialized() {
     if (_instance == null) {
       MapperContainer.globals.use(_instance = SeriesModelMapper._());
-      ItemBaseModelMapper.ensureInitialized().addSubMapper(_instance!);
+      ItemBaseModelMapper.ensureInitialized();
       EpisodeModelMapper.ensureInitialized();
       SeasonModelMapper.ensureInitialized();
       ItemBaseModelMapper.ensureInitialized();
@@ -100,16 +100,6 @@ class SeriesModelMapper extends SubClassMapperBase<SeriesModel> {
     #canDelete: _f$canDelete,
     #jellyType: _f$jellyType,
   };
-  @override
-  final bool ignoreNull = true;
-
-  @override
-  final String discriminatorKey = 'type';
-  @override
-  final dynamic discriminatorValue = 'SeriesModel';
-  @override
-  late final ClassMapperBase superMapper =
-      ItemBaseModelMapper.ensureInitialized();
 
   static SeriesModel _instantiate(DecodingData data) {
     return SeriesModel(
@@ -135,12 +125,46 @@ class SeriesModelMapper extends SubClassMapperBase<SeriesModel> {
 
   @override
   final Function instantiate = _instantiate;
+
+  static SeriesModel fromMap(Map<String, dynamic> map) {
+    return ensureInitialized().decodeMap<SeriesModel>(map);
+  }
+
+  static SeriesModel fromJson(String json) {
+    return ensureInitialized().decodeJson<SeriesModel>(json);
+  }
 }
 
 mixin SeriesModelMappable {
+  String toJson() {
+    return SeriesModelMapper.ensureInitialized()
+        .encodeJson<SeriesModel>(this as SeriesModel);
+  }
+
+  Map<String, dynamic> toMap() {
+    return SeriesModelMapper.ensureInitialized()
+        .encodeMap<SeriesModel>(this as SeriesModel);
+  }
+
   SeriesModelCopyWith<SeriesModel, SeriesModel, SeriesModel> get copyWith =>
       _SeriesModelCopyWithImpl<SeriesModel, SeriesModel>(
           this as SeriesModel, $identity, $identity);
+  @override
+  String toString() {
+    return SeriesModelMapper.ensureInitialized()
+        .stringifyValue(this as SeriesModel);
+  }
+
+  @override
+  bool operator ==(Object other) {
+    return SeriesModelMapper.ensureInitialized()
+        .equalsValue(this as SeriesModel, other);
+  }
+
+  @override
+  int get hashCode {
+    return SeriesModelMapper.ensureInitialized().hashValue(this as SeriesModel);
+  }
 }
 
 extension SeriesModelValueCopy<$R, $Out>

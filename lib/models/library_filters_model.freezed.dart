@@ -32,6 +32,24 @@ mixin _$LibraryFiltersModel {
   Map<String, dynamic> toJson();
 
   @override
+  bool operator ==(Object other) {
+    return identical(this, other) ||
+        (other.runtimeType == runtimeType &&
+            other is LibraryFiltersModel &&
+            (identical(other.id, id) || other.id == id) &&
+            (identical(other.name, name) || other.name == name) &&
+            (identical(other.isFavourite, isFavourite) ||
+                other.isFavourite == isFavourite) &&
+            const DeepCollectionEquality().equals(other.ids, ids) &&
+            (identical(other.filter, filter) || other.filter == filter));
+  }
+
+  @JsonKey(includeFromJson: false, includeToJson: false)
+  @override
+  int get hashCode => Object.hash(runtimeType, id, name, isFavourite,
+      const DeepCollectionEquality().hash(ids), filter);
+
+  @override
   String toString() {
     return 'LibraryFiltersModel(id: $id, name: $name, isFavourite: $isFavourite, ids: $ids, filter: $filter)';
   }
@@ -321,6 +339,24 @@ class _LibraryFiltersModel extends LibraryFiltersModel {
       this,
     );
   }
+
+  @override
+  bool operator ==(Object other) {
+    return identical(this, other) ||
+        (other.runtimeType == runtimeType &&
+            other is _LibraryFiltersModel &&
+            (identical(other.id, id) || other.id == id) &&
+            (identical(other.name, name) || other.name == name) &&
+            (identical(other.isFavourite, isFavourite) ||
+                other.isFavourite == isFavourite) &&
+            const DeepCollectionEquality().equals(other._ids, _ids) &&
+            (identical(other.filter, filter) || other.filter == filter));
+  }
+
+  @JsonKey(includeFromJson: false, includeToJson: false)
+  @override
+  int get hashCode => Object.hash(runtimeType, id, name, isFavourite,
+      const DeepCollectionEquality().hash(_ids), filter);
 
   @override
   String toString() {

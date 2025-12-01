@@ -1,5 +1,8 @@
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
+import 'dart:async';
+import 'package:collection/collection.dart';
+import 'package:kebap/util/notification_helper.dart';
 
 import 'package:kebap/models/media_request_model.dart';
 import 'package:kebap/providers/baklava_api_service.dart';
@@ -15,24 +18,40 @@ BaklavaService baklavaService(Ref ref) {
 
 @riverpod
 class BaklavaRequests extends _$BaklavaRequests {
+  Timer? _timer;
+
   @override
   RequestsState build() {
     // Load requests on initialization
     loadRequests();
+    
+    // Start polling every minute
+    _timer = Timer.periodic(const Duration(minutes: 1), (_) => loadRequests(notify: true));
+    
+    ref.onDispose(() {
+      _timer?.cancel();
+    });
+    
     return const RequestsState();
   }
 
   /// Load all media requests
-  Future<void> loadRequests() async {
-    state = state.copyWith(loading: true);
+  Future<void> loadRequests({bool notify = false}) async {
+    if (!notify) state = state.copyWith(loading: true);
 
     try {
       final service = ref.read(baklavaServiceProvider);
       final response = await service.fetchRequests();
 
       if (response.isSuccessful && response.body != null) {
+        final newRequests = response.body!;
+        
+        if (notify) {
+          _checkNotifications(state.requests, newRequests);
+        }
+
         state = state.copyWith(
-          requests: response.body!,
+          requests: newRequests,
           loading: false,
           error: null,
         );
@@ -51,6 +70,49 @@ class BaklavaRequests extends _$BaklavaRequests {
         loading: false,
         error: null,
       );
+    }
+  }
+
+  void _checkNotifications(List<MediaRequest> oldList, List<MediaRequest> newList) {
+    final user = ref.read(userProvider);
+    if (user == null) return;
+    final isAdmin = user.policy?.isAdministrator ?? false;
+
+    // Check for new requests (Admin only)
+    if (isAdmin) {
+      final oldIds = oldList.map((r) => r.id).toSet();
+      final newPending = newList.where((r) => r.status == 'pending' && !oldIds.contains(r.id));
+      for (var req in newPending) {
+        // Don't notify if I created it myself
+        if (req.username != user.name) {
+          NotificationHelper().showNotification(
+            id: req.id.hashCode,
+            title: 'New Request',
+            body: '${req.username} requested ${req.title}',
+          );
+        }
+      }
+    }
+
+    // Check for status changes (My requests)
+    final myOldRequests = oldList.where((r) => r.username == user.name);
+    for (var oldReq in myOldRequests) {
+      final newReq = newList.firstWhereOrNull((r) => r.id == oldReq.id);
+      if (newReq != null && newReq.status != oldReq.status) {
+        if (newReq.status == 'approved') {
+          NotificationHelper().showNotification(
+            id: newReq.id.hashCode,
+            title: 'Request Approved',
+            body: '${newReq.title} has been approved!',
+          );
+        } else if (newReq.status == 'rejected') {
+          NotificationHelper().showNotification(
+            id: newReq.id.hashCode,
+            title: 'Request Rejected',
+            body: '${newReq.title} was rejected.',
+          );
+        }
+      }
     }
   }
 

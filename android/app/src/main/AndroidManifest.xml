@@ -79,6 +79,12 @@
             </intent-filter>
         </service>
 
+        <!-- Background downloader service -->
+        <service
+            android:name="com.bbflight.background_downloader.DownloadService"
+            android:foregroundServiceType="dataSync"
+            android:exported="false" />
+
         <!-- Don't delete the meta-data below.
              This is used by the Flutter tool to generate GeneratedPluginRegistrant.java -->
         <meta-data

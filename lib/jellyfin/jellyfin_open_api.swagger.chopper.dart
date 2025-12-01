@@ -1,5 +1,5 @@
 // dart format width=80
-//Generated jellyfin api code
+// GENERATED CODE - DO NOT MODIFY BY HAND
 
 part of 'jellyfin_open_api.swagger.dart';
 

@@ -30,6 +30,32 @@ mixin _$LibraryScreenModel {
           this as LibraryScreenModel, _$identity);
 
   @override
+  bool operator ==(Object other) {
+    return identical(this, other) ||
+        (other.runtimeType == runtimeType &&
+            other is LibraryScreenModel &&
+            const DeepCollectionEquality().equals(other.views, views) &&
+            (identical(other.selectedViewModel, selectedViewModel) ||
+                other.selectedViewModel == selectedViewModel) &&
+            const DeepCollectionEquality().equals(other.viewType, viewType) &&
+            const DeepCollectionEquality()
+                .equals(other.recommendations, recommendations) &&
+            const DeepCollectionEquality().equals(other.genres, genres) &&
+            const DeepCollectionEquality()
+                .equals(other.favourites, favourites));
+  }
+
+  @override
+  int get hashCode => Object.hash(
+      runtimeType,
+      const DeepCollectionEquality().hash(views),
+      selectedViewModel,
+      const DeepCollectionEquality().hash(viewType),
+      const DeepCollectionEquality().hash(recommendations),
+      const DeepCollectionEquality().hash(genres),
+      const DeepCollectionEquality().hash(favourites));
+
+  @override
   String toString() {
     return 'LibraryScreenModel(views: $views, selectedViewModel: $selectedViewModel, viewType: $viewType, recommendations: $recommendations, genres: $genres, favourites: $favourites)';
   }
@@ -353,6 +379,32 @@ class _LibraryScreenModel implements LibraryScreenModel {
   @pragma('vm:prefer-inline')
   _$LibraryScreenModelCopyWith<_LibraryScreenModel> get copyWith =>
       __$LibraryScreenModelCopyWithImpl<_LibraryScreenModel>(this, _$identity);
+
+  @override
+  bool operator ==(Object other) {
+    return identical(this, other) ||
+        (other.runtimeType == runtimeType &&
+            other is _LibraryScreenModel &&
+            const DeepCollectionEquality().equals(other._views, _views) &&
+            (identical(other.selectedViewModel, selectedViewModel) ||
+                other.selectedViewModel == selectedViewModel) &&
+            const DeepCollectionEquality().equals(other._viewType, _viewType) &&
+            const DeepCollectionEquality()
+                .equals(other._recommendations, _recommendations) &&
+            const DeepCollectionEquality().equals(other._genres, _genres) &&
+            const DeepCollectionEquality()
+                .equals(other._favourites, _favourites));
+  }
+
+  @override
+  int get hashCode => Object.hash(
+      runtimeType,
+      const DeepCollectionEquality().hash(_views),
+      selectedViewModel,
+      const DeepCollectionEquality().hash(_viewType),
+      const DeepCollectionEquality().hash(_recommendations),
+      const DeepCollectionEquality().hash(_genres),
+      const DeepCollectionEquality().hash(_favourites));
 
   @override
   String toString() {

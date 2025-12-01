@@ -13,6 +13,7 @@ import 'package:kebap/providers/sync/background_download_provider.dart';
 import 'package:kebap/providers/sync/sync_provider_helpers.dart';
 import 'package:kebap/providers/sync_provider.dart';
 import 'package:kebap/util/localization_helper.dart';
+import 'package:kebap/util/size_formatting.dart';
 
 const _cancellableStatuses = {
   TaskStatus.canceled,
@@ -54,12 +55,35 @@ class SyncProgressBar extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
+    final children = ref.watch(syncedNestedChildrenProvider(item)).valueOrNull ?? [];
+    final totalSize = ref.watch(syncSizeProvider(item, children)) ?? 0;
+
+    double currentBytes = 0;
+    if (children.isNotEmpty) {
+      for (var child in children) {
+        final childTask = ref.watch(downloadTasksProvider(child.id));
+        final childSize = child.fileSize ?? 0;
+        if (child.videoFile.existsSync()) {
+          currentBytes += childSize;
+        } else if (childTask.hasDownload) {
+          currentBytes += childTask.progress * childSize;
+        }
+      }
+    } else {
+      final size = item.fileSize ?? 0;
+      if (item.videoFile.existsSync()) {
+        currentBytes = size.toDouble();
+      } else if (task.hasDownload) {
+        currentBytes = task.progress * size;
+      }
+    }
+
     final downloadStatus = task.status;
-    final downloadProgress = task.progress;
+    final downloadProgress = totalSize > 0 ? currentBytes / totalSize : 0.0;
     final downloadSpeed = task.downloadSpeed;
     final downloadTask = task.task;
 
-    if (!task.hasDownload) {
+    if (!task.hasDownload && currentBytes == 0) {
       return const SizedBox.shrink();
     }
     return Column(
@@ -98,7 +122,7 @@ class SyncProgressBar extends ConsumerWidget {
               ),
             ),
             Text(
-              "${(downloadProgress * 100).toStringAsFixed(0)}%",
+              "${(downloadProgress * 100).toStringAsFixed(0)}% (${currentBytes.toInt().byteFormat} / ${totalSize.byteFormat})",
               style: Theme.of(context)
                   .textTheme
                   .labelLarge

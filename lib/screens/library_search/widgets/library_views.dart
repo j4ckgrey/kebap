@@ -335,7 +335,13 @@ class LibraryViews extends ConsumerWidget {
                                 onUserDataChanged: (id, newData) => libraryProvider.updateUserData(id, newData),
                                 onItemRemoved: (oldItem) => libraryProvider.removeFromPosters([oldItem.id]),
                                 onItemUpdated: (newItem) => libraryProvider.updateItem(newItem),
-                                onPressed: (action, item) async => onItemPressed(action, key, item, ref, context),
+                                onPressed: (action, item) async {
+                                  if (onPressed != null) {
+                                    onPressed!(item);
+                                  } else {
+                                    await onItemPressed(action, key, item, ref, context);
+                                  }
+                                },
                               ),
                             ),
                           );

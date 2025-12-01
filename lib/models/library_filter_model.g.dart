@@ -65,7 +65,7 @@ _LibraryFilterModel _$LibraryFilterModelFromJson(Map<String, dynamic> json) =>
       hideEmptyShows: json['hideEmptyShows'] as bool? ?? true,
       recursive: json['recursive'] as bool? ?? true,
       groupBy: $enumDecodeNullable(_$GroupByEnumMap, json['groupBy']) ??
-          GroupBy.none,
+          GroupBy.type,
     );
 
 Map<String, dynamic> _$LibraryFilterModelToJson(_LibraryFilterModel instance) =>

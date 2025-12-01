@@ -1,165 +1,62 @@
-# Kebap
-
-Kebap — rebranded from Kebap.
-
-Small notes to get started:
-
-- Open this repository in GitHub Codespaces (or VS Code with Remote - Containers).
-- Recommended: use the provided devcontainer to start a dedicated development environment.
-- Useful commands:
-  - `flutter pub get` — fetch Dart/Flutter dependencies
-  - `flutter analyze` — run static analysis
-  - `flutter build` — build platform artifacts
-
-This README is intentionally minimal — tell me if you want a more detailed contributor guide.
-
 <h1 align="center">
   <br>
-    <a href="https://github.com/j4ckgrey/Kebap"><img src="icons/production/kebap_icon_desktop.png" alt="Kebap" width="200"></a>
+  <a href="https://github.com/j4ckgrey/Kebap">
+    <img src="icons/production/kebap_icon_desktop.png" alt="Kebap" width="200">
+  </a>
   <br>
   Kebap
   <br>
 </h1>
 
-<h4 align="center">A Simple Jellyfin Frontend built on top of <a href="https://flutter.dev/" target="_blank">Flutter</a>.</h4>
+<h4 align="center">A Cross-Platform Jellyfin Client</h4>
 
-<p align="center">
-  <a href="#key-features">Key Features</a> •
-  <a href="#screenshots">Screenshots</a> •
-  <a href="#planned-features">Planned Features</a> •
-  <a href="#download">Download</a> •
-  <a href="#how-to-contribute">Contributing</a> •
-  <a href="#credits">Credits</a> •
-  <a href="#license">License</a>
-</p>
+---
 
-<div align="center">
-  
-  [![Build](https://github.com/j4ckgrey/Kebap/actions/workflows/build.yml/badge.svg?branch=develop)](https://github.com/j4ckgrey/Kebap/actions/workflows/build.yml)
-  [![GitHub Downloads (all assets, all releases)](https://img.shields.io/github/downloads/j4ckgrey/kebap/total)](https://github.com/j4ckgrey/Kebap/releases/latest)
-  [![GitHub Release](https://img.shields.io/github/v/release/j4ckgrey/kebap?display_name=tag)](https://github.com/j4ckgrey/Kebap/releases/latest)
-  [![Conventional Commits](https://img.shields.io/badge/Conventional%20Commits-1.0.0-%23FE5196?logo=conventionalcommits&logoColor=white)](https://conventionalcommits.org)
-  
-</div>
+## 🚀 Key Features
 
+- **Online & Offline Downloads**
+- **Cross-Platform Support**
+- **Powered by Gelato & Baklava Plugins**
+  - Remote streaming support  
+  - Stremio search engine integration
+- **Alpha Version Notice**
+  - Only the clients currently listed on the Releases page are available  
+  - More platform builds coming soon
 
+---
 
-## Key Features
+## 🔧 Requirements
 
-* Play media – Stream or sync content locally to your device
-* Manage your library – Refresh content and edit metadata
-* Multiple profiles – add multiple users or different servers easily switching between
-* Direct, Transcode and Offline playback
-* Media segments skipping (Intro/Credits etc.)
-* Trickplay support (timeline scrubbing)
-* Dark/Light mode and multiple color styles to pick
-* Simple comic book format reading support (.cbz, .cbr)
-* Sync items for all platforms
-* Download items and keep progress in sync
-* Keyboard shortcuts
-* Adaptive layout for all platforms
-* Next-up overview when watching a queue
-* Platforms
-  - Android + TV
-  - Web + Docker
-  - macOS
-  - Windows 
-  - iOS 
-  - Linux 
- 
-## Screenshots
-<details close>
-  <summary>Mobile</summary>
-  <img src="assets/marketing/screenshots/Mobile/Dashboard.png" alt="Kebap" width="200">  
-  <img src="assets/marketing/screenshots/Mobile/Details.png" alt="Kebap" width="200">  
-  <img src="assets/marketing/screenshots/Mobile/Details_2.png" alt="Kebap" width="200">  
-  <img src="assets/marketing/screenshots/Mobile/Favourites.png" alt="Kebap" width="200">  
-  <img src="assets/marketing/screenshots/Mobile/Library.png" alt="Kebap" width="200">  
-  <img src="assets/marketing/screenshots/Mobile/Library_Search.png" alt="Kebap" width="200">  
-  <img src="assets/marketing/screenshots/Mobile/Resume_Tab.png" alt="Kebap" width="200">  
-  <img src="assets/marketing/screenshots/Mobile/Sync.png" alt="Kebap" width="200">  
-  <img src="assets/marketing/screenshots/Mobile/Settings.png" alt="Kebap" width="200">  
-  <img src="assets/marketing/screenshots/Mobile/Player.png" alt="Kebap" width="1280">  
-</details>
+Before using Kebap, make sure these two plugins are installed, configured, and running:
 
-<details close>
-  <summary>Tablet</summary>
-  <img src="assets/marketing/screenshots/Tablet/Dashboard.png" alt="Kebap" width="1280">  
-  <img src="assets/marketing/screenshots/Tablet/Details.png" alt="Kebap" width="1280">  
-  <img src="assets/marketing/screenshots/Tablet/Details_2.png" alt="Kebap" width="1280">  
-  <img src="assets/marketing/screenshots/Tablet/Favourites.png" alt="Kebap" width="1280">  
-  <img src="assets/marketing/screenshots/Tablet/Library.png" alt="Kebap" width="1280">  
-  <img src="assets/marketing/screenshots/Tablet/Library_Search.png" alt="Kebap" width="1280">  
-  <img src="assets/marketing/screenshots/Tablet/Resume_Tab.png" alt="Kebap" width="1280">  
-  <img src="assets/marketing/screenshots/Tablet/Sync.png" alt="Kebap" width="1280">  
-  <img src="assets/marketing/screenshots/Tablet/Settings.png" alt="Kebap" width="1280">  
-  <img src="assets/marketing/screenshots/Tablet/Player.png" alt="Kebap" width="1280">   
-</details>
+- **Gelato** → https://github.com/lostb1t/Gelato  
+- **Baklava** → https://github.com/j4ckgrey/Baklava  
 
-<details close>
-  <summary>Television</summary>
-  <img src="assets/marketing/screenshots/Television/Dashboard.png" alt="Kebap" width="1280">  
-  <img src="assets/marketing/screenshots/Television/Details.png" alt="Kebap" width="1280">  
-  <img src="assets/marketing/screenshots/Television/Favourites.png" alt="Kebap" width="1280">  
-  <img src="assets/marketing/screenshots/Television/Library.png" alt="Kebap" width="1280">  
-  <img src="assets/marketing/screenshots/Television/Library_Search.png" alt="Kebap" width="1280">  
-  <img src="assets/marketing/screenshots/Television/Sync.png" alt="Kebap" width="1280">  
-  <img src="assets/marketing/screenshots/Television/Settings.png" alt="Kebap" width="1280">  
-  <img src="assets/marketing/screenshots/Television/Player.png" alt="Kebap" width="1280">   
-</details>
+---
 
-Web/Desktop [try out the web build!](https://j4ckgrey.github.io/Kebap)
-> [!NOTE]
-> The GitHub hosted web build only allows `https` connections. This is a limitation on GitHub's end, for self-hosted versions `http` works fine.
+## 🙌 Credits
 
-## Planned Features
+Kebap is a fork of **Fladder**, a Jellyfin client built with Flutter.  
+Original project: https://github.com/DonutWare/Fladder
 
-* Music playback
-* Server management
-* And more???
+Huge thanks to the Fladder team and all open-source contributors.
 
-## Download
+---
 
-The latest executables for Windows, macOS, Linux, iOS, Android and Web can be found on the [releases page](https://github.com/j4ckgrey/Kebap/releases).
+## 💬 Support
 
-You can pull the Docker version using the following tags: ```ghcr.io/j4ckgrey/kebap:latest```. or ```ghcr.io/j4ckgrey/kebap-rootless:latest```
+- **Discord:**  
+  https://discordapp.com/channels/1433689453158862943/1441378427239137300  
 
-*Platform-specific installation and usage instructions can be found [here](https://github.com/j4ckgrey/Kebap/blob/develop/INSTALL.md).*
+- **Ko-fi:**  
+  https://ko-fi.com/j4ckgrey  
 
-<a href='https://play.google.com/store/apps/details?id=nl.jknaapen.kebap&pcampaignid=pcampaignidMKT-Other-global-all-co-prtnr-py-PartBadge-Mar2515-1'><img alt='Get it on Google Play' src='https://play.google.com/intl/en_us/badges/static/images/badges/en_badge_web_generic.png' width=250/></a>
+---
 
-> [!WARNING]
-> (Windows) Some flutter applications are marked as false positives by windows defender for more info see [this issue](https://github.com/j4ckgrey/Kebap/issues/197#issuecomment-2568906874).
+## 📄 License
 
-## How to Contribute
-Interested in contributing? Here are a couple of ways you can help:
+This project is licensed under the **GNU General Public License v3.0 (GPL-3.0)**.  
+The full license text is available in the root of this repository:  
+**[`LICENSE`](./LICENSE)**
 
-### 🐛 Reporting Bugs
-- Before reporting a bug, **please ensure** that the issue hasn't been reported already.
-- When submitting a bug report, provide detailed steps on how the bug can be reproduced. This will help us to understand and fix the issue faster.
-- Bug reports are appreciated and very helpful!
-
-### 🚀 Submitting Pull Requests
-- **Pull requests are always welcome!** 
-- For new features or large changes, please open a discussion or issue first to ensure that no one else is already working on it.
-- **Keep pull requests short and focused**: try to avoid fixing multiple issues in a single pull request. This helps make the review process smoother and quicker.
-
-### 🌐 Translations 
-</a>
-<a href="https://hosted.weblate.org/engage/kebap/">
-<img src="https://hosted.weblate.org/widget/kebap/kebap/multi-auto.svg" alt="Translation status" />
-</a>
-
-Thank you for helping to make this project better! 🙌
-
-
-## Credits
-
-This software uses the following open source packages:
-- [Flutter](https://flutter.dev/)
-
-## License
-
-This project is licensed under the GNU General Public License v3.0. More information about the license can be found in [this file](https://github.com/j4ckgrey/Kebap/blob/develop/LICENSE).
-
-
+---

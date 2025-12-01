@@ -93,8 +93,6 @@ class OverviewModelMapper extends ClassMapperBase<OverviewModel> {
     #people: _f$people,
     #providerIds: _f$providerIds,
   };
-  @override
-  final bool ignoreNull = true;
 
   static OverviewModel _instantiate(DecodingData data) {
     return OverviewModel(
@@ -119,12 +117,47 @@ class OverviewModelMapper extends ClassMapperBase<OverviewModel> {
 
   @override
   final Function instantiate = _instantiate;
+
+  static OverviewModel fromMap(Map<String, dynamic> map) {
+    return ensureInitialized().decodeMap<OverviewModel>(map);
+  }
+
+  static OverviewModel fromJson(String json) {
+    return ensureInitialized().decodeJson<OverviewModel>(json);
+  }
 }
 
 mixin OverviewModelMappable {
+  String toJson() {
+    return OverviewModelMapper.ensureInitialized()
+        .encodeJson<OverviewModel>(this as OverviewModel);
+  }
+
+  Map<String, dynamic> toMap() {
+    return OverviewModelMapper.ensureInitialized()
+        .encodeMap<OverviewModel>(this as OverviewModel);
+  }
+
   OverviewModelCopyWith<OverviewModel, OverviewModel, OverviewModel>
       get copyWith => _OverviewModelCopyWithImpl<OverviewModel, OverviewModel>(
           this as OverviewModel, $identity, $identity);
+  @override
+  String toString() {
+    return OverviewModelMapper.ensureInitialized()
+        .stringifyValue(this as OverviewModel);
+  }
+
+  @override
+  bool operator ==(Object other) {
+    return OverviewModelMapper.ensureInitialized()
+        .equalsValue(this as OverviewModel, other);
+  }
+
+  @override
+  int get hashCode {
+    return OverviewModelMapper.ensureInitialized()
+        .hashValue(this as OverviewModel);
+  }
 }
 
 extension OverviewModelValueCopy<$R, $Out>

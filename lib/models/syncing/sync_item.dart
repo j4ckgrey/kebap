@@ -35,6 +35,7 @@ abstract class SyncedItem with _$SyncedItem {
     String? sortName,
     int? fileSize,
     String? videoFileName,
+    String? mediaSourceId, // Selected version/media source ID
     MediaSegmentsModel? mediaSegments,
     TrickPlayModel? fTrickPlayModel,
     ImagesData? fImages,

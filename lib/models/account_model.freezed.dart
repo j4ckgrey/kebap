@@ -67,6 +67,59 @@ mixin _$AccountModel implements DiagnosticableTreeMixin {
   }
 
   @override
+  bool operator ==(Object other) {
+    return identical(this, other) ||
+        (other.runtimeType == runtimeType &&
+            other is AccountModel &&
+            (identical(other.name, name) || other.name == name) &&
+            (identical(other.id, id) || other.id == id) &&
+            (identical(other.avatar, avatar) || other.avatar == avatar) &&
+            (identical(other.lastUsed, lastUsed) ||
+                other.lastUsed == lastUsed) &&
+            (identical(other.authMethod, authMethod) ||
+                other.authMethod == authMethod) &&
+            (identical(other.localPin, localPin) ||
+                other.localPin == localPin) &&
+            (identical(other.credentials, credentials) ||
+                other.credentials == credentials) &&
+            const DeepCollectionEquality()
+                .equals(other.latestItemsExcludes, latestItemsExcludes) &&
+            const DeepCollectionEquality()
+                .equals(other.searchQueryHistory, searchQueryHistory) &&
+            (identical(other.quickConnectState, quickConnectState) ||
+                other.quickConnectState == quickConnectState) &&
+            const DeepCollectionEquality()
+                .equals(other.libraryFilters, libraryFilters) &&
+            (identical(other.policy, policy) || other.policy == policy) &&
+            (identical(other.serverConfiguration, serverConfiguration) ||
+                other.serverConfiguration == serverConfiguration) &&
+            (identical(other.userConfiguration, userConfiguration) ||
+                other.userConfiguration == userConfiguration) &&
+            (identical(other.userSettings, userSettings) ||
+                other.userSettings == userSettings));
+  }
+
+  @JsonKey(includeFromJson: false, includeToJson: false)
+  @override
+  int get hashCode => Object.hash(
+      runtimeType,
+      name,
+      id,
+      avatar,
+      lastUsed,
+      authMethod,
+      localPin,
+      credentials,
+      const DeepCollectionEquality().hash(latestItemsExcludes),
+      const DeepCollectionEquality().hash(searchQueryHistory),
+      quickConnectState,
+      const DeepCollectionEquality().hash(libraryFilters),
+      policy,
+      serverConfiguration,
+      userConfiguration,
+      userSettings);
+
+  @override
   String toString({DiagnosticLevel minLevel = DiagnosticLevel.info}) {
     return 'AccountModel(name: $name, id: $id, avatar: $avatar, lastUsed: $lastUsed, authMethod: $authMethod, localPin: $localPin, credentials: $credentials, latestItemsExcludes: $latestItemsExcludes, searchQueryHistory: $searchQueryHistory, quickConnectState: $quickConnectState, libraryFilters: $libraryFilters, policy: $policy, serverConfiguration: $serverConfiguration, userConfiguration: $userConfiguration, userSettings: $userSettings)';
   }
@@ -603,6 +656,59 @@ class _AccountModel extends AccountModel with DiagnosticableTreeMixin {
   }
 
   @override
+  bool operator ==(Object other) {
+    return identical(this, other) ||
+        (other.runtimeType == runtimeType &&
+            other is _AccountModel &&
+            (identical(other.name, name) || other.name == name) &&
+            (identical(other.id, id) || other.id == id) &&
+            (identical(other.avatar, avatar) || other.avatar == avatar) &&
+            (identical(other.lastUsed, lastUsed) ||
+                other.lastUsed == lastUsed) &&
+            (identical(other.authMethod, authMethod) ||
+                other.authMethod == authMethod) &&
+            (identical(other.localPin, localPin) ||
+                other.localPin == localPin) &&
+            (identical(other.credentials, credentials) ||
+                other.credentials == credentials) &&
+            const DeepCollectionEquality()
+                .equals(other._latestItemsExcludes, _latestItemsExcludes) &&
+            const DeepCollectionEquality()
+                .equals(other._searchQueryHistory, _searchQueryHistory) &&
+            (identical(other.quickConnectState, quickConnectState) ||
+                other.quickConnectState == quickConnectState) &&
+            const DeepCollectionEquality()
+                .equals(other._libraryFilters, _libraryFilters) &&
+            (identical(other.policy, policy) || other.policy == policy) &&
+            (identical(other.serverConfiguration, serverConfiguration) ||
+                other.serverConfiguration == serverConfiguration) &&
+            (identical(other.userConfiguration, userConfiguration) ||
+                other.userConfiguration == userConfiguration) &&
+            (identical(other.userSettings, userSettings) ||
+                other.userSettings == userSettings));
+  }
+
+  @JsonKey(includeFromJson: false, includeToJson: false)
+  @override
+  int get hashCode => Object.hash(
+      runtimeType,
+      name,
+      id,
+      avatar,
+      lastUsed,
+      authMethod,
+      localPin,
+      credentials,
+      const DeepCollectionEquality().hash(_latestItemsExcludes),
+      const DeepCollectionEquality().hash(_searchQueryHistory),
+      quickConnectState,
+      const DeepCollectionEquality().hash(_libraryFilters),
+      policy,
+      serverConfiguration,
+      userConfiguration,
+      userSettings);
+
+  @override
   String toString({DiagnosticLevel minLevel = DiagnosticLevel.info}) {
     return 'AccountModel(name: $name, id: $id, avatar: $avatar, lastUsed: $lastUsed, authMethod: $authMethod, localPin: $localPin, credentials: $credentials, latestItemsExcludes: $latestItemsExcludes, searchQueryHistory: $searchQueryHistory, quickConnectState: $quickConnectState, libraryFilters: $libraryFilters, policy: $policy, serverConfiguration: $serverConfiguration, userConfiguration: $userConfiguration, userSettings: $userSettings)';
   }
@@ -782,6 +888,22 @@ mixin _$UserSettings implements DiagnosticableTreeMixin {
       ..add(DiagnosticsProperty('skipForwardDuration', skipForwardDuration))
       ..add(DiagnosticsProperty('skipBackDuration', skipBackDuration));
   }
+
+  @override
+  bool operator ==(Object other) {
+    return identical(this, other) ||
+        (other.runtimeType == runtimeType &&
+            other is UserSettings &&
+            (identical(other.skipForwardDuration, skipForwardDuration) ||
+                other.skipForwardDuration == skipForwardDuration) &&
+            (identical(other.skipBackDuration, skipBackDuration) ||
+                other.skipBackDuration == skipBackDuration));
+  }
+
+  @JsonKey(includeFromJson: false, includeToJson: false)
+  @override
+  int get hashCode =>
+      Object.hash(runtimeType, skipForwardDuration, skipBackDuration);
 
   @override
   String toString({DiagnosticLevel minLevel = DiagnosticLevel.info}) {
@@ -1024,6 +1146,22 @@ class _UserSettings with DiagnosticableTreeMixin implements UserSettings {
       ..add(DiagnosticsProperty('skipForwardDuration', skipForwardDuration))
       ..add(DiagnosticsProperty('skipBackDuration', skipBackDuration));
   }
+
+  @override
+  bool operator ==(Object other) {
+    return identical(this, other) ||
+        (other.runtimeType == runtimeType &&
+            other is _UserSettings &&
+            (identical(other.skipForwardDuration, skipForwardDuration) ||
+                other.skipForwardDuration == skipForwardDuration) &&
+            (identical(other.skipBackDuration, skipBackDuration) ||
+                other.skipBackDuration == skipBackDuration));
+  }
+
+  @JsonKey(includeFromJson: false, includeToJson: false)
+  @override
+  int get hashCode =>
+      Object.hash(runtimeType, skipForwardDuration, skipBackDuration);
 
   @override
   String toString({DiagnosticLevel minLevel = DiagnosticLevel.info}) {

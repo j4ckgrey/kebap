@@ -26,62 +26,60 @@ List<Widget> buildClientSettingsDownload(BuildContext context, WidgetRef ref, Fu
   return [
     if (canSync && !kIsWeb) ...[
       ...settingsListGroup(context, SettingsLabelDivider(label: context.localized.downloadsTitle), [
-        if (AdaptiveLayout.of(context).isDesktop) ...[
-          SettingsListTile(
-            label: Text(context.localized.downloadsPath),
-            subLabel: Text(currentFolder ?? "-"),
-            onTap: currentFolder != null
-                ? () async => await showDialog(
-                      context: context,
-                      builder: (context) => AlertDialog(
-                        title: Text(context.localized.pathEditTitle),
-                        content: Text(context.localized.pathEditDesc),
-                        actions: [
-                          ElevatedButton(
-                            onPressed: () async {
-                              String? selectedDirectory = await FilePicker.platform.getDirectoryPath(
-                                  dialogTitle: context.localized.pathEditSelect, initialDirectory: currentFolder);
-                              if (selectedDirectory != null) {
-                                await ref.read(clientSettingsProvider.notifier).setSyncPath(selectedDirectory);
-                              }
-                              Navigator.of(context).pop();
-                            },
-                            child: Text(context.localized.change),
-                          )
-                        ],
-                      ),
-                    )
-                : () async {
-                    String? selectedDirectory = await FilePicker.platform.getDirectoryPath(
-                        dialogTitle: context.localized.pathEditSelect, initialDirectory: currentFolder);
-                    if (selectedDirectory != null) {
-                      ref.read(clientSettingsProvider.notifier).setSyncPath(selectedDirectory);
-                    }
-                  },
-            trailing: currentFolder?.isNotEmpty == true
-                ? IconButton(
-                    color: Theme.of(context).colorScheme.error,
-                    onPressed: () async => await showDialog(
-                      context: context,
-                      builder: (context) => AlertDialog(
-                        title: Text(context.localized.pathClearTitle),
-                        content: Text(context.localized.pathEditDesc),
-                        actions: [
-                          ElevatedButton(
-                            onPressed: () {
-                              ref.read(clientSettingsProvider.notifier).setSyncPath(null);
-                              Navigator.of(context).pop();
-                            },
-                            child: Text(context.localized.clear),
-                          )
-                        ],
-                      ),
+        SettingsListTile(
+          label: Text(context.localized.downloadsPath),
+          subLabel: Text(currentFolder ?? "-"),
+          onTap: currentFolder != null
+              ? () async => await showDialog(
+                    context: context,
+                    builder: (context) => AlertDialog(
+                      title: Text(context.localized.pathEditTitle),
+                      content: Text(context.localized.pathEditDesc),
+                      actions: [
+                        ElevatedButton(
+                          onPressed: () async {
+                            String? selectedDirectory = await FilePicker.platform.getDirectoryPath(
+                                dialogTitle: context.localized.pathEditSelect, initialDirectory: currentFolder);
+                            if (selectedDirectory != null) {
+                              await ref.read(clientSettingsProvider.notifier).setSyncPath(selectedDirectory);
+                            }
+                            Navigator.of(context).pop();
+                          },
+                          child: Text(context.localized.change),
+                        )
+                      ],
                     ),
-                    icon: const Icon(IconsaxPlusLinear.folder_minus),
                   )
-                : null,
-          ),
-        ],
+              : () async {
+                  String? selectedDirectory = await FilePicker.platform.getDirectoryPath(
+                      dialogTitle: context.localized.pathEditSelect, initialDirectory: currentFolder);
+                  if (selectedDirectory != null) {
+                    ref.read(clientSettingsProvider.notifier).setSyncPath(selectedDirectory);
+                  }
+                },
+          trailing: currentFolder?.isNotEmpty == true
+              ? IconButton(
+                  color: Theme.of(context).colorScheme.error,
+                  onPressed: () async => await showDialog(
+                    context: context,
+                    builder: (context) => AlertDialog(
+                      title: Text(context.localized.pathClearTitle),
+                      content: Text(context.localized.pathEditDesc),
+                      actions: [
+                        ElevatedButton(
+                          onPressed: () {
+                            ref.read(clientSettingsProvider.notifier).setSyncPath(null);
+                            Navigator.of(context).pop();
+                          },
+                          child: Text(context.localized.clear),
+                        )
+                      ],
+                    ),
+                  ),
+                  icon: const Icon(IconsaxPlusLinear.folder_minus),
+                )
+              : null,
+        ),
         FutureBuilder(
           future: ref.watch(syncProvider.notifier).directorySize,
           builder: (context, snapshot) {

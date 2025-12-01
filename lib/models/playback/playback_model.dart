@@ -9,6 +9,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:path/path.dart';
 
 import 'package:kebap/jellyfin/jellyfin_open_api.swagger.dart';
+import 'package:kebap/jellyfin/enum_models.dart';
 import 'package:kebap/models/item_base_model.dart';
 import 'package:kebap/models/items/chapters_model.dart';
 import 'package:kebap/models/items/episode_model.dart';
@@ -156,6 +157,17 @@ class PlaybackModelHelper {
         children.where((element) => element.videoFile.existsSync() && element.id != syncedItem.id).toList();
     final itemQueue = syncedItems.map((e) => e.itemModel).nonNulls;
 
+    // Filter media streams to only show the downloaded version
+    final allStreams = item.streamModel ?? syncedItemModel.streamModel;
+    final matchingVersion = allStreams?.versionStreams.firstWhereOrNull((v) => v.id == syncedItem.mediaSourceId);
+    
+    final filteredStreams = matchingVersion != null 
+        ? allStreams?.copyWith(
+            versionStreams: [matchingVersion],
+            versionStreamIndex: 0,
+          )
+        : allStreams;
+
     return OfflinePlaybackModel(
       item: syncedItemModel,
       syncedItem: syncedItem,
@@ -164,7 +176,7 @@ class PlaybackModelHelper {
       media: Media(url: syncedItem.videoFile.path),
       queue: itemQueue.nonNulls.toList(),
       syncedQueue: children,
-      mediaStreams: item.streamModel ?? syncedItemModel.streamModel,
+      mediaStreams: filteredStreams ?? allStreams,
     );
   }
 
@@ -289,6 +301,19 @@ class PlaybackModelHelper {
       final isNativePlayer =
           ref.read(videoPlayerSettingsProvider.select((value) => value.wantedPlayer == PlayerOptions.nativePlayer));
       final isExternalSub = newStreamModel?.currentSubStream?.isExternal == true;
+
+      // Refresh metadata to clear cached stream URLs (fixes expired RealDebrid/Torrentio links)
+      try {
+        await api.itemsItemIdRefreshPost(
+          itemId: item.id,
+          metadataRefreshMode: MetadataRefresh.fullRefresh,
+          replaceAllMetadata: false,
+          replaceAllImages: false,
+        );
+      } catch (e) {
+        log("Failed to refresh metadata: ${e.toString()}");
+        // Continue anyway - cached URLs might still work
+      }
 
       final Response<PlaybackInfoResponse> response = await api.itemsItemIdPlaybackInfoPost(
         itemId: item.id,
@@ -434,6 +459,19 @@ class PlaybackModelHelper {
         playbackModel.mediaStreams?.currentSubStream,
         playbackModel.subStreams,
         playbackModel.mediaStreams?.defaultSubStreamIndex);
+
+    // Refresh metadata to clear cached stream URLs (fixes expired RealDebrid/Torrentio links)
+    try {
+      await api.itemsItemIdRefreshPost(
+        itemId: item.id,
+        metadataRefreshMode: MetadataRefresh.fullRefresh,
+        replaceAllMetadata: false,
+        replaceAllImages: false,
+      );
+    } catch (e) {
+      log("Failed to refresh metadata: ${e.toString()}");
+      // Continue anyway - cached URLs might still work
+    }
 
     Response<PlaybackInfoResponse> response = await api.itemsItemIdPlaybackInfoPost(
       itemId: item.id,

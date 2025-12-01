@@ -9,6 +9,7 @@ import 'package:kebap/screens/details_screens/components/label_title_item.dart';
 import 'package:kebap/screens/details_screens/components/media_stream_carousel.dart';
 import 'package:kebap/util/focus_provider.dart';
 import 'package:kebap/util/localization_helper.dart';
+import 'package:kebap/util/size_formatting.dart';
 // removed unused import
 import 'package:kebap/widgets/shared/item_actions.dart';
 import 'package:kebap/widgets/shared/modal_bottom_sheet.dart';
@@ -107,7 +108,7 @@ class MediaStreamInformation extends ConsumerWidget {
               child: _StreamOptionSelect(
                 label: Text(context.localized.version),
                 currentQuality: parseVersionName(mediaStream.currentVersionStream?.name ?? "").quality,
-                currentFilename: parseVersionName(mediaStream.currentVersionStream?.name ?? "").filename,
+                currentFilename: "${parseVersionName(mediaStream.currentVersionStream?.name ?? "").filename}${mediaStream.currentVersionStream?.size.byteFormat != null ? ' • ${mediaStream.currentVersionStream?.size.byteFormat}' : ''}",
                 itemBuilder: (context) => mediaStream.versionStreams
                     .map((e) {
                       final parsed = parseVersionName(e.name);
@@ -124,7 +125,7 @@ class MediaStreamInformation extends ConsumerWidget {
                               ),
                             ),
                             Text(
-                              parsed.filename,
+                              "${parsed.filename}${e.size.byteFormat != null ? ' • ${e.size.byteFormat}' : ''}",
                               style: Theme.of(context).textTheme.bodySmall?.copyWith(
                                 color: Theme.of(context).colorScheme.onSurfaceVariant,
                               ),

@@ -6,14 +6,14 @@
 
 part of 'person_model.dart';
 
-class PersonModelMapper extends SubClassMapperBase<PersonModel> {
+class PersonModelMapper extends ClassMapperBase<PersonModel> {
   PersonModelMapper._();
 
   static PersonModelMapper? _instance;
   static PersonModelMapper ensureInitialized() {
     if (_instance == null) {
       MapperContainer.globals.use(_instance = PersonModelMapper._());
-      ItemBaseModelMapper.ensureInitialized().addSubMapper(_instance!);
+      ItemBaseModelMapper.ensureInitialized();
       MovieModelMapper.ensureInitialized();
       SeriesModelMapper.ensureInitialized();
       OverviewModelMapper.ensureInitialized();
@@ -91,16 +91,6 @@ class PersonModelMapper extends SubClassMapperBase<PersonModel> {
     #canDelete: _f$canDelete,
     #jellyType: _f$jellyType,
   };
-  @override
-  final bool ignoreNull = true;
-
-  @override
-  final String discriminatorKey = 'type';
-  @override
-  final dynamic discriminatorValue = 'PersonModel';
-  @override
-  late final ClassMapperBase superMapper =
-      ItemBaseModelMapper.ensureInitialized();
 
   static PersonModel _instantiate(DecodingData data) {
     return PersonModel(
@@ -124,12 +114,46 @@ class PersonModelMapper extends SubClassMapperBase<PersonModel> {
 
   @override
   final Function instantiate = _instantiate;
+
+  static PersonModel fromMap(Map<String, dynamic> map) {
+    return ensureInitialized().decodeMap<PersonModel>(map);
+  }
+
+  static PersonModel fromJson(String json) {
+    return ensureInitialized().decodeJson<PersonModel>(json);
+  }
 }
 
 mixin PersonModelMappable {
+  String toJson() {
+    return PersonModelMapper.ensureInitialized()
+        .encodeJson<PersonModel>(this as PersonModel);
+  }
+
+  Map<String, dynamic> toMap() {
+    return PersonModelMapper.ensureInitialized()
+        .encodeMap<PersonModel>(this as PersonModel);
+  }
+
   PersonModelCopyWith<PersonModel, PersonModel, PersonModel> get copyWith =>
       _PersonModelCopyWithImpl<PersonModel, PersonModel>(
           this as PersonModel, $identity, $identity);
+  @override
+  String toString() {
+    return PersonModelMapper.ensureInitialized()
+        .stringifyValue(this as PersonModel);
+  }
+
+  @override
+  bool operator ==(Object other) {
+    return PersonModelMapper.ensureInitialized()
+        .equalsValue(this as PersonModel, other);
+  }
+
+  @override
+  int get hashCode {
+    return PersonModelMapper.ensureInitialized().hashValue(this as PersonModel);
+  }
 }
 
 extension PersonModelValueCopy<$R, $Out>

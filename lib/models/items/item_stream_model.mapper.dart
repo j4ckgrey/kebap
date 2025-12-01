@@ -6,14 +6,14 @@
 
 part of 'item_stream_model.dart';
 
-class ItemStreamModelMapper extends SubClassMapperBase<ItemStreamModel> {
+class ItemStreamModelMapper extends ClassMapperBase<ItemStreamModel> {
   ItemStreamModelMapper._();
 
   static ItemStreamModelMapper? _instance;
   static ItemStreamModelMapper ensureInitialized() {
     if (_instance == null) {
       MapperContainer.globals.use(_instance = ItemStreamModelMapper._());
-      ItemBaseModelMapper.ensureInitialized().addSubMapper(_instance!);
+      ItemBaseModelMapper.ensureInitialized();
       OverviewModelMapper.ensureInitialized();
       UserDataMapper.ensureInitialized();
     }
@@ -81,16 +81,6 @@ class ItemStreamModelMapper extends SubClassMapperBase<ItemStreamModel> {
     #canDownload: _f$canDownload,
     #jellyType: _f$jellyType,
   };
-  @override
-  final bool ignoreNull = true;
-
-  @override
-  final String discriminatorKey = 'type';
-  @override
-  final dynamic discriminatorValue = 'ItemStreamModel';
-  @override
-  late final ClassMapperBase superMapper =
-      ItemBaseModelMapper.ensureInitialized();
 
   static ItemStreamModel _instantiate(DecodingData data) {
     return ItemStreamModel(
@@ -112,13 +102,48 @@ class ItemStreamModelMapper extends SubClassMapperBase<ItemStreamModel> {
 
   @override
   final Function instantiate = _instantiate;
+
+  static ItemStreamModel fromMap(Map<String, dynamic> map) {
+    return ensureInitialized().decodeMap<ItemStreamModel>(map);
+  }
+
+  static ItemStreamModel fromJson(String json) {
+    return ensureInitialized().decodeJson<ItemStreamModel>(json);
+  }
 }
 
 mixin ItemStreamModelMappable {
+  String toJson() {
+    return ItemStreamModelMapper.ensureInitialized()
+        .encodeJson<ItemStreamModel>(this as ItemStreamModel);
+  }
+
+  Map<String, dynamic> toMap() {
+    return ItemStreamModelMapper.ensureInitialized()
+        .encodeMap<ItemStreamModel>(this as ItemStreamModel);
+  }
+
   ItemStreamModelCopyWith<ItemStreamModel, ItemStreamModel, ItemStreamModel>
       get copyWith =>
           _ItemStreamModelCopyWithImpl<ItemStreamModel, ItemStreamModel>(
               this as ItemStreamModel, $identity, $identity);
+  @override
+  String toString() {
+    return ItemStreamModelMapper.ensureInitialized()
+        .stringifyValue(this as ItemStreamModel);
+  }
+
+  @override
+  bool operator ==(Object other) {
+    return ItemStreamModelMapper.ensureInitialized()
+        .equalsValue(this as ItemStreamModel, other);
+  }
+
+  @override
+  int get hashCode {
+    return ItemStreamModelMapper.ensureInitialized()
+        .hashValue(this as ItemStreamModel);
+  }
 }
 
 extension ItemStreamModelValueCopy<$R, $Out>

@@ -56,6 +56,52 @@ mixin _$MediaRequest {
   Map<String, dynamic> toJson();
 
   @override
+  bool operator ==(Object other) {
+    return identical(this, other) ||
+        (other.runtimeType == runtimeType &&
+            other is MediaRequest &&
+            (identical(other.id, id) || other.id == id) &&
+            (identical(other.username, username) ||
+                other.username == username) &&
+            (identical(other.userId, userId) || other.userId == userId) &&
+            (identical(other.timestamp, timestamp) ||
+                other.timestamp == timestamp) &&
+            (identical(other.title, title) || other.title == title) &&
+            (identical(other.year, year) || other.year == year) &&
+            (identical(other.img, img) || other.img == img) &&
+            (identical(other.imdbId, imdbId) || other.imdbId == imdbId) &&
+            (identical(other.tmdbId, tmdbId) || other.tmdbId == tmdbId) &&
+            (identical(other.jellyfinId, jellyfinId) ||
+                other.jellyfinId == jellyfinId) &&
+            (identical(other.itemType, itemType) ||
+                other.itemType == itemType) &&
+            (identical(other.tmdbMediaType, tmdbMediaType) ||
+                other.tmdbMediaType == tmdbMediaType) &&
+            (identical(other.status, status) || other.status == status) &&
+            (identical(other.approvedBy, approvedBy) ||
+                other.approvedBy == approvedBy));
+  }
+
+  @JsonKey(includeFromJson: false, includeToJson: false)
+  @override
+  int get hashCode => Object.hash(
+      runtimeType,
+      id,
+      username,
+      userId,
+      timestamp,
+      title,
+      year,
+      img,
+      imdbId,
+      tmdbId,
+      jellyfinId,
+      itemType,
+      tmdbMediaType,
+      status,
+      approvedBy);
+
+  @override
   String toString() {
     return 'MediaRequest(id: $id, username: $username, userId: $userId, timestamp: $timestamp, title: $title, year: $year, img: $img, imdbId: $imdbId, tmdbId: $tmdbId, jellyfinId: $jellyfinId, itemType: $itemType, tmdbMediaType: $tmdbMediaType, status: $status, approvedBy: $approvedBy)';
   }
@@ -497,6 +543,52 @@ class _MediaRequest implements MediaRequest {
   }
 
   @override
+  bool operator ==(Object other) {
+    return identical(this, other) ||
+        (other.runtimeType == runtimeType &&
+            other is _MediaRequest &&
+            (identical(other.id, id) || other.id == id) &&
+            (identical(other.username, username) ||
+                other.username == username) &&
+            (identical(other.userId, userId) || other.userId == userId) &&
+            (identical(other.timestamp, timestamp) ||
+                other.timestamp == timestamp) &&
+            (identical(other.title, title) || other.title == title) &&
+            (identical(other.year, year) || other.year == year) &&
+            (identical(other.img, img) || other.img == img) &&
+            (identical(other.imdbId, imdbId) || other.imdbId == imdbId) &&
+            (identical(other.tmdbId, tmdbId) || other.tmdbId == tmdbId) &&
+            (identical(other.jellyfinId, jellyfinId) ||
+                other.jellyfinId == jellyfinId) &&
+            (identical(other.itemType, itemType) ||
+                other.itemType == itemType) &&
+            (identical(other.tmdbMediaType, tmdbMediaType) ||
+                other.tmdbMediaType == tmdbMediaType) &&
+            (identical(other.status, status) || other.status == status) &&
+            (identical(other.approvedBy, approvedBy) ||
+                other.approvedBy == approvedBy));
+  }
+
+  @JsonKey(includeFromJson: false, includeToJson: false)
+  @override
+  int get hashCode => Object.hash(
+      runtimeType,
+      id,
+      username,
+      userId,
+      timestamp,
+      title,
+      year,
+      img,
+      imdbId,
+      tmdbId,
+      jellyfinId,
+      itemType,
+      tmdbMediaType,
+      status,
+      approvedBy);
+
+  @override
   String toString() {
     return 'MediaRequest(id: $id, username: $username, userId: $userId, timestamp: $timestamp, title: $title, year: $year, img: $img, imdbId: $imdbId, tmdbId: $tmdbId, jellyfinId: $jellyfinId, itemType: $itemType, tmdbMediaType: $tmdbMediaType, status: $status, approvedBy: $approvedBy)';
   }
@@ -629,6 +721,20 @@ mixin _$RequestsState {
   $RequestsStateCopyWith<RequestsState> get copyWith =>
       _$RequestsStateCopyWithImpl<RequestsState>(
           this as RequestsState, _$identity);
+
+  @override
+  bool operator ==(Object other) {
+    return identical(this, other) ||
+        (other.runtimeType == runtimeType &&
+            other is RequestsState &&
+            const DeepCollectionEquality().equals(other.requests, requests) &&
+            (identical(other.loading, loading) || other.loading == loading) &&
+            (identical(other.error, error) || other.error == error));
+  }
+
+  @override
+  int get hashCode => Object.hash(runtimeType,
+      const DeepCollectionEquality().hash(requests), loading, error);
 
   @override
   String toString() {
@@ -871,6 +977,20 @@ class _RequestsState extends RequestsState {
   @pragma('vm:prefer-inline')
   _$RequestsStateCopyWith<_RequestsState> get copyWith =>
       __$RequestsStateCopyWithImpl<_RequestsState>(this, _$identity);
+
+  @override
+  bool operator ==(Object other) {
+    return identical(this, other) ||
+        (other.runtimeType == runtimeType &&
+            other is _RequestsState &&
+            const DeepCollectionEquality().equals(other._requests, _requests) &&
+            (identical(other.loading, loading) || other.loading == loading) &&
+            (identical(other.error, error) || other.error == error));
+  }
+
+  @override
+  int get hashCode => Object.hash(runtimeType,
+      const DeepCollectionEquality().hash(_requests), loading, error);
 
   @override
   String toString() {

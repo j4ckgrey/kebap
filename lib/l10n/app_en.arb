@@ -175,13 +175,13 @@
   "@discovered": {},
   "displayLanguage": "Display language",
   "@displayLanguage": {},
-  "downloadsClearDesc": "Remove all synced data, clearing all data for every synced user?",
+  "downloadsClearDesc": "Remove all downloaded data, clearing all data for every user?",
   "@downloadsClearDesc": {},
-  "downloadsClearTitle": "Clear synced data",
+  "downloadsClearTitle": "Clear downloaded data",
   "@downloadsClearTitle": {},
   "downloadsPath": "Path",
   "@downloadsPath": {},
-  "downloadsSyncedData": "Synced data",
+  "downloadsSyncedData": "Downloaded data",
   "@downloadsSyncedData": {},
   "downloadsTitle": "Downloads",
   "@downloadsTitle": {},
@@ -433,11 +433,11 @@
   "@navigationDashboard": {},
   "navigationFavorites": "Favorites",
   "@navigationFavorites": {},
-  "navigationSync": "Synced",
+  "navigationSync": "Downloads",
   "@navigationSync": {},
   "never": "Never",
   "@never": {},
-  "noItemsSynced": "No items synced",
+  "noItemsSynced": "No items downloaded",
   "@noItemsSynced": {},
   "noItemsToShow": "No items to show",
   "@noItemsToShow": {},
@@ -486,7 +486,7 @@
   "@password": {},
   "pathClearTitle": "Clear downloads path",
   "@pathClearTitle": {},
-  "pathEditDesc": "This location is set for all users, any synced data will no longer be accessible. It will remain on your storage.",
+  "pathEditDesc": "This location is set for all users, any downloaded data will no longer be accessible. It will remain on your storage.",
   "@pathEditDesc": {},
   "pathEditSelect": "Select downloads destination",
   "@pathEditSelect": {},
@@ -822,9 +822,9 @@
   "@subtitles": {},
   "switchUser": "Switch user",
   "@switchUser": {},
-  "sync": "Sync",
+  "sync": "Download",
   "@sync": {},
-  "syncDeleteItemDesc": "Delete all synced data for {item}?",
+  "syncDeleteItemDesc": "Delete all downloaded data for {item}?",
   "@syncDeleteItemDesc": {
     "description": "Sync delete item pop-up window",
     "placeholders": {
@@ -833,19 +833,19 @@
       }
     }
   },
-  "syncDeleteItemTitle": "Delete synced item",
+  "syncDeleteItemTitle": "Delete downloaded item",
   "@syncDeleteItemTitle": {},
-  "syncDeletePopupPermanent": "This action is permanent and will remove all locally synced files",
+  "syncDeletePopupPermanent": "This action is permanent and will remove all locally downloaded files",
   "@syncDeletePopupPermanent": {},
-  "syncDetails": "Sync details",
+  "syncDetails": "Download details",
   "@syncDetails": {},
   "syncOpenParent": "Open parent",
   "@syncOpenParent": {},
-  "syncRemoveDataDesc": "Delete synced video data? This is permanent and you will need to re-sync the files",
+  "syncRemoveDataDesc": "Delete downloaded video data? This is permanent and you will need to re-download the files",
   "@syncRemoveDataDesc": {},
-  "syncRemoveDataTitle": "Remove synced data?",
+  "syncRemoveDataTitle": "Remove downloaded data?",
   "@syncRemoveDataTitle": {},
-  "syncedItems": "Synced items",
+  "syncedItems": "Downloaded items",
   "@syncedItems": {},
   "tag": "{count, plural, one{Tag} other{Tags}}",
   "@tag": {
@@ -1017,21 +1017,21 @@
   "@syncStatusWaitingToRetry": {},
   "syncStatusPaused": "Paused",
   "@syncStatusPaused": {},
-  "syncStatusSynced": "Synced",
+  "syncStatusSynced": "Downloaded",
   "@syncStatusSynced": {},
   "syncStatusPartially": "Partially",
   "@syncStatusPartially": {},
-  "syncOverlayDeleting": "Removing synced item",
+  "syncOverlayDeleting": "Removing downloaded item",
   "@syncOverlayDeleting": {},
-  "syncOverlaySyncing": "Syncing item details",
+  "syncOverlaySyncing": "Downloading item details",
   "@syncOverlaySyncing": {},
   "syncSelectDownloadsFolder": "Select downloads folder",
   "@syncSelectDownloadsFolder": {},
-  "syncNoFolderSetup": "No sync folder setup",
+  "syncNoFolderSetup": "Download folder not set",
   "@syncNoFolderSetup": {},
-  "syncRemoveUnableToDeleteItem": "Unable to remove synced item, something went wrong",
+  "syncRemoveUnableToDeleteItem": "Unable to remove downloaded item, something went wrong",
   "@syncRemoveUnableToDeleteItem": {},
-  "syncAddItemForSyncing": "Added {item} for syncing",
+  "syncAddItemForSyncing": "Added {item} for downloading",
   "@syncAddItemForSyncing": {
     "placeholders": {
       "item": {
@@ -1039,7 +1039,7 @@
       }
     }
   },
-  "startedSyncingItem": "Started syncing {item}",
+  "startedSyncingItem": "Started downloading {item}",
   "@startedSyncingItem": {
     "placeholders": {
       "item": {
@@ -1249,7 +1249,7 @@
   "notificationDownloadingPaused": "Download paused",
   "notificationDownloadingFinished": "Download finished",
   "notificationDownloadingError": "Download error",
-  "syncAllItemsTitle": "Sync all items from {itemName}?",
+  "syncAllItemsTitle": "Download all items from {itemName}?",
   "@syncAllItemsTitle": {
     "description": "syncAllItemsFrom",
     "placeholders": {
@@ -1258,7 +1258,7 @@
       }
     }
   },
-  "syncAllItemsDesc": "This will sync ({itemCount}) items from '{itemName}' to your device.\nThis can take a while depending on the amount of items.",
+  "syncAllItemsDesc": "This will download ({itemCount}) items from '{itemName}' to your device.\nThis can take a while depending on the amount of items.",
   "@syncAllItemsDesc": {
     "description": "syncAllitemsFromDesc",
     "placeholders": {
@@ -1270,7 +1270,7 @@
       }
     }
   },
-  "syncDeleteAllItemsTitle": "Delete all synced items from {itemName}?",
+  "syncDeleteAllItemsTitle": "Delete all downloaded items from {itemName}?",
   "@syncDeleteAllItemsTitle": {
     "description": "syncDeleteAllitemsFrom",
     "placeholders": {
@@ -1279,7 +1279,7 @@
       }
     }
   },
-  "syncDeleteAllItemsDesc": "This will delete all synced items from '{itemName}'.\nThis is permanent and you will need to re-sync ({itemCount}) files.",
+  "syncDeleteAllItemsDesc": "This will delete all downloaded items from '{itemName}'.\nThis is permanent and you will need to re-download ({itemCount}) files.",
   "@syncDeleteAllItemsDesc": {
     "description": "syncDeleteAllitemsFromDesc",
     "placeholders": {
@@ -1295,7 +1295,7 @@
   "syncResumeAll": "Resume all",
   "syncStopAll": "Stop all",
   "syncDeleteAll": "Delete all files",
-  "syncAllFiles": "Sync all files",
+  "syncAllFiles": "Download all files",
   "usePostersForLibraryIconsTitle": "Show posters for library icons",
   "usePostersForLibraryIconsDesc": "Show posters instead of icons for libraries",
   "offline": "Offline",

@@ -143,7 +143,7 @@ class _AlphaNumericKeyboardState extends ConsumerState<AlphaNumericKeyboard> {
     final rows = activeLayout;
 
     return FocusTraversalGroup(
-      policy: OrderedTraversalPolicy(),
+      policy: _KeyboardTraversalPolicy(),
       child: Column(
         mainAxisSize: MainAxisSize.max,
         mainAxisAlignment: MainAxisAlignment.center,
@@ -188,5 +188,63 @@ enum KeyboardActions {
       KeyboardActions.action => "Action",
       KeyboardActions.shift => "Shift",
     };
+  }
+}
+
+/// Custom traversal policy for keyboard that implements wrap-around navigation
+/// When pressing left from the first item in a row, focus moves to the last item
+/// When pressing right from the last item in a row, focus moves to the first item
+class _KeyboardTraversalPolicy extends ReadingOrderTraversalPolicy {
+  @override
+  bool inDirection(FocusNode currentNode, TraversalDirection direction) {
+    // Only handle left/right navigation for wrap-around
+    if (direction == TraversalDirection.left || direction == TraversalDirection.right) {
+      final parent = currentNode.parent;
+      if (parent == null) return super.inDirection(currentNode, direction);
+      
+      // Get all focusable nodes
+      final allNodes = parent.descendants
+          .where((n) => n.canRequestFocus && n.context != null)
+          .toList();
+
+      // Filter for nodes in the same row
+      // We use a small epsilon for float comparison, or check overlap
+      final currentRect = currentNode.rect;
+      final rowNodes = allNodes.where((n) {
+        final rect = n.rect;
+        return (rect.center.dy - currentRect.center.dy).abs() < 20; // 20px tolerance
+      }).toList();
+      
+      // Sort by left position
+      rowNodes.sort((a, b) => a.rect.left.compareTo(b.rect.left));
+      
+      if (rowNodes.isEmpty) return super.inDirection(currentNode, direction);
+      
+      final currentIndex = rowNodes.indexOf(currentNode);
+      if (currentIndex == -1) return super.inDirection(currentNode, direction);
+      
+      if (direction == TraversalDirection.left) {
+        // Wrap around to last item if at first item
+        if (currentIndex == 0) {
+          rowNodes.last.requestFocus();
+          return true;
+        } else {
+          rowNodes[currentIndex - 1].requestFocus();
+          return true;
+        }
+      } else if (direction == TraversalDirection.right) {
+        // Wrap around to first item if at last item
+        if (currentIndex == rowNodes.length - 1) {
+          rowNodes.first.requestFocus();
+          return true;
+        } else {
+          rowNodes[currentIndex + 1].requestFocus();
+          return true;
+        }
+      }
+    }
+    
+    // For up/down navigation, use default behavior
+    return super.inDirection(currentNode, direction);
   }
 }

@@ -34,6 +34,36 @@ mixin _$TrickPlayModel {
   Map<String, dynamic> toJson();
 
   @override
+  bool operator ==(Object other) {
+    return identical(this, other) ||
+        (other.runtimeType == runtimeType &&
+            other is TrickPlayModel &&
+            (identical(other.width, width) || other.width == width) &&
+            (identical(other.height, height) || other.height == height) &&
+            (identical(other.tileWidth, tileWidth) ||
+                other.tileWidth == tileWidth) &&
+            (identical(other.tileHeight, tileHeight) ||
+                other.tileHeight == tileHeight) &&
+            (identical(other.thumbnailCount, thumbnailCount) ||
+                other.thumbnailCount == thumbnailCount) &&
+            (identical(other.interval, interval) ||
+                other.interval == interval) &&
+            const DeepCollectionEquality().equals(other.images, images));
+  }
+
+  @JsonKey(includeFromJson: false, includeToJson: false)
+  @override
+  int get hashCode => Object.hash(
+      runtimeType,
+      width,
+      height,
+      tileWidth,
+      tileHeight,
+      thumbnailCount,
+      interval,
+      const DeepCollectionEquality().hash(images));
+
+  @override
   String toString() {
     return 'TrickPlayModel(width: $width, height: $height, tileWidth: $tileWidth, tileHeight: $tileHeight, thumbnailCount: $thumbnailCount, interval: $interval, images: $images)';
   }
@@ -344,6 +374,36 @@ class _TrickPlayModel extends TrickPlayModel {
       this,
     );
   }
+
+  @override
+  bool operator ==(Object other) {
+    return identical(this, other) ||
+        (other.runtimeType == runtimeType &&
+            other is _TrickPlayModel &&
+            (identical(other.width, width) || other.width == width) &&
+            (identical(other.height, height) || other.height == height) &&
+            (identical(other.tileWidth, tileWidth) ||
+                other.tileWidth == tileWidth) &&
+            (identical(other.tileHeight, tileHeight) ||
+                other.tileHeight == tileHeight) &&
+            (identical(other.thumbnailCount, thumbnailCount) ||
+                other.thumbnailCount == thumbnailCount) &&
+            (identical(other.interval, interval) ||
+                other.interval == interval) &&
+            const DeepCollectionEquality().equals(other._images, _images));
+  }
+
+  @JsonKey(includeFromJson: false, includeToJson: false)
+  @override
+  int get hashCode => Object.hash(
+      runtimeType,
+      width,
+      height,
+      tileWidth,
+      tileHeight,
+      thumbnailCount,
+      interval,
+      const DeepCollectionEquality().hash(_images));
 
   @override
   String toString() {
