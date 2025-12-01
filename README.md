@@ -18,14 +18,14 @@
 - **Cross-Platform Support**
 - **Powered by Gelato & Baklava Plugins**
   - Remote streaming support  
-  - Stremio search engine integration
-- **Alpha Version Notice**
-  - Only the clients currently available in the Releases section are provided  
-  - More platform builds coming soon
+  - Stremio search engine integration (Gelatthrough Gelato plugin)
+  (Full features list coming soon)
+  (Builds for Apple devices coming soon)
+- **Web Version**: [https://kebap-ten.vercel.app/](https://kebap-ten.vercel.app/)
+  - **Install as App (PWA)**: Open the link in Chrome/Edge/Safari, then click "Install Kebap" in the address bar or "Add to Home Screen" in the menu.
 - **Docker Support**
   - Multi-arch images (AMD64, ARM64, ARMv7) available
-  - **Docker Hub**: `docker pull YOUR_USERNAME/kebap:alpha`
-  - **GHCR**: `docker pull ghcr.io/YOUR_USERNAME/kebap:alpha`
+  - **Docker Hub**: `docker pull j4ckgrey/kebap:alpha`
 
 ---
 
