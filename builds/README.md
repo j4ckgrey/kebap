@@ -60,16 +60,9 @@ Choose the file matching your architecture:
    docker run -d -p 80:80 kebap:alpha-amd64
    ```
 
-**Option 2: Publish to Registry (Easy)**
-1. Run the included script to publish all architectures to Docker Hub:
-   ```bash
-   ./publish_docker.sh
-   ```
-   (Enter your Docker Hub username when prompted)
-2. Users can then pull the multi-arch image:
-   ```bash
-   docker pull YOUR_USERNAME/kebap:alpha
-   ```
+**Option 2: Pull from Registry**
+- **Docker Hub**: `docker pull YOUR_USERNAME/kebap:alpha`
+- **GHCR**: `docker pull ghcr.io/YOUR_USERNAME/kebap:alpha`
 
 ### Linux (ARM/32-bit)
 **Note**: The provided Linux installer (`.deb`) is for **x86_64 (AMD64)** only.
