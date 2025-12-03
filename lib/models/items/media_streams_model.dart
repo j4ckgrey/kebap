@@ -106,7 +106,7 @@ class MediaStreamsModel {
     return MediaStreamsModel(
         defaultAudioStreamIndex: mediaSource?.firstOrNull?.defaultAudioStreamIndex,
         // Default to -1 (None) for subtitles
-        defaultSubStreamIndex: -1,
+        defaultSubStreamIndex: mediaSource?.firstOrNull?.defaultSubtitleStreamIndex ?? -1,
         versionStreams: mediaSource?.mapIndexed(
               (index, element) {
                 final streams = element.mediaStreams ?? [];
@@ -116,7 +116,7 @@ class MediaStreamsModel {
                     index: index,
                     id: element.id,
                     defaultAudioStreamIndex: element.defaultAudioStreamIndex,
-                    defaultSubStreamIndex: -1, // Default to None for subtitles
+                    defaultSubStreamIndex: element.defaultSubtitleStreamIndex ?? -1,
                     videoStreams: streams
                         .where((element) => element.type == dto.MediaStreamType.video)
                         .map(
@@ -131,18 +131,7 @@ class MediaStreamsModel {
                         .sortByExternal(),
                     subStreams: streams
                         .where((element) => element.type == dto.MediaStreamType.subtitle)
-                        // Filter out FORCED subtitles (case-insensitive)
-                        .where((element) {
-                          final displayTitle = element.displayTitle?.toLowerCase() ?? '';
-                          final title = element.title?.toLowerCase() ?? '';
-                          final language = element.language?.toLowerCase() ?? '';
-                          final codec = element.codec?.toLowerCase() ?? '';
-                          
-                          return !displayTitle.contains('forced') && 
-                                 !title.contains('forced') &&
-                                 !language.contains('forced') &&
-                                 !codec.contains('forced');
-                        })
+
                         .map(
                           (sub) => SubStreamModel.fromMediaStream(sub, ref),
                         )
@@ -388,7 +377,7 @@ class SubStreamModel extends AudioAndSubStreamModel {
       id: stream.hashCode.toString(),
       supportsExternalStream: stream.supportsExternalStream ?? false,
       url: stream.deliveryUrl != null
-          ? "${ref.read(serverUrlProvider) ?? ""}${stream.deliveryUrl}}".replaceAll(".vtt", ".srt")
+          ? "${ref.read(serverUrlProvider) ?? ""}${stream.deliveryUrl}"
           : null,
       isExternal: stream.isExternal ?? false,
       index: stream.index ?? -1,

@@ -69,6 +69,7 @@ class _SeasonDetailScreenState extends ConsumerState<SeasonDetailScreen> {
                     officialRating: details.overview.parentalRating,
                     genres: details.overview.genreItems,
                     communityRating: details.overview.communityRating,
+                    premiereDate: details.overview.premiereDate,
                   ),
                   Row(
                     children: [

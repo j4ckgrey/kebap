@@ -80,6 +80,15 @@ List<Widget> buildClientSettingsAdvanced(BuildContext context, WidgetRef ref) {
           ),
         ),
       ),
+      if (AdaptiveLayout.inputDeviceOf(context) == InputDevice.dPad)
+        SettingsListTile(
+          label: const Text("Use System Keyboard"),
+          subLabel: const Text("Use the system keyboard instead of the custom one"),
+          trailing: Switch(
+            value: ref.watch(clientSettingsProvider).useSystemIME,
+            onChanged: (value) => ref.read(clientSettingsProvider.notifier).useSystemIME(value),
+          ),
+        ),
 
     ],
   );

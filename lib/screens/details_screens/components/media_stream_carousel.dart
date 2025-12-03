@@ -69,7 +69,7 @@ class _MediaStreamCarouselState extends ConsumerState<MediaStreamCarousel> {
                   padding: const EdgeInsets.only(right: 12),
                   child: _CarouselCard(
                     title: parsed.quality,
-                    subtitle: "${parsed.filename}${version.size.byteFormat != null ? ' • ${version.size.byteFormat}' : ''}",
+                    subtitle: version.size.byteFormat,
                     isSelected: isSelected,
                     onTap: () => widget.onVersionIndexChanged?.call(version.index),
                     onFocused: (value) {

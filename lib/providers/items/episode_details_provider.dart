@@ -61,6 +61,28 @@ class EpisodeDetailsProvider extends StateNotifier<EpisodeDetailModel> {
 
       var episode = (await api.usersUserIdItemsItemIdGet(itemId: item.id)).bodyOrThrow as EpisodeModel;
 
+      // If item has no media sources (non-Gelato items), fetch from PlaybackInfo
+      if (episode.mediaStreams.versionStreams.isEmpty) {
+        try {
+          final playbackInfo = await api.itemsItemIdPlaybackInfoPost(
+            itemId: item.id,
+            body: const PlaybackInfoDto(
+              enableDirectPlay: true,
+              enableDirectStream: true,
+              enableTranscoding: false,
+            ),
+          );
+          
+          if (playbackInfo.body?.mediaSources != null && playbackInfo.body!.mediaSources!.isNotEmpty) {
+            episode = episode.copyWith(
+              mediaStreams: MediaStreamsModel.fromMediaStreamsList(playbackInfo.body!.mediaSources, ref),
+            );
+          }
+        } catch (e) {
+          // Ignore error, use empty streams
+        }
+      }
+
       // Check if first version has 0 streams and fetch them
       final firstVersion = episode.mediaStreams.versionStreams.firstOrNull;
       final totalStreams = (firstVersion?.videoStreams.length ?? 0) + 

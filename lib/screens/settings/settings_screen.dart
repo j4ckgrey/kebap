@@ -47,7 +47,6 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen> {
             }
           },
           child: FocusScope(
-            autofocus: true,
             child: AdaptiveLayout.layoutModeOf(context) == LayoutMode.single
                 ? Card(
                     elevation: 0,

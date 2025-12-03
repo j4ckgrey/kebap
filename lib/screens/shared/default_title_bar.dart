@@ -22,17 +22,59 @@ class DefaultTitleBar extends ConsumerStatefulWidget {
 
 class _DefaultTitleBarState extends ConsumerState<DefaultTitleBar> with WindowListener {
   bool hovering = false;
+  bool isMinimized = false;
+  bool isMaximized = false;
 
   @override
   void initState() {
     windowManager.addListener(this);
     super.initState();
+    _updateWindowState();
   }
 
   @override
   void dispose() {
     windowManager.removeListener(this);
     super.dispose();
+  }
+
+  Future<void> _updateWindowState() async {
+    final minimized = await windowManager.isMinimized();
+    final maximized = await windowManager.isMaximized();
+    if (mounted) {
+      setState(() {
+        isMinimized = minimized;
+        isMaximized = maximized;
+      });
+    }
+  }
+
+  @override
+  void onWindowMinimize() {
+    setState(() {
+      isMinimized = true;
+    });
+  }
+
+  @override
+  void onWindowRestore() {
+    setState(() {
+      isMinimized = false;
+    });
+  }
+
+  @override
+  void onWindowMaximize() {
+    setState(() {
+      isMaximized = true;
+    });
+  }
+
+  @override
+  void onWindowUnmaximize() {
+    setState(() {
+      isMaximized = false;
+    });
   }
 
   @override
@@ -111,71 +153,56 @@ class _DefaultTitleBarState extends ConsumerState<DefaultTitleBar> with WindowLi
                                 ]),
                                 child: Row(
                                   children: [
-                                    FutureBuilder<List<bool>>(future: Future.microtask(() async {
-                                      final isMinimized = await windowManager.isMinimized();
-                                      return [isMinimized];
-                                    }), builder: (context, snapshot) {
-                                      final isMinimized = snapshot.data?.firstOrNull ?? false;
-                                      return IconButton(
-                                        style: IconButton.styleFrom(
-                                            hoverColor: brightness == Brightness.light
-                                                ? Colors.black.withValues(alpha: 0.1)
-                                                : Colors.white.withValues(alpha: 0.2),
-                                            shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(2))),
-                                        onPressed: () async {
-                                          fullScreenHelper.closeFullScreen(ref);
-                                          if (isMinimized) {
-                                            windowManager.restore();
-                                          } else {
-                                            windowManager.minimize();
-                                          }
-                                        },
-                                        icon: Transform.translate(
-                                          offset: const Offset(0, -2),
-                                          child: Icon(
-                                            Icons.minimize_rounded,
-                                            color: iconColor,
-                                            size: 20,
-                                          ),
-                                        ),
-                                      );
-                                    }),
-                                    FutureBuilder<List<bool>>(
-                                      future: Future.microtask(() async {
-                                        final isMaximized = await windowManager.isMaximized();
-                                        return [isMaximized];
-                                      }),
-                                      builder: (BuildContext context, AsyncSnapshot<List<bool>> snapshot) {
-                                        final maximized = snapshot.data?.firstOrNull ?? false;
-                                        return IconButton(
-                                          style: IconButton.styleFrom(
-                                            hoverColor: brightness == Brightness.light
-                                                ? Colors.black.withValues(alpha: 0.1)
-                                                : Colors.white.withValues(alpha: 0.2),
-                                            shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(2)),
-                                          ),
-                                          onPressed: () async {
-                                            fullScreenHelper.closeFullScreen(ref);
-                                            if (maximized) {
-                                              await windowManager.unmaximize();
-                                              return;
-                                            }
-                                            if (!maximized) {
-                                              await windowManager.maximize();
-                                            } else {
-                                              await windowManager.unmaximize();
-                                            }
-                                          },
-                                          icon: Transform.translate(
-                                            offset: const Offset(0, 0),
-                                            child: Icon(
-                                              maximized ? Icons.maximize_rounded : Icons.crop_square_rounded,
-                                              color: iconColor,
-                                              size: 19,
-                                            ),
-                                          ),
-                                        );
+                                    IconButton(
+                                      style: IconButton.styleFrom(
+                                          hoverColor: brightness == Brightness.light
+                                              ? Colors.black.withValues(alpha: 0.1)
+                                              : Colors.white.withValues(alpha: 0.2),
+                                          shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(2))),
+                                      onPressed: () async {
+                                        fullScreenHelper.closeFullScreen(ref);
+                                        if (isMinimized) {
+                                          windowManager.restore();
+                                        } else {
+                                          windowManager.minimize();
+                                        }
                                       },
+                                      icon: Transform.translate(
+                                        offset: const Offset(0, -2),
+                                        child: Icon(
+                                          Icons.minimize_rounded,
+                                          color: iconColor,
+                                          size: 20,
+                                        ),
+                                      ),
+                                    ),
+                                    IconButton(
+                                      style: IconButton.styleFrom(
+                                        hoverColor: brightness == Brightness.light
+                                            ? Colors.black.withValues(alpha: 0.1)
+                                            : Colors.white.withValues(alpha: 0.2),
+                                        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(2)),
+                                      ),
+                                      onPressed: () async {
+                                        fullScreenHelper.closeFullScreen(ref);
+                                        if (isMaximized) {
+                                          await windowManager.unmaximize();
+                                          return;
+                                        }
+                                        if (!isMaximized) {
+                                          await windowManager.maximize();
+                                        } else {
+                                          await windowManager.unmaximize();
+                                        }
+                                      },
+                                      icon: Transform.translate(
+                                        offset: const Offset(0, 0),
+                                        child: Icon(
+                                          isMaximized ? Icons.maximize_rounded : Icons.crop_square_rounded,
+                                          color: iconColor,
+                                          size: 19,
+                                        ),
+                                      ),
                                     ),
                                     IconButton(
                                       style: IconButton.styleFrom(

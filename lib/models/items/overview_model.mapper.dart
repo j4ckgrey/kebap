@@ -72,6 +72,9 @@ class OverviewModelMapper extends ClassMapperBase<OverviewModel> {
   static Map<String, String>? _$providerIds(OverviewModel v) => v.providerIds;
   static const Field<OverviewModel, Map<String, String>> _f$providerIds =
       Field('providerIds', _$providerIds, opt: true);
+  static DateTime? _$premiereDate(OverviewModel v) => v.premiereDate;
+  static const Field<OverviewModel, DateTime> _f$premiereDate =
+      Field('premiereDate', _$premiereDate, opt: true);
 
   @override
   final MappableFields<OverviewModel> fields = const {
@@ -92,6 +95,7 @@ class OverviewModelMapper extends ClassMapperBase<OverviewModel> {
     #tags: _f$tags,
     #people: _f$people,
     #providerIds: _f$providerIds,
+    #premiereDate: _f$premiereDate,
   };
 
   static OverviewModel _instantiate(DecodingData data) {
@@ -112,7 +116,8 @@ class OverviewModelMapper extends ClassMapperBase<OverviewModel> {
         genreItems: data.dec(_f$genreItems),
         tags: data.dec(_f$tags),
         people: data.dec(_f$people),
-        providerIds: data.dec(_f$providerIds));
+        providerIds: data.dec(_f$providerIds),
+        premiereDate: data.dec(_f$premiereDate));
   }
 
   @override
@@ -198,7 +203,8 @@ abstract class OverviewModelCopyWith<$R, $In extends OverviewModel, $Out>
       List<GenreItems>? genreItems,
       List<String>? tags,
       List<Person>? people,
-      Map<String, String>? providerIds});
+      Map<String, String>? providerIds,
+      DateTime? premiereDate});
   OverviewModelCopyWith<$R2, $In, $Out2> $chain<$R2, $Out2>(Then<$Out2, $R2> t);
 }
 
@@ -284,7 +290,8 @@ class _OverviewModelCopyWithImpl<$R, $Out>
           List<GenreItems>? genreItems,
           List<String>? tags,
           List<Person>? people,
-          Object? providerIds = $none}) =>
+          Object? providerIds = $none,
+          Object? premiereDate = $none}) =>
       $apply(FieldCopyWithData({
         if (runTime != $none) #runTime: runTime,
         if (summary != null) #summary: summary,
@@ -302,7 +309,8 @@ class _OverviewModelCopyWithImpl<$R, $Out>
         if (genreItems != null) #genreItems: genreItems,
         if (tags != null) #tags: tags,
         if (people != null) #people: people,
-        if (providerIds != $none) #providerIds: providerIds
+        if (providerIds != $none) #providerIds: providerIds,
+        if (premiereDate != $none) #premiereDate: premiereDate
       }));
   @override
   OverviewModel $make(CopyWithData data) => OverviewModel(
@@ -322,7 +330,8 @@ class _OverviewModelCopyWithImpl<$R, $Out>
       genreItems: data.get(#genreItems, or: $value.genreItems),
       tags: data.get(#tags, or: $value.tags),
       people: data.get(#people, or: $value.people),
-      providerIds: data.get(#providerIds, or: $value.providerIds));
+      providerIds: data.get(#providerIds, or: $value.providerIds),
+      premiereDate: data.get(#premiereDate, or: $value.premiereDate));
 
   @override
   OverviewModelCopyWith<$R2, OverviewModel, $Out2> $chain<$R2, $Out2>(

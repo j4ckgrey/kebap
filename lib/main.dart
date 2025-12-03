@@ -23,6 +23,7 @@ import 'package:kebap/logic/application_menu.dart';
 import 'package:kebap/models/account_model.dart';
 import 'package:kebap/models/settings/arguments_model.dart';
 import 'package:kebap/providers/arguments_provider.dart';
+import 'package:kebap/providers/baklava_requests_provider.dart';
 import 'package:kebap/providers/crash_log_provider.dart';
 import 'package:kebap/providers/settings/client_settings_provider.dart';
 import 'package:kebap/providers/shared_provider.dart';
@@ -32,8 +33,12 @@ import 'package:kebap/providers/search_mode_provider.dart';
 import 'package:kebap/providers/effective_baklava_config_provider.dart';
 import 'package:kebap/providers/video_player_provider.dart';
 import 'package:kebap/routes/auto_router.dart';
+import 'package:auto_route/auto_route.dart' hide AutoRouter;
 import 'package:kebap/routes/auto_router.gr.dart';
 import 'package:kebap/screens/login/lock_screen.dart';
+import 'package:kebap/routes/auto_router.gr.dart';
+import 'package:kebap/screens/login/lock_screen.dart';
+import 'package:kebap/screens/shared/kebap_snackbar.dart';
 import 'package:kebap/src/application_menu.g.dart';
 import 'package:kebap/src/video_player_helper.g.dart';
 import 'package:kebap/theme.dart';
@@ -262,9 +267,23 @@ class _MainState extends ConsumerState<Main> with WindowListener, WidgetsBinding
     PackageInfo packageInfo = await PackageInfo.fromPlatform();
 
     ref.read(sharedUtilityProvider).loadSettings();
+    // Initialize requests provider to start polling
+    ref.read(baklavaRequestsProvider);
 
     // If running on a lean-back (TV) device and the effective Baklava config
     // requests forcing local search for TV clients, update the search mode.
+
+    // Listen for in-app notifications from requests
+    ref.listen<InAppNotification?>(inAppNotificationProvider, (previous, next) {
+      if (next != null) {
+        kebapSnackbar(
+          context,
+          title: '${next.title}: ${next.body}',
+          duration: const Duration(seconds: 5),
+        );
+      }
+    });
+
     ref.listen<AsyncValue>(effectiveBaklavaConfigProvider, (previous, next) {
       try {
         final args = ref.read(argumentsStateProvider);
@@ -323,6 +342,10 @@ class _MainState extends ConsumerState<Main> with WindowListener, WidgetsBinding
     final schemeVariant = ref.watch(clientSettingsProvider.select((value) => value.schemeVariant));
     final language = ref.watch(clientSettingsProvider
         .select((value) => value.selectedLocale ?? WidgetsBinding.instance.platformDispatcher.locale));
+    
+    // Keep requests provider alive to ensure polling works
+    ref.listen(baklavaRequestsProvider, (_, __) {});
+
     final scrollBehaviour = const MaterialScrollBehavior();
     return DynamicColorBuilder(
       builder: (ColorScheme? lightDynamic, ColorScheme? darkDynamic) {
@@ -336,10 +359,6 @@ class _MainState extends ConsumerState<Main> with WindowListener, WidgetsBinding
         return ThemesData(
           light: lightTheme,
           dark: darkTheme,
-          child: Shortcuts(
-            shortcuts: <LogicalKeySet, Intent>{
-              LogicalKeySet(LogicalKeyboardKey.select): const ActivateIntent(),
-            },
             child: MaterialApp.router(
               onGenerateTitle: (context) => ref.watch(currentTitleProvider),
               theme: lightTheme,
@@ -384,9 +403,12 @@ class _MainState extends ConsumerState<Main> with WindowListener, WidgetsBinding
                 ),
               ),
               themeMode: themeMode,
-              routerConfig: autoRouter.config(),
+              routerConfig: autoRouter.config(
+                navigatorObservers: () => [
+                  AutoRouteObserver(),
+                ],
+              ),
             ),
-          ),
         );
       },
     );

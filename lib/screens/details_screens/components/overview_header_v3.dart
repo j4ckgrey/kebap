@@ -28,6 +28,7 @@ class OverviewHeaderV3 extends ConsumerWidget {
   final double? communityRating;
   final List<Studio> studios;
   final List<GenreItems> genres;
+  final DateTime? premiereDate;
 
   const OverviewHeaderV3({
     required this.name,
@@ -46,6 +47,7 @@ class OverviewHeaderV3 extends ConsumerWidget {
     this.communityRating,
     this.genres = const [],
     this.studios = const [],
+    this.premiereDate,
     super.key,
   });
 
@@ -140,6 +142,11 @@ class OverviewHeaderV3 extends ConsumerWidget {
                       ChipButton(
                         label: '★ ${communityRating?.toStringAsFixed(1)}',
                         backgroundColor: Colors.amber,
+                      ),
+                    if (premiereDate != null)
+                      ChipButton(
+                        label: "${premiereDate!.day}.${premiereDate!.month}.${premiereDate!.year}",
+                        backgroundColor: Theme.of(context).colorScheme.primary,
                       ),
                   ],
                 ),

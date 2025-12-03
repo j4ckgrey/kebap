@@ -22,43 +22,7 @@ class ParsedVersionName {
 }
 
 ParsedVersionName parseVersionName(String name) {
-  // Extract filename (after folder emoji)
-  String filename = name;
-  final parts = name.split('📁');
-  if (parts.length > 1) {
-    filename = parts.last.trim();
-  } else {
-    // Fallback: remove all emojis for filename
-    filename = name.replaceAll(RegExp(r'[\u{1F300}-\u{1F9FF}]|[\u{2600}-\u{26FF}]|[\u{2700}-\u{27BF}]', unicode: true), '').trim();
-  }
-  
-  // Extract quality information from the full name (before filename)
-  // (qualityPart was unused and removed)
-  
-  // Extract resolution (2160p, 1080p, 720p, etc.)
-  final resolutionMatch = RegExp(r'\b(\d{3,4}p)\b', caseSensitive: false).firstMatch(name);
-  final resolution = resolutionMatch?.group(1) ?? '';
-  
-  // Extract quality markers (WEB-DL, BluRay, WEBRip, etc.)
-  final qualityMatch = RegExp(r'\b(WEB-DL|BluRay|WEBRip|HDRip|DVDRip|BDRip)\b', caseSensitive: false).firstMatch(name);
-  final qualityType = qualityMatch?.group(1) ?? '';
-  
-  // Extract codec (HEVC, AVC, x265, x264, etc.)
-  final codecMatch = RegExp(r'\b(HEVC|AVC|x265|x264|H\.?265|H\.?264)\b', caseSensitive: false).firstMatch(name);
-  final codec = codecMatch?.group(1) ?? '';
-  
-  // Extract HDR info
-  final hdrMatch = RegExp(r'\b(HDR10\+|HDR10|HDR|DV|Dolby Vision)\b', caseSensitive: false).firstMatch(name);
-  final hdr = hdrMatch?.group(1) ?? '';
-  
-  // Build quality string
-  final qualityParts = [resolution, qualityType, codec, hdr]
-      .where((s) => s.isNotEmpty)
-      .toList();
-  
-  final quality = qualityParts.isNotEmpty ? qualityParts.join(' · ') : 'Unknown';
-  
-  return ParsedVersionName(quality: quality, filename: filename);
+  return ParsedVersionName(quality: name, filename: "");
 }
 
 class MediaStreamInformation extends ConsumerWidget {
@@ -108,7 +72,7 @@ class MediaStreamInformation extends ConsumerWidget {
               child: _StreamOptionSelect(
                 label: Text(context.localized.version),
                 currentQuality: parseVersionName(mediaStream.currentVersionStream?.name ?? "").quality,
-                currentFilename: "${parseVersionName(mediaStream.currentVersionStream?.name ?? "").filename}${mediaStream.currentVersionStream?.size.byteFormat != null ? ' • ${mediaStream.currentVersionStream?.size.byteFormat}' : ''}",
+                currentFilename: "${mediaStream.currentVersionStream?.size.byteFormat ?? ''}",
                 itemBuilder: (context) => mediaStream.versionStreams
                     .map((e) {
                       final parsed = parseVersionName(e.name);
@@ -125,7 +89,7 @@ class MediaStreamInformation extends ConsumerWidget {
                               ),
                             ),
                             Text(
-                              "${parsed.filename}${e.size.byteFormat != null ? ' • ${e.size.byteFormat}' : ''}",
+                              "${e.size.byteFormat ?? ''}",
                               style: Theme.of(context).textTheme.bodySmall?.copyWith(
                                 color: Theme.of(context).colorScheme.onSurfaceVariant,
                               ),

@@ -4,6 +4,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:iconsax_plus/iconsax_plus.dart';
 
 import 'package:kebap/models/item_base_model.dart';
+import 'package:kebap/providers/items/series_overview_provider.dart';
 import 'package:kebap/screens/details_screens/components/overview_header_v3.dart';
 import 'package:kebap/util/adaptive_layout/adaptive_layout.dart';
 import 'package:kebap/util/focus_provider.dart';
@@ -32,6 +33,13 @@ class CompactItemBanner extends ConsumerWidget {
     
     final bannerHeight = maxHeight ?? (size.height * 0.38);
 
+    // Check if we need to fetch a fallback overview
+    String? fallbackOverview;
+    if (item?.type == KebapItemType.episode && (item?.overview.summary.isEmpty ?? true)) {
+      final seriesOverviewAsync = ref.watch(seriesOverviewProvider(item?.parentId ?? ''));
+      fallbackOverview = seriesOverviewAsync.value;
+    }
+
     return SizedBox(
       width: double.infinity,
       height: bannerHeight,
@@ -48,6 +56,7 @@ class CompactItemBanner extends ConsumerWidget {
                   child: CustomShaderMask(
                     child: KebapImage(
                       image: item!.images?.backDrop?.firstOrNull ?? item!.images?.primary,
+                      decodeHeight: null,
                     ),
                   ),
                 ),
@@ -74,17 +83,24 @@ class CompactItemBanner extends ConsumerWidget {
                       Flexible(
                         child: OverviewHeaderV3(
                           name: item!.parentBaseModel.name,
-                          subTitle: item!.label(context),
+                          subTitle: item!.type == KebapItemType.episode
+                              ? "${item!.parentBaseModel.name}\n${item!.label(context)}"
+                              : item!.type == KebapItemType.series
+                                  ? item!.name
+                                  : item!.label(context),
                           image: item!.getPosters,
                           showImage: false,
                           logoAlignment: Alignment.centerLeft,
-                          summary: item!.overview.summary,
+                          summary: (item!.overview.summary.isNotEmpty) 
+                              ? item!.overview.summary 
+                              : fallbackOverview,
                           productionYear: item!.overview.productionYear,
                           duration: item!.overview.runTime,
                           genres: item!.overview.genreItems,
                           studios: item!.overview.studios,
                           officialRating: item!.overview.parentalRating,
                           communityRating: item!.overview.communityRating,
+                          premiereDate: item!.overview.premiereDate,
                         ),
                       ),
                       // Open button - hide on TV, keep focusable for mouse/touch on other devices

@@ -121,6 +121,7 @@ class NestedNavigationDrawer extends ConsumerWidget {
                 autofocus: context.router.current.name == destination.route?.routeName,
                 selectedIcon: destination.selectedIcon!,
                 icon: destination.icon!,
+                badge: destination.badge,
                 onPressed: () {
                   destination.action!();
                   Scaffold.of(context).closeDrawer();

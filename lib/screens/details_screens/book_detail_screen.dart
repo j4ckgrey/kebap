@@ -85,6 +85,7 @@ class _BookDetailScreenState extends ConsumerState<BookDetailScreen> {
                                 studios: details.nextUp!.overview.studios,
                                 officialRating: details.nextUp!.overview.parentalRating,
                                 communityRating: details.nextUp!.overview.communityRating,
+                                premiereDate: details.nextUp!.overview.premiereDate,
                               ),
                             const SizedBox(height: 16),
                             Wrap(

@@ -26,6 +26,7 @@ class AdaptiveTextField extends ConsumerStatefulWidget {
   final bool autoFocus;
   final InputDecoration? decoration;
   final bool useFocusWrapper;
+  final Function()? onDown;
 
   const AdaptiveTextField({
     this.controller,
@@ -40,6 +41,7 @@ class AdaptiveTextField extends ConsumerStatefulWidget {
     this.autoFocus = false,
     this.decoration,
     this.useFocusWrapper = false,
+    this.onDown,
     super.key,
   });
 
@@ -73,6 +75,7 @@ class _AdaptiveTextFieldState extends ConsumerState<AdaptiveTextField> {
       autoFocus: widget.autoFocus,
       decoration: widget.decoration,
       useFocusWrapper: widget.useFocusWrapper || useCustomKeyboard,
+      onDown: widget.onDown,
     );
   }
 }

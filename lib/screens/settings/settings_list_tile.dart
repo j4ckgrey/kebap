@@ -46,11 +46,7 @@ class SettingsListTile extends StatelessWidget {
       child: FlatButton(
         onTap: onTap,
         autoFocus: autoFocus,
-        onFocusChange: (value) {
-          if (value) {
-            context.ensureVisible();
-          }
-        },
+        onFocusChange: (value) {},
         child: Padding(
           padding: const EdgeInsets.symmetric(
             horizontal: 16,

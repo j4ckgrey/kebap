@@ -28,9 +28,9 @@ class BackgroundDownloader extends _$BackgroundDownloader {
     final downloader = FileDownloader()
       ..configure(
         globalConfig: globalConfig(maxDownloads),
-      )
-      ..trackTasks();
+      );
     updateListener = downloader.updates.listen(updateTask);
+    downloader.trackTasks();
     return downloader;
   }
 
@@ -81,10 +81,10 @@ class BackgroundDownloader extends _$BackgroundDownloader {
 
   void updateTranslations(BuildContext context) async {
     state.configureNotification(
-      running: TaskNotification(context.localized.notificationDownloadingDownloading, '{filename}\n{networkSpeed}'),
-      complete: TaskNotification(context.localized.notificationDownloadingFinished, '{filename}'),
-      paused: TaskNotification(context.localized.notificationDownloadingPaused, '{filename}'),
-      error: TaskNotification(context.localized.notificationDownloadingError, '{filename}'),
+      running: TaskNotification(context.localized.notificationDownloadingDownloading, '{displayName}\n{networkSpeed}'),
+      complete: TaskNotification(context.localized.notificationDownloadingFinished, '{displayName}'),
+      paused: TaskNotification(context.localized.notificationDownloadingPaused, '{displayName}'),
+      error: TaskNotification(context.localized.notificationDownloadingError, '{displayName}'),
       progressBar: true,
     );
   }

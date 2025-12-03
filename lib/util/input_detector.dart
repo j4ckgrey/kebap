@@ -29,6 +29,8 @@ class _InputDetectorState extends State<InputDetector> {
           ? InputDevice.pointer
           : InputDevice.touch;
 
+  DateTime? _lastKeyTime;
+
   @override
   void initState() {
     super.initState();
@@ -47,19 +49,16 @@ class _InputDetectorState extends State<InputDetector> {
 
   bool _handleKeyPress(KeyEvent event) {
     if (event is KeyDownEvent) {
-      if (isEditableTextFocused() &&
-          (event.logicalKey == LogicalKeyboardKey.arrowUp ||
-              event.logicalKey == LogicalKeyboardKey.arrowDown ||
-              event.logicalKey == LogicalKeyboardKey.arrowLeft ||
-              event.logicalKey == LogicalKeyboardKey.arrowRight)) {
-        return false;
-      }
-
       if (event.logicalKey == LogicalKeyboardKey.arrowUp ||
           event.logicalKey == LogicalKeyboardKey.arrowDown ||
           event.logicalKey == LogicalKeyboardKey.arrowLeft ||
           event.logicalKey == LogicalKeyboardKey.arrowRight ||
-          event.logicalKey == LogicalKeyboardKey.select) {
+          event.logicalKey == LogicalKeyboardKey.select ||
+          event.logicalKey == LogicalKeyboardKey.enter ||
+          event.logicalKey == LogicalKeyboardKey.numpadEnter ||
+          event.logicalKey == LogicalKeyboardKey.open ||
+          event.logicalKey == LogicalKeyboardKey.gameButtonA) {
+        _lastKeyTime = DateTime.now();
         _updateInputDevice(InputDevice.dPad);
       }
     }
@@ -68,6 +67,11 @@ class _InputDetectorState extends State<InputDetector> {
 
   void _handlePointerEvent(PointerEvent event) {
     if (event is PointerDownEvent) {
+      if (_lastKeyTime != null &&
+          DateTime.now().difference(_lastKeyTime!) <
+              const Duration(milliseconds: 300)) {
+        return;
+      }
       if (event.kind == PointerDeviceKind.touch) {
         _updateInputDevice(InputDevice.touch);
       } else if (event.kind == PointerDeviceKind.mouse) {
