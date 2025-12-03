@@ -49,6 +49,8 @@ extension CollectionTypeExtension on CollectionType {
         return outlined ? IconsaxPlusLinear.book : IconsaxPlusBold.book;
       case CollectionType.playlists:
         return outlined ? IconsaxPlusLinear.archive : IconsaxPlusBold.archive;
+      case CollectionType.livetv:
+        return outlined ? IconsaxPlusLinear.monitor : IconsaxPlusBold.monitor;
       default:
         return IconsaxPlusLinear.information;
     }

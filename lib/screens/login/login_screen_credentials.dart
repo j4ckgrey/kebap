@@ -141,7 +141,6 @@ class _LoginScreenCredentialsState extends ConsumerState<LoginScreenCredentials>
                         autoFillHints: const [AutofillHints.username],
                         textInputAction: TextInputAction.next,
                         autocorrect: false,
-                        onChanged: (value) => setState(() {}),
                         label: context.localized.userName,
                       ),
                     ),
@@ -154,7 +153,6 @@ class _LoginScreenCredentialsState extends ConsumerState<LoginScreenCredentials>
                         autocorrect: false,
                         textInputAction: TextInputAction.send,
                         onSubmitted: (value) => enterCredentialsTryLogin?.call(),
-                        onChanged: (value) => setState(() {}),
                         label: context.localized.password,
                       ),
                     ),
@@ -162,23 +160,28 @@ class _LoginScreenCredentialsState extends ConsumerState<LoginScreenCredentials>
                       indent: 32,
                       endIndent: 32,
                     ),
-                    FilledButton(
-                      onPressed: enterCredentialsTryLogin,
-                      child: loggingIn
-                          ? SizedBox(
-                              width: 18,
-                              height: 18,
-                              child: CircularProgressIndicator(
-                                  color: Theme.of(context).colorScheme.inversePrimary, strokeCap: StrokeCap.round),
-                            )
-                          : Row(
-                              mainAxisSize: MainAxisSize.min,
-                              children: [
-                                Text(context.localized.login),
-                                const SizedBox(width: 8),
-                                const Icon(IconsaxPlusBold.send_1),
-                              ],
-                            ),
+                    ValueListenableBuilder<TextEditingValue>(
+                      valueListenable: usernameController,
+                      builder: (context, value, child) {
+                        return FilledButton(
+                          onPressed: value.text.isEmpty ? null : () => loginUsingCredentials(),
+                          child: loggingIn
+                              ? SizedBox(
+                                  width: 18,
+                                  height: 18,
+                                  child: CircularProgressIndicator(
+                                      color: Theme.of(context).colorScheme.inversePrimary, strokeCap: StrokeCap.round),
+                                )
+                              : Row(
+                                  mainAxisSize: MainAxisSize.min,
+                                  children: [
+                                    Text(context.localized.login),
+                                    const SizedBox(width: 8),
+                                    const Icon(IconsaxPlusBold.send_1),
+                                  ],
+                                ),
+                        );
+                      },
                     ),
                     if (hasQuickConnect)
                       FilledButton(

@@ -154,6 +154,7 @@ class _ItemDetailScreenState extends ConsumerState<EpisodeDetailScreen> {
                     genres: details.series?.overview.genreItems ?? [],
                     officialRating: details.series?.overview.parentalRating,
                     communityRating: details.series?.overview.communityRating,
+                    premiereDate: details.episode?.overview.premiereDate,
                   ),
                   if (details.episode?.mediaStreams != null)
                     Padding(

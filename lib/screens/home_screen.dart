@@ -1,16 +1,21 @@
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 
 import 'package:auto_route/auto_route.dart';
+import 'package:collection/collection.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:iconsax_plus/iconsax_plus.dart';
 import 'package:window_manager/window_manager.dart';
 
 import 'package:kebap/models/settings/client_settings_model.dart';
 import 'package:kebap/providers/baklava_requests_provider.dart';
+import 'package:kebap/jellyfin/jellyfin_open_api.enums.swagger.dart';
+import 'package:kebap/models/collection_types.dart';
 import 'package:kebap/providers/settings/client_settings_provider.dart';
 import 'package:kebap/providers/sync_provider.dart';
 import 'package:kebap/providers/user_provider.dart';
+import 'package:kebap/providers/views_provider.dart';
 import 'package:kebap/routes/auto_router.gr.dart';
 import 'package:kebap/screens/shared/kebap_snackbar.dart';
 import 'package:kebap/util/input_handler.dart';
@@ -25,7 +30,8 @@ enum HomeTabs {
   library,
   favorites,
   requests,
-  sync;
+  sync,
+  liveTv;
 
   const HomeTabs();
 
@@ -35,6 +41,7 @@ enum HomeTabs {
         HomeTabs.favorites => IconsaxPlusLinear.heart,
         HomeTabs.requests => IconsaxPlusLinear.task_square,
         HomeTabs.sync => IconsaxPlusLinear.cloud,
+        HomeTabs.liveTv => IconsaxPlusLinear.monitor,
       };
 
   IconData get selectedIcon => switch (this) {
@@ -43,15 +50,31 @@ enum HomeTabs {
         HomeTabs.favorites => IconsaxPlusBold.heart,
         HomeTabs.requests => IconsaxPlusBold.task_square,
         HomeTabs.sync => IconsaxPlusBold.cloud,
+        HomeTabs.liveTv => IconsaxPlusBold.monitor,
       };
 
-  Future navigate(BuildContext context) => switch (this) {
-        HomeTabs.dashboard => context.router.navigate(const DashboardRoute()),
-        HomeTabs.library => context.router.navigate(const LibraryRoute()),
-        HomeTabs.favorites => context.router.navigate(const FavouritesRoute()),
-        HomeTabs.requests => context.router.navigate(const RequestsRoute()),
-        HomeTabs.sync => context.router.navigate(const SyncedRoute()),
-      };
+  Future<void> navigate(BuildContext context) async {
+    switch (this) {
+      case HomeTabs.dashboard:
+        await context.router.navigate(const DashboardRoute());
+      case HomeTabs.library:
+        await context.router.navigate(const LibraryRoute());
+      case HomeTabs.favorites:
+        await context.router.navigate(const FavouritesRoute());
+      case HomeTabs.requests:
+        await context.router.navigate(const RequestsRoute());
+      case HomeTabs.sync:
+        await context.router.navigate(const SyncedRoute());
+      case HomeTabs.liveTv:
+        final views = ProviderScope.containerOf(context).read(viewsProvider);
+        final liveTvView = views.views.firstWhereOrNull((e) => e.collectionType == CollectionType.livetv);
+        if (liveTvView != null) {
+          await context.router.navigate(LibrarySearchRoute(viewModelId: liveTvView.id));
+        } else {
+          kebapSnackbar(context, title: 'Live TV library not found');
+        }
+    }
+  }
 
   String label(BuildContext context) => switch (this) {
         HomeTabs.dashboard => context.localized.dashboard,
@@ -59,6 +82,7 @@ enum HomeTabs {
         HomeTabs.favorites => context.localized.favorites,
         HomeTabs.requests => 'Requests',
         HomeTabs.sync => context.localized.sync,
+        HomeTabs.liveTv => context.localized.liveTv,
       };
 }
 
@@ -120,24 +144,12 @@ class HomeScreen extends ConsumerWidget {
                 action: () => e.navigate(context),
               );
             case HomeTabs.requests:
-              // Hide the Requests tab on TV clients only
-              if (AdaptiveLayout.viewSizeOf(context) == ViewSize.television) return null;
               return DestinationModel(
                 label: 'Requests',
                 icon: Icon(e.icon),
                 badge: Consumer(
                   builder: (context, ref, child) {
-                    final pendingCount = ref.watch(
-                      baklavaRequestsProvider.select((state) {
-                        final user = ref.watch(userProvider);
-                        if (user == null) return 0;
-
-                        final isAdmin = user.policy?.isAdministrator ?? false;
-                        final filtered = state.filterByUser(user.name, isAdmin: isAdmin);
-
-                        return filtered.where((r) => r.status == (isAdmin ? 'pending' : 'approved')).length;
-                      }),
-                    );
+                    final pendingCount = ref.watch(pendingRequestsCountProvider);
                     return pendingCount != 0
                         ? CircleAvatar(
                             radius: 10,
@@ -152,42 +164,60 @@ class HomeScreen extends ConsumerWidget {
                 route: const RequestsRoute(),
                 action: () => e.navigate(context),
               );
+            case HomeTabs.liveTv:
+              return DestinationModel(
+                label: context.localized.liveTv,
+                icon: Icon(e.icon),
+                selectedIcon: Icon(e.selectedIcon),
+                // We don't have a specific route for Live TV in the bottom nav sense, 
+                // but we need a route for the DestinationModel. 
+                // Since it navigates to LibrarySearchRoute dynamically, we can use a placeholder or the same route.
+                // However, DestinationModel expects a route to highlight the tab.
+                // For now, let's use LibrarySearchRoute but we might need a specific check.
+                // Actually, since it pushes a new screen, it might not stay selected in the sidebar in the same way.
+                route: LibrarySearchRoute(), 
+                action: () => e.navigate(context),
+              );
           }
         })
         .nonNulls
         .toList();
     return InputHandler<GlobalHotKeys>(
-      autoFocus: false,
-      keyMapResult: (result) {
-        switch (result) {
-          case GlobalHotKeys.search:
-            context.navigateTo(LibrarySearchRoute());
-            return true;
-          case GlobalHotKeys.exit:
-            Future.microtask(() async {
-              final manager = WindowManager.instance;
-              if (await manager.isClosable()) {
-                manager.close();
-              } else {
-                kebapSnackbar(context, title: context.localized.somethingWentWrong);
-              }
-            });
-            return true;
-        }
-      },
-      keyMap: ref.watch(clientSettingsProvider.select((value) => value.currentShortcuts)),
-      child: HeroControllerScope(
-        controller: HeroController(),
-        child: AutoRouter(
-          builder: (context, child) {
-            return NavigationScaffold(
-              destinations: destinations.nonNulls.toList(),
-              currentRouteName: context.router.current.name,
-              nestedChild: child,
-            );
-          },
+        autoFocus: false,
+        keyMapResult: (result) {
+          switch (result) {
+            case GlobalHotKeys.search:
+              context.navigateTo(LibrarySearchRoute());
+              return true;
+            case GlobalHotKeys.exit:
+              Future.microtask(() async {
+                final manager = WindowManager.instance;
+                try {
+                  if (await manager.isClosable()) {
+                    manager.close();
+                  } else {
+                     SystemNavigator.pop();
+                  }
+                } catch (_) {
+                  SystemNavigator.pop();
+                }
+              });
+              return true;
+          }
+        },
+        keyMap: ref.watch(clientSettingsProvider.select((value) => value.currentShortcuts)),
+        child: HeroControllerScope(
+          controller: HeroController(),
+          child: AutoRouter(
+            builder: (context, child) {
+              return NavigationScaffold(
+                destinations: destinations.nonNulls.toList(),
+                currentRouteName: context.router.current.name,
+                nestedChild: child,
+              );
+            },
+          ),
         ),
-      ),
-    );
+      );
   }
 }

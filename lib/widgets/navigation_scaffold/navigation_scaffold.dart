@@ -4,7 +4,12 @@ import 'package:flutter/material.dart' hide ConnectionState;
 import 'package:auto_route/auto_route.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
+import 'package:flutter/services.dart';
+import 'package:kebap/util/localization_helper.dart';
+import 'package:window_manager/window_manager.dart';
+
 import 'package:kebap/models/media_playback_model.dart';
+import 'package:kebap/providers/arguments_provider.dart';
 import 'package:kebap/providers/connectivity_provider.dart';
 import 'package:kebap/providers/video_player_provider.dart';
 import 'package:kebap/providers/views_provider.dart';
@@ -53,7 +58,7 @@ class _NavigationScaffoldState extends ConsumerState<NavigationScaffold> {
 
   @override
   Widget build(BuildContext context) {
-    final views = ref.watch(viewsProvider.select((value) => value.views));
+    final isTV = ref.watch(argumentsStateProvider.select((args) => args.leanBackMode));
     final playerState = ref.watch(mediaPlaybackProvider.select((value) => value.state));
     final showPlayerBar = playerState == VideoPlayerState.minimized;
 
@@ -79,10 +84,67 @@ class _NavigationScaffoldState extends ConsumerState<NavigationScaffold> {
     final fullScreenChildRoute = fullScreenRoutes.contains(context.router.current.name);
 
     return PopScope(
-      canPop: currentIndex == 0,
-      onPopInvokedWithResult: (didPop, result) {
+      canPop: false,
+      onPopInvokedWithResult: (didPop, result) async {
+        if (didPop) return;
+
+        // 1. If Drawer is open, close it
+        if (_key.currentState?.isDrawerOpen ?? false) {
+          Navigator.of(context).pop(); // Closes drawer
+          return;
+        }
+
+        // 2. If not on Dashboard, go to Dashboard
         if (currentIndex != 0) {
           widget.destinations.first.action!();
+          return;
+        }
+
+        // 3. If on Dashboard, handle Exit
+        if (isTV || AdaptiveLayout.inputDeviceOf(context) == InputDevice.dPad) {
+          // TV: Show Confirmation
+          final shouldExit = await showDialog<bool>(
+            context: context,
+            builder: (context) => AlertDialog(
+              title: Text(context.localized.exitApp),
+              content: Text(context.localized.exitAppConfirmation),
+              actions: [
+                TextButton(
+                  onPressed: () => Navigator.of(context).pop(false),
+                  child: Text(context.localized.cancel),
+                ),
+                TextButton(
+                  autofocus: true,
+                  onPressed: () => Navigator.of(context).pop(true),
+                  child: Text(context.localized.exit),
+                ),
+              ],
+            ),
+          );
+
+          if (shouldExit == true) {
+            final manager = WindowManager.instance;
+            // Try WindowManager first (Desktop)
+            try {
+              if (await manager.isClosable()) {
+                manager.close();
+                return;
+              }
+            } catch (_) {}
+            
+            // Fallback to SystemNavigator (Mobile/TV)
+            SystemNavigator.pop();
+          }
+        } else {
+          // Non-TV: Exit immediately
+            final manager = WindowManager.instance;
+            try {
+              if (await manager.isClosable()) {
+                manager.close();
+                return;
+              }
+            } catch (_) {}
+            SystemNavigator.pop();
         }
       },
       child: Stack(
@@ -123,12 +185,17 @@ class _NavigationScaffoldState extends ConsumerState<NavigationScaffold> {
                       ? widget.destinations.elementAtOrNull(currentIndex)?.floatingActionButton?.normal
                       : null,
                   drawer: homeRoutes.any((element) => element.name.contains(currentLocation))
-                      ? NestedNavigationDrawer(
-                          actionButton: null,
-                          toggleExpanded: (value) => _key.currentState?.closeDrawer(),
-                          views: views,
-                          destinations: widget.destinations,
-                          currentLocation: currentLocation,
+                      ? Consumer(
+                          builder: (context, ref, child) {
+                            final views = ref.watch(viewsProvider.select((value) => value.views));
+                            return NestedNavigationDrawer(
+                              actionButton: null,
+                              toggleExpanded: (value) => _key.currentState?.closeDrawer(),
+                              views: views,
+                              destinations: widget.destinations,
+                              currentLocation: currentLocation,
+                            );
+                          },
                         )
                       : null,
                   body: widget.nestedChild != null

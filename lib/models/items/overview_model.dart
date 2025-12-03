@@ -28,6 +28,7 @@ class OverviewModel with OverviewModelMappable {
   final List<String> tags;
   final List<Person> people;
   final Map<String, String>? providerIds;
+  final DateTime? premiereDate;
 
   const OverviewModel({
     this.runTime,
@@ -47,6 +48,7 @@ class OverviewModel with OverviewModelMappable {
     this.tags = const [],
     this.people = const [],
     this.providerIds,
+    this.premiereDate,
   });
 
   List<Person> get directors {
@@ -77,6 +79,7 @@ class OverviewModel with OverviewModelMappable {
       externalUrls: ExternalUrls.fromDto(item.externalUrls ?? []),
       people: Person.peopleFromDto(item.people ?? [], ref),
       providerIds: item.providerIds?.cast<String, String>(),
+      premiereDate: item.premiereDate,
     );
   }
 }

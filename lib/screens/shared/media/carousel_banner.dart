@@ -106,7 +106,10 @@ class _CarouselBannerState extends ConsumerState<CarouselBanner> {
                                     },
                               child: Stack(
                                 children: [
-                                  KebapImage(image: item.bannerImage),
+                                  KebapImage(
+                                    image: item.bannerImage,
+                                    decodeHeight: null,
+                                  ),
                                   Container(
                                     decoration: BoxDecoration(
                                       gradient: LinearGradient(

@@ -1380,5 +1380,8 @@
   "playerSettingsScreensaverDesc": "Select screen saver that will be shown after no player activity",
   "settingsLocalUrlTitle": "Local Server URL",
   "settingsLocalUrlSetTitle": "Configure Local URL",
-  "settingsLocalUrlSetDesc": "Specify the local server address. Kebap will automatically use this URL when your device is on the same network."
+  "settingsLocalUrlSetDesc": "Specify the local server address. Kebap will automatically use this URL when your device is on the same network.",
+  "exitApp": "Exit App",
+  "exitAppConfirmation": "Are you sure you want to exit the application?",
+  "liveTv": "Live TV"
 }

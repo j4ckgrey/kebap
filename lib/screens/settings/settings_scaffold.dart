@@ -36,9 +36,7 @@ class SettingsScaffold extends ConsumerWidget {
     return Scaffold(
       floatingActionButtonLocation: FloatingActionButtonLocation.centerFloat,
       floatingActionButton: floatingActionButton,
-      body: Padding(
-        padding: const EdgeInsets.only(top: 60),
-        child: Column(
+      body: Column(
           children: [
           Flexible(
             child: CustomScrollView(
@@ -57,9 +55,14 @@ class SettingsScaffold extends ConsumerWidget {
                           if (showUserIcon)
                             SizedBox.fromSize(
                               size: const Size.fromRadius(14),
-                              child: UserIcon(
-                                user: ref.watch(userProvider),
-                                cornerRadius: 200,
+                              child: Consumer(
+                                builder: (context, ref, child) {
+                                  final user = ref.watch(userProvider.select((value) => value));
+                                  return UserIcon(
+                                    user: user,
+                                    cornerRadius: 200,
+                                  );
+                                },
                               ),
                             )
                         ],
@@ -109,7 +112,6 @@ class SettingsScaffold extends ConsumerWidget {
             const SizedBox(height: kBottomNavigationBarHeight + 40),
           },
         ],
-      ),
       ),
     );
   }

@@ -34,6 +34,7 @@ class IntInputField extends ConsumerWidget {
         textAlign: TextAlign.center,
         suffix: suffix,
         placeHolder: placeHolder,
+        useFocusWrapper: true,
       ),
     );
   }

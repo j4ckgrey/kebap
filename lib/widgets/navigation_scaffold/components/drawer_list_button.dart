@@ -25,11 +25,13 @@ class DrawerListButton extends ConsumerStatefulWidget {
     this.duration = const Duration(milliseconds: 125),
     this.focusNode,
     this.autofocus = false,
+    this.badge,
     super.key,
   });
 
   final FocusNode? focusNode;
   final bool autofocus;
+  final Widget? badge;
 
   @override
   ConsumerState<ConsumerStatefulWidget> createState() => _DrawerListButtonState();
@@ -68,16 +70,23 @@ class _DrawerListButtonState extends ConsumerState<DrawerListButton> {
             child:
                 AnimatedFadeSize(duration: widget.duration, child: widget.selected ? widget.selectedIcon : widget.icon),
           ),
-          trailing: widget.actions.isNotEmpty && AdaptiveLayout.inputDeviceOf(context) == InputDevice.pointer
-              ? AnimatedOpacity(
+          trailing: Row(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              if (widget.badge != null) widget.badge!,
+              if (widget.actions.isNotEmpty && AdaptiveLayout.inputDeviceOf(context) == InputDevice.pointer) ...[
+                if (widget.badge != null) const SizedBox(width: 8),
+                AnimatedOpacity(
                   duration: const Duration(milliseconds: 125),
                   opacity: showPopupButton ? 1 : 0,
                   child: PopupMenuButton(
                     tooltip: "Options",
                     itemBuilder: (context) => widget.actions.popupMenuItems(useIcons: true),
                   ),
-                )
-              : null,
+                ),
+              ],
+            ],
+          ),
           title: Text(widget.label),
         ),
       ),

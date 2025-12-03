@@ -42,7 +42,6 @@ class _LoginPageState extends ConsumerState<LoginScreen> {
   @override
   Widget build(BuildContext context) {
     final screen = ref.watch(authProvider.select((value) => value.screen));
-    final accounts = ref.watch(authProvider.select((value) => value.accounts));
     return Scaffold(
       appBar: const KebapAppBar(),
       extendBody: true,
@@ -92,13 +91,16 @@ class _LoginPageState extends ConsumerState<LoginScreen> {
                   LoginScreenType.login ||
                   LoginScreenType.code =>
                     const LoginScreenCredentials(),
-                  _ => LoginUserGrid(
-                      users: accounts,
-                      editMode: editUsersMode,
-                      onPressed: (user) =>
-                          tapLoggedInAccount(context, user, ref),
-                      onLongPress: (user) =>
-                          openUserEditDialogue(context, user),
+                  _ => Consumer(
+                      builder: (context, ref, child) {
+                        final accounts = ref.watch(authProvider.select((value) => value.accounts));
+                        return LoginUserGrid(
+                          users: accounts,
+                          editMode: editUsersMode,
+                          onPressed: (user) => tapLoggedInAccount(context, user, ref),
+                          onLongPress: (user) => openUserEditDialogue(context, user),
+                        );
+                      },
                     ),
                 },
               )

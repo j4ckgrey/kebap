@@ -35,7 +35,9 @@ class _InputHandlerState<T> extends ConsumerState<InputHandler<T>> {
   void initState() {
     super.initState();
     // Focus on start
-    focusNode.requestFocus();
+    if (widget.autoFocus) {
+      focusNode.requestFocus();
+    }
   }
 
   @override

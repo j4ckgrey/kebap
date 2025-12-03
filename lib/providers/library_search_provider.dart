@@ -57,11 +57,15 @@ class LibrarySearchNotifier extends StateNotifier<LibrarySearchModel> {
 
   bool get loading => state.loading;
 
+  bool _forceLocal = false;
+
   Future<void> initRefresh(
     List<String>? folderId,
     String? viewModelId,
-    LibraryFilterModel filters,
-  ) async {
+    LibraryFilterModel filters, {
+    bool forceLocal = false,
+  }) async {
+    _forceLocal = forceLocal;
     loading = true;
     state = state.resetLazyLoad();
     if (state.views.isEmpty && state.folderOverwrite.isEmpty) {
@@ -270,9 +274,11 @@ class LibrarySearchNotifier extends StateNotifier<LibrarySearchModel> {
       String? searchTerm}) async {
     final searchString = searchTerm ?? (state.searchQuery.isNotEmpty ? state.searchQuery : null);
     
-    // Process search term based on current search mode
+    // Process search term based on current search mode or forced local mode
     final processedSearchString = searchString != null
-        ? ref.read(searchModeNotifierProvider.notifier).processSearchTerm(searchString)
+        ? (_forceLocal
+            ? "local:$searchString"
+            : ref.read(searchModeNotifierProvider.notifier).processSearchTerm(searchString))
         : null;
     
     final response = await api.itemsGet(

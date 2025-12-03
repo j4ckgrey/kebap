@@ -63,10 +63,12 @@ class KebapImage extends ConsumerWidget {
               placeholderFit: fit,
               alignment: alignment ?? Alignment.center,
               imageErrorBuilder: imageErrorBuilder,
-              image: ResizeImage(
-                imageProvider,
-                height: decodeHeight,
-              ),
+              image: decodeHeight != null
+                  ? ResizeImage(
+                      imageProvider,
+                      height: decodeHeight,
+                    )
+                  : imageProvider,
             )
         ],
       );

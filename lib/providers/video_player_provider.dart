@@ -33,6 +33,8 @@ class VideoPlayerNotifier extends StateNotifier<MediaControlsWrapper> {
 
   final Debouncer debouncer = Debouncer(const Duration(milliseconds: 125));
 
+  final Completer<void> _initCompleter = Completer();
+
   void init() async {
     debouncer.run(() async {
       await state.dispose();
@@ -53,6 +55,7 @@ class VideoPlayerNotifier extends StateNotifier<MediaControlsWrapper> {
       if (subscription != null) {
         subscriptions.add(subscription);
       }
+      if (!_initCompleter.isCompleted) _initCompleter.complete();
     });
   }
 
@@ -115,6 +118,7 @@ class VideoPlayerNotifier extends StateNotifier<MediaControlsWrapper> {
   }
 
   Future<bool> loadPlaybackItem(PlaybackModel model, Duration startPosition) async {
+    if (!_initCompleter.isCompleted) await _initCompleter.future;
     await state.stop();
     mediaState
         .update((state) => state.copyWith(state: VideoPlayerState.fullScreen, buffering: true, errorPlaying: false));

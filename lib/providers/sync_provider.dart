@@ -99,6 +99,7 @@ class SyncNotifier extends StateNotifier<SyncSettingsModel> {
 
   void _init() {
     cleanupTemporaryFiles();
+    ref.read(backgroundDownloaderProvider);
     ref.listen(
       userProvider,
       (previous, next) {

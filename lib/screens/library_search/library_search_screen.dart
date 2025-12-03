@@ -1,6 +1,7 @@
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'dart:io';
 
 import 'package:auto_route/auto_route.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -37,7 +38,6 @@ import 'package:kebap/util/map_bool_helper.dart';
 import 'package:kebap/util/refresh_state.dart';
 import 'package:kebap/util/router_extension.dart';
 import 'package:kebap/widgets/navigation_scaffold/components/background_image.dart';
-import 'package:kebap/widgets/search/search_mode_toggle.dart';
 import 'package:kebap/widgets/shared/kebap_scrollbar.dart';
 import 'package:kebap/widgets/shared/item_actions.dart';
 import 'package:kebap/widgets/shared/modal_bottom_sheet.dart';
@@ -77,6 +77,7 @@ class _LibrarySearchScreenState extends ConsumerState<LibrarySearchScreen> {
   final GlobalKey<RefreshIndicatorState> refreshKey = GlobalKey<RefreshIndicatorState>();
   final ScrollController scrollController = ScrollController();
   final FocusNode resultsFocusNode = FocusNode();
+  final FocusNode searchBarFocusNode = FocusNode();
   late double lastScale = 0;
 
   bool loadOnStart = false;
@@ -98,17 +99,17 @@ class _LibrarySearchScreenState extends ConsumerState<LibrarySearchScreen> {
   void initState() {
     super.initState();
     // Force local search mode for library-specific searches (Movies, Shows)
-    if (widget.viewModelId != null) {
-      WidgetsBinding.instance.addPostFrameCallback((_) {
-        ref.read(searchModeNotifierProvider.notifier).setMode(SearchMode.local);
-      });
-    }
+    // Force global search mode for global search (Sidebar)
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      // Ensure we don't override global search mode here anymore
+    });
     WidgetsBinding.instance.addPostFrameCallback((value) {
       initLibrary();
     });
   }
 
   Future<void> initLibrary() async {
+    final isEmptySearchScreen = widget.viewModelId == null && widget.favourites == null && widget.folderId == null;
     await refreshKey.currentState?.show();
     SystemChrome.setEnabledSystemUIMode(
       SystemUiMode.edgeToEdge,
@@ -117,6 +118,13 @@ class _LibrarySearchScreenState extends ConsumerState<LibrarySearchScreen> {
     scrollController.addListener(() {
       scrollPosition();
     });
+    // Request focus on the first item for TV navigation, but ONLY if we are not in global search mode
+    // In global search mode (isEmptySearchScreen == true), we want the search bar to have focus.
+    if (AdaptiveLayout.inputDeviceOf(context) == InputDevice.dPad && !isEmptySearchScreen) {
+      WidgetsBinding.instance.addPostFrameCallback((_) {
+        resultsFocusNode.requestFocus();
+      });
+    }
   }
 
   void scrollPosition() {
@@ -128,6 +136,25 @@ class _LibrarySearchScreenState extends ConsumerState<LibrarySearchScreen> {
   Future<void> refreshSearch() async {
     await refreshKey.currentState?.show();
     scrollController.jumpTo(0);
+  }
+
+  Future<void> _performSearch() async {
+    final defaultFilter = const LibraryFilterModel();
+    if (libraryProvider.mounted) {
+      return libraryProvider.initRefresh(
+        widget.folderId,
+        widget.viewModelId,
+        defaultFilter.copyWith(
+          favourites: widget.favourites,
+          sortOrder: widget.sortOrder ?? defaultFilter.sortOrder,
+          sortingOption: widget.sortingOptions ?? defaultFilter.sortingOption,
+          types: widget.types ?? {},
+          genres: widget.genres ?? {},
+          recursive: widget.recursive,
+        ),
+        forceLocal: widget.viewModelId != null,
+      );
+    }
   }
 
   @override
@@ -180,23 +207,7 @@ class _LibrarySearchScreenState extends ConsumerState<LibrarySearchScreen> {
                   refreshKey: refreshKey,
                   autoFocus: false,
                   contextRefresh: false,
-                  onRefresh: () async {
-                    final defaultFilter = const LibraryFilterModel();
-                    if (libraryProvider.mounted) {
-                      return libraryProvider.initRefresh(
-                        widget.folderId,
-                        widget.viewModelId,
-                        defaultFilter.copyWith(
-                          favourites: widget.favourites,
-                          sortOrder: widget.sortOrder ?? defaultFilter.sortOrder,
-                          sortingOption: widget.sortingOptions ?? defaultFilter.sortingOption,
-                          types: widget.types ?? {},
-                          genres: widget.genres ?? {},
-                          recursive: widget.recursive,
-                        ),
-                      );
-                    }
-                  },
+                  onRefresh: _performSearch,
                   refreshOnStart: false,
                   child: CustomScrollView(
                     controller: scrollController,
@@ -344,12 +355,6 @@ class _LibrarySearchScreenState extends ConsumerState<LibrarySearchScreen> {
                               ),
                             );
                           }),
-                          SearchModeToggle(
-                            onModeChanged: () {
-                              // Trigger search refresh when mode changes
-                              refreshKey.currentState?.show();
-                            },
-                          ),
                           if (AdaptiveLayout.layoutModeOf(context) == LayoutMode.single) ...[
                             const SizedBox(width: 6),
                             // User icon removed as per user request
@@ -379,21 +384,25 @@ class _LibrarySearchScreenState extends ConsumerState<LibrarySearchScreen> {
                                   child: SuggestionSearchBar(
                                     autoFocus: isEmptySearchScreen,
                                     key: uniqueKey,
+                                    focusNode: searchBarFocusNode,
                                     title: librarySearchResults.searchBarTitle(context),
                                     debounceDuration: const Duration(milliseconds: 500),
                                     onChanged: (value) {
                                       if (librarySearchResults.searchQuery != value) {
                                         debouncer.run(() {
                                           libraryProvider.setSearch(value);
-                                          refreshKey.currentState?.show();
+                                          _performSearch();
                                         });
                                       }
                                     },
                                     onSubmited: (value) async {
                                       if (librarySearchResults.searchQuery != value) {
                                         libraryProvider.setSearch(value);
-                                        refreshKey.currentState?.show();
+                                        await _performSearch();
                                       }
+                                      resultsFocusNode.requestFocus();
+                                    },
+                                    onDown: () {
                                       resultsFocusNode.requestFocus();
                                     },
                                   ),

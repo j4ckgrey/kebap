@@ -11,6 +11,7 @@ import 'package:kebap/models/collection_types.dart';
 import 'package:kebap/models/item_base_model.dart';
 import 'package:kebap/models/library_search/library_search_options.dart';
 import 'package:kebap/models/settings/home_settings_model.dart';
+import 'package:kebap/providers/baklava_requests_provider.dart';
 import 'package:kebap/providers/dashboard_provider.dart';
 import 'package:kebap/providers/settings/home_settings_provider.dart';
 import 'package:kebap/providers/user_provider.dart';
@@ -32,9 +33,10 @@ class DashboardScreen extends ConsumerStatefulWidget {
   ConsumerState<ConsumerStatefulWidget> createState() => _DashboardScreenState();
 }
 
-class _DashboardScreenState extends ConsumerState<DashboardScreen> {
+class _DashboardScreenState extends ConsumerState<DashboardScreen> with AutoRouteAwareStateMixin<DashboardScreen> {
   late final Timer _timer;
   final GlobalKey<RefreshIndicatorState> _refreshIndicatorKey = GlobalKey<RefreshIndicatorState>();
+  final FocusScopeNode _focusScopeNode = FocusScopeNode();
 
   final textController = TextEditingController();
 
@@ -50,12 +52,20 @@ class _DashboardScreenState extends ConsumerState<DashboardScreen> {
     // Trigger initial fetch for Continue Watching and Next Up
     WidgetsBinding.instance.addPostFrameCallback((_) {
       _refreshHome();
+      _focusScopeNode.requestFocus();
     });
+  }
+
+  @override
+  void didPopNext() {
+    _refreshHome();
+    _focusScopeNode.requestFocus();
   }
 
   @override
   void dispose() {
     _timer.cancel();
+    _focusScopeNode.dispose();
     super.dispose();
   }
 
@@ -63,7 +73,10 @@ class _DashboardScreenState extends ConsumerState<DashboardScreen> {
     if (mounted) {
       await ref.read(userProvider.notifier).updateInformation();
       await ref.read(viewsProvider.notifier).fetchViews();
+      await ref.read(viewsProvider.notifier).fetchViews();
       await ref.read(dashboardProvider.notifier).fetchNextUpAndResume();
+      // Refresh requests
+      ref.read(baklavaRequestsProvider.notifier).loadRequests(notify: true);
     }
   }
 
@@ -99,74 +112,79 @@ class _DashboardScreenState extends ConsumerState<DashboardScreen> {
             );
           },
         ),
-        body: Builder(
-          builder: (context) {
-            final rows = [
-              if (resumeVideo.isNotEmpty &&
-                  (homeSettings.nextUp == HomeNextUp.cont || homeSettings.nextUp == HomeNextUp.separate))
-                RowData(
-                  label: context.localized.dashboardContinueWatching,
-                  posters: resumeVideo,
-                ),
-              if (resumeAudio.isNotEmpty &&
-                  (homeSettings.nextUp == HomeNextUp.cont || homeSettings.nextUp == HomeNextUp.separate))
-                RowData(
-                  label: context.localized.dashboardContinueListening,
-                  posters: resumeAudio,
-                ),
-              if (resumeBooks.isNotEmpty &&
-                  (homeSettings.nextUp == HomeNextUp.cont || homeSettings.nextUp == HomeNextUp.separate))
-                RowData(
-                  label: context.localized.dashboardContinueReading,
-                  posters: resumeBooks,
-                ),
-              if (dashboardData.nextUp.isNotEmpty &&
-                  (homeSettings.nextUp == HomeNextUp.nextUp || homeSettings.nextUp == HomeNextUp.separate))
-                RowData(
-                  label: context.localized.nextUp,
-                  posters: dashboardData.nextUp,
-                ),
-              if ([...allResume, ...dashboardData.nextUp].isNotEmpty && homeSettings.nextUp == HomeNextUp.combined)
-                RowData(
-                  label: context.localized.dashboardContinue,
-                  posters: [...allResume, ...dashboardData.nextUp],
-                ),
-              ...views.views
-                  .where((element) => element.recentlyAdded.isNotEmpty)
-                  .map(
-                    (view) => RowData(
-                      label: context.localized.dashboardRecentlyAdded(view.name),
-                      posters: view.recentlyAdded,
-                      aspectRatio: view.collectionType.aspectRatio,
-                      onLabelClick: () => context.router.push(
-                        LibrarySearchRoute(
-                          viewModelId: view.id,
-                          types: switch (view.collectionType) {
-                            CollectionType.tvshows => {
-                                KebapItemType.episode: true,
-                              },
-                            _ => {},
-                          },
-                          sortingOptions: switch (view.collectionType) {
-                            CollectionType.books ||
-                            CollectionType.boxsets ||
-                            CollectionType.folders ||
-                            CollectionType.music =>
-                              SortingOptions.dateLastContentAdded,
-                            _ => SortingOptions.dateAdded,
-                          },
-                          sortOrder: SortingOrder.descending,
-                          recursive: true,
+        body: FocusScope(
+          node: _focusScopeNode,
+          autofocus: true,
+          child: Builder(
+            builder: (context) {
+              final rows = [
+                if (resumeVideo.isNotEmpty &&
+                    (homeSettings.nextUp == HomeNextUp.cont || homeSettings.nextUp == HomeNextUp.separate))
+                  RowData(
+                    label: context.localized.dashboardContinueWatching,
+                    posters: resumeVideo,
+                  ),
+                if (resumeAudio.isNotEmpty &&
+                    (homeSettings.nextUp == HomeNextUp.cont || homeSettings.nextUp == HomeNextUp.separate))
+                  RowData(
+                    label: context.localized.dashboardContinueListening,
+                    posters: resumeAudio,
+                  ),
+                if (resumeBooks.isNotEmpty &&
+                    (homeSettings.nextUp == HomeNextUp.cont || homeSettings.nextUp == HomeNextUp.separate))
+                  RowData(
+                    label: context.localized.dashboardContinueReading,
+                    posters: resumeBooks,
+                  ),
+                if (dashboardData.nextUp.isNotEmpty &&
+                    (homeSettings.nextUp == HomeNextUp.nextUp || homeSettings.nextUp == HomeNextUp.separate))
+                  RowData(
+                    label: context.localized.nextUp,
+                    posters: dashboardData.nextUp,
+                  ),
+                if ([...allResume, ...dashboardData.nextUp].isNotEmpty && homeSettings.nextUp == HomeNextUp.combined)
+                  RowData(
+                    label: context.localized.dashboardContinue,
+                    posters: [...allResume, ...dashboardData.nextUp],
+                  ),
+                ...views.views
+                    .where((element) => element.recentlyAdded.isNotEmpty)
+                    .map(
+                      (view) => RowData(
+                        label: context.localized.dashboardRecentlyAdded(view.name),
+                        posters: view.recentlyAdded,
+                        aspectRatio: view.collectionType.aspectRatio,
+                        onLabelClick: () => context.router.push(
+                          LibrarySearchRoute(
+                            viewModelId: view.id,
+                            types: switch (view.collectionType) {
+                              CollectionType.tvshows => {
+                                  KebapItemType.episode: true,
+                                },
+                              _ => {},
+                            },
+                            sortingOptions: switch (view.collectionType) {
+                              CollectionType.books ||
+                              CollectionType.boxsets ||
+                              CollectionType.folders ||
+                              CollectionType.music =>
+                                SortingOptions.dateLastContentAdded,
+                              _ => SortingOptions.dateAdded,
+                            },
+                            sortOrder: SortingOrder.descending,
+                            recursive: true,
+                          ),
                         ),
                       ),
                     ),
-                  ),
-            ];
-            return SingleRowView(
-              contentPadding: padding,
-              rows: rows,
-            );
-          },
+              ];
+              return SingleRowView(
+                contentPadding: padding,
+                rows: rows,
+                onRefresh: _refreshHome,
+              );
+            },
+          ),
         ),
       ),
     );

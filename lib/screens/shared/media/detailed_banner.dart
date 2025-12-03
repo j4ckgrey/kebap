@@ -235,7 +235,7 @@ class _DetailedBannerState extends ConsumerState<DetailedBanner> {
                         ),
                       ),
                     ),
-                  ),
+                  ],
                 ),
               ),
             ],

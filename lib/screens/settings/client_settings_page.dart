@@ -123,7 +123,7 @@ class _ClientSettingsPageState extends ConsumerState<ClientSettingsPage> {
               label: const Text('Show Reviews Carousel'),
               subLabel: const Text('Display TMDB reviews on item detail pages'),
               trailing: Switch(
-                value: ref.watch(kebapSettingsProvider).showReviewsCarousel,
+                value: ref.watch(kebapSettingsProvider.select((value) => value.showReviewsCarousel)),
                 onChanged: (v) => ref.read(kebapSettingsProvider.notifier).setShowReviewsCarousel(v),
               ),
             ),

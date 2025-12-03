@@ -6,6 +6,8 @@ import 'package:kebap/widgets/search/search_result_modal.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:kebap/util/item_base_model/item_base_model_extensions.dart';
+import 'package:kebap/screens/shared/focus_button.dart';
+import 'package:kebap/screens/shared/adaptive_text_field.dart';
 
 class SearchScreen extends ConsumerStatefulWidget {
   const SearchScreen({super.key});
@@ -68,9 +70,9 @@ class _SearchScreenState extends ConsumerState<SearchScreen> {
             ],
           ),
         ),
-        title: TextField(
+        title: AdaptiveTextField(
           controller: _controller,
-          autofocus: true,
+          autoFocus: true,
           decoration: const InputDecoration(
             hintText: "Search library...",
             border: InputBorder.none,
@@ -115,12 +117,10 @@ class _SearchScreenState extends ConsumerState<SearchScreen> {
                             final item = e.value[index];
                             return Padding(
                               padding: const EdgeInsets.only(right: 12),
-                              child: SizedBox(
+                                child: SizedBox(
                                 width: 150,
-                                child: GestureDetector(
-                                  behavior: HitTestBehavior.opaque,
+                                child: FocusButton(
                                   onTap: () {
-                                    print('DEBUG: Search item tapped, showing modal');
                                     showDialog(
                                       context: context,
                                       builder: (context) => Dialog(

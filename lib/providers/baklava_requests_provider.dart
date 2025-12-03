@@ -16,12 +16,24 @@ BaklavaService baklavaService(Ref ref) {
   return BaklavaService(ref);
 }
 
+class InAppNotification {
+  final String title;
+  final String body;
+
+  InAppNotification(this.title, this.body);
+}
+
+final inAppNotificationProvider = StateProvider<InAppNotification?>((ref) => null);
+
 @riverpod
 class BaklavaRequests extends _$BaklavaRequests {
   Timer? _timer;
 
   @override
   RequestsState build() {
+    // Reload when user changes
+    ref.watch(userProvider);
+
     // Load requests on initialization
     loadRequests();
     
@@ -73,6 +85,8 @@ class BaklavaRequests extends _$BaklavaRequests {
     }
   }
 
+
+
   void _checkNotifications(List<MediaRequest> oldList, List<MediaRequest> newList) {
     final user = ref.read(userProvider);
     if (user == null) return;
@@ -85,11 +99,16 @@ class BaklavaRequests extends _$BaklavaRequests {
       for (var req in newPending) {
         // Don't notify if I created it myself
         if (req.username != user.name) {
+          final title = 'New Request';
+          final body = '${req.username} requested ${req.title}';
+          
           NotificationHelper().showNotification(
             id: req.id.hashCode,
-            title: 'New Request',
-            body: '${req.username} requested ${req.title}',
+            title: title,
+            body: body,
           );
+          
+          ref.read(inAppNotificationProvider.notifier).state = InAppNotification(title, body);
         }
       }
     }
@@ -100,17 +119,27 @@ class BaklavaRequests extends _$BaklavaRequests {
       final newReq = newList.firstWhereOrNull((r) => r.id == oldReq.id);
       if (newReq != null && newReq.status != oldReq.status) {
         if (newReq.status == 'approved') {
+          final title = 'Request Approved';
+          final body = '${newReq.title} has been approved!';
+          
           NotificationHelper().showNotification(
             id: newReq.id.hashCode,
-            title: 'Request Approved',
-            body: '${newReq.title} has been approved!',
+            title: title,
+            body: body,
           );
+          
+          ref.read(inAppNotificationProvider.notifier).state = InAppNotification(title, body);
         } else if (newReq.status == 'rejected') {
+          final title = 'Request Rejected';
+          final body = '${newReq.title} was rejected.';
+          
           NotificationHelper().showNotification(
             id: newReq.id.hashCode,
-            title: 'Request Rejected',
-            body: '${newReq.title} was rejected.',
+            title: title,
+            body: body,
           );
+          
+          ref.read(inAppNotificationProvider.notifier).state = InAppNotification(title, body);
         }
       }
     }
@@ -247,6 +276,8 @@ class BaklavaRequests extends _$BaklavaRequests {
     return updateRequestStatus(requestId: requestId, status: 'rejected');
   }
 
+
+
   /// Get filtered requests based on user role
   List<MediaRequest> getFilteredRequests() {
     final user = ref.read(userProvider);
@@ -267,3 +298,15 @@ class BaklavaRequests extends _$BaklavaRequests {
     return filtered.where((r) => r.status == 'pending').length;
   }
 }
+
+final pendingRequestsCountProvider = Provider<int>((ref) {
+  final requests = ref.watch(baklavaRequestsProvider);
+  final user = ref.watch(userProvider);
+
+  if (user == null) return 0;
+
+  final isAdmin = user.policy?.isAdministrator ?? false;
+  final filtered = requests.filterByUser(user.name, isAdmin: isAdmin);
+
+  return filtered.where((r) => r.status == (isAdmin ? 'pending' : 'approved')).length;
+});

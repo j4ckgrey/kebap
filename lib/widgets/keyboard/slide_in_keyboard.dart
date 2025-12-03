@@ -42,7 +42,7 @@ class CustomKeyboardWrapper extends StatelessWidget {
   }
 }
 
-Future<T?> openKeyboard<T>(
+Future<bool?> openKeyboard<T>(
   BuildContext context,
   TextEditingController controller, {
   TextInputType? inputType,
@@ -51,7 +51,7 @@ Future<T?> openKeyboard<T>(
   VoidCallback? onChanged,
 }) async {
   isKeyboardOpen.value = true;
-  await showGeneralDialog(
+  final result = await showGeneralDialog<bool>(
     context: context,
     transitionDuration: const Duration(milliseconds: 175),
     barrierDismissible: true,
@@ -73,10 +73,9 @@ Future<T?> openKeyboard<T>(
         child: _SlideInKeyboard(
           controller: controller,
           onChanged: onChanged ?? () {},
-          onClose: () {
-            context.router.pop();
+          onClose: (submitted) {
+            context.router.pop(submitted);
             isKeyboardOpen.value = false;
-            return null;
           },
           inputType: inputType,
           inputAction: inputAction,
@@ -86,13 +85,13 @@ Future<T?> openKeyboard<T>(
     },
   );
   isKeyboardOpen.value = false;
-  return null;
+  return result;
 }
 
 class _SlideInKeyboard extends StatefulWidget {
   final TextEditingController controller;
   final Function() onChanged;
-  final Function() onClose;
+  final Function(bool) onClose;
   final TextInputType? inputType;
   final TextInputAction? inputAction;
   final FutureOr<List<String>> Function(String query)? searchQuery;
@@ -164,7 +163,7 @@ class _CustomKeyboardView extends StatefulWidget {
   final TextInputType? keyboardType;
 
   final VoidCallback onChanged;
-  final VoidCallback onClose;
+  final Function(bool) onClose;
   final FutureOr<List<String>> Function(String query)? searchQuery;
 
   const _CustomKeyboardView({
@@ -231,7 +230,7 @@ class _CustomKeyboardViewState extends State<_CustomKeyboardView> {
                   query: widget.controller.text,
                   onTap: (value) {
                     widget.controller.text = value;
-                    widget.onClose();
+                    widget.onClose(true);
                   },
                 ),
               ),
@@ -239,6 +238,7 @@ class _CustomKeyboardViewState extends State<_CustomKeyboardView> {
               child: AlphaNumericKeyboard(
                 onCharacter: (value) => setState(() {
                   widget.controller.text += value;
+                  widget.onChanged();
                   startUpdate(widget.controller.text);
                 }),
                 keyboardType: widget.keyboardType ?? TextInputType.name,
@@ -251,7 +251,7 @@ class _CustomKeyboardViewState extends State<_CustomKeyboardView> {
                   startUpdate(widget.controller.text);
                 },
                 onClear: () => setState(() => widget.controller.clear()),
-                onDone: widget.onClose,
+                onDone: () => widget.onClose(true),
               ),
             ),
           ],

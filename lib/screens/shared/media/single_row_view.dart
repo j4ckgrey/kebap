@@ -1,3 +1,4 @@
+import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
@@ -18,9 +19,12 @@ class SingleRowView extends ConsumerStatefulWidget {
   final List<RowData> rows;
   final EdgeInsets contentPadding;
 
+  final Future<void> Function()? onRefresh;
+
   const SingleRowView({
     required this.rows,
     required this.contentPadding,
+    this.onRefresh,
     super.key,
   });
 
@@ -31,6 +35,7 @@ class SingleRowView extends ConsumerStatefulWidget {
 class _SingleRowViewState extends ConsumerState<SingleRowView> {
   final ScrollController _scrollController = ScrollController();
   bool _hasAutoFocused = false;
+  Timer? _debounceTimer;
 
   @override
   void initState() {
@@ -58,9 +63,19 @@ class _SingleRowViewState extends ConsumerState<SingleRowView> {
     });
   }
 
+  void _onItemFocused(ItemBaseModel item) {
+    _debounceTimer?.cancel();
+    _debounceTimer = Timer(const Duration(milliseconds: 200), () {
+      if (mounted) {
+        ref.read(focusedItemProvider.notifier).state = item;
+      }
+    });
+  }
+
   @override
   void dispose() {
     _scrollController.dispose();
+    _debounceTimer?.cancel();
     super.dispose();
   }
 
@@ -115,68 +130,124 @@ class _SingleRowViewState extends ConsumerState<SingleRowView> {
         ),
         // Scrollable rows
         Expanded(
-            child: ListView.builder(
-            controller: _scrollController,
-            primary: false,
-            physics: const ClampingScrollPhysics(), // Proper scroll physics
-            padding: EdgeInsets.only(bottom: extraBottomPadding),
-            itemCount: widget.rows.length,
-            // We compute itemExtent per-row inside itemBuilder; fallback to default estimated size
-            // itemExtent: scaledCardHeight + titleHeight + 16,
-                itemBuilder: (context, index) {
-              final row = widget.rows[index];
-              final isFirstRow = index == 0;
-              
-                  // compute dominant ratio per row like PosterRow does
+          child: widget.onRefresh != null
+              ? RefreshIndicator(
+                  onRefresh: widget.onRefresh!,
+                  child: ListView.builder(
+                    controller: _scrollController,
+                    primary: false,
+                    physics: const AlwaysScrollableScrollPhysics(), // Ensure scrollable for refresh
+                    padding: EdgeInsets.only(bottom: extraBottomPadding),
+                    itemCount: widget.rows.length,
+                    itemBuilder: (context, index) {
+                      final row = widget.rows[index];
+                      final isFirstRow = index == 0;
+
+                      // compute dominant ratio per row like PosterRow does
+                      final dominantRatio = row.aspectRatio ?? AdaptiveLayout.poster(context).ratio;
+                      final cardHeight = (((AdaptiveLayout.poster(context).size * posterSizeMultiplier) /
+                                  math.pow(dominantRatio, 0.55)) *
+                              0.72) *
+                          scale;
+
+                      return FocusProvider(
+                        autoFocus: isFirstRow && !_hasAutoFocused,
+                        child: SizedBox(
+                          height: cardHeight + titleHeight + 16, // Height matches PosterRow defaults + title
+                          child: Column(
+                            mainAxisSize: MainAxisSize.min,
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              // Row title
+                              Padding(
+                                padding: const EdgeInsets.only(left: 16, top: 8, bottom: 4),
+                                child: Text(
+                                  row.label,
+                                  style: Theme.of(context).textTheme.titleMedium?.copyWith(
+                                        fontWeight: FontWeight.bold,
+                                      ),
+                                ),
+                              ),
+                              // Poster cards
+                              Expanded(
+                                child: PosterRow(
+                                  contentPadding: EdgeInsets.only(
+                                    left: widget.contentPadding.left,
+                                    right: widget.contentPadding.right,
+                                  ),
+                                  label: row.label,
+                                  hideLabel: true, // Hide label, shown above instead
+                                  posters: row.posters,
+                                  collectionAspectRatio: row.aspectRatio,
+                                  onLabelClick: row.onLabelClick,
+                                  explicitHeight: cardHeight,
+                                  onCardTap: _onItemFocused,
+                                ),
+                              ),
+                            ],
+                          ),
+                        ),
+                      );
+                    },
+                  ),
+                )
+              : ListView.builder(
+                  controller: _scrollController,
+                  primary: false,
+                  physics: const ClampingScrollPhysics(), // Proper scroll physics
+                  padding: EdgeInsets.only(bottom: extraBottomPadding),
+                  itemCount: widget.rows.length,
+                  itemBuilder: (context, index) {
+                    final row = widget.rows[index];
+                    final isFirstRow = index == 0;
+
+                    // compute dominant ratio per row like PosterRow does
                     final dominantRatio = row.aspectRatio ?? AdaptiveLayout.poster(context).ratio;
                     final cardHeight = (((AdaptiveLayout.poster(context).size * posterSizeMultiplier) /
-                        math.pow(dominantRatio, 0.55)) *
-                      0.72) *
-                    scale;
+                                math.pow(dominantRatio, 0.55)) *
+                            0.72) *
+                        scale;
 
-                  return FocusProvider(
-                autoFocus: isFirstRow && !_hasAutoFocused,
-                child: SizedBox(
-                  height: cardHeight + titleHeight + 16, // Height matches PosterRow defaults + title
-                  child: Column(
-                    mainAxisSize: MainAxisSize.min,
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      // Row title
-                      Padding(
-                        padding: const EdgeInsets.only(left: 16, top: 8, bottom: 4),
-                        child: Text(
-                          row.label,
-                          style: Theme.of(context).textTheme.titleMedium?.copyWith(
-                            fontWeight: FontWeight.bold,
-                          ),
+                    return FocusProvider(
+                      autoFocus: isFirstRow && !_hasAutoFocused,
+                      child: SizedBox(
+                        height: cardHeight + titleHeight + 16, // Height matches PosterRow defaults + title
+                        child: Column(
+                          mainAxisSize: MainAxisSize.min,
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            // Row title
+                            Padding(
+                              padding: const EdgeInsets.only(left: 16, top: 8, bottom: 4),
+                              child: Text(
+                                row.label,
+                                style: Theme.of(context).textTheme.titleMedium?.copyWith(
+                                      fontWeight: FontWeight.bold,
+                                    ),
+                              ),
+                            ),
+                            // Poster cards
+                            Expanded(
+                              child: PosterRow(
+                                contentPadding: EdgeInsets.only(
+                                  left: widget.contentPadding.left,
+                                  right: widget.contentPadding.right,
+                                ),
+                                label: row.label,
+                                hideLabel: true, // Hide label, shown above instead
+                                posters: row.posters,
+                                collectionAspectRatio: row.aspectRatio,
+                                onLabelClick: row.onLabelClick,
+                                explicitHeight: cardHeight,
+                                onCardTap: _onItemFocused,
+                              ),
+                            ),
+                          ],
                         ),
                       ),
-                      // Poster cards
-                      Expanded(
-                        child: PosterRow(
-                          contentPadding: EdgeInsets.only(
-                            left: widget.contentPadding.left, 
-                            right: widget.contentPadding.right,
-                          ),
-                          label: row.label,
-                          hideLabel: true, // Hide label, shown above instead
-                          posters: row.posters,
-                          collectionAspectRatio: row.aspectRatio,
-                          onLabelClick: row.onLabelClick,
-                          explicitHeight: cardHeight,
-                          onCardTap: (item) {
-                            // Update banner content for all devices
-                            ref.read(focusedItemProvider.notifier).state = item;
-                          },
-                        ),
-                      ),
-                    ],
-                  ),
+                    );
+                  },
                 ),
-              );
-            },
-          ),
         ),
       ],
     );

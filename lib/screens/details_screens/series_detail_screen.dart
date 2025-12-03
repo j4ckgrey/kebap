@@ -162,6 +162,7 @@ class _SeriesDetailScreenState extends ConsumerState<SeriesDetailScreen> {
                     officialRating: details.overview.parentalRating,
                     genres: details.overview.genreItems,
                     communityRating: details.overview.communityRating,
+                    premiereDate: details.overview.premiereDate,
                   ),
                   if (details.nextUp != null)
                     NextUpEpisode(
