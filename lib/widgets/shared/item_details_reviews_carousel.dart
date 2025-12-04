@@ -212,7 +212,7 @@ class _ReviewsCarouselWidgetState extends State<_ReviewsCarouselWidget> {
                   showDialog(
                     context: context,
                     barrierDismissible: true, // Dismiss on outside click
-                    barrierColor: Colors.black.withOpacity(0.7), // Blur background
+                    barrierColor: Colors.black.withValues(alpha: 0.7), // Blur background
                     builder: (context) => ReviewModal(review: review, theme: widget.theme),
                   );
                 },

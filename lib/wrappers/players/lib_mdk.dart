@@ -41,15 +41,15 @@ class LibMDK extends BasePlayer {
   }
 
   @override
-  Future<void> loadVideo(String url, bool play) async {
+  Future<void> loadVideo(Media media, bool play) async {
     if (_controller != null) {
       _controller?.dispose();
     }
-    final validUrl = isValidUrl(url);
+    final validUrl = isValidUrl(media.url);
     if (validUrl != null) {
-      _controller = VideoPlayerController.networkUrl(validUrl);
+      _controller = VideoPlayerController.networkUrl(validUrl, httpHeaders: media.httpHeaders ?? {});
     } else {
-      _controller = VideoPlayerController.file(File(url));
+      _controller = VideoPlayerController.file(File(media.url));
     }
 
     await _controller?.initialize();

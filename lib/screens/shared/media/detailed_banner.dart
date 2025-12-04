@@ -3,7 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import 'package:kebap/models/item_base_model.dart';
-import 'package:kebap/screens/details_screens/components/overview_header.dart';
+import 'package:kebap/screens/details_screens/components/overview_header_v3.dart';
 import 'package:kebap/util/adaptive_layout/adaptive_layout.dart';
 import 'package:kebap/util/focus_provider.dart';
 import 'package:kebap/util/kebap_image.dart';
@@ -34,7 +34,8 @@ class _DetailedBannerState extends ConsumerState<DetailedBanner> {
   }
 
   @override
-  Widget build(BuildContext context) {
+  Widget build(BuildContext context, WidgetRef ref) {
+    final item = ref.watch(itemProvider);
     final size = MediaQuery.sizeOf(context);
     final viewSize = AdaptiveLayout.viewSizeOf(context);
     final layoutMode = AdaptiveLayout.layoutModeOf(context);
@@ -78,12 +79,12 @@ class _DetailedBannerState extends ConsumerState<DetailedBanner> {
                       valueListenable: selectedPoster,
                       builder: (context, value, child) => FocusButton(
                         focusNode: _focusNode,
-                        autofocus: false, // Don't autofocus to avoid conflicts
+                        autoFocus: false, // Don't autofocus to avoid conflicts
                         onTap: () => widget.onSelect(value),
                         onFocusChanged: (hasFocus) => setState(() => _isHovering = hasFocus),
                         child: Stack(
                           children: [
-                            OverviewHeader(
+                            OverviewHeaderV3(
                               name: value.parentBaseModel.name,
                               subTitle: value.label(context),
                               image: value.getPosters,
@@ -93,7 +94,7 @@ class _DetailedBannerState extends ConsumerState<DetailedBanner> {
                                   : Alignment.centerLeft,
                               summary: value.overview.summary,
                               productionYear: value.overview.productionYear,
-                              runTime: value.overview.runTime,
+                              duration: value.overview.runTime,
                               genres: value.overview.genreItems,
                               studios: value.overview.studios,
                               officialRating: value.overview.parentalRating,
@@ -179,12 +180,12 @@ class _DetailedBannerState extends ConsumerState<DetailedBanner> {
                             valueListenable: selectedPoster,
                             builder: (context, value, child) => FocusButton(
                               focusNode: _focusNode,
-                              autofocus: false, // Don't autofocus to avoid conflicts
+                              autoFocus: false, // Don't autofocus to avoid conflicts
                               onTap: () => widget.onSelect(value),
                               onFocusChanged: (hasFocus) => setState(() => _isHovering = hasFocus),
                               child: Stack(
                                 children: [
-                                  OverviewHeader(
+                            OverviewHeaderV3(
                                     name: value.parentBaseModel.name,
                                     subTitle: value.label(context),
                                     image: value.getPosters,
@@ -192,7 +193,7 @@ class _DetailedBannerState extends ConsumerState<DetailedBanner> {
                                     logoAlignment: Alignment.centerLeft,
                                     summary: value.overview.summary,
                                     productionYear: value.overview.productionYear,
-                                    runTime: value.overview.runTime,
+                                    duration: value.overview.runTime,
                                     genres: value.overview.genreItems,
                                     studios: value.overview.studios,
                                     officialRating: value.overview.parentalRating,

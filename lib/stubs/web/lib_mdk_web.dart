@@ -23,7 +23,7 @@ class LibMDK extends BasePlayer {
   Future<void> dispose() async {}
 
   @override
-  Future<void> loadVideo(String url, bool play) async {}
+  Future<void> loadVideo(Media media, bool play) async {}
 
   void setState(PlayerState state) {}
 

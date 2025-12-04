@@ -8,7 +8,6 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:kebap/providers/settings/client_settings_provider.dart';
 import 'package:kebap/screens/shared/outlined_text_field.dart';
 import 'package:kebap/util/adaptive_layout/adaptive_layout.dart';
-import 'package:kebap/widgets/keyboard/slide_in_keyboard.dart';
 
 /// Adaptive TextField that uses custom keyboard on TV (like original Fladder)
 /// The flutter_android_tv_text_field package didn't work, so we're using
@@ -26,7 +25,6 @@ class AdaptiveTextField extends ConsumerStatefulWidget {
   final bool autoFocus;
   final InputDecoration? decoration;
   final bool useFocusWrapper;
-  final Function()? onDown;
 
   const AdaptiveTextField({
     this.controller,
@@ -41,7 +39,6 @@ class AdaptiveTextField extends ConsumerStatefulWidget {
     this.autoFocus = false,
     this.decoration,
     this.useFocusWrapper = false,
-    this.onDown,
     super.key,
   });
 
@@ -75,7 +72,6 @@ class _AdaptiveTextFieldState extends ConsumerState<AdaptiveTextField> {
       autoFocus: widget.autoFocus,
       decoration: widget.decoration,
       useFocusWrapper: widget.useFocusWrapper || useCustomKeyboard,
-      onDown: widget.onDown,
     );
   }
 }

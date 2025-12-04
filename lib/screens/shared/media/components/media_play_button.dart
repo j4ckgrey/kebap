@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:iconsax_plus/iconsax_plus.dart';
 
 import 'package:kebap/models/item_base_model.dart';
 import 'package:kebap/util/localization_helper.dart';

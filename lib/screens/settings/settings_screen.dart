@@ -36,6 +36,7 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen> {
 
   @override
   Widget build(BuildContext context) {
+    print('[LAG_DEBUG] ${DateTime.now()} SettingsScreen build');
     return AutoTabsRouter(
       builder: (context, content) {
         checkForNullIndex(context);
@@ -46,26 +47,24 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen> {
               context.tabsRouter.setActiveIndex(0);
             }
           },
-          child: FocusScope(
-            child: AdaptiveLayout.layoutModeOf(context) == LayoutMode.single
-                ? Card(
-                    elevation: 0,
-                    child: Stack(
-                      children: [_leftPane(context), content],
-                    ),
-                  )
-                : Row(
-                    mainAxisSize: MainAxisSize.max,
-                    crossAxisAlignment: CrossAxisAlignment.stretch,
-                    children: [
-                      Expanded(flex: 2, child: _leftPane(context)),
-                      Expanded(
-                        flex: 3,
-                        child: content,
-                      ),
-                    ],
+          child: AdaptiveLayout.layoutModeOf(context) == LayoutMode.single
+              ? Card(
+                  elevation: 0,
+                  child: Stack(
+                    children: [_leftPane(context), content],
                   ),
-          ),
+                )
+              : Row(
+                  mainAxisSize: MainAxisSize.max,
+                  crossAxisAlignment: CrossAxisAlignment.stretch,
+                  children: [
+                    Expanded(flex: 2, child: _leftPane(context)),
+                    Expanded(
+                      flex: 3,
+                      child: content,
+                    ),
+                  ],
+                ),
         );
       },
     );
@@ -133,6 +132,7 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen> {
               const SizedBox(height: 8),
             ],
             SettingsListTile(
+              key: const ValueKey('client_settings'),
               label: Text(context.localized.settingsClientTitle),
               subLabel: Text(context.localized.settingsClientDesc),
               autoFocus: true,
@@ -141,6 +141,7 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen> {
               onTap: () => navigateTo(const ClientSettingsRoute()),
             ),
             SettingsListTile(
+              key: const ValueKey('profile_settings'),
               label: Text(context.localized.settingsProfileTitle),
               subLabel: Text(context.localized.settingsProfileDesc),
               selected: containsRoute(const ProfileSettingsRoute()),
@@ -148,6 +149,7 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen> {
               onTap: () => navigateTo(const ProfileSettingsRoute()),
             ),
             SettingsListTile(
+              key: const ValueKey('player_settings'),
               label: Text(context.localized.settingsPlayerTitle),
               subLabel: Text(context.localized.settingsPlayerDesc),
               selected: containsRoute(const PlayerSettingsRoute()),
@@ -155,6 +157,7 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen> {
               onTap: () => navigateTo(const PlayerSettingsRoute()),
             ),
             SettingsListTile(
+              key: const ValueKey('about_settings'),
               label: Text(context.localized.about),
               subLabel: Text("Kebap, ${context.localized.latestReleases}"),
               selected: containsRoute(const AboutSettingsRoute()),
@@ -169,6 +172,7 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen> {
             ),
             if (ref.watch(argumentsStateProvider.select((value) => value.htpcMode))) ...[
               SettingsListTile(
+                key: const ValueKey('exit_kebap'),
                 label: Text(context.localized.exitKebapTitle),
                 icon: IconsaxPlusLinear.close_square,
                 onTap: () async {
@@ -201,11 +205,13 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen> {
             ),
             if (quickConnectAvailable)
               SettingsListTile(
+                key: const ValueKey('quick_connect'),
                 label: Text(context.localized.settingsQuickConnectTitle),
                 icon: IconsaxPlusLinear.password_check,
                 onTap: () => openQuickConnectDialog(context),
               ),
             SettingsListTile(
+              key: const ValueKey('switch_user'),
               label: Text(context.localized.switchUser),
               icon: IconsaxPlusLinear.arrow_swap_horizontal,
               contentColor: Colors.greenAccent,
@@ -215,6 +221,7 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen> {
               },
             ),
             SettingsListTile(
+              key: const ValueKey('logout'),
               label: Text(context.localized.logout),
               icon: IconsaxPlusLinear.logout,
               contentColor: Theme.of(context).colorScheme.error,

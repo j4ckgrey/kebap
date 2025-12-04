@@ -210,8 +210,8 @@ class BaklavaMetadataNotifier extends StateNotifier<BaklavaMetadataState> {
                 limit: 1,
                 includeItemTypes: itemType.toLowerCase().contains('series') ? [BaseItemKind.series] : [BaseItemKind.movie],
               );
-              if (searchResponse.body?.items?.isNotEmpty ?? false) {
-                foundItemId = searchResponse.body!.items!.first.id;
+              if (searchResponse.body?.items.isNotEmpty ?? false) {
+                foundItemId = searchResponse.body!.items.first.id;
               }
             }
           } catch (e) {

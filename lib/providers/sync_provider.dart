@@ -120,19 +120,23 @@ class SyncNotifier extends StateNotifier<SyncSettingsModel> {
   }
 
   void _initializeQueryStream({String? id}) async {
+    state = state.copyWith(isLoading: true);
     final userId = id ?? ref.read(userProvider)?.id;
     _subscription?.cancel();
     state = state.copyWith(items: []);
 
-    if (userId == null) return;
+    if (userId == null) {
+      state = state.copyWith(isLoading: false);
+      return;
+    }
 
     final queryStream = _db.getParentItems.watch().distinct();
-    final initItems = await _db.getParentItems.get();
+    // final initItems = await _db.getParentItems.get();
 
-    state = state.copyWith(items: initItems);
+    // state = state.copyWith(items: initItems, isLoading: false);
 
     _subscription = queryStream.listen((items) {
-      state = state.copyWith(items: items);
+      state = state.copyWith(items: items, isLoading: false);
     });
   }
 
@@ -149,7 +153,8 @@ class SyncNotifier extends StateNotifier<SyncSettingsModel> {
     ];
 
     for (final dir in directories) {
-      final List<FileSystemEntity> files = dir.listSync();
+      if (!await dir.exists()) continue;
+      final List<FileSystemEntity> files = await dir.list().toList();
 
       for (var file in files) {
         if (file is File) {
@@ -212,11 +217,20 @@ class SyncNotifier extends StateNotifier<SyncSettingsModel> {
     super.dispose();
   }
 
-  Future<void> refresh() async => state = state.copyWith(items: (await _db.getParentItems.get()));
+  Future<void> refresh() async {
+    state = state.copyWith(isLoading: true);
+    try {
+      state = state.copyWith(items: (await _db.getParentItems.get()));
+    } finally {
+      state = state.copyWith(isLoading: false);
+    }
+  }
 
   Future<List<SyncedItem>> getNestedChildren(SyncedItem item) async => _db.getNestedChildren(item);
 
   Future<List<SyncedItem>> getChildren(String parentId) async => await _db.getChildren(parentId).get();
+
+  Stream<List<SyncedItem>> watchChildren(String parentId) => _db.getChildren(parentId).watch();
 
   Future<List<SyncedItem>> getSiblings(SyncedItem syncedItem) async {
     if (syncedItem.parentId == null) return [];
@@ -476,6 +490,36 @@ class SyncNotifier extends StateNotifier<SyncSettingsModel> {
     return syncedItem;
   }
 
+  Future<void> stopDownload(BuildContext context, SyncedItem item, DownloadTask? task) async {
+    await deleteFullSyncFiles(item, task);
+
+    // Check for other video files
+    final dir = item.directory;
+    bool hasOtherFiles = false;
+    if (await dir.exists()) {
+      final files = await dir.list().toList();
+      for (var file in files) {
+        if (file is File) {
+          final name = file.path.split(Platform.pathSeparator).last;
+          // Ignore known non-video files
+          if (!['data.json', '.nomedia'].contains(name) &&
+              !name.endsWith('.jpg') &&
+              !name.endsWith('.png') &&
+              !name.endsWith('.nfo')) {
+            hasOtherFiles = true;
+            break;
+          }
+        }
+      }
+    }
+
+    if (!hasOtherFiles) {
+      if (context.mounted) {
+        await removeSync(context, item);
+      }
+    }
+  }
+
   Future<bool?> syncFile(SyncedItem syncItem, bool skipDownload) async {
     cleanupTemporaryFiles();
 
@@ -518,6 +562,11 @@ class SyncNotifier extends StateNotifier<SyncSettingsModel> {
     final mediaSource = playbackResponse.bodyOrThrow.mediaSources?.firstOrNull;
     final streamUrl = mediaSource?.path;
     final fileSize = mediaSource?.size;
+
+    print('[DEBUG] syncFile: syncItem=${syncItem.id}, mediaSourceId=${syncItem.mediaSourceId}');
+    print('[DEBUG] syncFile: playbackResponse mediaSources count=${playbackResponse.bodyOrThrow.mediaSources?.length}');
+    print('[DEBUG] syncFile: streamUrl=$streamUrl');
+    print('[DEBUG] syncFile: fileSize=$fileSize');
     
     // Update syncItem with file size if available
     if (fileSize != null && fileSize > 0) {
@@ -527,7 +576,7 @@ class SyncNotifier extends StateNotifier<SyncSettingsModel> {
     
     // Use direct stream URL if available (for remote streams) and valid, otherwise use Jellyfin download endpoint
     final bool isValidStreamUrl = streamUrl != null && (streamUrl.startsWith('http://') || streamUrl.startsWith('https://'));
-    final downloadUrl = isValidStreamUrl ? streamUrl! : path.joinAll([ref.read(serverUrlProvider) ?? "", "Items", syncItem.id, "Download"]);
+    final downloadUrl = isValidStreamUrl ? streamUrl : path.joinAll([ref.read(serverUrlProvider) ?? "", "Items", syncItem.id, "Download"]);
 
     try {
       if (currentTask.task != null) {
@@ -535,8 +584,7 @@ class SyncNotifier extends StateNotifier<SyncSettingsModel> {
       }
       if (!skipDownload) {
         // Calculate display name
-        String displayName = syncItem.videoFileName ?? syncItem.itemModel?.name ?? "Unknown";
-        final item = syncItem.itemModel;
+        String displayName = syncItem.videoFileName ?? item?.name ?? "Unknown";
         if (item is EpisodeModel) {
           final s = item.season.toString().padLeft(2, '0');
           final e = item.episode.toString().padLeft(2, '0');
@@ -664,7 +712,7 @@ class SyncNotifier extends StateNotifier<SyncSettingsModel> {
 }
 
 extension SyncNotifierHelpers on SyncNotifier {
-  Future<SyncedItem> createSyncItem(BaseItemDto response, {SyncedItem? parent}) async {
+  Future<SyncedItem> createSyncItem(BaseItemDto response, {SyncedItem? parent, String? preferredMediaSourceId}) async {
     final ItemBaseModel item = ItemBaseModel.fromBaseDto(response, ref);
 
     final existingSyncedItem = await getSyncedItem(item.id);
@@ -677,12 +725,17 @@ extension SyncNotifierHelpers on SyncNotifier {
       await _db.insertItem(syncItem);
     }
 
-    return syncItem.copyWith(
+    final extension = path.extension(response.path ?? "");
+    final fileName = "${item.id}$extension";
+
+    syncItem = syncItem.copyWith(
       fileSize: response.mediaSources?.firstOrNull?.size ?? 0,
       syncing: false,
-      videoFileName: response.path?.universalBasename ?? "",
-      mediaSourceId: item.streamModel?.currentVersionStream?.id ?? response.mediaSources?.firstOrNull?.id,
+      videoFileName: fileName,
+      mediaSourceId: preferredMediaSourceId ?? item.streamModel?.currentVersionStream?.id ?? response.mediaSources?.firstOrNull?.id,
     );
+    
+    return syncItem;
   }
 
   Future<SyncedItem> _syncItemData(SyncedItem? parent, ItemBaseModel item, BaseItemDto response) async {
@@ -717,7 +770,7 @@ extension SyncNotifierHelpers on SyncNotifier {
     final itemBaseModel = response.body;
     if (itemBaseModel == null) return null;
 
-    SyncedItem syncItem = await createSyncItem(itemBaseModel);
+    SyncedItem syncItem = await createSyncItem(itemBaseModel, preferredMediaSourceId: item.streamModel?.currentVersionStream?.id);
 
     if (!syncItem.directory.existsSync()) return null;
 
@@ -800,7 +853,7 @@ extension SyncNotifierHelpers on SyncNotifier {
 
       final episodeResults = await Future.wait(
         episodes.map((ep) async {
-          final newEpisode = await createSyncItem(ep, parent: syncedSeason);
+          final newEpisode = await createSyncItem(ep, parent: syncedSeason, preferredMediaSourceId: ep.id == episode?.id ? episode?.streamModel?.currentVersionStream?.id : null);
           return (ep, newEpisode);
         }),
       );

@@ -36,7 +36,8 @@ class _CarouselBannerState extends ConsumerState<CarouselBanner> {
   bool showControls = false;
 
   @override
-  Widget build(BuildContext context) {
+  Widget build(BuildContext context, WidgetRef ref) {
+    final item = ref.watch(itemProvider);
     return MouseRegion(
       onEnter: (event) => setState(() => showControls = true),
       onExit: (event) => setState(() => showControls = false),

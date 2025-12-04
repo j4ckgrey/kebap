@@ -110,13 +110,17 @@ abstract class SyncedItem with _$SyncedItem {
   }
 
   ItemBaseModel? createItemModel(Ref ref) {
-    if (!dataFile.existsSync()) return null;
-    final BaseItemDto itemDto = BaseItemDto.fromJson(jsonDecode(dataFile.readAsStringSync()));
-    final itemModel = ItemBaseModel.fromBaseDto(itemDto, ref);
-    return itemModel.copyWith(
-      images: images,
-      userData: userData,
-    );
+    try {
+      if (!dataFile.existsSync()) return null;
+      final BaseItemDto itemDto = BaseItemDto.fromJson(jsonDecode(dataFile.readAsStringSync()));
+      final itemModel = ItemBaseModel.fromBaseDto(itemDto, ref);
+      return itemModel.copyWith(
+        images: images,
+        userData: userData,
+      );
+    } catch (e) {
+      return null;
+    }
   }
 }
 

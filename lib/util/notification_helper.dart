@@ -23,10 +23,14 @@ class NotificationHelper {
       requestAlertPermission: false,
     );
 
-    const InitializationSettings initializationSettings = InitializationSettings(
+    const LinuxInitializationSettings initializationSettingsLinux =
+        LinuxInitializationSettings(defaultActionName: 'Open notification');
+
+    final InitializationSettings initializationSettings = InitializationSettings(
       android: initializationSettingsAndroid,
       iOS: initializationSettingsDarwin,
       macOS: initializationSettingsDarwin,
+      linux: initializationSettingsLinux,
     );
 
     await flutterLocalNotificationsPlugin.initialize(

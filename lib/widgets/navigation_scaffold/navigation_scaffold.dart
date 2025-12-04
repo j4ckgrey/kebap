@@ -1,5 +1,6 @@
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart' hide ConnectionState;
+import 'dart:io';
 
 import 'package:auto_route/auto_route.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -29,11 +30,13 @@ class NavigationScaffold extends ConsumerStatefulWidget {
   final Widget? nestedChild;
   final List<DestinationModel> destinations;
   final GlobalKey<NavigatorState>? nestedNavigatorKey;
+  final GlobalKey<ScaffoldState>? scaffoldKey;
   const NavigationScaffold({
     this.currentRouteName,
     this.nestedChild,
     required this.destinations,
     this.nestedNavigatorKey,
+    this.scaffoldKey,
     super.key,
   });
 
@@ -41,8 +44,9 @@ class NavigationScaffold extends ConsumerStatefulWidget {
   ConsumerState<ConsumerStatefulWidget> createState() => _NavigationScaffoldState();
 }
 
-class _NavigationScaffoldState extends ConsumerState<NavigationScaffold> {
+class _NavigationScaffoldState extends ConsumerState<NavigationScaffold> with WindowListener {
   final GlobalKey<ScaffoldState> _key = GlobalKey();
+  GlobalKey<ScaffoldState> get _effectiveKey => widget.scaffoldKey ?? _key;
 
   int get currentIndex =>
       widget.destinations.indexWhere((element) => element.route?.routeName == widget.currentRouteName);
@@ -54,6 +58,50 @@ class _NavigationScaffoldState extends ConsumerState<NavigationScaffold> {
     WidgetsBinding.instance.addPostFrameCallback((value) {
       ref.read(viewsProvider.notifier).fetchViews();
     });
+    windowManager.addListener(this);
+    if (!kIsWeb && (Platform.isWindows || Platform.isLinux || Platform.isMacOS)) {
+      windowManager.setPreventClose(true);
+    }
+  }
+
+  @override
+  void dispose() {
+    windowManager.removeListener(this);
+    super.dispose();
+  }
+
+  @override
+  void onWindowClose() {
+    _handleExit();
+  }
+
+  Future<void> _handleExit() async {
+    final shouldExit = await showDialog<bool>(
+      context: context,
+      builder: (context) => AlertDialog(
+        title: Text(context.localized.exitApp),
+        content: Text(context.localized.exitAppConfirmation),
+        actions: [
+          TextButton(
+            onPressed: () => Navigator.of(context).pop(false),
+            child: Text(context.localized.cancel),
+          ),
+          TextButton(
+            autofocus: true,
+            onPressed: () => Navigator.of(context).pop(true),
+            child: Text(context.localized.exit),
+          ),
+        ],
+      ),
+    );
+
+    if (shouldExit == true) {
+      if (!kIsWeb && (Platform.isWindows || Platform.isLinux || Platform.isMacOS)) {
+        await windowManager.destroy();
+      } else {
+        SystemNavigator.pop();
+      }
+    }
   }
 
   @override
@@ -83,75 +131,11 @@ class _NavigationScaffoldState extends ConsumerState<NavigationScaffold> {
 
     final fullScreenChildRoute = fullScreenRoutes.contains(context.router.current.name);
 
-    return PopScope(
-      canPop: false,
-      onPopInvokedWithResult: (didPop, result) async {
-        if (didPop) return;
-
-        // 1. If Drawer is open, close it
-        if (_key.currentState?.isDrawerOpen ?? false) {
-          Navigator.of(context).pop(); // Closes drawer
-          return;
-        }
-
-        // 2. If not on Dashboard, go to Dashboard
-        if (currentIndex != 0) {
-          widget.destinations.first.action!();
-          return;
-        }
-
-        // 3. If on Dashboard, handle Exit
-        if (isTV || AdaptiveLayout.inputDeviceOf(context) == InputDevice.dPad) {
-          // TV: Show Confirmation
-          final shouldExit = await showDialog<bool>(
-            context: context,
-            builder: (context) => AlertDialog(
-              title: Text(context.localized.exitApp),
-              content: Text(context.localized.exitAppConfirmation),
-              actions: [
-                TextButton(
-                  onPressed: () => Navigator.of(context).pop(false),
-                  child: Text(context.localized.cancel),
-                ),
-                TextButton(
-                  autofocus: true,
-                  onPressed: () => Navigator.of(context).pop(true),
-                  child: Text(context.localized.exit),
-                ),
-              ],
-            ),
-          );
-
-          if (shouldExit == true) {
-            final manager = WindowManager.instance;
-            // Try WindowManager first (Desktop)
-            try {
-              if (await manager.isClosable()) {
-                manager.close();
-                return;
-              }
-            } catch (_) {}
-            
-            // Fallback to SystemNavigator (Mobile/TV)
-            SystemNavigator.pop();
-          }
-        } else {
-          // Non-TV: Exit immediately
-            final manager = WindowManager.instance;
-            try {
-              if (await manager.isClosable()) {
-                manager.close();
-                return;
-              }
-            } catch (_) {}
-            SystemNavigator.pop();
-        }
-      },
-      child: Stack(
-        alignment: Alignment.bottomCenter,
-        children: [
-          Positioned.fill(
-            child: MediaQuery(
+    return Stack(
+      alignment: Alignment.bottomCenter,
+      children: [
+        Positioned.fill(
+          child: MediaQuery(
               data: mediaQuery.copyWith(
                 padding: paddingOf.copyWith(
                   top: mediaQuery.padding.top + offlineMessageHeight,
@@ -165,7 +149,8 @@ class _NavigationScaffoldState extends ConsumerState<NavigationScaffold> {
               //Builder to correctly apply new padding
               child: Builder(builder: (context) {
                 return Scaffold(
-                  key: _key,
+                  key: _effectiveKey,
+                  drawerEnableOpenDragGesture: false,
                   appBar: fullScreenChildRoute ? null : const KebapAppBar(),
                   extendBodyBehindAppBar: false,
                   resizeToAvoidBottomInset: false,
@@ -190,7 +175,7 @@ class _NavigationScaffoldState extends ConsumerState<NavigationScaffold> {
                             final views = ref.watch(viewsProvider.select((value) => value.views));
                             return NestedNavigationDrawer(
                               actionButton: null,
-                              toggleExpanded: (value) => _key.currentState?.closeDrawer(),
+                              toggleExpanded: (value) => _effectiveKey.currentState?.closeDrawer(),
                               views: views,
                               destinations: widget.destinations,
                               currentLocation: currentLocation,
@@ -207,7 +192,7 @@ class _NavigationScaffoldState extends ConsumerState<NavigationScaffold> {
                               currentIndex: currentIndex,
                               destinations: widget.destinations,
                               currentLocation: currentLocation,
-                              drawerKey: _key,
+                              drawerKey: _effectiveKey,
                             ),
                             if (!currentLocation.contains("Settings"))
                               const Align(
@@ -263,7 +248,6 @@ class _NavigationScaffoldState extends ConsumerState<NavigationScaffold> {
 
 
         ],
-      ),
-    );
+      );
   }
 }

@@ -4,7 +4,6 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 
 import 'package:kebap/util/adaptive_layout/adaptive_layout.dart';
-import 'package:kebap/util/focus_helper.dart';
 
 class InputDetector extends StatefulWidget {
   final bool isDesktop;
@@ -60,13 +59,19 @@ class _InputDetectorState extends State<InputDetector> {
           event.logicalKey == LogicalKeyboardKey.gameButtonA) {
         _lastKeyTime = DateTime.now();
         _updateInputDevice(InputDevice.dPad);
+      } else {
       }
     }
     return false;
   }
 
   void _handlePointerEvent(PointerEvent event) {
+    if (widget.htpcMode) {
+      // debugPrint('[LAG_DEBUG] InputDetector ignoring pointer in HTPC mode');
+      return;
+    }
     if (event is PointerDownEvent) {
+      print('[LAG_DEBUG] ${DateTime.now()} InputDetector PointerDownEvent kind: ${event.kind}');
       if (_lastKeyTime != null &&
           DateTime.now().difference(_lastKeyTime!) <
               const Duration(milliseconds: 300)) {
@@ -82,6 +87,7 @@ class _InputDetectorState extends State<InputDetector> {
 
   void _updateInputDevice(InputDevice device) {
     if (_currentInput != device) {
+      print('[LAG_DEBUG] ${DateTime.now()} InputDetector switching to $device');
       setState(() {
         _currentInput = device;
       });

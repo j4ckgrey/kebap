@@ -28,6 +28,14 @@ final authProvider = StateNotifierProvider<AuthNotifier, LoginScreenModel>((ref)
 class AuthNotifier extends StateNotifier<LoginScreenModel> {
   AuthNotifier(this.ref) : super(LoginScreenModel());
 
+  @override
+  set state(LoginScreenModel value) {
+    if (state != value) {
+      print('[LAG_DEBUG] AuthNotifier state update: screen=${value.screen}, loading=${value.loading}');
+    }
+    super.state = value;
+  }
+
   final Ref ref;
 
   late final JellyService api = ref.read(jellyApiProvider);

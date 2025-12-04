@@ -26,6 +26,7 @@
 - **Docker Support**
   - Multi-arch images (AMD64, ARM64, ARMv7) available
   - **Docker Hub**: `docker pull j4ckgrey/kebap:alpha`
+  - **GHCR**: `docker pull ghcr.io/j4ckgrey/kebap:alpha`
 
 ---
 

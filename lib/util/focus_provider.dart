@@ -180,6 +180,7 @@ class FocusButtonState extends State<FocusButton> {
 
   @override
   Widget build(BuildContext context) {
+    // print('[LAG_DEBUG] ${DateTime.now()} FocusButton build');
     return MouseRegion(
       cursor: SystemMouseCursors.click,
       onEnter: (event) => onHover.value = true,
@@ -202,9 +203,9 @@ class FocusButtonState extends State<FocusButton> {
             valueListenable: onHover,
             builder: (context, value, child) {
               return AnimatedContainer(
-                duration: const Duration(milliseconds: 200),
+                duration: Duration.zero,
                 curve: Curves.easeInOut,
-                clipBehavior: Clip.hardEdge,
+                clipBehavior: Clip.none,
                 decoration: BoxDecoration(
                   borderRadius: widget.borderRadius ?? KebapTheme.smallShape.borderRadius,
                 ),

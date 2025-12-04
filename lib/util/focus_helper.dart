@@ -7,5 +7,9 @@ bool isEditableTextFocused() {
   if (ctx == null || !ctx.mounted) return false;
 
   if (ctx.widget is EditableText) return true;
-  return ctx.findAncestorWidgetOfExactType<EditableText>() != null;
+  if (ctx.widget is TextField) return true;
+  if (ctx.findAncestorWidgetOfExactType<EditableText>() != null) return true;
+  if (ctx.findAncestorWidgetOfExactType<TextField>() != null) return true;
+  
+  return false;
 }

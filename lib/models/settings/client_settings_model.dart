@@ -12,6 +12,7 @@ import 'package:kebap/models/settings/arguments_model.dart';
 import 'package:kebap/models/settings/key_combinations.dart';
 import 'package:kebap/providers/sync_provider.dart';
 import 'package:kebap/src/directory_bookmark.g.dart';
+import 'package:kebap/models/settings/media_stream_view_type.dart';
 import 'package:kebap/util/custom_color_themes.dart';
 import 'package:kebap/util/localization_helper.dart';
 
@@ -87,6 +88,7 @@ abstract class ClientSettingsModel with _$ClientSettingsModel {
     int? libraryPageSize,
     @Default(true) bool showClock,
     @Default(false) bool use12HourClock,
+    @Default(MediaStreamViewType.dropdown) MediaStreamViewType mediaStreamViewType,
     @Default({}) Map<GlobalHotKeys, KeyCombination> shortcuts,
   }) = _ClientSettingsModel;
 

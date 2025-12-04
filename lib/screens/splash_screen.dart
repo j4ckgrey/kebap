@@ -64,10 +64,7 @@ class _SplashScreenState extends ConsumerState<SplashScreen> {
   Widget build(BuildContext context) {
     return const Scaffold(
       body: Center(
-        child: FractionallySizedBox(
-          heightFactor: 0.4,
-          child: KebapLogo(useGradient: false),
-        ),
+        child: CircularProgressIndicator(),
       ),
     );
   }

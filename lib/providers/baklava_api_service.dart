@@ -344,6 +344,44 @@ class BaklavaService {
     }
   }
 
+  /// Get media streams via Baklava (includes ffprobe fallback)
+  Future<Response<Map<String, dynamic>>> getMediaStreams({
+    required String itemId,
+    String? mediaSourceId,
+  }) async {
+    try {
+      final api = ref.read(jellyApiProvider).api;
+      final serverUrl = ref.read(serverUrlProvider);
+
+      if (serverUrl == null || serverUrl.isEmpty) {
+        throw Exception('Server URL not available');
+      }
+
+      final params = <String, String>{'itemId': itemId};
+      if (mediaSourceId != null) params['mediaSourceId'] = mediaSourceId;
+
+      final queryString = params.entries.map((e) => '${e.key}=${Uri.encodeComponent(e.value)}').join('&');
+      final cleanServerUrl = serverUrl.endsWith('/') 
+          ? serverUrl.substring(0, serverUrl.length - 1) 
+          : serverUrl;
+      final url = '$cleanServerUrl/api/baklava/metadata/streams?$queryString';
+
+      final request = Request('GET', Uri.parse(url), Uri.parse(serverUrl));
+      final response = await api.client.send(request);
+
+      if (response.isSuccessful && response.body != null) {
+        final dynamic bodyData = response.body is String 
+            ? jsonDecode(response.body as String)
+            : response.body;
+        return Response(response.base, bodyData as Map<String, dynamic>);
+      }
+
+      throw Exception('Failed to get media streams: ${response.statusCode}');
+    } catch (e) {
+      throw Exception('Failed to get media streams: $e');
+    }
+  }
+
   /// Import item to library via Gelato
   Future<Response<String>> importToLibrary(String imdbId, String itemType) async {
     try {

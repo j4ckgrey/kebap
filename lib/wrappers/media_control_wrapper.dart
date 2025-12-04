@@ -104,7 +104,8 @@ class MediaControlsWrapper extends BaseAudioHandler implements VideoPlayerContro
       final context = ref.read(localizationContextProvider);
       await (_player as NativePlayer).sendPlaybackDataToNative(context, model, startPosition);
     }
-    return _player?.loadVideo(model.media?.url ?? "", play);
+    if (model.media == null) return;
+    return _player?.loadVideo(model.media!, play);
   }
 
   Future<void> openPlayer(BuildContext context) async => _player?.open(context);

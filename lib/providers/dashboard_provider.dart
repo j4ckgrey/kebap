@@ -7,6 +7,8 @@ import 'package:kebap/providers/api_provider.dart';
 import 'package:kebap/providers/service_provider.dart';
 import 'package:kebap/providers/settings/client_settings_provider.dart';
 import 'package:kebap/providers/views_provider.dart';
+import 'package:kebap/providers/connectivity_provider.dart';
+import 'package:kebap/providers/sync_provider.dart';
 import 'package:kebap/util/list_extensions.dart';
 
 final dashboardProvider = StateNotifierProvider<DashboardNotifier, HomeModel>((ref) {
@@ -23,6 +25,37 @@ class DashboardNotifier extends StateNotifier<HomeModel> {
   Future<void> fetchNextUpAndResume() async {
     if (state.loading) return;
     state = state.copyWith(loading: true);
+
+    final connectionState = ref.read(connectivityStatusProvider);
+    if (connectionState == ConnectionState.offline) {
+      final syncedItems = ref.read(syncProvider).items;
+      final allItems = syncedItems.map((e) => e.itemModel).nonNulls.toList();
+
+      final videos = allItems.where((e) {
+        final type = e.type;
+        return type == KebapItemType.movie ||
+            type == KebapItemType.episode ||
+            type == KebapItemType.video ||
+            type == KebapItemType.musicVideo;
+      }).toList();
+
+      final audio = allItems.where((e) {
+        final type = e.type;
+        return type == KebapItemType.audio || type == KebapItemType.musicAlbum;
+      }).toList();
+
+      final books = allItems.where((e) => e.type == KebapItemType.book).toList();
+
+      state = state.copyWith(
+        resumeVideo: videos,
+        resumeAudio: audio,
+        resumeBooks: books,
+        nextUp: [],
+        loading: false,
+      );
+      return;
+    }
+
     final viewTypes =
         ref.read(viewsProvider.select((value) => value.views)).map((e) => e.collectionType).toSet().toList();
 

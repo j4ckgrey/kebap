@@ -31,9 +31,9 @@ class CustomKeyboardWrapper extends StatelessWidget {
         builder: (context, value, _) {
           return AnimatedFractionallySizedBox(
             duration: const Duration(milliseconds: 175),
-            widthFactor: value ? 1.0 - keyboardWidthFactor : 1.0,
+            widthFactor: 1.0,
             heightFactor: 1.0,
-            alignment: Alignment.centerRight,
+            alignment: Alignment.center,
             child: child,
           );
         },

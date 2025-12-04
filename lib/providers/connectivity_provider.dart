@@ -1,3 +1,4 @@
+import 'dart:async';
 import 'dart:convert';
 import 'dart:developer';
 
@@ -35,13 +36,24 @@ class ConnectivityStatus extends _$ConnectivityStatus {
     ref.watch(userProvider);
     // Wrap connectivity plugin initialization in try/catch to avoid unhandled
     // DBus exceptions on platforms without NetworkManager (WSL, minimal VMs).
-    try {
-      final connectivity = Connectivity();
-      connectivity.onConnectivityChanged.listen((result) => onStateChange(result));
-      checkConnectivity();
-    } catch (e, s) {
-      log('[Connectivity] initialization failed: $e\n$s');
-    }
+    // Wrap connectivity plugin initialization in runZonedGuarded to catch
+    // unhandled async errors from the plugin (e.g. DBus/NetworkManager missing).
+    runZonedGuarded(() {
+      try {
+        final connectivity = Connectivity();
+        connectivity.onConnectivityChanged.listen(
+          (result) => onStateChange(result),
+          onError: (e) {
+            log('[Connectivity] Stream error: $e');
+          },
+        );
+        checkConnectivity();
+      } catch (e, s) {
+        log('[Connectivity] initialization failed: $e\n$s');
+      }
+    }, (error, stack) {
+      log('[Connectivity] Unhandled async error: $error\n$stack');
+    });
     return ConnectionState.mobile;
   }
   // Accept either a single ConnectivityResult or an Iterable/list of them.

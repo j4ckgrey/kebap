@@ -26,6 +26,7 @@ class UserIcon extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
+    print('[LAG_DEBUG] ${DateTime.now()} UserIcon build: ${user?.name}');
     Widget placeHolder() {
       return Container(
         color: Theme.of(context).colorScheme.primaryContainer,
@@ -49,7 +50,7 @@ class UserIcon extends ConsumerWidget {
           decoration: BoxDecoration(
             borderRadius: BorderRadius.circular(cornerRadius),
           ),
-          clipBehavior: Clip.hardEdge,
+          clipBehavior: Clip.none,
           child: SizedBox.fromSize(
             size: size,
             child: Stack(

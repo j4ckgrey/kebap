@@ -14,13 +14,14 @@ import 'package:kebap/screens/settings/widgets/settings_label_divider.dart';
 import 'package:kebap/screens/settings/widgets/settings_list_group.dart';
 import 'package:kebap/screens/shared/default_alert_dialog.dart';
 import 'package:kebap/screens/shared/input_fields.dart';
-import 'package:kebap/util/adaptive_layout/adaptive_layout.dart';
 import 'package:kebap/util/localization_helper.dart';
 import 'package:kebap/util/size_formatting.dart';
 
 List<Widget> buildClientSettingsDownload(BuildContext context, WidgetRef ref, Function setState) {
   final clientSettings = ref.watch(clientSettingsProvider);
-  final currentFolder = ref.watch(syncProvider.notifier).savePath;
+  final String? currentFolder = (clientSettings.syncPath?.isNotEmpty == true)
+      ? clientSettings.syncPath
+      : (kIsWeb ? null : ref.read(syncProvider.notifier).mobileDirectory.path);
   final canSync = ref.watch(userProvider.select((value) => value?.canDownload ?? false));
 
   return [

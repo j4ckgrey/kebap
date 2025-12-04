@@ -5,8 +5,7 @@ import 'package:kebap/widgets/search/search_mode_toggle.dart';
 import 'package:kebap/widgets/search/search_result_modal.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:kebap/util/item_base_model/item_base_model_extensions.dart';
-import 'package:kebap/screens/shared/focus_button.dart';
+import 'package:kebap/util/focus_provider.dart';
 import 'package:kebap/screens/shared/adaptive_text_field.dart';
 
 class SearchScreen extends ConsumerStatefulWidget {

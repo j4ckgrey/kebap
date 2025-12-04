@@ -12,6 +12,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:macos_window_utils/window_manipulator.dart';
 import 'package:package_info_plus/package_info_plus.dart';
 import 'package:path_provider/path_provider.dart';
+import 'package:permission_handler/permission_handler.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:smtc_windows/smtc_windows.dart' if (dart.library.html) 'package:kebap/stubs/web/smtc_web.dart';
 import 'package:universal_html/html.dart' as html;
@@ -34,8 +35,6 @@ import 'package:kebap/providers/effective_baklava_config_provider.dart';
 import 'package:kebap/providers/video_player_provider.dart';
 import 'package:kebap/routes/auto_router.dart';
 import 'package:auto_route/auto_route.dart' hide AutoRouter;
-import 'package:kebap/routes/auto_router.gr.dart';
-import 'package:kebap/screens/login/lock_screen.dart';
 import 'package:kebap/routes/auto_router.gr.dart';
 import 'package:kebap/screens/login/lock_screen.dart';
 import 'package:kebap/screens/shared/kebap_snackbar.dart';
@@ -330,11 +329,17 @@ class _MainState extends ConsumerState<Main> with WindowListener, WidgetsBinding
         systemNavigationBarColor: Colors.transparent,
         systemNavigationBarDividerColor: Colors.transparent,
       ));
+      
+      // Request notification permissions on Android
+      if (Platform.isAndroid) {
+        Permission.notification.request();
+      }
     }
   }
 
   @override
   Widget build(BuildContext context) {
+    print('[LAG_DEBUG] ${DateTime.now()} Main build');
     final themeMode = ref.watch(clientSettingsProvider.select((value) => value.themeMode));
     final themeColor = ref.watch(clientSettingsProvider.select((value) => value.themeColor));
     final amoledBlack = ref.watch(clientSettingsProvider.select((value) => value.amoledBlack));

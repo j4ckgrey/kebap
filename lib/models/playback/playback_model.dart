@@ -40,12 +40,16 @@ import 'package:kebap/util/list_extensions.dart';
 import 'package:kebap/util/map_bool_helper.dart';
 import 'package:kebap/util/streams_selection.dart';
 import 'package:kebap/wrappers/media_control_wrapper.dart';
+import 'package:kebap/providers/baklava_config_provider.dart';
+import 'package:kebap/providers/settings/kebap_settings_provider.dart';
 
 class Media {
   final String url;
+  final Map<String, String>? httpHeaders;
 
   const Media({
     required this.url,
+    this.httpHeaders,
   });
 }
 
@@ -348,6 +352,11 @@ class PlaybackModelHelper {
         defaultSubStreamIndex: subStreamIndex,
       );
 
+      final useBaklava = ref.read(kebapSettingsProvider).useBaklava;
+      final mergedMediaStreams = useBaklava
+          ? await _mergeBaklavaStreams(item.id, mediaSource.id, mediaStreamsWithUrls)
+          : mediaStreamsWithUrls;
+
       final mediaSegments = await api.mediaSegmentsGet(id: item.id);
       final trickPlay = (await api.getTrickPlay(item: item, ref: ref))?.body;
       final chapters = item.overview.chapters ?? [];
@@ -379,8 +388,11 @@ class PlaybackModelHelper {
           chapters: chapters,
           playbackInfo: playbackInfo,
           trickPlay: trickPlay,
-          media: Media(url: mediaPath ?? playbackUrl),
-          mediaStreams: mediaStreamsWithUrls,
+          media: Media(
+            url: mediaPath ?? playbackUrl,
+            httpHeaders: mediaSource.requiredHttpHeaders?.map((key, value) => MapEntry(key, value.toString())),
+          ),
+          mediaStreams: mergedMediaStreams,
           bitRateOptions: qualityOptions,
         );
       } else if ((mediaSource.supportsTranscoding ?? false) && mediaSource.transcodingUrl != null) {
@@ -391,8 +403,11 @@ class PlaybackModelHelper {
           chapters: chapters,
           trickPlay: trickPlay,
           playbackInfo: playbackInfo,
-          media: Media(url: "${ref.read(serverUrlProvider) ?? ""}${mediaSource.transcodingUrl ?? ""}"),
-          mediaStreams: mediaStreamsWithUrls,
+          media: Media(
+            url: "${ref.read(serverUrlProvider) ?? ""}${mediaSource.transcodingUrl ?? ""}",
+            httpHeaders: mediaSource.requiredHttpHeaders?.map((key, value) => MapEntry(key, value.toString())),
+          ),
+          mediaStreams: mergedMediaStreams,
           bitRateOptions: qualityOptions,
         );
       }
@@ -551,6 +566,104 @@ class PlaybackModelHelper {
     if (newModel == null) return;
     if (newModel.runtimeType != playbackModel.runtimeType || newModel is TranscodePlaybackModel) {
       ref.read(videoPlayerProvider.notifier).loadPlaybackItem(newModel, currentPosition);
+    }
+  }
+
+  Future<MediaStreamsModel> _mergeBaklavaStreams(
+    String itemId,
+    String? mediaSourceId,
+    MediaStreamsModel originalStreams,
+  ) async {
+    try {
+      final baklavaService = ref.read(baklavaServiceProvider);
+      final response = await baklavaService.getMediaStreams(itemId: itemId, mediaSourceId: mediaSourceId);
+
+      if (!response.isSuccessful || response.body == null) {
+        return originalStreams;
+      }
+
+      final data = response.body!;
+      final audioList = (data['audio'] as List?) ?? [];
+      final subList = (data['subs'] as List?) ?? [];
+
+      if (audioList.isEmpty && subList.isEmpty) {
+        return originalStreams;
+      }
+
+      // Convert Baklava streams to Kebap models
+      final baklavaAudioStreams = audioList.map<AudioStreamModel>((a) {
+        return AudioStreamModel(
+          index: a['index'] ?? -1,
+          name: a['title'] ?? 'Unknown',
+          displayTitle: a['title'] ?? 'Unknown',
+          language: a['language'] ?? 'Unknown',
+          codec: a['codec'] ?? '',
+          channelLayout: (a['channels']?.toString() ?? ''),
+          isDefault: false,
+          isExternal: false, // Baklava probed streams are usually embedded
+        );
+      }).toList();
+
+      final baklavaSubStreams = subList.map<SubStreamModel>((s) {
+        return SubStreamModel(
+          index: s['index'] ?? -1,
+          name: s['title'] ?? 'Unknown',
+          title: s['title'] ?? 'Unknown',
+          displayTitle: s['title'] ?? 'Unknown',
+          language: s['language'] ?? 'Unknown',
+          codec: s['codec'] ?? '',
+          id: (s['index'] ?? -1).toString(),
+          isDefault: s['isDefault'] ?? false,
+          isExternal: false,
+          supportsExternalStream: false,
+        );
+      }).toList();
+
+      // Merge logic:
+      // We want to add streams found by Baklava that are NOT in the original list.
+      // Simple check by index.
+      
+      final currentVersion = originalStreams.currentVersionStream;
+      if (currentVersion == null) return originalStreams;
+
+      final existingAudioIndices = currentVersion.audioStreams.map((e) => e.index).toSet();
+      final existingSubIndices = currentVersion.subStreams.map((e) => e.index).toSet();
+
+      final newAudioStreams = [
+        ...currentVersion.audioStreams,
+        ...baklavaAudioStreams.where((e) => !existingAudioIndices.contains(e.index)),
+      ];
+
+      final newSubStreams = [
+        ...currentVersion.subStreams,
+        ...baklavaSubStreams.where((e) => !existingSubIndices.contains(e.index)),
+      ];
+
+      // Create a new VersionStreamModel with merged streams
+      final newVersionStream = VersionStreamModel(
+        name: currentVersion.name,
+        size: currentVersion.size,
+        index: currentVersion.index,
+        id: currentVersion.id,
+        defaultAudioStreamIndex: currentVersion.defaultAudioStreamIndex,
+        defaultSubStreamIndex: currentVersion.defaultSubStreamIndex,
+        videoStreams: currentVersion.videoStreams,
+        audioStreams: newAudioStreams,
+        subStreams: newSubStreams,
+      );
+
+      // Replace the current version stream in the list
+      final newVersionStreams = List<VersionStreamModel>.from(originalStreams.versionStreams);
+      if (originalStreams.versionStreamIndex != null && 
+          originalStreams.versionStreamIndex! < newVersionStreams.length) {
+        newVersionStreams[originalStreams.versionStreamIndex!] = newVersionStream;
+      }
+
+      return originalStreams.copyWith(versionStreams: newVersionStreams);
+
+    } catch (e) {
+      log("Error merging Baklava streams: ${e.toString()}");
+      return originalStreams;
     }
   }
 }

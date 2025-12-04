@@ -20,9 +20,7 @@ import 'package:kebap/util/localization_helper.dart';
 import 'package:kebap/widgets/navigation_scaffold/components/adaptive_fab.dart';
 import 'package:kebap/widgets/navigation_scaffold/components/destination_model.dart';
 import 'package:kebap/widgets/navigation_scaffold/components/drawer_list_button.dart';
-import 'package:kebap/widgets/navigation_scaffold/components/navigation_body.dart';
 import 'package:kebap/widgets/navigation_scaffold/components/settings_user_icon.dart';
-import 'package:kebap/widgets/requests/requests_sheet.dart';
 import 'package:kebap/widgets/shared/item_actions.dart';
 
 class NestedNavigationDrawer extends ConsumerWidget {
@@ -116,6 +114,7 @@ class NestedNavigationDrawer extends ConsumerWidget {
             ),
             ...destinations.map(
               (destination) => DrawerListButton(
+                key: ValueKey(destination.label),
                 label: destination.label,
                 selected: context.router.current.name == destination.route?.routeName,
                 autofocus: context.router.current.name == destination.route?.routeName,
@@ -156,6 +155,7 @@ class NestedNavigationDrawer extends ConsumerWidget {
                       )
                     : null;
                 return DrawerListButton(
+                    key: ValueKey(library.id),
                     label: library.name,
                     selected: selected,
                     autofocus: selected,
@@ -181,6 +181,7 @@ class NestedNavigationDrawer extends ConsumerWidget {
               Transform.translate(
                 offset: const Offset(-8, 0),
                 child: DrawerListButton(
+                  key: const ValueKey('settings_expanded'),
                   label: context.localized.settings,
                   selectedIcon: const Icon(IconsaxPlusBold.setting_3),
                   selected: currentLocation.contains(const SettingsRoute().routeName),
@@ -201,6 +202,7 @@ class NestedNavigationDrawer extends ConsumerWidget {
               )
             else
               DrawerListButton(
+                key: const ValueKey('settings_collapsed'),
                 label: context.localized.settings,
                 selectedIcon: const Icon(IconsaxPlusBold.setting_2),
                 icon: const Icon(IconsaxPlusLinear.setting_2),

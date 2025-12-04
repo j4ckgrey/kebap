@@ -51,6 +51,9 @@ _ClientSettingsModel _$ClientSettingsModelFromJson(Map<String, dynamic> json) =>
       libraryPageSize: (json['libraryPageSize'] as num?)?.toInt(),
       showClock: json['showClock'] as bool? ?? true,
       use12HourClock: json['use12HourClock'] as bool? ?? false,
+      mediaStreamViewType: $enumDecodeNullable(
+              _$MediaStreamViewTypeEnumMap, json['mediaStreamViewType']) ??
+          MediaStreamViewType.dropdown,
       shortcuts: (json['shortcuts'] as Map<String, dynamic>?)?.map(
             (k, e) => MapEntry($enumDecode(_$GlobalHotKeysEnumMap, k),
                 KeyCombination.fromJson(e as Map<String, dynamic>)),
@@ -89,6 +92,8 @@ Map<String, dynamic> _$ClientSettingsModelToJson(
       'libraryPageSize': instance.libraryPageSize,
       'showClock': instance.showClock,
       'use12HourClock': instance.use12HourClock,
+      'mediaStreamViewType':
+          _$MediaStreamViewTypeEnumMap[instance.mediaStreamViewType]!,
       'shortcuts': instance.shortcuts
           .map((k, e) => MapEntry(_$GlobalHotKeysEnumMap[k]!, e)),
     };
@@ -133,6 +138,11 @@ const _$BackgroundTypeEnumMap = {
   BackgroundType.disabled: 'disabled',
   BackgroundType.enabled: 'enabled',
   BackgroundType.blurred: 'blurred',
+};
+
+const _$MediaStreamViewTypeEnumMap = {
+  MediaStreamViewType.dropdown: 'dropdown',
+  MediaStreamViewType.carousel: 'carousel',
 };
 
 const _$GlobalHotKeysEnumMap = {
