@@ -114,7 +114,13 @@ class AdaptiveLayout extends InheritedWidget {
   static InputDevice inputDeviceOf(BuildContext context) => maybeOf(context)!.data.inputDevice;
 
   @override
-  bool updateShouldNotify(AdaptiveLayout oldWidget) => data != oldWidget.data;
+  bool updateShouldNotify(AdaptiveLayout oldWidget) {
+    final notify = data != oldWidget.data;
+    if (notify) {
+      print('[LAG_DEBUG] AdaptiveLayout notifying dependents. Data changed.');
+    }
+    return notify;
+  }
 }
 
 const defaultTitleBarHeight = 35.0;

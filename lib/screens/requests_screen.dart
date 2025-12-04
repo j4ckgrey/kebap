@@ -12,14 +12,12 @@ import 'package:kebap/theme.dart';
 
 import 'package:kebap/widgets/requests/request_card.dart';
 import 'package:kebap/widgets/requests/request_detail_modal.dart';
-import 'package:kebap/widgets/shared/modal_bottom_sheet.dart';
 import 'package:kebap/widgets/shared/status_card.dart';
 import 'package:kebap/models/items/images_models.dart';
 import 'package:kebap/widgets/navigation_scaffold/components/background_image.dart';
 import 'package:kebap/util/focus_provider.dart';
 
 import 'package:kebap/util/sliver_list_padding.dart';
-import 'package:kebap/widgets/navigation_scaffold/components/navigation_body.dart';
 import 'package:kebap/widgets/shared/horizontal_list.dart';
 
 @RoutePage()

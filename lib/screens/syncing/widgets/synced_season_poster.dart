@@ -8,6 +8,7 @@ import 'package:kebap/models/items/episode_model.dart';
 import 'package:kebap/models/items/season_model.dart';
 import 'package:kebap/models/syncing/sync_item.dart';
 import 'package:kebap/providers/sync/sync_provider_helpers.dart';
+import 'package:kebap/providers/sync_provider.dart';
 import 'package:kebap/screens/shared/flat_button.dart';
 import 'package:kebap/screens/syncing/sync_widgets.dart';
 import 'package:kebap/screens/syncing/widgets/sync_options_button.dart';
@@ -109,7 +110,14 @@ class _SyncedSeasonPosterState extends ConsumerState<SyncedSeasonPoster> {
               ],
             ),
             trailing: SyncOptionsButton(syncedItem: syncedItem, children: children),
-            children: children.map(
+            children: children.where((item) {
+              final task = ref.watch(downloadTasksProvider(item.id));
+              final exists = item.videoFile.existsSync();
+              if (!exists && !task.isEnqueuedOrDownloading) {
+                 print('[DEBUG] SyncedSeasonPoster: File not found for ${item.id}: ${item.videoFile.path}');
+              }
+              return exists || task.isEnqueuedOrDownloading;
+            }).map(
               (item) {
                 final baseItem = item.itemModel;
                 return Padding(

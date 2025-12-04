@@ -1,9 +1,13 @@
 import 'dart:async';
+import 'dart:io';
 
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 
 import 'package:auto_route/auto_route.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:window_manager/window_manager.dart';
 
 import 'package:kebap/jellyfin/jellyfin_open_api.enums.swagger.dart';
 import 'package:kebap/jellyfin/jellyfin_open_api.swagger.dart';
@@ -17,6 +21,8 @@ import 'package:kebap/providers/settings/home_settings_provider.dart';
 import 'package:kebap/providers/user_provider.dart';
 import 'package:kebap/providers/views_provider.dart';
 import 'package:kebap/routes/auto_router.gr.dart';
+import 'package:kebap/screens/shared/default_alert_dialog.dart';
+import 'package:kebap/screens/shared/kebap_snackbar.dart';
 import 'package:kebap/screens/shared/media/single_row_view.dart';
 import 'package:kebap/screens/shared/nested_scaffold.dart';
 import 'package:kebap/util/adaptive_layout/adaptive_layout.dart';
@@ -33,51 +39,62 @@ class DashboardScreen extends ConsumerStatefulWidget {
   ConsumerState<ConsumerStatefulWidget> createState() => _DashboardScreenState();
 }
 
-class _DashboardScreenState extends ConsumerState<DashboardScreen> with AutoRouteAwareStateMixin<DashboardScreen> {
-  late final Timer _timer;
-  final GlobalKey<RefreshIndicatorState> _refreshIndicatorKey = GlobalKey<RefreshIndicatorState>();
+class _DashboardScreenState extends ConsumerState<DashboardScreen> {
+  final ValueNotifier<ItemBaseModel?> selectedPoster = ValueNotifier(null);
   final FocusScopeNode _focusScopeNode = FocusScopeNode();
-
-  final textController = TextEditingController();
-
-  final selectedPoster = ValueNotifier<ItemBaseModel?>(null);
 
   @override
   void initState() {
     super.initState();
-    _timer = Timer.periodic(const Duration(seconds: 120), (timer) {
-      _refreshIndicatorKey.currentState?.show();
-    });
-    
-    // Trigger initial fetch for Continue Watching and Next Up
     WidgetsBinding.instance.addPostFrameCallback((_) {
-      _refreshHome();
-      _focusScopeNode.requestFocus();
+      ref.read(dashboardProvider.notifier).fetchNextUpAndResume();
     });
   }
 
   @override
-  void didPopNext() {
-    _refreshHome();
-    _focusScopeNode.requestFocus();
+  void didChangeDependencies() {
+    super.didChangeDependencies();
+    final routeData = context.routeData;
+    final router = context.router;
+    router.addListener(() {
+      if (router.current.name == routeData.name) {
+        // We are back on this screen
+      }
+    });
   }
 
   @override
   void dispose() {
-    _timer.cancel();
+    selectedPoster.dispose();
     _focusScopeNode.dispose();
     super.dispose();
   }
 
   Future<void> _refreshHome() async {
-    if (mounted) {
-      await ref.read(userProvider.notifier).updateInformation();
-      await ref.read(viewsProvider.notifier).fetchViews();
-      await ref.read(viewsProvider.notifier).fetchViews();
-      await ref.read(dashboardProvider.notifier).fetchNextUpAndResume();
-      // Refresh requests
-      ref.read(baklavaRequestsProvider.notifier).loadRequests(notify: true);
-    }
+    await ref.read(dashboardProvider.notifier).fetchNextUpAndResume();
+  }
+
+  Future<void> _handleExit() async {
+    showDefaultAlertDialog(
+      context,
+      context.localized.exitKebapTitle,
+      context.localized.exitKebapDesc,
+      (context) async {
+        if (!kIsWeb && (Platform.isWindows || Platform.isLinux || Platform.isMacOS)) {
+          final manager = WindowManager.instance;
+          if (await manager.isClosable()) {
+            manager.close();
+          } else {
+            kebapSnackbar(context, title: context.localized.somethingWentWrong);
+          }
+        } else {
+          SystemNavigator.pop();
+        }
+      },
+      context.localized.close,
+      (context) => context.pop(),
+      context.localized.cancel,
+    );
   }
 
   @override
@@ -93,97 +110,105 @@ class _DashboardScreenState extends ConsumerState<DashboardScreen> with AutoRout
 
     final allResume = [...resumeVideo, ...resumeAudio, ...resumeBooks].toList();
 
-    return MediaQuery.removeViewInsets(
-      context: context,
-      child: NestedScaffold(
-        background: ValueListenableBuilder<ItemBaseModel?>(
-          valueListenable: selectedPoster,
-          builder: (_, value, __) {
-            return BackgroundImage(
-              images: (value != null
-                      ? [value]
-                      : [
-                          ...dashboardData.nextUp,
-                          ...allResume,
-                        ])
-                  .map((e) => e.images)
-                  .nonNulls
-                  .toList(),
-            );
-          },
-        ),
-        body: FocusScope(
-          node: _focusScopeNode,
-          autofocus: true,
-          child: Builder(
-            builder: (context) {
-              final rows = [
-                if (resumeVideo.isNotEmpty &&
-                    (homeSettings.nextUp == HomeNextUp.cont || homeSettings.nextUp == HomeNextUp.separate))
-                  RowData(
-                    label: context.localized.dashboardContinueWatching,
-                    posters: resumeVideo,
-                  ),
-                if (resumeAudio.isNotEmpty &&
-                    (homeSettings.nextUp == HomeNextUp.cont || homeSettings.nextUp == HomeNextUp.separate))
-                  RowData(
-                    label: context.localized.dashboardContinueListening,
-                    posters: resumeAudio,
-                  ),
-                if (resumeBooks.isNotEmpty &&
-                    (homeSettings.nextUp == HomeNextUp.cont || homeSettings.nextUp == HomeNextUp.separate))
-                  RowData(
-                    label: context.localized.dashboardContinueReading,
-                    posters: resumeBooks,
-                  ),
-                if (dashboardData.nextUp.isNotEmpty &&
-                    (homeSettings.nextUp == HomeNextUp.nextUp || homeSettings.nextUp == HomeNextUp.separate))
-                  RowData(
-                    label: context.localized.nextUp,
-                    posters: dashboardData.nextUp,
-                  ),
-                if ([...allResume, ...dashboardData.nextUp].isNotEmpty && homeSettings.nextUp == HomeNextUp.combined)
-                  RowData(
-                    label: context.localized.dashboardContinue,
-                    posters: [...allResume, ...dashboardData.nextUp],
-                  ),
-                ...views.views
-                    .where((element) => element.recentlyAdded.isNotEmpty)
-                    .map(
-                      (view) => RowData(
-                        label: context.localized.dashboardRecentlyAdded(view.name),
-                        posters: view.recentlyAdded,
-                        aspectRatio: view.collectionType.aspectRatio,
-                        onLabelClick: () => context.router.push(
-                          LibrarySearchRoute(
-                            viewModelId: view.id,
-                            types: switch (view.collectionType) {
-                              CollectionType.tvshows => {
-                                  KebapItemType.episode: true,
-                                },
-                              _ => {},
-                            },
-                            sortingOptions: switch (view.collectionType) {
-                              CollectionType.books ||
-                              CollectionType.boxsets ||
-                              CollectionType.folders ||
-                              CollectionType.music =>
-                                SortingOptions.dateLastContentAdded,
-                              _ => SortingOptions.dateAdded,
-                            },
-                            sortOrder: SortingOrder.descending,
-                            recursive: true,
+    return PopScope(
+      canPop: false,
+      onPopInvokedWithResult: (didPop, result) async {
+        debugPrint('[DashboardScreen] onPopInvokedWithResult: didPop=$didPop');
+        if (didPop) return;
+        _handleExit();
+      },
+      child: MediaQuery.removeViewInsets(
+        context: context,
+        child: NestedScaffold(
+          background: ValueListenableBuilder<ItemBaseModel?>(
+            valueListenable: selectedPoster,
+            builder: (_, value, __) {
+              return BackgroundImage(
+                images: (value != null
+                        ? [value]
+                        : [
+                            ...dashboardData.nextUp,
+                            ...allResume,
+                          ])
+                    .map((e) => e.images)
+                    .nonNulls
+                    .toList(),
+              );
+            },
+          ),
+          body: FocusScope(
+            node: _focusScopeNode,
+            autofocus: true,
+            child: Builder(
+              builder: (context) {
+                final rows = [
+                  if (resumeVideo.isNotEmpty &&
+                      (homeSettings.nextUp == HomeNextUp.cont || homeSettings.nextUp == HomeNextUp.separate))
+                    RowData(
+                      label: context.localized.dashboardContinueWatching,
+                      posters: resumeVideo,
+                    ),
+                  if (resumeAudio.isNotEmpty &&
+                      (homeSettings.nextUp == HomeNextUp.cont || homeSettings.nextUp == HomeNextUp.separate))
+                    RowData(
+                      label: context.localized.dashboardContinueListening,
+                      posters: resumeAudio,
+                    ),
+                  if (resumeBooks.isNotEmpty &&
+                      (homeSettings.nextUp == HomeNextUp.cont || homeSettings.nextUp == HomeNextUp.separate))
+                    RowData(
+                      label: context.localized.dashboardContinueReading,
+                      posters: resumeBooks,
+                    ),
+                  if (dashboardData.nextUp.isNotEmpty &&
+                      (homeSettings.nextUp == HomeNextUp.nextUp || homeSettings.nextUp == HomeNextUp.separate))
+                    RowData(
+                      label: context.localized.nextUp,
+                      posters: dashboardData.nextUp,
+                    ),
+                  if ([...allResume, ...dashboardData.nextUp].isNotEmpty && homeSettings.nextUp == HomeNextUp.combined)
+                    RowData(
+                      label: context.localized.dashboardContinue,
+                      posters: [...allResume, ...dashboardData.nextUp],
+                    ),
+                  ...views.views
+                      .where((element) => element.recentlyAdded.isNotEmpty)
+                      .map(
+                        (view) => RowData(
+                          label: context.localized.dashboardRecentlyAdded(view.name),
+                          posters: view.recentlyAdded,
+                          aspectRatio: view.collectionType.aspectRatio,
+                          onLabelClick: () => context.router.push(
+                            LibrarySearchRoute(
+                              viewModelId: view.id,
+                              types: switch (view.collectionType) {
+                                CollectionType.tvshows => {
+                                    KebapItemType.episode: true,
+                                  },
+                                _ => {},
+                              },
+                              sortingOptions: switch (view.collectionType) {
+                                CollectionType.books ||
+                                CollectionType.boxsets ||
+                                CollectionType.folders ||
+                                CollectionType.music =>
+                                  SortingOptions.dateLastContentAdded,
+                                _ => SortingOptions.dateAdded,
+                              },
+                              sortOrder: SortingOrder.descending,
+                              recursive: true,
+                            ),
                           ),
                         ),
                       ),
-                    ),
-              ];
-              return SingleRowView(
-                contentPadding: padding,
-                rows: rows,
-                onRefresh: _refreshHome,
-              );
-            },
+                ];
+                return SingleRowView(
+                  contentPadding: padding,
+                  rows: rows,
+                  onRefresh: _refreshHome,
+                );
+              },
+            ),
           ),
         ),
       ),

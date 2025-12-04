@@ -151,6 +151,7 @@ class _SingleRowViewState extends ConsumerState<SingleRowView> {
                           scale;
 
                       return FocusProvider(
+                        key: ValueKey(row.label),
                         autoFocus: isFirstRow && !_hasAutoFocused,
                         child: SizedBox(
                           height: cardHeight + titleHeight + 16, // Height matches PosterRow defaults + title
@@ -209,6 +210,7 @@ class _SingleRowViewState extends ConsumerState<SingleRowView> {
                         scale;
 
                     return FocusProvider(
+                      key: ValueKey(row.label),
                       autoFocus: isFirstRow && !_hasAutoFocused,
                       child: SizedBox(
                         height: cardHeight + titleHeight + 16, // Height matches PosterRow defaults + title

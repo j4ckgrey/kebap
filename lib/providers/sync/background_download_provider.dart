@@ -37,11 +37,17 @@ class BackgroundDownloader extends _$BackgroundDownloader {
   void updateTask(TaskUpdate update) async {
     switch (update) {
       case TaskStatusUpdate():
+        // Debug log for file name
+        print('[DEBUG] Download task info: taskId=${update.task.taskId}, displayName=${update.task.displayName}');
         final status = update.status;
+        // Debug log for status changes
+        print('[DEBUG] Download status update: taskId=${update.task.taskId}, status=$status');
         ref.read(downloadTasksProvider(update.task.taskId).notifier).update(
-              (state) => state.copyWith(status: status),
+              (state) {
+                print('[DEBUG] TaskStatusUpdate: oldProgress=${state.progress}, newStatus=$status');
+                return state.copyWith(status: status);
+              },
             );
-
         if (status == TaskStatus.complete || status == TaskStatus.canceled) {
           // Update file size from actual downloaded file when complete
           if (status == TaskStatus.complete) {
@@ -49,6 +55,7 @@ class BackgroundDownloader extends _$BackgroundDownloader {
             if (syncItem != null && syncItem.videoFile.existsSync()) {
               final actualFileSize = await syncItem.videoFile.length();
               if (actualFileSize > 0) {
+                print('[DEBUG] Updating file size for ${syncItem.id}: $actualFileSize');
                 final updatedItem = syncItem.copyWith(fileSize: actualFileSize);
                 await ref.read(syncProvider.notifier).updateItem(updatedItem);
               }
@@ -64,12 +71,36 @@ class BackgroundDownloader extends _$BackgroundDownloader {
         }
       case TaskProgressUpdate():
         final progress = update.progress;
-        ref.read(downloadTasksProvider(update.task.taskId).notifier).update(
-              (state) => state.copyWith(
-                progress: progress > 0 && progress < 1 ? progress : null,
+        
+        // Try to update file size if we don't have it
+        if (progress > 0) {
+           final syncItem = await ref.read(syncProvider.notifier).getSyncedItem(update.task.taskId);
+           if (syncItem != null && (syncItem.fileSize == null || syncItem.fileSize == 0)) {
+               if (update.task is DownloadTask) {
+                   final size = await (update.task as DownloadTask).expectedFileSize();
+                   if (size > 0) {
+                       print('[DEBUG] Updating missing file size for ${syncItem.id}: $size');
+                       await ref.read(syncProvider.notifier).updateItem(syncItem.copyWith(fileSize: size));
+                   }
+               }
+           }
+        }
+
+        // Debug log for progress updates
+        print('[DEBUG] Download progress update: taskId=${update.task.taskId}, progress=${(progress * 100).toStringAsFixed(1)}%, speed=${update.networkSpeedAsString}');
+        
+        ref.read(downloadTasksProvider(update.task.taskId).notifier).update((state) {
+            double newProgress = state.progress;
+            if (progress >= 0 && progress <= 1) {
+                newProgress = progress;
+            }
+            print('[DEBUG] Updating task state: oldProgress=${state.progress}, newProgress=$newProgress, status=${state.status}');
+            return state.copyWith(
+                progress: newProgress,
                 downloadSpeed: update.networkSpeedAsString,
-              ),
             );
+        });
+
     }
   }
 

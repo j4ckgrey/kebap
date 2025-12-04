@@ -11,7 +11,6 @@ import 'package:window_manager/window_manager.dart';
 import 'package:kebap/models/settings/client_settings_model.dart';
 import 'package:kebap/providers/baklava_requests_provider.dart';
 import 'package:kebap/jellyfin/jellyfin_open_api.enums.swagger.dart';
-import 'package:kebap/models/collection_types.dart';
 import 'package:kebap/providers/settings/client_settings_provider.dart';
 import 'package:kebap/providers/sync_provider.dart';
 import 'package:kebap/providers/user_provider.dart';
@@ -20,7 +19,6 @@ import 'package:kebap/routes/auto_router.gr.dart';
 import 'package:kebap/screens/shared/kebap_snackbar.dart';
 import 'package:kebap/util/input_handler.dart';
 import 'package:kebap/util/localization_helper.dart';
-import 'package:kebap/util/adaptive_layout/adaptive_layout.dart';
 
 import 'package:kebap/widgets/navigation_scaffold/components/destination_model.dart';
 import 'package:kebap/widgets/navigation_scaffold/navigation_scaffold.dart';
@@ -87,11 +85,52 @@ enum HomeTabs {
 }
 
 @RoutePage()
-class HomeScreen extends ConsumerWidget {
+class HomeScreen extends ConsumerStatefulWidget {
   const HomeScreen({super.key});
 
   @override
-  Widget build(BuildContext context, WidgetRef ref) {
+  ConsumerState<HomeScreen> createState() => _HomeScreenState();
+}
+
+class _HomeScreenState extends ConsumerState<HomeScreen> {
+  final GlobalKey<ScaffoldState> _scaffoldKey = GlobalKey();
+
+  Future<void> _handleExit() async {
+    final shouldExit = await showDialog<bool>(
+      context: context,
+      builder: (context) => AlertDialog(
+        title: Text(context.localized.exitApp),
+        content: Text(context.localized.exitAppConfirmation),
+        actions: [
+          TextButton(
+            onPressed: () => Navigator.of(context).pop(false),
+            child: Text(context.localized.cancel),
+          ),
+          TextButton(
+            autofocus: true,
+            onPressed: () => Navigator.of(context).pop(true),
+            child: Text(context.localized.exit),
+          ),
+        ],
+      ),
+    );
+
+    if (shouldExit == true) {
+      final manager = WindowManager.instance;
+      try {
+        if (await manager.isClosable()) {
+          await manager.destroy();
+        } else {
+          SystemNavigator.pop();
+        }
+      } catch (_) {
+        SystemNavigator.pop();
+      }
+    }
+  }
+
+  @override
+  Widget build(BuildContext context) {
     final canDownload = ref.watch(showSyncButtonProviderProvider);
     final destinations = HomeTabs.values
         .map((e) {
@@ -190,18 +229,7 @@ class HomeScreen extends ConsumerWidget {
               context.navigateTo(LibrarySearchRoute());
               return true;
             case GlobalHotKeys.exit:
-              Future.microtask(() async {
-                final manager = WindowManager.instance;
-                try {
-                  if (await manager.isClosable()) {
-                    manager.close();
-                  } else {
-                     SystemNavigator.pop();
-                  }
-                } catch (_) {
-                  SystemNavigator.pop();
-                }
-              });
+              _handleExit();
               return true;
           }
         },
@@ -211,6 +239,7 @@ class HomeScreen extends ConsumerWidget {
           child: AutoRouter(
             builder: (context, child) {
               return NavigationScaffold(
+                scaffoldKey: _scaffoldKey,
                 destinations: destinations.nonNulls.toList(),
                 currentRouteName: context.router.current.name,
                 nestedChild: child,

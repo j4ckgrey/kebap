@@ -22,7 +22,7 @@ class LoginUserGrid extends ConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final mainAxisExtent = 175.0;
-    final maxCount = (MediaQuery.of(context).size.width / mainAxisExtent).floor().clamp(1, 3);
+    final maxCount = (MediaQuery.sizeOf(context).width / mainAxisExtent).floor().clamp(1, 3);
 
     final crossAxisCount = users.length == 1 ? 1 : maxCount;
 
@@ -30,116 +30,128 @@ class LoginUserGrid extends ConsumerWidget {
 
     final lastUsedAccount = users.sorted((a, b) => a.lastUsed.compareTo(b.lastUsed)).lastOrNull;
 
-    return SizedBox(
-      width: neededWidth,
-      child: ReorderableGridView.builder(
-        onReorder: (oldIndex, newIndex) => ref.read(authProvider.notifier).reOrderUsers(oldIndex, newIndex),
-        shrinkWrap: true,
-        physics: const NeverScrollableScrollPhysics(),
-        autoScroll: true,
-        gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
-          crossAxisCount: (users.length == 1 ? 1 : maxCount).toInt(),
-          mainAxisSpacing: 24,
-          crossAxisSpacing: 24,
-          mainAxisExtent: mainAxisExtent,
-        ),
-        itemCount: users.length,
-        itemBuilder: (context, index) {
-          final user = users[index];
-          return Center(
-            key: Key(user.id),
-            child: AspectRatio(
-              aspectRatio: 1.0,
-              child: FocusButton(
-                autoFocus: AdaptiveLayout.inputDeviceOf(context) == InputDevice.dPad && lastUsedAccount != null
-                    ? user.sameIdentity(lastUsedAccount)
-                    : false,
-                onTap: () => editMode ? onLongPress?.call(user) : onPressed?.call(user),
-                onLongPress: switch (AdaptiveLayout.inputDeviceOf(context)) {
-                  InputDevice.dPad || InputDevice.pointer => () => onLongPress?.call(user),
-                  InputDevice.touch => null,
-                },
-                darkOverlay: false,
-                child: Stack(
-                  children: [
-                    Padding(
-                      padding: const EdgeInsets.all(8.0),
-                      child: Column(
-                        mainAxisAlignment: MainAxisAlignment.spaceAround,
-                        mainAxisSize: MainAxisSize.min,
+    final gridDelegate = SliverGridDelegateWithFixedCrossAxisCount(
+      crossAxisCount: (users.length == 1 ? 1 : maxCount).toInt(),
+      mainAxisSpacing: 24,
+      crossAxisSpacing: 24,
+      mainAxisExtent: mainAxisExtent,
+    );
+
+    Widget itemBuilder(BuildContext context, int index) {
+      final user = users[index];
+      return Center(
+        key: Key(user.id),
+        child: AspectRatio(
+          aspectRatio: 1.0,
+          child: FocusButton(
+            autoFocus: AdaptiveLayout.inputDeviceOf(context) == InputDevice.dPad && lastUsedAccount != null
+                ? user.sameIdentity(lastUsedAccount)
+                : false,
+            onTap: () => editMode ? onLongPress?.call(user) : onPressed?.call(user),
+            onLongPress: switch (AdaptiveLayout.inputDeviceOf(context)) {
+              InputDevice.dPad || InputDevice.pointer => () => onLongPress?.call(user),
+              InputDevice.touch => null,
+            },
+            darkOverlay: false,
+            child: Stack(
+              children: [
+                Padding(
+                  padding: const EdgeInsets.all(8.0),
+                  child: Column(
+                    mainAxisAlignment: MainAxisAlignment.spaceAround,
+                    mainAxisSize: MainAxisSize.min,
+                    children: [
+                      Flexible(
+                        child: UserIcon(
+                          labelStyle: Theme.of(context).textTheme.headlineMedium,
+                          user: user,
+                        ),
+                      ),
+                      Row(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        mainAxisSize: MainAxisSize.max,
                         children: [
-                          Flexible(
-                            child: UserIcon(
-                              labelStyle: Theme.of(context).textTheme.headlineMedium,
-                              user: user,
-                            ),
+                          Icon(
+                            user.authMethod.icon,
+                            size: 18,
                           ),
-                          Row(
+                          const SizedBox(width: 4),
+                          Flexible(
+                              child: Text(
+                            user.name,
+                            maxLines: 2,
+                            softWrap: true,
+                          )),
+                        ],
+                      ),
+                      if (user.credentials.serverName.isNotEmpty)
+                        Opacity(
+                          opacity: 0.75,
+                          child: Row(
                             mainAxisAlignment: MainAxisAlignment.center,
                             mainAxisSize: MainAxisSize.max,
                             children: [
-                              Icon(
-                                user.authMethod.icon,
-                                size: 18,
+                              const Icon(
+                                IconsaxPlusBold.driver_2,
+                                size: 14,
                               ),
                               const SizedBox(width: 4),
                               Flexible(
-                                  child: Text(
-                                user.name,
-                                maxLines: 2,
-                                softWrap: true,
-                              )),
+                                child: Text(
+                                  user.credentials.serverName,
+                                  maxLines: 2,
+                                  softWrap: true,
+                                ),
+                              ),
                             ],
                           ),
-                          if (user.credentials.serverName.isNotEmpty)
-                            Opacity(
-                              opacity: 0.75,
-                              child: Row(
-                                mainAxisAlignment: MainAxisAlignment.center,
-                                mainAxisSize: MainAxisSize.max,
-                                children: [
-                                  const Icon(
-                                    IconsaxPlusBold.driver_2,
-                                    size: 14,
-                                  ),
-                                  const SizedBox(width: 4),
-                                  Flexible(
-                                    child: Text(
-                                      user.credentials.serverName,
-                                      maxLines: 2,
-                                      softWrap: true,
-                                    ),
-                                  ),
-                                ],
-                              ),
-                            )
-                        ].addInBetween(const SizedBox(width: 4, height: 4)),
-                      ),
-                    ),
-                    if (editMode)
-                      Align(
-                        alignment: Alignment.topRight,
-                        child: Padding(
-                          padding: const EdgeInsets.all(8.0),
-                          child: Card(
-                            color: Theme.of(context).colorScheme.errorContainer,
-                            child: const Padding(
-                              padding: EdgeInsets.all(8.0),
-                              child: Icon(
-                                IconsaxPlusBold.edit_2,
-                                size: 14,
-                              ),
-                            ),
+                        )
+                    ].addInBetween(const SizedBox(width: 4, height: 4)),
+                  ),
+                ),
+                if (editMode)
+                  Align(
+                    alignment: Alignment.topRight,
+                    child: Padding(
+                      padding: const EdgeInsets.all(8.0),
+                      child: Card(
+                        color: Theme.of(context).colorScheme.errorContainer,
+                        child: const Padding(
+                          padding: EdgeInsets.all(8.0),
+                          child: Icon(
+                            IconsaxPlusBold.edit_2,
+                            size: 14,
                           ),
                         ),
                       ),
-                  ],
-                ),
-              ),
+                    ),
+                  ),
+              ],
             ),
-          );
-        },
-      ),
+          ),
+        ),
+      );
+    }
+
+    return SizedBox(
+      width: neededWidth,
+      child: editMode
+          ? ReorderableGridView.builder(
+              onReorder: (oldIndex, newIndex) => ref.read(authProvider.notifier).reOrderUsers(oldIndex, newIndex),
+              shrinkWrap: true,
+              physics: const NeverScrollableScrollPhysics(),
+              autoScroll: true,
+              gridDelegate: gridDelegate,
+              itemCount: users.length,
+              itemBuilder: itemBuilder,
+            )
+          : GridView.builder(
+              shrinkWrap: true,
+              physics: const NeverScrollableScrollPhysics(),
+              gridDelegate: gridDelegate,
+              itemCount: users.length,
+              itemBuilder: itemBuilder,
+            ),
     );
   }
 }

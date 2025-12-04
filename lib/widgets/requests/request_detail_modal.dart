@@ -14,7 +14,6 @@ import 'package:kebap/providers/baklava_requests_provider.dart';
 import 'package:kebap/providers/user_provider.dart';
 import 'package:kebap/routes/auto_router.gr.dart';
 import 'package:kebap/screens/shared/kebap_snackbar.dart';
-import 'package:kebap/util/adaptive_layout/adaptive_layout.dart';
 import 'package:kebap/util/focus_provider.dart';
 import 'package:kebap/widgets/shared/item_details_reviews_carousel.dart';
 import 'package:kebap/widgets/shared/status_card.dart';
@@ -427,102 +426,103 @@ class _RequestDetailModalState extends ConsumerState<RequestDetailModal> {
           ],
         );
 
-        return Container(
-          width: double.maxFinite,
-          decoration: BoxDecoration(
-            color: theme.colorScheme.surface,
-          ),
-          child: metadataState.error != null
-              ? Center(
-                  child: Column(
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    children: [
-                      const Icon(Icons.error_outline, size: 48, color: Colors.red),
-                      const SizedBox(height: 16),
-                      Text(
-                        'Error loading metadata',
-                        style: theme.textTheme.titleMedium,
-                      ),
-                      const SizedBox(height: 8),
-                      Padding(
-                        padding: const EdgeInsets.symmetric(horizontal: 16),
-                        child: Text(
-                          metadataState.error!,
-                          textAlign: TextAlign.center,
-                          style: theme.textTheme.bodySmall,
-                        ),
-                      ),
-                    ],
-                  ),
-                )
-              : metadataState.loading
-                  ? const SizedBox(
-                      height: 200,
-                      child: Center(child: CircularProgressIndicator()),
-                    )
-              : isMobile
-                  ? Column(
-                      crossAxisAlignment: CrossAxisAlignment.stretch,
+        return Material(
+          color: theme.colorScheme.surface,
+          clipBehavior: Clip.antiAlias,
+          child: Container(
+            height: 700,
+            width: double.maxFinite,
+            constraints: const BoxConstraints(maxWidth: 1100),
+            child: metadataState.error != null
+                ? Center(
+                    child: Column(
+                      mainAxisAlignment: MainAxisAlignment.center,
                       children: [
-                        // Top: Poster
-                        Container(
-                          height: 200,
-                          decoration: BoxDecoration(
-                            borderRadius: const BorderRadius.vertical(top: Radius.circular(12)),
-                            image: DecorationImage(
-                              image: CachedNetworkImageProvider(
-                                metadata?.posterPath != null
-                                    ? 'https://image.tmdb.org/t/p/w500${metadata!.posterPath}'
-                                    : widget.request.img ?? '',
-                              ),
-                              fit: BoxFit.cover,
-                              alignment: Alignment.center,
-                            ),
-                          ),
+                        const Icon(Icons.error_outline, size: 48, color: Colors.red),
+                        const SizedBox(height: 16),
+                        Text(
+                          'Error loading metadata',
+                          style: theme.textTheme.titleMedium,
                         ),
+                        const SizedBox(height: 8),
                         Padding(
-                          padding: const EdgeInsets.all(16),
-                          child: content,
+                          padding: const EdgeInsets.symmetric(horizontal: 16),
+                          child: Text(
+                            metadataState.error!,
+                            textAlign: TextAlign.center,
+                            style: theme.textTheme.bodySmall,
+                          ),
                         ),
                       ],
-                    )
-                  : Container(
-                      height: 700,
-                      constraints: const BoxConstraints(maxWidth: 1100),
-                      child: Row(
-                        crossAxisAlignment: CrossAxisAlignment.stretch,
-                        children: [
-                          // Left: Poster
-                          Expanded(
-                            flex: 1,
-                            child: Container(
-                              decoration: BoxDecoration(
-                                image: DecorationImage(
-                                  image: CachedNetworkImageProvider(
-                                    metadata?.posterPath != null
-                                        ? 'https://image.tmdb.org/t/p/w500${metadata!.posterPath}'
-                                        : widget.request.img ?? '',
+                    ),
+                  )
+                : metadataState.loading
+                    ? const SizedBox(
+                        height: 200,
+                        child: Center(child: CircularProgressIndicator()),
+                      )
+                    : isMobile
+                        ? SingleChildScrollView(
+                            child: Column(
+                              crossAxisAlignment: CrossAxisAlignment.stretch,
+                              children: [
+                                // Top: Poster
+                                Container(
+                                  height: 200,
+                                  decoration: BoxDecoration(
+                                    borderRadius: const BorderRadius.vertical(top: Radius.circular(12)),
+                                    image: DecorationImage(
+                                      image: CachedNetworkImageProvider(
+                                        metadata?.posterPath != null
+                                            ? 'https://image.tmdb.org/t/p/w500${metadata!.posterPath}'
+                                            : widget.request.img ?? '',
+                                      ),
+                                      fit: BoxFit.cover,
+                                      alignment: Alignment.center,
+                                    ),
                                   ),
-                                  fit: BoxFit.cover,
-                                  alignment: Alignment.center,
+                                ),
+                                Padding(
+                                  padding: const EdgeInsets.all(16),
+                                  child: content,
+                                ),
+                              ],
+                            ),
+                          )
+                        : Row(
+                            crossAxisAlignment: CrossAxisAlignment.stretch,
+                            children: [
+                              // Left: Poster
+                              Expanded(
+                                flex: 1,
+                                child: Container(
+                                  decoration: BoxDecoration(
+                                    image: DecorationImage(
+                                      image: CachedNetworkImageProvider(
+                                        metadata?.posterPath != null
+                                            ? 'https://image.tmdb.org/t/p/w500${metadata!.posterPath}'
+                                            : widget.request.img ?? '',
+                                      ),
+                                      fit: BoxFit.cover,
+                                      alignment: Alignment.center,
+                                    ),
+                                  ),
                                 ),
                               ),
-                            ),
-                          ),
 
-                          // Right: Content
-                          Expanded(
-                            flex: 2,
-                            child: SingleChildScrollView(
-                              child: Padding(
-                                padding: const EdgeInsets.all(24),
-                                child: content,
+                              // Right: Content
+                              Expanded(
+                                flex: 2,
+                                child: SingleChildScrollView(
+                                  child: Padding(
+                                    padding: const EdgeInsets.all(24),
+                                    child: content,
+                                  ),
+                                ),
                               ),
-                            ),
+                            ],
                           ),
-                        ],
-                      ),
-                    ),
+          ),
         );
       },
       ),
@@ -637,7 +637,7 @@ class _ReviewsCarouselState extends State<_ReviewsCarousel> {
                   showDialog(
                     context: context,
                     barrierDismissible: true,
-                    barrierColor: Colors.black.withOpacity(0.7),
+                    barrierColor: Colors.black.withValues(alpha: 0.7),
                     builder: (context) => ReviewModal(review: review, theme: widget.theme),
                   );
                 },

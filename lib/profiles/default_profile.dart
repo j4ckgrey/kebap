@@ -19,9 +19,14 @@ DeviceProfile defaultProfile(PlayerOptions player) => kIsWeb
         directPlayProfiles: [
           DirectPlayProfile(
             type: DlnaProfileType.video,
+            container: 'mkv,mp4,m4v,avi,mov,wmv,asf,wma,mp3,flac,ogg,ogv,webm',
+            videoCodec: 'h264,hevc,vp8,vp9,av1,mpeg4,mpeg2video',
+            audioCodec: 'aac,mp3,ac3,eac3,flac,vorbis,opus,dts,dca,truehd',
           ),
           DirectPlayProfile(
             type: DlnaProfileType.audio,
+            container: 'mp3,flac,ogg,opus,wav,m4a,aac,alac',
+            audioCodec: 'aac,mp3,flac,vorbis,opus,pcm,alac',
           )
         ],
         transcodingProfiles: [

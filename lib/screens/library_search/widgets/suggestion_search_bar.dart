@@ -3,12 +3,8 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:iconsax_plus/iconsax_plus.dart';
-import 'package:kebap/models/item_base_model.dart';
 import 'package:kebap/providers/library_search_provider.dart';
 import 'package:kebap/screens/shared/adaptive_text_field.dart';
-import 'package:kebap/theme.dart';
-import 'package:kebap/util/debouncer.dart';
 import 'package:kebap/util/localization_helper.dart';
 
 class SuggestionSearchBar extends ConsumerStatefulWidget {
@@ -54,7 +50,7 @@ class _SearchBarState extends ConsumerState<SuggestionSearchBar> {
       padding: const EdgeInsets.symmetric(horizontal: 12),
       child: Container(
         decoration: BoxDecoration(
-          color: Theme.of(context).colorScheme.surfaceContainerHighest.withOpacity(0.5),
+          color: Theme.of(context).colorScheme.surfaceContainerHighest.withValues(alpha: 0.5),
           borderRadius: BorderRadius.circular(12),
         ),
         padding: const EdgeInsets.symmetric(horizontal: 12),
@@ -68,7 +64,6 @@ class _SearchBarState extends ConsumerState<SuggestionSearchBar> {
             focusNode: focusNode,
             autoFocus: widget.autoFocus,
             controller: textEditingController,
-            onDown: widget.onDown,
             onSubmitted: (value) {
               widget.onSubmited?.call(value);
             },

@@ -32,7 +32,7 @@ class NativePlayer extends BasePlayer implements VideoPlayerListenerCallback {
   }
 
   @override
-  Future<void> loadVideo(String url, bool play) async => player.open(url, play);
+  Future<void> loadVideo(Media media, bool play) async => player.open(media.url, play);
 
   @override
   Future<StartResult> open(BuildContext newContext) async {
@@ -181,6 +181,7 @@ class NativePlayer extends BasePlayer implements VideoPlayerListenerCallback {
         videoInformation: model.item.streamModel?.mediaInfoTag ?? " ",
       ),
       url: model.media?.url ?? "",
+      headers: model.media?.httpHeaders,
     );
     await player.sendPlayableModel(playableData);
   }

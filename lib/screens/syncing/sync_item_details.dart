@@ -55,6 +55,11 @@ class _SyncItemDetailsState extends ConsumerState<SyncItemDetails> {
     final hasFile = syncedItem.videoFile.existsSync();
     final downloadTask = ref.watch(downloadTasksProvider(syncedItem.id));
     final syncedChildren = ref.watch(syncedChildrenProvider(syncedItem));
+
+    ref.listen(syncedChildrenProvider(syncedItem), (previous, next) {
+      ref.invalidate(syncedNestedChildrenProvider(syncedItem));
+    });
+
     final nestedChildren = ref.watch(syncedNestedChildrenProvider(syncedItem));
     return PullToRefresh(
       refreshOnStart: false,
@@ -196,9 +201,29 @@ class _SyncItemDetailsState extends ConsumerState<SyncItemDetails> {
                       padding: EdgeInsets.symmetric(vertical: 16),
                       child: Divider(),
                     ),
-                    ...children!.map(
-                      (e) => ChildSyncWidget(syncedChild: e),
-                    ),
+                    ...() {
+                      try {
+                        return children!.where((child) {
+                          final task = ref.watch(downloadTasksProvider(child.id));
+                          final isSelfActive = child.videoFile.existsSync() || task.isEnqueuedOrDownloading;
+
+                          final nestedAsync = ref.watch(syncedNestedChildrenProvider(child));
+                          final nested = nestedAsync.valueOrNull ?? [];
+
+                          final hasActiveDescendants = nested.any((descendant) {
+                            final dTask = ref.watch(downloadTasksProvider(descendant.id));
+                            return descendant.videoFile.existsSync() || dTask.isEnqueuedOrDownloading;
+                          });
+
+                          return isSelfActive || hasActiveDescendants;
+                        }).map(
+                          (e) => ChildSyncWidget(syncedChild: e),
+                        );
+                      } catch (e) {
+                        print('[ERROR] SyncItemDetails filtering failed: $e');
+                        return <Widget>[];
+                      }
+                    }() as Iterable<Widget>,
                   ],
                 ],
               ),
@@ -217,8 +242,8 @@ class _SyncItemDetailsState extends ConsumerState<SyncItemDetails> {
                         context.localized.syncDeleteItemDesc(baseItem?.detailedName(context) ?? ""),
                         (localContext) async {
                           await ref.read(syncProvider.notifier).removeSync(context, syncedItem);
-                          Navigator.pop(localContext);
-                          Navigator.pop(context);
+                          if (localContext.mounted) Navigator.pop(localContext);
+                          if (context.mounted) Navigator.pop(context);
                         },
                         context.localized.delete,
                         (context) => Navigator.pop(context),
@@ -242,6 +267,7 @@ class _SyncItemDetailsState extends ConsumerState<SyncItemDetails> {
                   )
               ],
             ),
+          _ => const Center(child: CircularProgressIndicator()),
         },
       ),
     );

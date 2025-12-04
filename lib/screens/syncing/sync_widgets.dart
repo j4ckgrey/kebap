@@ -12,6 +12,7 @@ import 'package:kebap/models/syncing/sync_item.dart';
 import 'package:kebap/providers/sync/background_download_provider.dart';
 import 'package:kebap/providers/sync/sync_provider_helpers.dart';
 import 'package:kebap/providers/sync_provider.dart';
+import 'package:kebap/screens/shared/default_alert_dialog.dart';
 import 'package:kebap/util/localization_helper.dart';
 import 'package:kebap/util/size_formatting.dart';
 
@@ -81,6 +82,7 @@ class SyncProgressBar extends ConsumerWidget {
     final downloadStatus = task.status;
     final downloadProgress = totalSize > 0 ? currentBytes / totalSize : 0.0;
     final downloadSpeed = task.downloadSpeed;
+    print('[DEBUG] Sync progress: item=${item.id}, progress=${(downloadProgress * 100).toStringAsFixed(1)}%, bytes=${currentBytes.toInt()}/${totalSize.toInt()}, speed=$downloadSpeed');
     final downloadTask = task.task;
 
     if (!task.hasDownload && currentBytes == 0) {
@@ -98,29 +100,29 @@ class SyncProgressBar extends ConsumerWidget {
             ],
           ),
         ),
+        // Progress Bar (Full Width)
+        IgnorePointer(
+          child: TweenAnimationBuilder(
+            duration: const Duration(milliseconds: 250),
+            curve: Curves.easeInOut,
+            tween: Tween<double>(
+              begin: 0,
+              end: downloadProgress,
+            ),
+            builder: (context, value, child) => LinearProgressIndicator(
+              minHeight: 8,
+              value: value,
+              color: downloadStatus.color(context),
+              borderRadius: BorderRadius.circular(8),
+            ),
+          ),
+        ),
+        const SizedBox(height: 8),
+        // Controls Row
         Row(
           crossAxisAlignment: CrossAxisAlignment.center,
-          mainAxisSize: MainAxisSize.min,
-          spacing: 8,
           children: [
-            Flexible(
-              child: IgnorePointer(
-                child: TweenAnimationBuilder(
-                  duration: const Duration(milliseconds: 250),
-                  curve: Curves.easeInOut,
-                  tween: Tween<double>(
-                    begin: 0,
-                    end: downloadProgress,
-                  ),
-                  builder: (context, value, child) => LinearProgressIndicator(
-                    minHeight: 8,
-                    value: value,
-                    color: downloadStatus.color(context),
-                    borderRadius: BorderRadius.circular(8),
-                  ),
-                ),
-              ),
-            ),
+            // Size and Percentage Text
             Text(
               "${(downloadProgress * 100).toStringAsFixed(0)}% (${currentBytes.toInt().byteFormat} / ${totalSize.byteFormat})",
               style: Theme.of(context)
@@ -128,6 +130,8 @@ class SyncProgressBar extends ConsumerWidget {
                   .labelLarge
                   ?.copyWith(color: Theme.of(context).colorScheme.onSurface.withValues(alpha: 0.75)),
             ),
+            const Spacer(),
+            // Control Buttons
             if (downloadTask != null) ...{
               if (downloadStatus != TaskStatus.paused && downloadStatus != TaskStatus.enqueued)
                 IconButton(
@@ -136,7 +140,18 @@ class SyncProgressBar extends ConsumerWidget {
                 ),
               if (downloadStatus == TaskStatus.paused) ...[
                 IconButton(
-                  onPressed: () => ref.read(syncProvider.notifier).deleteFullSyncFiles(item, downloadTask),
+                  onPressed: () => showDefaultAlertDialog(
+                    context,
+                    context.localized.stopDownload,
+                    context.localized.stopDownloadConfirmation,
+                    (context) {
+                      ref.read(syncProvider.notifier).stopDownload(context, item, downloadTask);
+                      Navigator.of(context).pop();
+                    },
+                    context.localized.yes,
+                    (context) => Navigator.of(context).pop(),
+                    context.localized.no,
+                  ),
                   icon: const Icon(IconsaxPlusBold.stop),
                 ),
                 IconButton(
@@ -146,14 +161,24 @@ class SyncProgressBar extends ConsumerWidget {
               ],
               if (_cancellableStatuses.contains(downloadStatus)) ...[
                 IconButton(
-                  onPressed: () => ref.read(syncProvider.notifier).deleteFullSyncFiles(item, downloadTask),
+                  onPressed: () => showDefaultAlertDialog(
+                    context,
+                    context.localized.stopDownload,
+                    context.localized.stopDownloadConfirmation,
+                    (context) {
+                      ref.read(syncProvider.notifier).stopDownload(context, item, downloadTask);
+                      Navigator.of(context).pop();
+                    },
+                    context.localized.yes,
+                    (context) => Navigator.of(context).pop(),
+                    context.localized.no,
+                  ),
                   icon: const Icon(IconsaxPlusBold.stop),
                 ),
               ],
             },
           ],
         ),
-        const SizedBox(width: 6),
       ],
     );
   }
@@ -189,9 +214,17 @@ class SyncSubtitle extends ConsumerWidget {
                 builder: (context) {
                   final itemBaseModels = children.map((e) => e.itemModel);
                   final episodes = itemBaseModels.whereType<EpisodeModel>().length;
+                  final syncedCount = children.where((element) {
+                    final task = ref.read(downloadTasksProvider(element.id));
+                    final exists = element.videoFile.existsSync();
+                    if (!exists && !task.isEnqueuedOrDownloading) {
+                       print('[DEBUG] File not found for ${element.id}: ${element.videoFile.path}');
+                    }
+                    return exists || task.isEnqueuedOrDownloading;
+                  }).length;
                   return Text(
                     [
-                      "${context.localized.episode(2)}: $episodes | ${context.localized.syncStatusSynced}: ${children.where((element) => element.videoFile.existsSync()).length}"
+                      "${context.localized.episode(2)}: $episodes | ${context.localized.syncStatusSynced}: $syncedCount"
                     ].join('\n'),
                   );
                 },
@@ -201,10 +234,14 @@ class SyncSubtitle extends ConsumerWidget {
                   final itemBaseModels = children.map((e) => e.itemModel);
                   final seasons = itemBaseModels.whereType<SeasonModel>().length;
                   final episodes = itemBaseModels.whereType<EpisodeModel>().length;
+                  final syncedCount = children.where((element) {
+                    final task = ref.read(downloadTasksProvider(element.id));
+                    return element.videoFile.existsSync() || task.isEnqueuedOrDownloading;
+                  }).length;
                   return Text(
                     [
                       "${context.localized.season(2)}: $seasons",
-                      "${context.localized.episode(2)}: $episodes | ${context.localized.syncStatusSynced}: ${children.where((element) => element.videoFile.existsSync()).length}"
+                      "${context.localized.episode(2)}: $episodes | ${context.localized.syncStatusSynced}: $syncedCount"
                     ].join('\n'),
                   );
                 },

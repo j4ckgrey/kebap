@@ -3,7 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:kebap/screens/shared/flat_button.dart';
 import 'package:kebap/widgets/shared/ensure_visible.dart';
 
-class SettingsListTile extends StatelessWidget {
+class SettingsListTile extends StatefulWidget {
   final Widget label;
   final Widget? subLabel;
   final Widget? trailing;
@@ -27,32 +27,44 @@ class SettingsListTile extends StatelessWidget {
   });
 
   @override
-  Widget build(BuildContext context) {
-    final iconWidget = icon != null ? Icon(icon) : null;
+  State<SettingsListTile> createState() => _SettingsListTileState();
+}
 
-    final leadingWidget = (leading ?? iconWidget) != null
+class _SettingsListTileState extends State<SettingsListTile> with AutomaticKeepAliveClientMixin {
+  @override
+  bool get wantKeepAlive => true;
+
+  @override
+  Widget build(BuildContext context) {
+    super.build(context);
+    // print('[LAG_DEBUG] ${DateTime.now()} SettingsListTile build: ${widget.label}');
+    final iconWidget = widget.icon != null ? Icon(widget.icon) : null;
+
+    final leadingWidget = (widget.leading ?? iconWidget) != null
         ? Padding(
             padding: const EdgeInsets.only(left: 8, right: 16.0),
-            child: (leading ?? iconWidget),
+            child: (widget.leading ?? iconWidget),
           )
-        : leading ?? const SizedBox();
+        : widget.leading ?? const SizedBox();
     return Card(
-      elevation: selected ? 2 : 0,
-      color: selected ? Theme.of(context).colorScheme.surfaceContainerLow : Colors.transparent,
+      elevation: 0,
+      color: widget.selected ? Theme.of(context).colorScheme.surfaceContainerLow : Colors.transparent,
       shadowColor: Colors.transparent,
       shape: const RoundedRectangleBorder(
           borderRadius: BorderRadius.only(topLeft: Radius.circular(8), bottomLeft: Radius.circular(8))),
       margin: EdgeInsets.zero,
       child: FlatButton(
-        onTap: onTap,
-        autoFocus: autoFocus,
-        onFocusChange: (value) {},
+        onTap: widget.onTap,
+        autoFocus: widget.autoFocus,
+        onFocusChange: (value) {
+          // ensureVisible removed for performance
+        },
         child: Padding(
           padding: const EdgeInsets.symmetric(
             horizontal: 16,
             vertical: 12,
           ).copyWith(
-            left: (leading ?? iconWidget) != null ? 0 : null,
+            left: (widget.leading ?? iconWidget) != null ? 0 : null,
           ),
           child: ConstrainedBox(
             constraints: const BoxConstraints(
@@ -64,11 +76,11 @@ class SettingsListTile extends StatelessWidget {
               children: [
                 DefaultTextStyle.merge(
                   style: TextStyle(
-                    color: contentColor ?? Theme.of(context).colorScheme.onSurface,
+                    color: widget.contentColor ?? Theme.of(context).colorScheme.onSurface,
                   ),
                   child: IconTheme(
                     data: IconThemeData(
-                      color: contentColor ?? Theme.of(context).colorScheme.onSurface,
+                      color: widget.contentColor ?? Theme.of(context).colorScheme.onSurface,
                     ),
                     child: leadingWidget,
                   ),
@@ -80,27 +92,27 @@ class SettingsListTile extends StatelessWidget {
                     children: [
                       Material(
                         color: Colors.transparent,
-                        textStyle: Theme.of(context).textTheme.titleLarge?.copyWith(color: contentColor),
-                        child: label,
+                        textStyle: Theme.of(context).textTheme.titleLarge?.copyWith(color: widget.contentColor),
+                        child: widget.label,
                       ),
-                      if (subLabel != null)
+                      if (widget.subLabel != null)
                         Material(
                           color: Colors.transparent,
                           textStyle: Theme.of(context).textTheme.labelLarge?.copyWith(
                                 color:
-                                    (contentColor ?? Theme.of(context).colorScheme.onSurface).withValues(alpha: 0.65),
+                                    (widget.contentColor ?? Theme.of(context).colorScheme.onSurface).withValues(alpha: 0.65),
                               ),
-                          child: subLabel,
+                          child: widget.subLabel,
                         ),
                     ],
                   ),
                 ),
-                if (trailing != null)
+                if (widget.trailing != null)
                   ExcludeFocusTraversal(
-                    excluding: onTap != null,
+                    excluding: widget.onTap != null,
                     child: Padding(
                       padding: const EdgeInsets.only(left: 16),
-                      child: trailing,
+                      child: widget.trailing,
                     ),
                   )
               ],

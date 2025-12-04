@@ -157,13 +157,13 @@ class _SyncedItemProviderElement
   ItemBaseModel? get item => (origin as SyncedItemProvider).item;
 }
 
-String _$syncedChildrenHash() => r'75e25432f33e0fe31708618b7ba744430523a4d3';
+String _$syncedChildrenHash() => r'd67edcff34c9e25fe2903e34107c5079244f7fe2';
 
 abstract class _$SyncedChildren
-    extends BuildlessAutoDisposeAsyncNotifier<List<SyncedItem>> {
+    extends BuildlessAutoDisposeStreamNotifier<List<SyncedItem>> {
   late final SyncedItem item;
 
-  FutureOr<List<SyncedItem>> build(
+  Stream<List<SyncedItem>> build(
     SyncedItem item,
   );
 }
@@ -211,7 +211,7 @@ class SyncedChildrenFamily extends Family<AsyncValue<List<SyncedItem>>> {
 }
 
 /// See also [SyncedChildren].
-class SyncedChildrenProvider extends AutoDisposeAsyncNotifierProviderImpl<
+class SyncedChildrenProvider extends AutoDisposeStreamNotifierProviderImpl<
     SyncedChildren, List<SyncedItem>> {
   /// See also [SyncedChildren].
   SyncedChildrenProvider(
@@ -243,7 +243,7 @@ class SyncedChildrenProvider extends AutoDisposeAsyncNotifierProviderImpl<
   final SyncedItem item;
 
   @override
-  FutureOr<List<SyncedItem>> runNotifierBuild(
+  Stream<List<SyncedItem>> runNotifierBuild(
     covariant SyncedChildren notifier,
   ) {
     return notifier.build(
@@ -268,7 +268,7 @@ class SyncedChildrenProvider extends AutoDisposeAsyncNotifierProviderImpl<
   }
 
   @override
-  AutoDisposeAsyncNotifierProviderElement<SyncedChildren, List<SyncedItem>>
+  AutoDisposeStreamNotifierProviderElement<SyncedChildren, List<SyncedItem>>
       createElement() {
     return _SyncedChildrenProviderElement(this);
   }
@@ -290,13 +290,13 @@ class SyncedChildrenProvider extends AutoDisposeAsyncNotifierProviderImpl<
 @Deprecated('Will be removed in 3.0. Use Ref instead')
 // ignore: unused_element
 mixin SyncedChildrenRef
-    on AutoDisposeAsyncNotifierProviderRef<List<SyncedItem>> {
+    on AutoDisposeStreamNotifierProviderRef<List<SyncedItem>> {
   /// The parameter `item` of this provider.
   SyncedItem get item;
 }
 
 class _SyncedChildrenProviderElement
-    extends AutoDisposeAsyncNotifierProviderElement<SyncedChildren,
+    extends AutoDisposeStreamNotifierProviderElement<SyncedChildren,
         List<SyncedItem>> with SyncedChildrenRef {
   _SyncedChildrenProviderElement(super.provider);
 

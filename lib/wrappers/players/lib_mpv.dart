@@ -83,8 +83,8 @@ class LibMPV extends BasePlayer {
   }
 
   @override
-  Future<void> loadVideo(String url, bool play) async {
-    await _player?.open(mpv.Media(url), play: play);
+  Future<void> loadVideo(Media media, bool play) async {
+    await _player?.open(mpv.Media(media.url, httpHeaders: media.httpHeaders), play: play);
     return setState(lastState.update(buffering: true));
   }
 

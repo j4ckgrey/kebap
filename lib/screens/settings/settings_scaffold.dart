@@ -31,6 +31,7 @@ class SettingsScaffold extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
+    print('[LAG_DEBUG] ${DateTime.now()} SettingsScaffold build: $label');
     final padding = MediaQuery.of(context).padding;
     final singleLayout = AdaptiveLayout.layoutModeOf(context) == LayoutMode.single;
     return Scaffold(
@@ -43,34 +44,31 @@ class SettingsScaffold extends ConsumerWidget {
               controller: scrollController,
               slivers: [
                 if (singleLayout)
-                  SliverAppBar.medium(
+                  SliverAppBar.large(
                     automaticallyImplyLeading: false,
                     flexibleSpace: FlexibleSpaceBar(
                       titlePadding: const EdgeInsets.symmetric(horizontal: 16)
-                          .add(EdgeInsets.only(left: padding.left, right: padding.right, bottom: 8)),
+                          .add(EdgeInsets.only(left: padding.left, right: padding.right, bottom: 4)),
                       title: Row(
                         children: [
-                          Text(label, style: Theme.of(context).textTheme.headlineMedium),
+                          Text(label, style: Theme.of(context).textTheme.headlineLarge),
                           const Spacer(),
                           if (showUserIcon)
                             SizedBox.fromSize(
                               size: const Size.fromRadius(14),
-                              child: Consumer(
-                                builder: (context, ref, child) {
-                                  final user = ref.watch(userProvider.select((value) => value));
-                                  return UserIcon(
-                                    user: user,
-                                    cornerRadius: 200,
-                                  );
-                                },
+                              child: RepaintBoundary(
+                                child: UserIcon(
+                                  user: ref.watch(userProvider),
+                                  cornerRadius: 200,
+                                ),
                               ),
                             )
                         ],
                       ),
-                      expandedTitleScale: 1.1,
+                      expandedTitleScale: 1.2,
                     ),
-                    expandedHeight: 70,
-                    collapsedHeight: 64,
+                    expandedHeight: 100,
+                    collapsedHeight: 80,
                     pinned: false,
                     floating: true,
                   )

@@ -3,7 +3,6 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import 'package:kebap/models/item_base_model.dart';
-import 'package:kebap/providers/arguments_provider.dart';
 import 'package:kebap/screens/shared/media/poster_widget.dart';
 import 'package:kebap/util/focus_provider.dart';
 import 'package:kebap/util/item_base_model/item_base_model_extensions.dart';

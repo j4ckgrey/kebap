@@ -23,7 +23,7 @@ class DownloadStream {
 
   bool get hasDownload => progress != -1.0 && status != dl.TaskStatus.notFound && status != dl.TaskStatus.complete;
 
-  bool get isEnqueuedOrDownloading => status == dl.TaskStatus.enqueued || status == dl.TaskStatus.running;
+  bool get isEnqueuedOrDownloading => status == dl.TaskStatus.enqueued || status == dl.TaskStatus.running || status == dl.TaskStatus.paused;
 
   DownloadStream copyWith({
     String? id,

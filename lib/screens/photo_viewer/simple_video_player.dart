@@ -10,6 +10,7 @@ import 'package:wakelock_plus/wakelock_plus.dart';
 import 'package:window_manager/window_manager.dart';
 
 import 'package:kebap/models/items/photos_model.dart';
+import 'package:kebap/models/playback/playback_model.dart';
 import 'package:kebap/models/settings/video_player_settings.dart';
 import 'package:kebap/providers/settings/photo_view_settings_provider.dart';
 import 'package:kebap/providers/settings/video_player_settings_provider.dart';
@@ -104,7 +105,7 @@ class _SimpleVideoPlayerState extends ConsumerState<SimpleVideoPlayer> with Wind
         duration = event.duration;
       });
     }));
-    await player.loadVideo(videoUrl, !ref.watch(photoViewSettingsProvider).autoPlay);
+    await player.loadVideo(Media(url: videoUrl), !ref.watch(photoViewSettingsProvider).autoPlay);
     await player.setVolume(ref.watch(photoViewSettingsProvider.select((value) => value.mute)) ? 0 : 100);
     await player.loop(ref.watch(photoViewSettingsProvider.select((value) => value.repeat)));
   }

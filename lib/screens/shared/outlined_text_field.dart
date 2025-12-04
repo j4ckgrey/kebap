@@ -9,7 +9,6 @@ import 'package:kebap/providers/settings/client_settings_provider.dart';
 import 'package:kebap/screens/shared/animated_fade_size.dart';
 import 'package:kebap/theme.dart';
 import 'package:kebap/util/adaptive_layout/adaptive_layout.dart';
-import 'package:kebap/util/focus_provider.dart';
 import 'package:kebap/widgets/keyboard/slide_in_keyboard.dart';
 import 'package:kebap/widgets/shared/ensure_visible.dart';
 
@@ -38,7 +37,6 @@ class OutlinedTextField extends ConsumerStatefulWidget {
   final String? errorText;
   final bool? enabled;
   final bool useFocusWrapper;
-  final Function()? onDown;
 
   const OutlinedTextField({
     this.label,
@@ -65,7 +63,6 @@ class OutlinedTextField extends ConsumerStatefulWidget {
     this.suffix,
     this.enabled,
     this.useFocusWrapper = false,
-    this.onDown,
     super.key,
   });
 
@@ -83,52 +80,24 @@ const acceptKeys = [
 
 class _OutlinedTextFieldState extends ConsumerState<OutlinedTextField> {
   late final controller = widget.controller ?? TextEditingController();
-  late final FocusNode _textFocus = (widget.focusNode ?? FocusNode())..addListener(_onFocusChange);
-  late final FocusNode _wrapperFocus = FocusNode()..addListener(_onFocusChange);
-
-  void _onFocusChange() {
-    if (!mounted) return;
-    final newHasFocus = _wrapperFocus.hasFocus || _textFocus.hasFocus;
-    if (hasFocus != newHasFocus) {
-      setState(() {
-        hasFocus = newHasFocus;
-      });
-      if (hasFocus) {
-        context.ensureVisible();
-      }
-    }
-  }
+  late final FocusNode _textFocus = widget.focusNode ?? FocusNode();
+  late final FocusNode _wrapperFocus = FocusNode();
 
   bool hasFocus = false;
-  bool _isEditing = false;
   bool keyboardFocus = false;
-  bool _obscureText = true;
 
   @override
-  void initState() {
-    super.initState();
-    controller.addListener(_onTextChanged);
-    WidgetsBinding.instance.addPostFrameCallback((_) {
-      if (!mounted) return;
-      if (widget.autoFocus) {
-        final isDpad = AdaptiveLayout.inputDeviceOf(context) == InputDevice.dPad;
-        final isWrapperMode = isDpad || widget.useFocusWrapper;
-        if (isWrapperMode) {
-          _wrapperFocus.requestFocus();
-        } else {
-          _textFocus.requestFocus();
-        }
-      }
-    });
+  void dispose() {
+    // Only dispose if we created it, but we can't easily know that here if we assigned it to a late final.
+    // Actually, if widget.focusNode is null, we created it.
+    if (widget.focusNode == null) {
+      _textFocus.dispose();
+    }
+    _wrapperFocus.dispose();
+    super.dispose();
   }
 
-  void _onTextChanged() {
-    if (!mounted) return;
-    setState(() {
-      _isEditing = controller.text.isNotEmpty;
-    });
-  }
-
+  bool _obscureText = true;
   void _toggle() {
     setState(() {
       _obscureText = !_obscureText;
@@ -140,35 +109,80 @@ class _OutlinedTextFieldState extends ConsumerState<OutlinedTextField> {
     return Theme.of(context).colorScheme.surfaceContainerHighest.withValues(alpha: 0.35);
   }
 
+  KeyEventResult _onTextFocusKey(FocusNode node, KeyEvent event) {
+    // On TV/D-pad devices, we MUST let the System (IME) handle navigation keys.
+    // Flutter consumes them by default, breaking the System Keyboard navigation.
+    // We check for D-pad input type.
+    final isDPad = AdaptiveLayout.inputDeviceOf(context) == InputDevice.dPad;
+    
+    if (event is KeyDownEvent) {
+    }
+
+    if (isDPad && event is KeyDownEvent) {
+      if (event.logicalKey == LogicalKeyboardKey.arrowUp ||
+          event.logicalKey == LogicalKeyboardKey.arrowDown ||
+          event.logicalKey == LogicalKeyboardKey.arrowLeft ||
+          event.logicalKey == LogicalKeyboardKey.arrowRight ||
+          event.logicalKey == LogicalKeyboardKey.select ||
+          event.logicalKey == LogicalKeyboardKey.enter ||
+          event.logicalKey == LogicalKeyboardKey.numpadEnter ||
+          event.logicalKey == LogicalKeyboardKey.gameButtonA) {
+            return KeyEventResult.skipRemainingHandlers;
+      }
+    }
+    return KeyEventResult.ignored;
+  }
+
+
   @override
-  void dispose() {
-    controller.removeListener(_onTextChanged);
-    if (widget.focusNode == null) _textFocus.dispose();
-    _wrapperFocus.dispose();
-    super.dispose();
+  void initState() {
+    super.initState();
+    // Attach our key event handler to the focus node (whether passed or created)
+    _textFocus.onKeyEvent = _onTextFocusKey;
+
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      if (!mounted) return;
+      final useCustomKeyboard = (AdaptiveLayout.inputDeviceOf(context) == InputDevice.dPad || widget.useFocusWrapper) &&
+          ref.read(clientSettingsProvider.select((value) => !value.useSystemIME));
+      if (widget.autoFocus) {
+        _wrapperFocus.requestFocus();
+      }
+      _textFocus.addListener(() {
+        if (mounted) setState(() {});
+      });
+    });
   }
 
   @override
   Widget build(BuildContext context) {
     final isPasswordField = widget.keyboardType == TextInputType.visiblePassword;
-    final isDpad = AdaptiveLayout.inputDeviceOf(context) == InputDevice.dPad;
-    final useSystemIME = ref.watch(clientSettingsProvider.select((value) => value.useSystemIME));
-    
-    // Custom Keyboard is only used if we are on D-pad AND System IME is disabled.
-    final useCustomKeyboard = isDpad && !useSystemIME;
+    final useCustomKeyboard = (AdaptiveLayout.inputDeviceOf(context) == InputDevice.dPad || widget.useFocusWrapper) &&
+        ref.watch(clientSettingsProvider.select((value) => !value.useSystemIME));
 
-    // Wrapper Mode is active if:
-    // 1. We are on D-pad (TV behavior).
-    // 2. OR it is explicitly requested (Settings fields).
-    final isWrapperMode = isDpad || widget.useFocusWrapper;
-
-    // We show the actual TextField ONLY if:
-    // 1. We are NOT in wrapper mode (Standard Desktop behavior).
-    // 2. OR we are in wrapper mode AND we are currently editing.
-    // 3. AND we are NOT using a custom keyboard (Custom keyboard uses dialog, never inline TextField).
-    final showTextField = (!isWrapperMode || _isEditing) && !useCustomKeyboard;
-
-    final inputDecoration = widget.decoration ??
+    final textField = TextField(
+      controller: controller,
+      onChanged: widget.onChanged,
+      focusNode: _textFocus,
+      onTap: widget.onTap,
+      readOnly: useCustomKeyboard,
+      autofillHints: widget.autoFillHints,
+      keyboardType: widget.keyboardType,
+      autocorrect: widget.autocorrect,
+      onSubmitted: (value) {
+        widget.onSubmitted?.call(value);
+        Future.microtask(() async {
+          await Future.delayed(const Duration(milliseconds: 125));
+          if (mounted) _wrapperFocus.requestFocus();
+        });
+      },
+      textInputAction: widget.textInputAction,
+      obscureText: isPasswordField ? _obscureText : false,
+      style: widget.style,
+      maxLines: widget.maxLines,
+      inputFormatters: widget.inputFormatters,
+      textAlign: widget.textAlign,
+      canRequestFocus: true,
+      decoration: widget.decoration ??
           InputDecoration(
             border: InputBorder.none,
             filled: widget.fillColor != null,
@@ -192,149 +206,85 @@ class _OutlinedTextFieldState extends ConsumerState<OutlinedTextField> {
                     ),
                   )
                 : null,
-          );
-
-    final childWidget = showTextField
-        ? CallbackShortcuts(
-            bindings: {
-              const SingleActivator(LogicalKeyboardKey.arrowDown): () {
-                widget.onDown?.call();
-              },
-            },
-            child: TextField(
-              controller: controller,
-              onChanged: widget.onChanged,
-              focusNode: _textFocus,
-              onTap: widget.onTap,
-              // If we are showing the TextField, it should be editable.
-              readOnly: false,
-              autofillHints: widget.autoFillHints,
-              keyboardType: widget.keyboardType,
-              autocorrect: widget.autocorrect,
-              onSubmitted: widget.onSubmitted != null
-                  ? (value) {
-                      widget.onSubmitted?.call(value);
-                      Future.microtask(() async {
-                        await Future.delayed(const Duration(milliseconds: 125));
-                        _wrapperFocus.requestFocus();
-                      });
-                    }
-                  : null,
-              textInputAction: widget.textInputAction,
-              obscureText: isPasswordField ? _obscureText : false,
-              style: widget.style,
-              maxLines: widget.maxLines,
-              inputFormatters: widget.inputFormatters,
-              textAlign: widget.textAlign,
-              canRequestFocus: true,
-              enableInteractiveSelection: !isDpad,
-              decoration: inputDecoration,
-              autofocus: _isEditing,
-            ),
-          )
-        : InkWell(
-            borderRadius: KebapTheme.smallShape.borderRadius as BorderRadius?,
-            onTap: () {
-              // Handle Tap on Static Text
-              if (widget.enabled == false) return;
-              
-              if (useCustomKeyboard) {
-                // Open Custom Keyboard
-                _handleCustomKeyboard();
-              } else {
-                // Enter Edit Mode
-                setState(() {
-                  _isEditing = true;
-                });
-                Future.delayed(const Duration(milliseconds: 50), () {
-                  _textFocus.requestFocus();
-                });
-              }
-            },
-            child: InputDecorator(
-              decoration: inputDecoration,
-              child: Text(
-                isPasswordField && _obscureText ? '•' * controller.text.length : controller.text,
-                style: widget.style,
-                maxLines: widget.maxLines,
-                textAlign: widget.textAlign,
-              ),
-            ),
-          );
+          ),
+    );
 
     return Column(
       children: [
-        GestureDetector(
-          onTap: () {
-            if (!_textFocus.hasFocus) {
-              _textFocus.requestFocus();
-            }
-          },
-          child: AnimatedContainer(
-            duration: const Duration(milliseconds: 175),
-            decoration: BoxDecoration(
-              color: widget.decoration == null ? widget.fillColor ?? getColor() : null,
-              borderRadius: KebapTheme.smallShape.borderRadius,
-              border: Border.all(
-                width: 2,
-                color: hasFocus || keyboardFocus ? Theme.of(context).colorScheme.primaryFixed : Colors.transparent,
-              ),
+        AnimatedContainer(
+          duration: const Duration(milliseconds: 175),
+          decoration: BoxDecoration(
+            color: widget.decoration == null ? widget.fillColor ?? getColor() : null,
+            borderRadius: KebapTheme.smallShape.borderRadius,
+            border: BoxBorder.all(
+              width: 2,
+              color: hasFocus || keyboardFocus || _textFocus.hasFocus
+                  ? Theme.of(context).colorScheme.primaryFixed
+                  : Colors.transparent,
             ),
-            child: Padding(
-              padding: const EdgeInsets.symmetric(horizontal: 8),
-              child: IgnorePointer(
-                ignoring: widget.enabled == false,
-                  child: Focus(
-                    focusNode: _wrapperFocus,
-                    onKeyEvent: (node, event) {
-                      // If we are NOT in wrapper mode, we don't handle keys here (let TextField handle them).
-                      // BUT if showTextField is false (e.g. false positive dPad), we MUST handle keys/focus.
-                      if (!isWrapperMode && showTextField) {
-                        return KeyEventResult.ignored;
+          ),
+          child: Padding(
+            padding: const EdgeInsets.symmetric(horizontal: 8),
+            child: IgnorePointer(
+              ignoring: widget.enabled == false,
+              child: Focus(
+                focusNode: _wrapperFocus,
+                canRequestFocus: true,
+                skipTraversal: false,
+                onFocusChange: (value) {
+                  setState(() {
+                    hasFocus = value;
+                  });
+                },
+                onKeyEvent: (node, event) {
+                  if (keyboardFocus || AdaptiveLayout.inputDeviceOf(context) != InputDevice.dPad) return KeyEventResult.ignored;
+                  if (event is KeyDownEvent && acceptKeys.contains(event.logicalKey)) {
+                    if (_textFocus.hasFocus) {
+                      // If using System IME, we must NOT consume Select/Enter here.
+                      // We must let it bubble to the System so the user can click keys on the soft keyboard.
+                      if (!useCustomKeyboard) {
+                         print('[LAG_DEBUG] _wrapperFocus skipping ${event.logicalKey.keyLabel} for System IME');
+                         return KeyEventResult.skipRemainingHandlers;
                       }
-  
-                      if (event is KeyDownEvent) {
-                        // Enter Edit Mode / Open Keyboard on Select
-                        if (acceptKeys.contains(event.logicalKey)) {
-                           if (useCustomKeyboard) {
-                             _handleCustomKeyboard();
-                             return KeyEventResult.handled;
-                           } else if (!_isEditing) {
+                      _wrapperFocus.requestFocus();
+                      return KeyEventResult.handled;
+                    } else if (_wrapperFocus.hasFocus) {
+                      if (useCustomKeyboard) {
+                        // We need to handle the async operation but return a result synchronously
+                        // Using a future here to trigger the keyboard opening
+                        Future(() async {
+                          await openKeyboard(
+                            context,
+                            controller,
+                            inputType: widget.keyboardType,
+                            inputAction: widget.textInputAction,
+                            searchQuery: widget.searchQuery,
+                            onChanged: () {
+                              widget.onChanged?.call(controller.text);
+                            },
+                          );
+                          widget.onSubmitted?.call(controller.text);
+                          if (context.mounted) {
                              setState(() {
-                               _isEditing = true;
+                               keyboardFocus = false;
                              });
-                             // Force focus to the text field with a delay
-                             Future.delayed(const Duration(milliseconds: 50), () {
-                               _textFocus.requestFocus();
-                             });
-                             return KeyEventResult.handled;
-                           }
-                        }
-                        
-                        // Exit Edit Mode on Back or Escape
-                        if ((event.logicalKey == LogicalKeyboardKey.escape ||
-                                event.logicalKey == LogicalKeyboardKey.goBack) &&
-                            _isEditing) {
-                          setState(() {
-                            _isEditing = false;
-                          });
-                          _wrapperFocus.requestFocus();
-                          return KeyEventResult.handled;
-                        }
+                             _wrapperFocus.requestFocus();
+                          }
+                        });
+                        return KeyEventResult.handled;
+                      } else {
+                        _textFocus.requestFocus();
+                        return KeyEventResult.handled;
                       }
-                      return KeyEventResult.ignored;
-                    },
-                    child: ExcludeFocusTraversal(
-                      // Exclude child from traversal if we are in "View Mode" (showTextField is false)
-                      // OR if we are using custom keyboard.
-                      excluding: isWrapperMode, 
-                      child: childWidget,
-                    ),
-                  ),
+                    }
+                  }
+                  return KeyEventResult.ignored;
+                },
+                child: ExcludeFocusTraversal(child: textField),
               ),
             ),
           ),
-        ),
+          ),
         AnimatedFadeSize(
           child: widget.errorText != null
               ? Align(
@@ -349,27 +299,6 @@ class _OutlinedTextFieldState extends ConsumerState<OutlinedTextField> {
         ),
       ],
     );
-  }
-
-  void _handleCustomKeyboard() {
-    openKeyboard(
-      context,
-      controller,
-      inputType: widget.keyboardType,
-      inputAction: widget.textInputAction,
-      searchQuery: widget.searchQuery,
-      onChanged: () {
-        widget.onChanged?.call(controller.text);
-      },
-    ).then((result) {
-      if (result == true) {
-        widget.onSubmitted?.call(controller.text);
-      }
-      setState(() {
-        keyboardFocus = false;
-      });
-      _wrapperFocus.requestFocus();
-    });
   }
 }
 

@@ -46,7 +46,9 @@ class SyncButton extends ConsumerWidget {
                       strokeCap: StrokeCap.round,
                       strokeWidth: 2,
                       color: status.color(context),
-                      value: status == TaskStatus.running ? value.clamp(0.0, 1.0) : 0,
+                      value: (status == TaskStatus.running || status == TaskStatus.paused)
+                          ? value.clamp(0.0, 1.0)
+                          : 0,
                     ),
                   ),
                 ),

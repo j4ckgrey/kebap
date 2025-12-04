@@ -9,6 +9,7 @@ import 'package:kebap/screens/shared/animated_fade_size.dart';
 import 'package:kebap/screens/shared/kebap_logo.dart';
 import 'package:kebap/util/adaptive_layout/adaptive_layout.dart';
 
+import 'package:kebap/widgets/keyboard/slide_in_keyboard.dart';
 import 'package:kebap/widgets/navigation_scaffold/components/adaptive_fab.dart';
 import 'package:kebap/widgets/navigation_scaffold/components/kebap_app_bar.dart';
 import 'package:flutter/material.dart';
@@ -41,70 +42,73 @@ class _LoginPageState extends ConsumerState<LoginScreen> {
 
   @override
   Widget build(BuildContext context) {
+    print('[LAG_DEBUG] ${DateTime.now()} LoginScreen build');
     final screen = ref.watch(authProvider.select((value) => value.screen));
-    return Scaffold(
-      appBar: const KebapAppBar(),
-      extendBody: true,
-      extendBodyBehindAppBar: true,
-      floatingActionButton: switch (screen) {
-        LoginScreenType.users => Row(
-            mainAxisAlignment: MainAxisAlignment.end,
-            spacing: 16,
-            children: [
-              if (AdaptiveLayout.of(context).isDesktop)
+    return CustomKeyboardWrapper(
+      child: Scaffold(
+        appBar: const KebapAppBar(),
+        extendBody: true,
+        extendBodyBehindAppBar: true,
+        floatingActionButton: switch (screen) {
+          LoginScreenType.users => Row(
+              mainAxisAlignment: MainAxisAlignment.end,
+              spacing: 16,
+              children: [
+                if (AdaptiveLayout.of(context).isDesktop)
+                  AdaptiveFab(
+                    context: context,
+                    key: const Key("edit_user_button"),
+                    heroTag: "edit_user_button",
+                    backgroundColor: editUsersMode
+                        ? Theme.of(context).colorScheme.errorContainer
+                        : null,
+                    child: const Icon(IconsaxPlusLinear.edit_2),
+                    onPressed: () =>
+                        setState(() => editUsersMode = !editUsersMode),
+                  ).normal,
                 AdaptiveFab(
                   context: context,
-                  key: const Key("edit_user_button"),
-                  heroTag: "edit_user_button",
-                  backgroundColor: editUsersMode
-                      ? Theme.of(context).colorScheme.errorContainer
-                      : null,
-                  child: const Icon(IconsaxPlusLinear.edit_2),
-                  onPressed: () =>
-                      setState(() => editUsersMode = !editUsersMode),
+                  key: const Key("new_user_button"),
+                  heroTag: "new_user_button",
+                  child: const Icon(IconsaxPlusLinear.add_square),
+                  onPressed: () => ref.read(authProvider.notifier).addNewUser(),
                 ).normal,
-              AdaptiveFab(
-                context: context,
-                key: const Key("new_user_button"),
-                heroTag: "new_user_button",
-                child: const Icon(IconsaxPlusLinear.add_square),
-                onPressed: () => ref.read(authProvider.notifier).addNewUser(),
-              ).normal,
-            ],
-          ),
-        _ => null,
-      },
-      body: Center(
-        child: ConstrainedBox(
-          constraints: const BoxConstraints(
-            maxWidth: 1000,
-          ),
-          child: ListView(
-            shrinkWrap: true,
-            padding: MediaQuery.paddingOf(context)
-                .add(const EdgeInsetsGeometry.all(16)),
-            children: [
-              const KebapLogo(useGradient: false),
-              const SizedBox(height: 24),
-              AnimatedFadeSize(
-                child: switch (screen) {
-                  LoginScreenType.login ||
-                  LoginScreenType.code =>
-                    const LoginScreenCredentials(),
-                  _ => Consumer(
-                      builder: (context, ref, child) {
-                        final accounts = ref.watch(authProvider.select((value) => value.accounts));
-                        return LoginUserGrid(
-                          users: accounts,
-                          editMode: editUsersMode,
-                          onPressed: (user) => tapLoggedInAccount(context, user, ref),
-                          onLongPress: (user) => openUserEditDialogue(context, user),
-                        );
-                      },
-                    ),
-                },
-              )
-            ],
+              ],
+            ),
+          _ => null,
+        },
+        body: Center(
+          child: ConstrainedBox(
+            constraints: const BoxConstraints(
+              maxWidth: 1000,
+            ),
+            child: ListView(
+              shrinkWrap: true,
+              padding: MediaQuery.paddingOf(context)
+                  .add(const EdgeInsetsGeometry.all(16)),
+              children: [
+                const KebapLogo(useGradient: false),
+                const SizedBox(height: 24),
+                SizedBox(
+                  child: switch (screen) {
+                    LoginScreenType.login ||
+                    LoginScreenType.code =>
+                      const LoginScreenCredentials(),
+                    _ => Consumer(
+                        builder: (context, ref, child) {
+                          final accounts = ref.watch(authProvider.select((value) => value.accounts));
+                          return LoginUserGrid(
+                            users: accounts,
+                            editMode: editUsersMode,
+                            onPressed: (user) => tapLoggedInAccount(context, user, ref),
+                            onLongPress: (user) => openUserEditDialogue(context, user),
+                          );
+                        },
+                      ),
+                  },
+                )
+              ],
+            ),
           ),
         ),
       ),

@@ -149,6 +149,7 @@ class _ScreenshotRunnerState extends State<ScreenshotRunner> {
                                   isDesktop: device.isDesktop,
                                   posterDefaults: const PosterDefaults(size: 350, ratio: 0.55),
                                   controller: {},
+                                  sideBarWidth: 0.0,
                                 )
                               : AdaptiveLayout.of(context),
                           child: widget.child,

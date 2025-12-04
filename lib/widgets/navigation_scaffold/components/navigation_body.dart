@@ -188,12 +188,21 @@ class GlobalFallbackTraversalPolicy extends ReadingOrderTraversalPolicy {
   bool inDirection(FocusNode currentNode, TraversalDirection direction) {
     lastMainFocus = null;
     final handled = super.inDirection(currentNode, direction);
-    if (!handled && direction == TraversalDirection.left) {
+    
+    // Handle edge navigation (Left or Up) to open drawer
+    if (!handled && (direction == TraversalDirection.left || direction == TraversalDirection.up)) {
       lastMainFocus = currentNode;
 
+      // 1. Try to focus the hamburger button if it exists and is focusable
       if (fallbackNode.canRequestFocus && fallbackNode.context?.mounted == true) {
         final cb = FocusTraversalPolicy.defaultTraversalRequestFocusCallback;
         cb(fallbackNode);
+        return true;
+      }
+      
+      // 2. If hamburger is hidden (e.g. TV), open the drawer directly
+      if (drawerKey?.currentState != null) {
+        drawerKey!.currentState!.openDrawer();
         return true;
       }
     }

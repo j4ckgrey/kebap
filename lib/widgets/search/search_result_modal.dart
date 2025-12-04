@@ -15,7 +15,6 @@ import 'package:kebap/providers/baklava_requests_provider.dart';
 import 'package:kebap/providers/effective_baklava_config_provider.dart';
 import 'package:kebap/providers/user_provider.dart';
 import 'package:kebap/screens/shared/kebap_snackbar.dart';
-import 'package:kebap/util/adaptive_layout/adaptive_layout.dart';
 import 'package:kebap/util/focus_provider.dart';
 import 'package:kebap/widgets/shared/item_details_reviews_carousel.dart';
 
@@ -69,7 +68,7 @@ class _SearchResultModalState extends ConsumerState<SearchResultModal> {
       var effectiveImdbId = imdbId ?? metadata.imdbId;
 
       // Fetch external IDs if needed
-      if (effectiveImdbId == null && effectiveTmdbId != null) {
+      if (effectiveImdbId == null) {
         final externalIds = await metadataNotifier.fetchExternalIds(
           effectiveTmdbId,
           itemType == 'series' ? 'tv' : 'movie',
@@ -659,7 +658,7 @@ class _SearchResultModalState extends ConsumerState<SearchResultModal> {
                                     child: Container(
                                       padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
                                       decoration: BoxDecoration(
-                                        color: Colors.black.withOpacity(0.7),
+                                        color: Colors.black.withValues(alpha: 0.7),
                                         borderRadius: BorderRadius.circular(4),
                                       ),
                                       child: Text(
@@ -675,10 +674,10 @@ class _SearchResultModalState extends ConsumerState<SearchResultModal> {
                                       padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
                                       decoration: BoxDecoration(
                                         color: metadataState.requestStatus?.toLowerCase() == 'approved'
-                                            ? Colors.green.withOpacity(0.8)
+                                            ? Colors.green.withValues(alpha: 0.8)
                                             : metadataState.requestStatus?.toLowerCase() == 'rejected'
-                                                ? Colors.red.withOpacity(0.8)
-                                                : Colors.orange.withOpacity(0.8),
+                                                ? Colors.red.withValues(alpha: 0.8)
+                                                : Colors.orange.withValues(alpha: 0.8),
                                         borderRadius: BorderRadius.circular(4),
                                       ),
                                       child: Text(
@@ -727,7 +726,7 @@ class _SearchResultModalState extends ConsumerState<SearchResultModal> {
                                     child: Container(
                                       padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
                                       decoration: BoxDecoration(
-                                        color: Colors.black.withOpacity(0.7),
+                                        color: Colors.black.withValues(alpha: 0.7),
                                         borderRadius: BorderRadius.circular(4),
                                       ),
                                       child: Text(
@@ -743,10 +742,10 @@ class _SearchResultModalState extends ConsumerState<SearchResultModal> {
                                       padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
                                       decoration: BoxDecoration(
                                         color: metadataState.requestStatus?.toLowerCase() == 'approved'
-                                            ? Colors.green.withOpacity(0.8)
+                                            ? Colors.green.withValues(alpha: 0.8)
                                             : metadataState.requestStatus?.toLowerCase() == 'rejected'
-                                                ? Colors.red.withOpacity(0.8)
-                                                : Colors.orange.withOpacity(0.8),
+                                                ? Colors.red.withValues(alpha: 0.8)
+                                                : Colors.orange.withValues(alpha: 0.8),
                                         borderRadius: BorderRadius.circular(4),
                                       ),
                                       child: Text(
@@ -862,7 +861,7 @@ class _ReviewsCarouselState extends State<_ReviewsCarousel> {
                   showDialog(
                     context: context,
                     barrierDismissible: true,
-                    barrierColor: Colors.black.withOpacity(0.7),
+                    barrierColor: Colors.black.withValues(alpha: 0.7),
                     builder: (context) => ReviewModal(review: review, theme: widget.theme),
                   );
                 },

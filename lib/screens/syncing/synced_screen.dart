@@ -30,11 +30,12 @@ class _SyncedScreenState extends ConsumerState<SyncedScreen> {
   @override
   Widget build(BuildContext context) {
     final items = ref.watch(syncProvider.select((value) => value.items));
+    final isLoading = ref.watch(syncProvider.select((value) => value.isLoading));
     final padding = AdaptiveLayout.adaptivePadding(context);
 
     return PullToRefresh(
-      refreshOnStart: true,
-      onRefresh: () => ref.read(syncProvider.notifier).refresh(),
+      refreshOnStart: false,
+      onRefresh: () async {ref.read(syncProvider.notifier).refresh();},
       child: NestedScaffold(
         background: BackgroundImage(images: items.map((value) => value.images).nonNulls.toList()),
         body: CustomScrollView(
@@ -70,7 +71,13 @@ class _SyncedScreenState extends ConsumerState<SyncedScreen> {
                   ),
                 ),
               ),
-            if (items.isNotEmpty) ...[
+            if (isLoading && items.isEmpty) ...[
+              const SliverFillRemaining(
+                child: Center(
+                  child: CircularProgressIndicator(),
+                ),
+              )
+            ] else if (items.isNotEmpty) ...[
               SliverToBoxAdapter(
                 child: Padding(
                   padding: padding,

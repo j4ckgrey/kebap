@@ -1383,5 +1383,9 @@
   "settingsLocalUrlSetDesc": "Specify the local server address. Kebap will automatically use this URL when your device is on the same network.",
   "exitApp": "Exit App",
   "exitAppConfirmation": "Are you sure you want to exit the application?",
-  "liveTv": "Live TV"
+  "liveTv": "Live TV",
+  "stopDownload": "Stop download",
+  "stopDownloadConfirmation": "Are you sure you want to stop this download?",
+  "yes": "Yes",
+  "no": "No"
 }

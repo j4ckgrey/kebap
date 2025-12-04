@@ -58,6 +58,7 @@ class PlayableData {
   final SimpleItemModel? nextVideo;
   final MediaInfo mediaInfo;
   final String url;
+  final Map<String, String>? headers;
 
   PlayableData({
     required this.currentItem,
@@ -74,6 +75,7 @@ class PlayableData {
     this.nextVideo,
     required this.mediaInfo,
     required this.url,
+    this.headers,
   });
 }
 

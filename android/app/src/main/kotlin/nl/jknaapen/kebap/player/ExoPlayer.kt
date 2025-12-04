@@ -28,8 +28,10 @@ import androidx.media3.common.Player
 import androidx.media3.common.TrackSelectionParameters
 import androidx.media3.common.Tracks
 import androidx.media3.common.util.UnstableApi
+import androidx.media3.datasource.DataSpec
 import androidx.media3.datasource.DefaultDataSource
 import androidx.media3.datasource.DefaultHttpDataSource
+import androidx.media3.datasource.ResolvingDataSource
 import androidx.media3.exoplayer.DefaultRenderersFactory
 import androidx.media3.exoplayer.ExoPlayer
 import androidx.media3.exoplayer.source.DefaultMediaSourceFactory
@@ -77,7 +79,21 @@ internal fun ExoPlayer(
     }
 
     val dataSourceFactory = remember {
-        DefaultDataSource.Factory(context, DefaultHttpDataSource.Factory())
+        val httpDataSourceFactory = DefaultHttpDataSource.Factory()
+        val defaultDataSourceFactory = DefaultDataSource.Factory(context, httpDataSourceFactory)
+        
+        ResolvingDataSource.Factory(
+            defaultDataSourceFactory
+        ) { dataSpec ->
+            val headers = VideoPlayerObject.implementation.playbackData.value?.headers
+            if (headers != null) {
+                val newHeaders = HashMap(dataSpec.httpRequestHeaders)
+                newHeaders.putAll(headers)
+                dataSpec.buildUpon().setHttpRequestHeaders(newHeaders).build()
+            } else {
+                dataSpec
+            }
+        }
     }
 
     val audioAttributes = AudioAttributes.Builder()
