@@ -38,23 +38,27 @@ class User extends _$User {
 
   Future<Response<AccountModel>?> updateInformation() async {
     if (state == null) return null;
-    var response = await api.usersMeGet();
-    var quickConnectStatus = await api.quickConnectEnabled();
-    var systemConfiguration = await api.systemConfigurationGet();
+    try {
+      var response = await api.usersMeGet();
+      var quickConnectStatus = await api.quickConnectEnabled();
+      var systemConfiguration = await api.systemConfigurationGet();
 
-    final customConfig = await api.getCustomConfig();
+      final customConfig = await api.getCustomConfig();
 
-    if (response.isSuccessful && response.body != null) {
-      userState = state?.copyWith(
-        name: response.body?.name ?? state?.name ?? "",
-        policy: response.body?.policy,
-        serverConfiguration: systemConfiguration.body,
-        userConfiguration: response.body?.configuration,
-        quickConnectState: quickConnectStatus.body ?? false,
-        latestItemsExcludes: response.body?.configuration?.latestItemsExcludes ?? [],
-        userSettings: customConfig.body,
-      );
-      return response.copyWith(body: state);
+      if (response.isSuccessful && response.body != null) {
+        userState = state?.copyWith(
+          name: response.body?.name ?? state?.name ?? "",
+          policy: response.body?.policy,
+          serverConfiguration: systemConfiguration.body,
+          userConfiguration: response.body?.configuration,
+          quickConnectState: quickConnectStatus.body ?? false,
+          latestItemsExcludes: response.body?.configuration?.latestItemsExcludes ?? [],
+          userSettings: customConfig.body,
+        );
+        return response.copyWith(body: state);
+      }
+    } catch (e) {
+      // Log error or ignore
     }
     return null;
   }

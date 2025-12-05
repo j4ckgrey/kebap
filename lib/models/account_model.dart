@@ -32,9 +32,9 @@ abstract class AccountModel with _$AccountModel {
     @Default([]) List<String> searchQueryHistory,
     @Default(false) bool quickConnectState,
     @Default([]) List<LibraryFiltersModel> libraryFilters,
-    @JsonKey(includeFromJson: false, includeToJson: false) UserPolicy? policy,
-    @JsonKey(includeFromJson: false, includeToJson: false) ServerConfiguration? serverConfiguration,
-    @JsonKey(includeFromJson: false, includeToJson: false) UserConfiguration? userConfiguration,
+    UserPolicy? policy,
+    ServerConfiguration? serverConfiguration,
+    UserConfiguration? userConfiguration,
     UserSettings? userSettings,
   }) = _AccountModel;
 

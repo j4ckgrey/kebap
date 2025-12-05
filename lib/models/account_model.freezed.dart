@@ -26,11 +26,8 @@ mixin _$AccountModel implements DiagnosticableTreeMixin {
   List<String> get searchQueryHistory;
   bool get quickConnectState;
   List<LibraryFiltersModel> get libraryFilters;
-  @JsonKey(includeFromJson: false, includeToJson: false)
   UserPolicy? get policy;
-  @JsonKey(includeFromJson: false, includeToJson: false)
   ServerConfiguration? get serverConfiguration;
-  @JsonKey(includeFromJson: false, includeToJson: false)
   UserConfiguration? get userConfiguration;
   UserSettings? get userSettings;
 
@@ -143,10 +140,8 @@ abstract mixin class $AccountModelCopyWith<$Res> {
       List<String> searchQueryHistory,
       bool quickConnectState,
       List<LibraryFiltersModel> libraryFilters,
-      @JsonKey(includeFromJson: false, includeToJson: false) UserPolicy? policy,
-      @JsonKey(includeFromJson: false, includeToJson: false)
+      UserPolicy? policy,
       ServerConfiguration? serverConfiguration,
-      @JsonKey(includeFromJson: false, includeToJson: false)
       UserConfiguration? userConfiguration,
       UserSettings? userSettings});
 
@@ -376,11 +371,8 @@ extension AccountModelPatterns on AccountModel {
             List<String> searchQueryHistory,
             bool quickConnectState,
             List<LibraryFiltersModel> libraryFilters,
-            @JsonKey(includeFromJson: false, includeToJson: false)
             UserPolicy? policy,
-            @JsonKey(includeFromJson: false, includeToJson: false)
             ServerConfiguration? serverConfiguration,
-            @JsonKey(includeFromJson: false, includeToJson: false)
             UserConfiguration? userConfiguration,
             UserSettings? userSettings)?
         $default, {
@@ -437,11 +429,8 @@ extension AccountModelPatterns on AccountModel {
             List<String> searchQueryHistory,
             bool quickConnectState,
             List<LibraryFiltersModel> libraryFilters,
-            @JsonKey(includeFromJson: false, includeToJson: false)
             UserPolicy? policy,
-            @JsonKey(includeFromJson: false, includeToJson: false)
             ServerConfiguration? serverConfiguration,
-            @JsonKey(includeFromJson: false, includeToJson: false)
             UserConfiguration? userConfiguration,
             UserSettings? userSettings)
         $default,
@@ -496,11 +485,8 @@ extension AccountModelPatterns on AccountModel {
             List<String> searchQueryHistory,
             bool quickConnectState,
             List<LibraryFiltersModel> libraryFilters,
-            @JsonKey(includeFromJson: false, includeToJson: false)
             UserPolicy? policy,
-            @JsonKey(includeFromJson: false, includeToJson: false)
             ServerConfiguration? serverConfiguration,
-            @JsonKey(includeFromJson: false, includeToJson: false)
             UserConfiguration? userConfiguration,
             UserSettings? userSettings)?
         $default,
@@ -545,10 +531,8 @@ class _AccountModel extends AccountModel with DiagnosticableTreeMixin {
       final List<String> searchQueryHistory = const [],
       this.quickConnectState = false,
       final List<LibraryFiltersModel> libraryFilters = const [],
-      @JsonKey(includeFromJson: false, includeToJson: false) this.policy,
-      @JsonKey(includeFromJson: false, includeToJson: false)
+      this.policy,
       this.serverConfiguration,
-      @JsonKey(includeFromJson: false, includeToJson: false)
       this.userConfiguration,
       this.userSettings})
       : _latestItemsExcludes = latestItemsExcludes,
@@ -608,13 +592,10 @@ class _AccountModel extends AccountModel with DiagnosticableTreeMixin {
   }
 
   @override
-  @JsonKey(includeFromJson: false, includeToJson: false)
   final UserPolicy? policy;
   @override
-  @JsonKey(includeFromJson: false, includeToJson: false)
   final ServerConfiguration? serverConfiguration;
   @override
-  @JsonKey(includeFromJson: false, includeToJson: false)
   final UserConfiguration? userConfiguration;
   @override
   final UserSettings? userSettings;
@@ -734,10 +715,8 @@ abstract mixin class _$AccountModelCopyWith<$Res>
       List<String> searchQueryHistory,
       bool quickConnectState,
       List<LibraryFiltersModel> libraryFilters,
-      @JsonKey(includeFromJson: false, includeToJson: false) UserPolicy? policy,
-      @JsonKey(includeFromJson: false, includeToJson: false)
+      UserPolicy? policy,
       ServerConfiguration? serverConfiguration,
-      @JsonKey(includeFromJson: false, includeToJson: false)
       UserConfiguration? userConfiguration,
       UserSettings? userSettings});
 

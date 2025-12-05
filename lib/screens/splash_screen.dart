@@ -27,6 +27,9 @@ class _SplashScreenState extends ConsumerState<SplashScreen> {
       await Future.delayed(const Duration(milliseconds: 500));
       final AccountModel? lastUsedAccount = ref.read(sharedUtilityProvider).getActiveAccount();
       ref.read(userProvider.notifier).updateUser(lastUsedAccount);
+      if (lastUsedAccount != null) {
+        ref.read(userProvider.notifier).updateInformation();
+      }
 
       if (context.mounted) {
         if (lastUsedAccount == null || ref.read(argumentsStateProvider).newWindow == true) {

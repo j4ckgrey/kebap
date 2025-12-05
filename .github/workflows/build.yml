@@ -35,48 +35,48 @@ concurrency:
 env:
   NIGHTLY_TAG: nightly
 
-jobs:
-  # Check if workflow should run based on trigger conditions
-  check-trigger:
-    runs-on: ubuntu-latest
-    outputs:
-      should_run: ${{ steps.check.outputs.should_run }}
-      build_type: ${{ steps.check.outputs.build_type }}
-    steps:
-      - name: Checkout repository
-        uses: actions/checkout@v4.1.1
-        with:
-          fetch-depth: 0
-
-      - name: Check if should run and determine build type
-        id: check
-        run: |
-          # Determine build type based on trigger and input
-          if [[ "${{ github.event_name }}" == "workflow_dispatch" ]]; then
-            BUILD_TYPE="${{ github.event.inputs.build_type }}"
-          elif [[ "${{ startsWith(github.ref, 'refs/tags/v') }}" == "true" ]]; then
-            BUILD_TYPE="release"
-          elif [[ "${{ github.event_name }}" == "schedule" ]]; then
-            # Check if there were commits to develop in the last 24 hours
-            git checkout develop
-            COMMITS_LAST_24H=$(git log --since="24 hours ago" --oneline | wc -l)
-            if [[ $COMMITS_LAST_24H -gt 0 ]]; then
-              BUILD_TYPE="nightly"
-            else
-              echo "No commits to develop in the last 24 hours, skipping nightly build"
-              echo "should_run=false" >> $GITHUB_OUTPUT
-              exit 0
-            fi
-          elif [[ "${{ github.event_name }}" == "workflow_dispatch" ]]; then
-            BUILD_TYPE="nightly"
-          else
-            # For PRs and other events, build but don't release
-            BUILD_TYPE="development"
-          fi
-
-          echo "build_type=${BUILD_TYPE}" >> $GITHUB_OUTPUT
-          echo "should_run=true" >> $GITHUB_OUTPUT
-          echo "Build type determined: ${BUILD_TYPE}"
+# jobs:
+#   # Check if workflow should run based on trigger conditions
+#   check-trigger:
+#     runs-on: ubuntu-latest
+#     outputs:
+#       should_run: ${{ steps.check.outputs.should_run }}
+#       build_type: ${{ steps.check.outputs.build_type }}
+#     steps:
+#       - name: Checkout repository
+#         uses: actions/checkout@v4.1.1
+#         with:
+#           fetch-depth: 0
+# 
+#       - name: Check if should run and determine build type
+#         id: check
+#         run: |
+#           # Determine build type based on trigger and input
+#           if [[ "${{ github.event_name }}" == "workflow_dispatch" ]]; then
+#             BUILD_TYPE="${{ github.event.inputs.build_type }}"
+#           elif [[ "${{ startsWith(github.ref, 'refs/tags/v') }}" == "true" ]]; then
+#             BUILD_TYPE="release"
+#           elif [[ "${{ github.event_name }}" == "schedule" ]]; then
+#             # Check if there were commits to develop in the last 24 hours
+#             git checkout develop
+#             COMMITS_LAST_24H=$(git log --since="24 hours ago" --oneline | wc -l)
+#             if [[ $COMMITS_LAST_24H -gt 0 ]]; then
+#               BUILD_TYPE="nightly"
+#             else
+#               echo "No commits to develop in the last 24 hours, skipping nightly build"
+#               echo "should_run=false" >> $GITHUB_OUTPUT
+#               exit 0
+#             fi
+#           elif [[ "${{ github.event_name }}" == "workflow_dispatch" ]]; then
+#             BUILD_TYPE="nightly"
+#           else
+#             # For PRs and other events, build but don't release
+#             BUILD_TYPE="development"
+#           fi
+# 
+#           echo "build_type=${BUILD_TYPE}" >> $GITHUB_OUTPUT
+#           echo "should_run=true" >> $GITHUB_OUTPUT
+#           echo "Build type determined: ${BUILD_TYPE}"
 
   fetch-info:
     needs: [check-trigger]

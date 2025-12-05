@@ -76,7 +76,15 @@ class ConnectivityStatus extends _$ConnectivityStatus {
     } else if (results.contains(ConnectivityResult.mobile)) {
       state = ConnectionState.mobile;
     } else if (results.contains(ConnectivityResult.none)) {
-      state = ConnectionState.offline;
+      // Debounce offline state to avoid flickering during network switches
+      await Future.delayed(const Duration(seconds: 2));
+      final current = await Connectivity().checkConnectivity();
+      if (current.contains(ConnectivityResult.none) && 
+          !current.contains(ConnectivityResult.wifi) && 
+          !current.contains(ConnectivityResult.ethernet) && 
+          !current.contains(ConnectivityResult.mobile)) {
+        state = ConnectionState.offline;
+      }
     }
 
     final newUrl = ref.read(userProvider.select((value) => value?.credentials.localUrl));
