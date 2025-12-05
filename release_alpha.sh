@@ -243,7 +243,7 @@ if [ -n "$DOCKER_USER" ]; then
 
     echo "   - Pushing to GHCR..."
     # Login to GHCR using provided PAT
-    echo "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" | docker login ghcr.io -u j4ckgrey --password-stdin
+    echo "$GH_TOKEN" | docker login ghcr.io -u j4ckgrey --password-stdin
 
     GHCR_IMAGE="ghcr.io/$DOCKER_USER/kebap"
     for ARCH in amd64 arm64 armv7; do
@@ -294,23 +294,6 @@ fi
 # 6. Build Windows (Inline)
 build_windows
 
-# 7. Verify Artifacts
-echo "🔍 Verifying Artifacts..."
-MISSING=0
-check_artifact() {
-    if ls $1 1> /dev/null 2>&1; then echo "   ✅ Found $1"; else echo "   ❌ Missing $1"; MISSING=1; fi
-}
-check_artifact "builds/kebap-linux-*.zip"
-check_artifact "builds/kebap_*.deb"
-check_artifact "builds/kebap_setup_x64.exe"
-APK_COUNT=$(ls builds/*-signed.apk 2>/dev/null | wc -l)
-if [ "$APK_COUNT" -ge 3 ]; then echo "   ✅ Found $APK_COUNT signed APKs"; else echo "   ❌ Found only $APK_COUNT signed APKs"; MISSING=1; fi
-
-if [ "$MISSING" -eq 1 ]; then
-    echo "❌ Artifact verification failed. Aborting release."
-    exit 1
-fi
-
 # 8. Package Artifacts
 echo "📦 Packaging Remaining Artifacts..."
 zip -r builds/kebap-linux-$VERSION.zip build/linux/x64/release/bundle
@@ -347,6 +330,23 @@ rm -rf builds/deb
 
 # Web Zip
 zip -r builds/kebap-web-$VERSION.zip build/web
+
+# 7. Verify Artifacts
+echo "🔍 Verifying Artifacts..."
+MISSING=0
+check_artifact() {
+    if ls $1 1> /dev/null 2>&1; then echo "   ✅ Found $1"; else echo "   ❌ Missing $1"; MISSING=1; fi
+}
+check_artifact "builds/kebap-linux-*.zip"
+check_artifact "builds/kebap_*.deb"
+check_artifact "builds/kebap_setup_x64.exe"
+APK_COUNT=$(ls builds/*-signed.apk 2>/dev/null | wc -l)
+if [ "$APK_COUNT" -ge 3 ]; then echo "   ✅ Found $APK_COUNT signed APKs"; else echo "   ❌ Found only $APK_COUNT signed APKs"; MISSING=1; fi
+
+if [ "$MISSING" -eq 1 ]; then
+    echo "❌ Artifact verification failed. Aborting release."
+    exit 1
+fi
 
 # 9. Documentation
 echo "📝 Generating Documentation..."
