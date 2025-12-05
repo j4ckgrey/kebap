@@ -775,7 +775,7 @@ class _ClientSettingsModel extends ClientSettingsModel
       this.maxConcurrentDownloads = 2,
       this.schemeVariant = DynamicSchemeVariant.rainbow,
       this.backgroundImage = BackgroundType.blurred,
-      this.checkForUpdates = true,
+      this.checkForUpdates = false,
       this.usePosterForLibrary = false,
       this.useSystemIME = false,
       this.lastViewedUpdate,

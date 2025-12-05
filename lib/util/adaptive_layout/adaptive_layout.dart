@@ -190,6 +190,7 @@ class _AdaptiveLayoutBuilderState extends ConsumerState<AdaptiveLayoutBuilder> {
 
   @override
   Widget build(BuildContext context) {
+    print('[LAG_DEBUG] ${DateTime.now()} AdaptiveLayoutBuilder build');
     final arguments = ref.watch(argumentsStateProvider);
     final htpcMode = arguments.htpcMode;
     final acceptedLayouts =

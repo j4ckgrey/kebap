@@ -54,7 +54,7 @@ class _AdaptiveTextFieldState extends ConsumerState<AdaptiveTextField> {
   Widget build(BuildContext context) {
     // Check if we should use custom keyboard (TV with d-pad)
     final useCustomKeyboard = !kIsWeb &&
-        Platform.isAndroid &&
+        !kIsWeb && Platform.isAndroid &&
         AdaptiveLayout.inputDeviceOf(context) == InputDevice.dPad &&
         !ref.watch(clientSettingsProvider.select((value) => value.useSystemIME));
 

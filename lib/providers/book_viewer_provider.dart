@@ -1,6 +1,7 @@
 import 'dart:developer';
 import 'dart:io';
 
+import 'package:flutter/foundation.dart';
 import 'package:flutter/widgets.dart';
 
 import 'package:archive/archive_io.dart';
@@ -69,6 +70,7 @@ class BookViewerNotifier extends StateNotifier<BookViewerModel> {
 
       final bookDirectory = state.book?.id;
 
+      if (kIsWeb) return null;
       String tempDir = (await getTemporaryDirectory()).path;
       savedDirectory = Directory('$tempDir/$bookDirectory');
       await savedDirectory.create();

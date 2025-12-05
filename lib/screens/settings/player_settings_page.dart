@@ -339,7 +339,7 @@ class _PlayerSettingsPageState extends ConsumerState<PlayerSettingsPage> {
                                 },
                         ),
                       AnimatedFadeSize(
-                        child: videoSettings.useLibass && videoSettings.hardwareAccel && Platform.isAndroid
+                        child: videoSettings.useLibass && videoSettings.hardwareAccel && !kIsWeb && Platform.isAndroid
                             ? SettingsMessageBox(
                                 context.localized.settingsPlayerMobileWarning,
                                 messageType: MessageType.warning,

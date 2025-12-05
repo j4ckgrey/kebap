@@ -21,8 +21,12 @@ class ImageNotifier {
     return ref.read(serverUrlProvider) ?? "";
   }
 
-  String getUserImageUrl(String id) {
-    return Uri.decodeFull("$currentServerUrl/Users/$id/Images/${ImageType.primary.value}");
+  String getUserImageUrl(String id, {String? tag}) {
+    final url = "$currentServerUrl/Users/$id/Images/${ImageType.primary.value}";
+    if (tag != null) {
+      return Uri.decodeFull("$url?tag=$tag");
+    }
+    return Uri.decodeFull(url);
   }
 
   String getItemsImageUrl(String? itemId,

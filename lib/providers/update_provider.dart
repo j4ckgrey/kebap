@@ -68,6 +68,7 @@ class Update extends _$Update {
   }
 
   Future<List<ReleaseInfo>> _fetchLatest() async {
+    print('[DEBUG] UpdateProvider: _fetchLatest called');
     final latest = await updateChecker.fetchRecentReleases();
     state = UpdatesModel(
       lastRelease: latest,

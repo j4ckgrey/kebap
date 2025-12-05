@@ -31,8 +31,8 @@ class SettingsScaffold extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    print('[LAG_DEBUG] ${DateTime.now()} SettingsScaffold build: $label');
-    final padding = MediaQuery.of(context).padding;
+    final mediaQuery = MediaQuery.of(context);
+    final padding = mediaQuery.padding;
     final singleLayout = AdaptiveLayout.layoutModeOf(context) == LayoutMode.single;
     return Scaffold(
       floatingActionButtonLocation: FloatingActionButtonLocation.centerFloat,

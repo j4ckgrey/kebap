@@ -55,7 +55,9 @@ const syncPathKey = "syncPathKey";
 
 class SyncNotifier extends StateNotifier<SyncSettingsModel> {
   SyncNotifier(this.ref, this.mobileDirectory) : super(SyncSettingsModel()) {
-    _init();
+    if (!kIsWeb) {
+      _init();
+    }
   }
 
   final Ref ref;
@@ -117,6 +119,7 @@ class SyncNotifier extends StateNotifier<SyncSettingsModel> {
       }
     });
     _initializeQueryStream();
+    calculateDirectorySize();
   }
 
   void _initializeQueryStream({String? id}) async {
@@ -141,6 +144,7 @@ class SyncNotifier extends StateNotifier<SyncSettingsModel> {
   }
 
   Future<void> cleanupTemporaryFiles() async {
+    if (kIsWeb) return;
     final activeDownloads = ref.read(activeDownloadTasksProvider);
     if (activeDownloads.isNotEmpty) return;
 
@@ -204,11 +208,14 @@ class SyncNotifier extends StateNotifier<SyncSettingsModel> {
 
   String? get syncPath => saveDirectory?.path;
 
-  Future<int> get directorySize async {
-    if (saveDirectory == null) return 0;
+  Future<void> calculateDirectorySize() async {
+    if (saveDirectory == null) {
+      state = state.copyWith(directorySize: 0);
+      return;
+    }
     var files = await saveDirectory!.list(recursive: true).toList();
     var dirSize = files.fold(0, (int sum, file) => sum + file.statSync().size);
-    return dirSize;
+    state = state.copyWith(directorySize: dirSize);
   }
 
   @override
@@ -487,10 +494,12 @@ class SyncNotifier extends StateNotifier<SyncSettingsModel> {
 
     cleanupTemporaryFiles();
     refresh();
+    calculateDirectorySize();
     return syncedItem;
   }
 
   Future<void> stopDownload(BuildContext context, SyncedItem item, DownloadTask? task) async {
+    if (kIsWeb) return;
     await deleteFullSyncFiles(item, task);
 
     // Check for other video files
@@ -623,7 +632,9 @@ class SyncNotifier extends StateNotifier<SyncSettingsModel> {
 
         final defaultDownloadStream = DownloadStream(id: syncItem.id, task: downloadTask, status: TaskStatus.enqueued);
         ref.read(downloadTasksProvider(syncItem.id).notifier).update((state) => defaultDownloadStream);
-        return await ref.read(backgroundDownloaderProvider).enqueue(downloadTask);
+        final result = await ref.read(backgroundDownloaderProvider).enqueue(downloadTask);
+        calculateDirectorySize();
+        return result;
       }
     } catch (e) {
       log(e.toString());
@@ -640,7 +651,9 @@ class SyncNotifier extends StateNotifier<SyncSettingsModel> {
     await _db.close();
     await _db.clearDatabase();
     _db = AppDatabase(ref);
+    _db = AppDatabase(ref);
     state = state.copyWith(items: []);
+    calculateDirectorySize();
   }
 
   Future<void> updatePlaybackPosition({String? itemId, required Duration position}) async {

@@ -1,8 +1,12 @@
 import 'package:flutter/material.dart';
 
+import 'dart:typed_data'; // for Uint8List
 import 'package:auto_route/auto_route.dart';
+import 'package:file_picker/file_picker.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-
+import 'package:kebap/jellyfin/jellyfin_open_api.swagger.dart' as jelly_api; // ALIAS
+import 'package:kebap/jellyfin/jellyfin_open_api.enums.swagger.dart' as jelly_enums; // ALIAS
+import 'package:kebap/providers/api_provider.dart';
 import 'package:kebap/providers/connectivity_provider.dart';
 import 'package:kebap/providers/user_provider.dart';
 import 'package:kebap/screens/settings/settings_list_tile.dart';
@@ -11,6 +15,8 @@ import 'package:kebap/screens/settings/widgets/settings_label_divider.dart';
 import 'package:kebap/screens/settings/widgets/settings_list_group.dart';
 import 'package:kebap/screens/shared/authenticate_button_options.dart';
 import 'package:kebap/screens/shared/input_fields.dart';
+import 'package:iconsax_plus/iconsax_plus.dart';
+import 'package:kebap/screens/shared/user_icon.dart';
 import 'package:kebap/util/localization_helper.dart';
 
 @RoutePage()
@@ -22,12 +28,85 @@ class ProfileSettingsPage extends ConsumerStatefulWidget {
 }
 
 class _UserSettingsPageState extends ConsumerState<ProfileSettingsPage> {
+  Future<void> _pickAndUploadImage(WidgetRef ref, String userId) async {
+    try {
+      final result = await FilePicker.platform.pickFiles(
+        type: FileType.image,
+        withData: true,
+      );
+
+      if (result != null && result.files.isNotEmpty) {
+        final file = result.files.first;
+        final bytes = file.bytes;
+
+        if (bytes != null) {
+          final api = ref.read(jellyApiProvider);
+          // Assuming 'primary' is the correct image type for user profile
+          final response = await api.usersUserIdImagesImageTypePost(
+            userId: userId,
+            imageType: jelly_enums.ItemsItemIdImagesImageTypePostImageType.primary, 
+            body: bytes,
+          );
+
+          if (response.isSuccessful) {
+            await ref.read(userProvider.notifier).updateInformation();
+          }
+        }
+      }
+    } catch (e) {
+      debugPrint('Error uploading image: $e');
+      if (mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: Text(
+              "Oops! Failed to pick image. This might be due to a missing system dependency (xdg-desktop-portal) on your Linux setup.\nError: $e",
+            ),
+            backgroundColor: Theme.of(context).colorScheme.error,
+          ),
+        );
+      }
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     final user = ref.watch(userProvider);
     return SettingsScaffold(
       label: context.localized.settingsProfileTitle,
       items: [
+        if (user != null) ...[
+          Center(
+            child: Stack(
+              children: [
+                UserIcon(
+                  user: user,
+                  size: const Size(120, 120),
+                  cornerRadius: 120,
+                  onTap: () => _pickAndUploadImage(ref, user.id),
+                ),
+                Positioned(
+                  bottom: 0,
+                  right: 0,
+                  child: IgnorePointer(
+                    child: Container(
+                      padding: const EdgeInsets.all(8),
+                      decoration: BoxDecoration(
+                        color: Theme.of(context).colorScheme.primary,
+                        shape: BoxShape.circle,
+                      ),
+                      child: Icon(
+                        IconsaxPlusLinear.edit,
+                        size: 20,
+                        color: Theme.of(context).colorScheme.onPrimary,
+                      ),
+                    ),
+                  ),
+                ),
+              ],
+            ),
+          ),
+          const SizedBox(height: 24),
+        ],
         ...settingsListGroup(
           context,
           SettingsLabelDivider(label: context.localized.settingSecurityApplockTitle),

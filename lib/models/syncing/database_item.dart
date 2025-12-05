@@ -3,6 +3,7 @@ import 'dart:io';
 
 import 'package:drift/drift.dart';
 import 'package:drift_flutter/drift_flutter.dart';
+import 'package:flutter/foundation.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:path/path.dart' as p;
 import 'package:path_provider/path_provider.dart';
@@ -55,6 +56,7 @@ class AppDatabase extends _$AppDatabase {
   int get schemaVersion => 1;
 
   Future<void> clearDatabase() async {
+    if (kIsWeb) return;
     final dbPath = await getApplicationSupportDirectory();
     final dbFile = File(p.join(dbPath.path, '$_databseName.sqlite'));
 
@@ -196,8 +198,13 @@ class AppDatabase extends _$AppDatabase {
   static QueryExecutor _openConnection() {
     return driftDatabase(
       name: _databseName,
-      native: const DriftNativeOptions(
-        databaseDirectory: getApplicationSupportDirectory,
+      native: DriftNativeOptions(
+        databaseDirectory: () async {
+          if (kIsWeb) {
+            throw UnsupportedError('Not supported on web');
+          }
+          return await getApplicationSupportDirectory();
+        },
       ),
       web: DriftWebOptions(
         sqlite3Wasm: Uri.parse('sqlite3.wasm'),

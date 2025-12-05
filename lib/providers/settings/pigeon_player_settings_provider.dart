@@ -14,7 +14,8 @@ import 'package:kebap/providers/user_provider.dart';
 import 'package:kebap/src/player_settings_helper.g.dart' as pigeon;
 
 final pigeonPlayerSettingsSyncProvider = Provider<void>((ref) {
-  void sendSettings() {
+  Future<void> sendSettings() async {
+    if (kIsWeb) return;
     final userData = ref.read(userProvider);
     final color = ref.read(
       clientSettingsProvider.select(

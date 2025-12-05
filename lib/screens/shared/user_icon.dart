@@ -44,15 +44,16 @@ class UserIcon extends ConsumerWidget {
 
     return Hero(
       tag: Key(user?.id ?? "empty-user-avatar"),
-      child: AspectRatio(
-        aspectRatio: 1,
-        child: Container(
-          decoration: BoxDecoration(
-            borderRadius: BorderRadius.circular(cornerRadius),
-          ),
-          clipBehavior: Clip.none,
-          child: SizedBox.fromSize(
-            size: size,
+      child: SizedBox(
+        width: size.width,
+        height: size.height,
+        child: AspectRatio(
+          aspectRatio: 1,
+          child: Container(
+            decoration: BoxDecoration(
+              borderRadius: BorderRadius.circular(cornerRadius),
+            ),
+            clipBehavior: Clip.none,
             child: Stack(
               alignment: Alignment.center,
               fit: StackFit.expand,

@@ -77,7 +77,7 @@ class MediaControlsWrapper extends BaseAudioHandler implements VideoPlayerContro
     final player = switch (ref.read(videoPlayerSettingsProvider).wantedPlayer) {
       PlayerOptions.libMDK => LibMDK(),
       PlayerOptions.libMPV => LibMPV(),
-      PlayerOptions.nativePlayer => NativePlayer(),
+      PlayerOptions.nativePlayer => kIsWeb ? LibMDK() : NativePlayer(),
     };
 
     setup(player);
@@ -111,7 +111,7 @@ class MediaControlsWrapper extends BaseAudioHandler implements VideoPlayerContro
   Future<void> openPlayer(BuildContext context) async => _player?.open(context);
 
   void _subscribePlayer() {
-    if (Platform.isWindows && !kIsWeb) {
+    if (!kIsWeb && Platform.isWindows) {
       smtc = SMTCWindows(
         config: const SMTCConfig(
           fastForwardEnabled: true,

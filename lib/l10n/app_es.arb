@@ -1048,8 +1048,6 @@
             }
         }
     },
-    "aboutCreatedBy": "Created by DonutWare - rebranded by j4ckgrey",
-    "@aboutCreatedBy": {},
     "aboutLicenses": "Licencias",
     "@aboutLicenses": {},
     "addedToCollection": "Añadido a la colección {collectionName}",

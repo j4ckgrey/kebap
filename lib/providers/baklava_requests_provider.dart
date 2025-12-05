@@ -35,7 +35,7 @@ class BaklavaRequests extends _$BaklavaRequests {
     ref.watch(userProvider);
 
     // Load requests on initialization
-    loadRequests();
+    Future.microtask(() => loadRequests());
     
     // Start polling every minute
     _timer = Timer.periodic(const Duration(minutes: 1), (_) => loadRequests(notify: true));

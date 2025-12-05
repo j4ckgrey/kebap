@@ -1,4 +1,6 @@
-import 'package:flutter/material.dart';
+import 'package:flutter/material.dart' hide ConnectionState;
+
+import 'package:kebap/providers/connectivity_provider.dart';
 
 import 'package:collection/collection.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -45,22 +47,31 @@ class _BackgroundImageState extends ConsumerState<BackgroundImage> {
 
       ImageData? newImage;
 
-      if (widget.images.isNotEmpty) {
-        newImage = widget.images.shuffled().firstOrNull?.randomBackDrop;
-      } else if (widget.items.isNotEmpty) {
-        final randomItem = widget.items.shuffled().firstOrNull;
-        final itemId = switch (randomItem?.type) {
-          KebapItemType.folder => randomItem?.id,
-          KebapItemType.series => randomItem?.parentId ?? randomItem?.id,
-          _ => randomItem?.id,
-        };
+      final isOffline = ref.read(connectivityStatusProvider) == ConnectionState.offline;
 
-        if (itemId != null) {
-          final apiResponse = await ref.read(jellyApiProvider).usersUserIdItemsItemIdGet(itemId: itemId);
+      if (isOffline) {
+        if (widget.items.isNotEmpty) {
+          final randomItem = widget.items.shuffled().firstOrNull;
+          newImage = randomItem?.images?.randomBackDrop;
+        }
+      } else {
+        if (widget.images.isNotEmpty) {
+          newImage = widget.images.shuffled().firstOrNull?.randomBackDrop;
+        } else if (widget.items.isNotEmpty) {
+          final randomItem = widget.items.shuffled().firstOrNull;
+          final itemId = switch (randomItem?.type) {
+            KebapItemType.folder => randomItem?.id,
+            KebapItemType.series => randomItem?.parentId ?? randomItem?.id,
+            _ => randomItem?.id,
+          };
 
-          newImage = apiResponse.body?.parentBaseModel.getPosters?.randomBackDrop ??
-              apiResponse.body?.getPosters?.randomBackDrop ??
-              apiResponse.body?.getPosters?.primary;
+          if (itemId != null) {
+            final apiResponse = await ref.read(jellyApiProvider).usersUserIdItemsItemIdGet(itemId: itemId);
+
+            newImage = apiResponse.body?.parentBaseModel.getPosters?.randomBackDrop ??
+                apiResponse.body?.getPosters?.randomBackDrop ??
+                apiResponse.body?.getPosters?.primary;
+          }
         }
       }
 

@@ -2,7 +2,7 @@ import 'dart:async';
 import 'dart:io';
 
 import 'package:flutter/foundation.dart';
-import 'package:flutter/material.dart';
+import 'package:flutter/material.dart' hide ConnectionState;
 import 'package:flutter/services.dart';
 
 import 'package:auto_route/auto_route.dart';
@@ -16,6 +16,7 @@ import 'package:kebap/models/item_base_model.dart';
 import 'package:kebap/models/library_search/library_search_options.dart';
 import 'package:kebap/models/settings/home_settings_model.dart';
 import 'package:kebap/providers/baklava_requests_provider.dart';
+import 'package:kebap/providers/connectivity_provider.dart';
 import 'package:kebap/providers/dashboard_provider.dart';
 import 'package:kebap/providers/settings/home_settings_provider.dart';
 import 'package:kebap/providers/user_provider.dart';
@@ -141,66 +142,92 @@ class _DashboardScreenState extends ConsumerState<DashboardScreen> {
             autofocus: true,
             child: Builder(
               builder: (context) {
-                final rows = [
-                  if (resumeVideo.isNotEmpty &&
-                      (homeSettings.nextUp == HomeNextUp.cont || homeSettings.nextUp == HomeNextUp.separate))
-                    RowData(
-                      label: context.localized.dashboardContinueWatching,
-                      posters: resumeVideo,
-                    ),
-                  if (resumeAudio.isNotEmpty &&
-                      (homeSettings.nextUp == HomeNextUp.cont || homeSettings.nextUp == HomeNextUp.separate))
-                    RowData(
-                      label: context.localized.dashboardContinueListening,
-                      posters: resumeAudio,
-                    ),
-                  if (resumeBooks.isNotEmpty &&
-                      (homeSettings.nextUp == HomeNextUp.cont || homeSettings.nextUp == HomeNextUp.separate))
-                    RowData(
-                      label: context.localized.dashboardContinueReading,
-                      posters: resumeBooks,
-                    ),
-                  if (dashboardData.nextUp.isNotEmpty &&
-                      (homeSettings.nextUp == HomeNextUp.nextUp || homeSettings.nextUp == HomeNextUp.separate))
-                    RowData(
-                      label: context.localized.nextUp,
-                      posters: dashboardData.nextUp,
-                    ),
-                  if ([...allResume, ...dashboardData.nextUp].isNotEmpty && homeSettings.nextUp == HomeNextUp.combined)
-                    RowData(
-                      label: context.localized.dashboardContinue,
-                      posters: [...allResume, ...dashboardData.nextUp],
-                    ),
-                  ...views.views
-                      .where((element) => element.recentlyAdded.isNotEmpty)
-                      .map(
-                        (view) => RowData(
-                          label: context.localized.dashboardRecentlyAdded(view.name),
-                          posters: view.recentlyAdded,
-                          aspectRatio: view.collectionType.aspectRatio,
-                          onLabelClick: () => context.router.push(
-                            LibrarySearchRoute(
-                              viewModelId: view.id,
-                              types: switch (view.collectionType) {
-                                CollectionType.tvshows => {
-                                    KebapItemType.episode: true,
-                                  },
-                                _ => {},
-                              },
-                              sortingOptions: switch (view.collectionType) {
-                                CollectionType.books ||
-                                CollectionType.boxsets ||
-                                CollectionType.folders ||
-                                CollectionType.music =>
-                                  SortingOptions.dateLastContentAdded,
-                                _ => SortingOptions.dateAdded,
-                              },
-                              sortOrder: SortingOrder.descending,
-                              recursive: true,
+                  final isOffline = ref.watch(connectivityStatusProvider) == ConnectionState.offline;
+
+                  final offlineMovies = allResume.where((e) => e.type == KebapItemType.movie || e.type == KebapItemType.video).toList();
+                  final offlineShows = allResume.where((e) => e.type == KebapItemType.episode || e.type == KebapItemType.series).toList();
+
+                  final rows = [
+                    if (isOffline) ...[
+                      if (offlineMovies.isNotEmpty)
+                        RowData(
+                          label: context.localized.offlineMovies,
+                          posters: offlineMovies,
+                        ),
+                      if (offlineShows.isNotEmpty)
+                        RowData(
+                          label: context.localized.offlineShows,
+                          posters: offlineShows,
+                        ),
+                      // Fallback or other types (like music/books) if needed, or if movies/shows are empty but others exist?
+                      // User asked for 2 carousels specifically.
+                      if (allResume.where((e) => !offlineMovies.contains(e) && !offlineShows.contains(e)).isNotEmpty)
+                         RowData(
+                          label: context.localized.downloads,
+                          posters: allResume.where((e) => !offlineMovies.contains(e) && !offlineShows.contains(e)).toList(),
+                        ),
+                    ] else ...[
+                    if (resumeVideo.isNotEmpty &&
+                        (homeSettings.nextUp == HomeNextUp.cont || homeSettings.nextUp == HomeNextUp.separate))
+                      RowData(
+                        label: context.localized.dashboardContinueWatching,
+                        posters: resumeVideo,
+                      ),
+                    if (resumeAudio.isNotEmpty &&
+                        (homeSettings.nextUp == HomeNextUp.cont || homeSettings.nextUp == HomeNextUp.separate))
+                      RowData(
+                        label: context.localized.dashboardContinueListening,
+                        posters: resumeAudio,
+                      ),
+                    if (resumeBooks.isNotEmpty &&
+                        (homeSettings.nextUp == HomeNextUp.cont || homeSettings.nextUp == HomeNextUp.separate))
+                      RowData(
+                        label: context.localized.dashboardContinueReading,
+                        posters: resumeBooks,
+                      ),
+                    if (dashboardData.nextUp.isNotEmpty &&
+                        (homeSettings.nextUp == HomeNextUp.nextUp || homeSettings.nextUp == HomeNextUp.separate))
+                      RowData(
+                        label: context.localized.nextUp,
+                        posters: dashboardData.nextUp,
+                      ),
+                    if ([...allResume, ...dashboardData.nextUp].isNotEmpty &&
+                        homeSettings.nextUp == HomeNextUp.combined)
+                      RowData(
+                        label: context.localized.dashboardContinue,
+                        posters: [...allResume, ...dashboardData.nextUp],
+                      ),
+                    ...views.views
+                        .where((element) => element.recentlyAdded.isNotEmpty)
+                        .map(
+                          (view) => RowData(
+                            label: context.localized.dashboardRecentlyAdded(view.name),
+                            posters: view.recentlyAdded,
+                            aspectRatio: view.collectionType.aspectRatio,
+                            onLabelClick: () => context.router.push(
+                              LibrarySearchRoute(
+                                viewModelId: view.id,
+                                types: switch (view.collectionType) {
+                                  CollectionType.tvshows => {
+                                      KebapItemType.episode: true,
+                                    },
+                                  _ => {},
+                                },
+                                sortingOptions: switch (view.collectionType) {
+                                  CollectionType.books ||
+                                  CollectionType.boxsets ||
+                                  CollectionType.folders ||
+                                  CollectionType.music =>
+                                    SortingOptions.dateLastContentAdded,
+                                  _ => SortingOptions.dateAdded,
+                                },
+                                sortOrder: SortingOrder.descending,
+                                recursive: true,
+                              ),
                             ),
                           ),
                         ),
-                      ),
+                  ]
                 ];
                 return SingleRowView(
                   contentPadding: padding,

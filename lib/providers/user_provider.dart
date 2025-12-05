@@ -11,6 +11,7 @@ import 'package:kebap/models/library_filters_model.dart';
 import 'package:kebap/providers/api_provider.dart';
 import 'package:kebap/providers/service_provider.dart';
 import 'package:kebap/providers/shared_provider.dart';
+import 'package:kebap/providers/image_provider.dart';
 import 'package:kebap/providers/sync_provider.dart';
 import 'package:kebap/providers/video_player_provider.dart';
 
@@ -28,6 +29,7 @@ class User extends _$User {
   late final JellyService api = ref.read(jellyApiProvider);
 
   set userState(AccountModel? account) {
+    print('[LAG_DEBUG] UserProvider: userState updated');
     state = account?.copyWith(lastUsed: DateTime.now());
     if (account != null) {
       ref.read(sharedUtilityProvider).updateAccountInfo(account);
@@ -54,6 +56,10 @@ class User extends _$User {
           quickConnectState: quickConnectStatus.body ?? false,
           latestItemsExcludes: response.body?.configuration?.latestItemsExcludes ?? [],
           userSettings: customConfig.body,
+          avatar: ref.read(imageUtilityProvider).getUserImageUrl(
+                state?.id ?? "",
+                tag: response.body?.primaryImageTag,
+              ),
         );
         return response.copyWith(body: state);
       }
@@ -92,6 +98,7 @@ class User extends _$User {
   }
 
   Future<Response<dynamic>> updateCustomConfig(UserSettings settings) async {
+    print('[LAG_DEBUG] UserProvider: updateCustomConfig');
     state = state?.copyWith(userSettings: settings);
     return api.setCustomConfig(settings);
   }

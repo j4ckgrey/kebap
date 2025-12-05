@@ -14,6 +14,7 @@ import 'package:kebap/routes/auto_router.gr.dart';
 import 'package:kebap/screens/settings/quick_connect_window.dart';
 import 'package:kebap/screens/settings/settings_list_tile.dart';
 import 'package:kebap/screens/settings/settings_scaffold.dart';
+import 'package:kebap/screens/settings/widgets/settings_left_pane.dart';
 import 'package:kebap/screens/shared/default_alert_dialog.dart';
 import 'package:kebap/screens/shared/kebap_icon.dart';
 import 'package:kebap/screens/shared/kebap_snackbar.dart';
@@ -36,7 +37,6 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen> {
 
   @override
   Widget build(BuildContext context) {
-    print('[LAG_DEBUG] ${DateTime.now()} SettingsScreen build');
     return AutoTabsRouter(
       builder: (context, content) {
         checkForNullIndex(context);
@@ -51,14 +51,14 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen> {
               ? Card(
                   elevation: 0,
                   child: Stack(
-                    children: [_leftPane(context), content],
+                    children: [const SettingsLeftPane(), content],
                   ),
                 )
               : Row(
                   mainAxisSize: MainAxisSize.max,
                   crossAxisAlignment: CrossAxisAlignment.stretch,
                   children: [
-                    Expanded(flex: 2, child: _leftPane(context)),
+                    const Expanded(flex: 2, child: SettingsLeftPane()),
                     Expanded(
                       flex: 3,
                       child: content,
@@ -79,189 +79,5 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen> {
       }
     });
   }
-
-  IconData get deviceIcon {
-    if (AdaptiveLayout.of(context).isDesktop) {
-      return IconsaxPlusLinear.monitor;
-    }
-    switch (AdaptiveLayout.viewSizeOf(context)) {
-      case ViewSize.phone:
-        return IconsaxPlusLinear.mobile;
-      case ViewSize.tablet:
-        return IconsaxPlusLinear.monitor;
-      case ViewSize.desktop:
-        return IconsaxPlusLinear.monitor;
-      case ViewSize.television:
-        return IconsaxPlusLinear.mirroring_screen;
-    }
-  }
-
-  Widget _leftPane(BuildContext context) {
-    void navigateTo(PageRouteInfo route) => context.tabsRouter.navigate(route);
-
-    bool containsRoute(PageRouteInfo route) =>
-        AdaptiveLayout.layoutModeOf(context) == LayoutMode.dual && context.tabsRouter.current.name == route.routeName;
-
-    final quickConnectAvailable =
-        ref.watch(userProvider.select((value) => value?.serverConfiguration?.quickConnectAvailable ?? false));
-
-    final newRelease = ref.watch(updateProvider.select((value) => value.latestRelease));
-
-    final hasNewUpdate = ref.watch(hasNewUpdateProvider);
-
-    return Padding(
-      padding: EdgeInsets.only(left: AdaptiveLayout.of(context).sideBarWidth),
-      child: Container(
-        color: context.colors.surface,
-        child: SettingsScaffold(
-          label: context.localized.settings,
-          scrollController: scrollController,
-          showBackButtonNested: true,
-          showUserIcon: true,
-          items: [
-            if (hasNewUpdate && newRelease != null) ...[
-              Card(
-                color: context.colors.secondaryContainer,
-                child: SettingsListTile(
-                  label: Text(context.localized.newReleaseFoundTitle(newRelease.version)),
-                  subLabel: Text(context.localized.newUpdateFoundOnGithub),
-                  icon: IconsaxPlusLinear.information,
-                  onTap: () => navigateTo(const AboutSettingsRoute()),
-                ),
-              ),
-              const SizedBox(height: 8),
-            ],
-            SettingsListTile(
-              key: const ValueKey('client_settings'),
-              label: Text(context.localized.settingsClientTitle),
-              subLabel: Text(context.localized.settingsClientDesc),
-              autoFocus: true,
-              selected: containsRoute(const ClientSettingsRoute()),
-              icon: deviceIcon,
-              onTap: () => navigateTo(const ClientSettingsRoute()),
-            ),
-            SettingsListTile(
-              key: const ValueKey('profile_settings'),
-              label: Text(context.localized.settingsProfileTitle),
-              subLabel: Text(context.localized.settingsProfileDesc),
-              selected: containsRoute(const ProfileSettingsRoute()),
-              icon: IconsaxPlusLinear.security_user,
-              onTap: () => navigateTo(const ProfileSettingsRoute()),
-            ),
-            SettingsListTile(
-              key: const ValueKey('player_settings'),
-              label: Text(context.localized.settingsPlayerTitle),
-              subLabel: Text(context.localized.settingsPlayerDesc),
-              selected: containsRoute(const PlayerSettingsRoute()),
-              icon: IconsaxPlusLinear.video_play,
-              onTap: () => navigateTo(const PlayerSettingsRoute()),
-            ),
-            SettingsListTile(
-              key: const ValueKey('about_settings'),
-              label: Text(context.localized.about),
-              subLabel: Text("Kebap, ${context.localized.latestReleases}"),
-              selected: containsRoute(const AboutSettingsRoute()),
-              leading: Opacity(
-                opacity: 1,
-                child: KebapIconOutlined(
-                  size: 24,
-                  color: context.colors.onSurfaceVariant,
-                ),
-              ),
-              onTap: () => navigateTo(const AboutSettingsRoute()),
-            ),
-            if (ref.watch(argumentsStateProvider.select((value) => value.htpcMode))) ...[
-              SettingsListTile(
-                key: const ValueKey('exit_kebap'),
-                label: Text(context.localized.exitKebapTitle),
-                icon: IconsaxPlusLinear.close_square,
-                onTap: () async {
-                  showDefaultAlertDialog(
-                    context,
-                    context.localized.exitKebapTitle,
-                    context.localized.exitKebapDesc,
-                    (context) async {
-                      if (AdaptiveLayout.of(context).isDesktop) {
-                        final manager = WindowManager.instance;
-                        if (await manager.isClosable()) {
-                          manager.close();
-                        } else {
-                          kebapSnackbar(context, title: context.localized.somethingWentWrong);
-                        }
-                      } else {
-                        SystemNavigator.pop();
-                      }
-                    },
-                    context.localized.close,
-                    (context) => context.pop(),
-                    context.localized.cancel,
-                  );
-                },
-              ),
-            ],
-            const FractionallySizedBox(
-              widthFactor: 0.25,
-              child: Divider(),
-            ),
-            if (quickConnectAvailable)
-              SettingsListTile(
-                key: const ValueKey('quick_connect'),
-                label: Text(context.localized.settingsQuickConnectTitle),
-                icon: IconsaxPlusLinear.password_check,
-                onTap: () => openQuickConnectDialog(context),
-              ),
-            SettingsListTile(
-              key: const ValueKey('switch_user'),
-              label: Text(context.localized.switchUser),
-              icon: IconsaxPlusLinear.arrow_swap_horizontal,
-              contentColor: Colors.greenAccent,
-              onTap: () async {
-                await ref.read(userProvider.notifier).logoutUser();
-                context.router.replaceAll([const LoginRoute()]);
-              },
-            ),
-            SettingsListTile(
-              key: const ValueKey('logout'),
-              label: Text(context.localized.logout),
-              icon: IconsaxPlusLinear.logout,
-              contentColor: Theme.of(context).colorScheme.error,
-              onTap: () {
-                final user = ref.read(userProvider);
-                showDialog(
-                  context: context,
-                  builder: (context) => AlertDialog(
-                    title: Text(context.localized.logoutUserPopupTitle(user?.name ?? "")),
-                    scrollable: true,
-                    content: Text(
-                      context.localized.logoutUserPopupContent(user?.name ?? "", user?.credentials.url ?? ""),
-                    ),
-                    actions: [
-                      ElevatedButton(
-                        onPressed: () => Navigator.pop(context),
-                        child: Text(context.localized.cancel),
-                      ),
-                      ElevatedButton(
-                        style: ElevatedButton.styleFrom().copyWith(
-                          iconColor: WidgetStatePropertyAll(Theme.of(context).colorScheme.onErrorContainer),
-                          foregroundColor: WidgetStatePropertyAll(Theme.of(context).colorScheme.onErrorContainer),
-                          backgroundColor: WidgetStatePropertyAll(Theme.of(context).colorScheme.errorContainer),
-                        ),
-                        onPressed: () async {
-                          await ref.read(authProvider.notifier).logOutUser();
-                          if (context.mounted) {
-                            context.router.replaceAll([const LoginRoute()]);
-                          }
-                        },
-                        child: Text(context.localized.logout),
-                      ),
-                    ],
-                  ),
-                );
-              },
-            ),
-          ],
-        ),
-      ),
-    );
-  }
 }
+

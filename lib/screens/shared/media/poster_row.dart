@@ -52,9 +52,8 @@ class PosterRow extends ConsumerWidget {
       onFocused: (index) {
         if (onFocused != null) {
           onFocused?.call(posters[index]);
-        } else {
-          context.ensureVisible();
         }
+        // ensureVisible removed to prevent jumpy page transitions
         // Also update banner when navigating with arrow keys
         if (onCardTap != null) {
           onCardTap!(posters[index]);
