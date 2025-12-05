@@ -21,7 +21,7 @@
   - Stremio search engine integration (Gelatthrough Gelato plugin)
   (Full features list coming soon)
   (Builds for Apple devices coming soon)
-- **Web Version**: [https://kebap-ten.vercel.app/](https://kebap-ten.vercel.app/)
+- **Web Version**: [https://kebap-seven.vercel.app/](https://kebap-seven.vercel.app/)
   - **Install as App (PWA)**: Open the link in Chrome/Edge/Safari, then click "Install Kebap" in the address bar or "Add to Home Screen" in the menu.
 - **Docker Support**
   - Multi-arch images (AMD64, ARM64, ARMv7) available

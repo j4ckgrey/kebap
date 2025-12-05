@@ -1,26 +1,30 @@
 #!/bin/bash
 set -e
 
-VERSION="0.0.1-alpha"
-NOTES="Latest ALpha Release before Official Release"
+# Arguments
+VERSION="$1"
+NOTES="$2"
+DOCKER_USER="$3"
 
-echo "🚀 Finishing Release for $VERSION..."
+if [ -z "$VERSION" ] || [ -z "$NOTES" ]; then
+    echo "Usage: $0 <version> \"<release_notes>\" [docker_user]"
+    echo "Example: $0 1.0.0 \"Initial Release\" j4ckgrey"
+    exit 1
+fi
+
+echo "🚀 Resuming Kebap Release Process for Version: $VERSION"
 
 # 8. Package Artifacts
 echo "📦 Packaging Remaining Artifacts..."
 if [ -d "build/linux/x64/release/bundle" ]; then
     zip -r builds/kebap-linux-$VERSION.zip build/linux/x64/release/bundle
-else
-    echo "❌ Error: Linux build bundle not found!"
-    exit 1
-fi
 
-# Deb
-mkdir -p builds/deb/DEBIAN
-mkdir -p builds/deb/opt/kebap
-mkdir -p builds/deb/usr/share/applications
-mkdir -p builds/deb/usr/share/icons/hicolor/scalable/apps
-cat > builds/deb/DEBIAN/control << EOL
+    # Deb
+    mkdir -p builds/deb/DEBIAN
+    mkdir -p builds/deb/opt/kebap
+    mkdir -p builds/deb/usr/share/applications
+    mkdir -p builds/deb/usr/share/icons/hicolor/scalable/apps
+    cat > builds/deb/DEBIAN/control << EOL
 Package: kebap
 Version: $VERSION
 Section: utils
@@ -30,7 +34,7 @@ Maintainer: Kebap Team <maintainer@example.com>
 Description: A simple cross-platform Jellyfin client.
  Kebap is a modern, fast, and beautiful Jellyfin client.
 EOL
-cat > builds/deb/usr/share/applications/kebap.desktop << EOL
+    cat > builds/deb/usr/share/applications/kebap.desktop << EOL
 [Desktop Entry]
 Name=Kebap
 Comment=A simple cross-platform Jellyfin client
@@ -40,21 +44,40 @@ Terminal=false
 Type=Application
 Categories=AudioVideo;Video;Player;
 EOL
-cp -r build/linux/x64/release/bundle/* builds/deb/opt/kebap/
-cp icons/kebap_icon.svg builds/deb/usr/share/icons/hicolor/scalable/apps/kebap.svg
-dpkg-deb --build builds/deb builds/kebap_${VERSION}_amd64.deb
-rm -rf builds/deb
+    cp -r build/linux/x64/release/bundle/* builds/deb/opt/kebap/
+    cp icons/kebap_icon.svg builds/deb/usr/share/icons/hicolor/scalable/apps/kebap.svg
+    dpkg-deb --build builds/deb builds/kebap_${VERSION}_amd64.deb
+    rm -rf builds/deb
+else
+    echo "⚠️ Linux build not found at build/linux/x64/release/bundle. Skipping Linux packaging."
+fi
 
 # Web Zip
 if [ -d "build/web" ]; then
     zip -r builds/kebap-web-$VERSION.zip build/web
 else
-    echo "⚠️ Web build not found, skipping web zip."
+    echo "⚠️ Web build not found at build/web. Skipping Web packaging."
+fi
+
+# 7. Verify Artifacts (Now running AFTER packaging)
+echo "🔍 Verifying Artifacts..."
+MISSING=0
+check_artifact() {
+    if ls $1 1> /dev/null 2>&1; then echo "   ✅ Found $1"; else echo "   ❌ Missing $1"; MISSING=1; fi
+}
+check_artifact "builds/kebap-linux-*.zip"
+check_artifact "builds/kebap_*.deb"
+check_artifact "builds/kebap_setup_x64.exe"
+APK_COUNT=$(ls builds/*-signed.apk 2>/dev/null | wc -l)
+if [ "$APK_COUNT" -ge 3 ]; then echo "   ✅ Found $APK_COUNT signed APKs"; else echo "   ❌ Found only $APK_COUNT signed APKs"; MISSING=1; fi
+
+if [ "$MISSING" -eq 1 ]; then
+    echo "❌ Artifact verification failed. Aborting release."
+    exit 1
 fi
 
 # 9. Documentation
 echo "📝 Generating Documentation..."
-DOCKER_USER="j4ckgrey"
 # README
 cat > builds/README.md << EOL
 # Kebap Release $VERSION
@@ -91,23 +114,24 @@ if [ -d "builds/kebap-web" ]; then
     # Clean old files but keep .git
     find builds/kebap-web -mindepth 1 -maxdepth 1 ! -name '.git' -exec rm -rf {} +
     # Copy new build
-    cp -r build/web/* builds/kebap-web/
-    # Commit and Push
-    cd builds/kebap-web
-    git add .
-    git commit -m "Release $VERSION"
-    git push origin master
-    cd ../..
+    if [ -d "build/web" ]; then
+        cp -r build/web/* builds/kebap-web/
+        # Commit and Push
+        cd builds/kebap-web
+        git add .
+        git commit -m "Release $VERSION"
+        git push origin master
+        cd ../..
+    else
+        echo "⚠️ build/web not found. Cannot update kebap-web."
+    fi
 else
     echo "⚠️ 'builds/kebap-web' not found. Skipping web repo push."
-    echo "   To enable this, clone your web repo into 'builds/kebap-web' before running this script."
 fi
 
 # 12. GitHub Release
 if command -v gh &> /dev/null; then
     echo "🚀 Creating GitHub Release v$VERSION..."
-    # Check if release exists and delete it if so (to allow re-run)
-    gh release delete "v$VERSION" -y || true
     gh release create "v$VERSION" \
         --title "Kebap $VERSION" \
         --notes "$NOTES" \

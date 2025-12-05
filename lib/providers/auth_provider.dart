@@ -151,6 +151,8 @@ class AuthNotifier extends StateNotifier<LoginScreenModel> {
         avatar: imageUrl,
         credentials: credentials,
         lastUsed: DateTime.now(),
+        policy: response.body?.user?.policy,
+        userConfiguration: response.body?.user?.configuration,
       );
       ref.read(sharedUtilityProvider).addAccount(newUser);
       ref.read(userProvider.notifier).userState = newUser;

@@ -31,6 +31,17 @@ _AccountModel _$AccountModelFromJson(Map<String, dynamic> json) =>
                   LibraryFiltersModel.fromJson(e as Map<String, dynamic>))
               .toList() ??
           const [],
+      policy: json['policy'] == null
+          ? null
+          : UserPolicy.fromJson(json['policy'] as Map<String, dynamic>),
+      serverConfiguration: json['serverConfiguration'] == null
+          ? null
+          : ServerConfiguration.fromJson(
+              json['serverConfiguration'] as Map<String, dynamic>),
+      userConfiguration: json['userConfiguration'] == null
+          ? null
+          : UserConfiguration.fromJson(
+              json['userConfiguration'] as Map<String, dynamic>),
       userSettings: json['userSettings'] == null
           ? null
           : UserSettings.fromJson(json['userSettings'] as Map<String, dynamic>),
@@ -49,6 +60,9 @@ Map<String, dynamic> _$AccountModelToJson(_AccountModel instance) =>
       'searchQueryHistory': instance.searchQueryHistory,
       'quickConnectState': instance.quickConnectState,
       'libraryFilters': instance.libraryFilters,
+      'policy': instance.policy,
+      'serverConfiguration': instance.serverConfiguration,
+      'userConfiguration': instance.userConfiguration,
       'userSettings': instance.userSettings,
     };
 
