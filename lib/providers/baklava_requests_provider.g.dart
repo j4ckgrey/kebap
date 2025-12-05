@@ -23,7 +23,7 @@ final baklavaServiceProvider = AutoDisposeProvider<BaklavaService>.internal(
 @Deprecated('Will be removed in 3.0. Use Ref instead')
 // ignore: unused_element
 typedef BaklavaServiceRef = AutoDisposeProviderRef<BaklavaService>;
-String _$baklavaRequestsHash() => r'36d4ee29e30a38d76c3a25b41ba8738790521546';
+String _$baklavaRequestsHash() => r'a168b0d69f30254c097dfd8756c329f5d1f776ff';
 
 /// See also [BaklavaRequests].
 @ProviderFor(BaklavaRequests)

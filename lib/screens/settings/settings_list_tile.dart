@@ -53,72 +53,85 @@ class _SettingsListTileState extends State<SettingsListTile> with AutomaticKeepA
       shape: const RoundedRectangleBorder(
           borderRadius: BorderRadius.only(topLeft: Radius.circular(8), bottomLeft: Radius.circular(8))),
       margin: EdgeInsets.zero,
-      child: FlatButton(
-        onTap: widget.onTap,
-        autoFocus: widget.autoFocus,
-        onFocusChange: (value) {
-          // ensureVisible removed for performance
-        },
-        child: Padding(
-          padding: const EdgeInsets.symmetric(
-            horizontal: 16,
-            vertical: 12,
-          ).copyWith(
-            left: (widget.leading ?? iconWidget) != null ? 0 : null,
-          ),
-          child: ConstrainedBox(
-            constraints: const BoxConstraints(
-              minHeight: 50,
-            ),
-            child: Row(
-              mainAxisSize: MainAxisSize.max,
-              mainAxisAlignment: MainAxisAlignment.start,
-              children: [
-                DefaultTextStyle.merge(
-                  style: TextStyle(
-                    color: widget.contentColor ?? Theme.of(context).colorScheme.onSurface,
-                  ),
-                  child: IconTheme(
-                    data: IconThemeData(
-                      color: widget.contentColor ?? Theme.of(context).colorScheme.onSurface,
-                    ),
-                    child: leadingWidget,
-                  ),
+      child: Stack(
+        alignment: Alignment.centerRight,
+        children: [
+          FlatButton(
+            onTap: widget.onTap,
+            autoFocus: widget.autoFocus,
+            onFocusChange: (value) {
+              // ensureVisible removed for performance
+            },
+            child: Padding(
+              padding: const EdgeInsets.symmetric(
+                horizontal: 16,
+                vertical: 12,
+              ).copyWith(
+                left: (widget.leading ?? iconWidget) != null ? 0 : null,
+              ),
+              child: ConstrainedBox(
+                constraints: const BoxConstraints(
+                  minHeight: 50,
                 ),
-                Expanded(
-                  child: Column(
-                    mainAxisSize: MainAxisSize.max,
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      Material(
-                        color: Colors.transparent,
-                        textStyle: Theme.of(context).textTheme.titleLarge?.copyWith(color: widget.contentColor),
-                        child: widget.label,
+                child: Row(
+                  mainAxisSize: MainAxisSize.max,
+                  mainAxisAlignment: MainAxisAlignment.start,
+                  children: [
+                    DefaultTextStyle.merge(
+                      style: TextStyle(
+                        color: widget.contentColor ?? Theme.of(context).colorScheme.onSurface,
                       ),
-                      if (widget.subLabel != null)
-                        Material(
-                          color: Colors.transparent,
-                          textStyle: Theme.of(context).textTheme.labelLarge?.copyWith(
-                                color:
-                                    (widget.contentColor ?? Theme.of(context).colorScheme.onSurface).withValues(alpha: 0.65),
-                              ),
-                          child: widget.subLabel,
+                      child: IconTheme(
+                        data: IconThemeData(
+                          color: widget.contentColor ?? Theme.of(context).colorScheme.onSurface,
                         ),
-                    ],
-                  ),
-                ),
-                if (widget.trailing != null)
-                  ExcludeFocusTraversal(
-                    excluding: widget.onTap != null,
-                    child: Padding(
-                      padding: const EdgeInsets.only(left: 16),
-                      child: widget.trailing,
+                        child: leadingWidget,
+                      ),
                     ),
-                  )
-              ],
+                    Expanded(
+                      child: Column(
+                        mainAxisSize: MainAxisSize.max,
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Material(
+                            color: Colors.transparent,
+                            textStyle: Theme.of(context).textTheme.titleLarge?.copyWith(color: widget.contentColor),
+                            child: widget.label,
+                          ),
+                          if (widget.subLabel != null)
+                            Material(
+                              color: Colors.transparent,
+                              textStyle: Theme.of(context).textTheme.labelLarge?.copyWith(
+                                    color: (widget.contentColor ?? Theme.of(context).colorScheme.onSurface)
+                                        .withValues(alpha: 0.65),
+                                  ),
+                              child: widget.subLabel,
+                            ),
+                        ],
+                      ),
+                    ),
+                    if (widget.trailing != null)
+                      ExcludeFocusTraversal(
+                        excluding: widget.onTap != null,
+                        child: Padding(
+                          padding: const EdgeInsets.only(left: 16),
+                          child: Opacity(
+                            opacity: 0.0,
+                            child: IgnorePointer(child: widget.trailing),
+                          ),
+                        ),
+                      )
+                  ],
+                ),
+              ),
             ),
           ),
-        ),
+          if (widget.trailing != null)
+            Padding(
+              padding: const EdgeInsets.only(right: 16),
+              child: widget.trailing!,
+            ),
+        ],
       ),
     );
   }

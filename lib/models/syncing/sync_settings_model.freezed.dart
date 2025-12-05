@@ -16,6 +16,7 @@ T _$identity<T>(T value) => value;
 mixin _$SyncSettingsModel {
   List<SyncedItem> get items;
   bool get isLoading;
+  int get directorySize;
 
   /// Create a copy of SyncSettingsModel
   /// with the given fields replaced by the non-null parameter values.
@@ -32,16 +33,18 @@ mixin _$SyncSettingsModel {
             other is SyncSettingsModel &&
             const DeepCollectionEquality().equals(other.items, items) &&
             (identical(other.isLoading, isLoading) ||
-                other.isLoading == isLoading));
+                other.isLoading == isLoading) &&
+            (identical(other.directorySize, directorySize) ||
+                other.directorySize == directorySize));
   }
 
   @override
-  int get hashCode => Object.hash(
-      runtimeType, const DeepCollectionEquality().hash(items), isLoading);
+  int get hashCode => Object.hash(runtimeType,
+      const DeepCollectionEquality().hash(items), isLoading, directorySize);
 
   @override
   String toString() {
-    return 'SyncSettingsModel(items: $items, isLoading: $isLoading)';
+    return 'SyncSettingsModel(items: $items, isLoading: $isLoading, directorySize: $directorySize)';
   }
 }
 
@@ -51,7 +54,7 @@ abstract mixin class $SyncSettingsModelCopyWith<$Res> {
           SyncSettingsModel value, $Res Function(SyncSettingsModel) _then) =
       _$SyncSettingsModelCopyWithImpl;
   @useResult
-  $Res call({List<SyncedItem> items, bool isLoading});
+  $Res call({List<SyncedItem> items, bool isLoading, int directorySize});
 }
 
 /// @nodoc
@@ -69,6 +72,7 @@ class _$SyncSettingsModelCopyWithImpl<$Res>
   $Res call({
     Object? items = null,
     Object? isLoading = null,
+    Object? directorySize = null,
   }) {
     return _then(_self.copyWith(
       items: null == items
@@ -79,6 +83,10 @@ class _$SyncSettingsModelCopyWithImpl<$Res>
           ? _self.isLoading
           : isLoading // ignore: cast_nullable_to_non_nullable
               as bool,
+      directorySize: null == directorySize
+          ? _self.directorySize
+          : directorySize // ignore: cast_nullable_to_non_nullable
+              as int,
     ));
   }
 }
@@ -176,13 +184,14 @@ extension SyncSettingsModelPatterns on SyncSettingsModel {
 
   @optionalTypeArgs
   TResult maybeWhen<TResult extends Object?>(
-    TResult Function(List<SyncedItem> items, bool isLoading)? $default, {
+    TResult Function(List<SyncedItem> items, bool isLoading, int directorySize)?
+        $default, {
     required TResult orElse(),
   }) {
     final _that = this;
     switch (_that) {
       case _SyncSettignsModel() when $default != null:
-        return $default(_that.items, _that.isLoading);
+        return $default(_that.items, _that.isLoading, _that.directorySize);
       case _:
         return orElse();
     }
@@ -203,12 +212,13 @@ extension SyncSettingsModelPatterns on SyncSettingsModel {
 
   @optionalTypeArgs
   TResult when<TResult extends Object?>(
-    TResult Function(List<SyncedItem> items, bool isLoading) $default,
+    TResult Function(List<SyncedItem> items, bool isLoading, int directorySize)
+        $default,
   ) {
     final _that = this;
     switch (_that) {
       case _SyncSettignsModel():
-        return $default(_that.items, _that.isLoading);
+        return $default(_that.items, _that.isLoading, _that.directorySize);
       case _:
         throw StateError('Unexpected subclass');
     }
@@ -228,12 +238,14 @@ extension SyncSettingsModelPatterns on SyncSettingsModel {
 
   @optionalTypeArgs
   TResult? whenOrNull<TResult extends Object?>(
-    TResult? Function(List<SyncedItem> items, bool isLoading)? $default,
+    TResult? Function(
+            List<SyncedItem> items, bool isLoading, int directorySize)?
+        $default,
   ) {
     final _that = this;
     switch (_that) {
       case _SyncSettignsModel() when $default != null:
-        return $default(_that.items, _that.isLoading);
+        return $default(_that.items, _that.isLoading, _that.directorySize);
       case _:
         return null;
     }
@@ -244,7 +256,9 @@ extension SyncSettingsModelPatterns on SyncSettingsModel {
 
 class _SyncSettignsModel extends SyncSettingsModel {
   _SyncSettignsModel(
-      {final List<SyncedItem> items = const [], this.isLoading = false})
+      {final List<SyncedItem> items = const [],
+      this.isLoading = false,
+      this.directorySize = 0})
       : _items = items,
         super._();
 
@@ -260,6 +274,9 @@ class _SyncSettignsModel extends SyncSettingsModel {
   @override
   @JsonKey()
   final bool isLoading;
+  @override
+  @JsonKey()
+  final int directorySize;
 
   /// Create a copy of SyncSettingsModel
   /// with the given fields replaced by the non-null parameter values.
@@ -276,16 +293,18 @@ class _SyncSettignsModel extends SyncSettingsModel {
             other is _SyncSettignsModel &&
             const DeepCollectionEquality().equals(other._items, _items) &&
             (identical(other.isLoading, isLoading) ||
-                other.isLoading == isLoading));
+                other.isLoading == isLoading) &&
+            (identical(other.directorySize, directorySize) ||
+                other.directorySize == directorySize));
   }
 
   @override
-  int get hashCode => Object.hash(
-      runtimeType, const DeepCollectionEquality().hash(_items), isLoading);
+  int get hashCode => Object.hash(runtimeType,
+      const DeepCollectionEquality().hash(_items), isLoading, directorySize);
 
   @override
   String toString() {
-    return 'SyncSettingsModel(items: $items, isLoading: $isLoading)';
+    return 'SyncSettingsModel(items: $items, isLoading: $isLoading, directorySize: $directorySize)';
   }
 }
 
@@ -297,7 +316,7 @@ abstract mixin class _$SyncSettignsModelCopyWith<$Res>
       __$SyncSettignsModelCopyWithImpl;
   @override
   @useResult
-  $Res call({List<SyncedItem> items, bool isLoading});
+  $Res call({List<SyncedItem> items, bool isLoading, int directorySize});
 }
 
 /// @nodoc
@@ -315,6 +334,7 @@ class __$SyncSettignsModelCopyWithImpl<$Res>
   $Res call({
     Object? items = null,
     Object? isLoading = null,
+    Object? directorySize = null,
   }) {
     return _then(_SyncSettignsModel(
       items: null == items
@@ -325,6 +345,10 @@ class __$SyncSettignsModelCopyWithImpl<$Res>
           ? _self.isLoading
           : isLoading // ignore: cast_nullable_to_non_nullable
               as bool,
+      directorySize: null == directorySize
+          ? _self.directorySize
+          : directorySize // ignore: cast_nullable_to_non_nullable
+              as int,
     ));
   }
 }

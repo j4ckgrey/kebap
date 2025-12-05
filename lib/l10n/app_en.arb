@@ -183,6 +183,12 @@
   "@downloadsPath": {},
   "downloadsSyncedData": "Downloaded data",
   "@downloadsSyncedData": {},
+  "downloads": "Downloads",
+  "@downloads": {},
+  "offlineMovies": "Offline Movies",
+  "@offlineMovies": {},
+  "offlineShows": "Offline Shows",
+  "@offlineShows": {},
   "downloadsTitle": "Downloads",
   "@downloadsTitle": {},
   "dynamicText": "Dynamic",
@@ -1071,8 +1077,6 @@
       }
     }
   },
-  "aboutCreatedBy": "Created by DonutWare - rebranded by j4ckgrey",
-  "@aboutCreatedBy": {},
   "aboutSocials": "Socials",
   "@aboutSocials": {},
   "aboutLicenses": "Licenses",

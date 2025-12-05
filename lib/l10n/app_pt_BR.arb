@@ -1051,8 +1051,6 @@
       }
     }
   },
-  "aboutCreatedBy": "Created by DonutWare - rebranded by j4ckgrey",
-  "@aboutCreatedBy": {},
   "aboutSocials": "Social",
   "@aboutSocials": {},
   "aboutVersion": "Versão: {version}",

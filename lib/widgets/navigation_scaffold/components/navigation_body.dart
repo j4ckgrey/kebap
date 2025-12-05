@@ -39,9 +39,6 @@ class _NavigationBodyState extends ConsumerState<NavigationBody> {
   @override
   void initState() {
     super.initState();
-    WidgetsBinding.instance.addPostFrameCallback((value) {
-      ref.read(viewsProvider.notifier).fetchViews();
-    });
   }
 
   @override

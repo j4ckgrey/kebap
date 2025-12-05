@@ -48,8 +48,8 @@ class AboutSettingsPage extends ConsumerWidget {
             Text(context.localized.aboutVersion(applicationInfo.versionAndPlatform)),
             Text(context.localized.aboutBuild(applicationInfo.buildNumber)),
             const SizedBox(height: 16),
-            Text(context.localized.aboutCreatedBy),
           ],
+
         ),
         const FractionallySizedBox(
           widthFactor: 0.25,

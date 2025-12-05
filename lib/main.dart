@@ -1,3 +1,4 @@
+import 'dart:async';
 import 'dart:convert';
 import 'dart:io';
 import 'dart:ui';
@@ -68,17 +69,18 @@ Future<Map<String, dynamic>> loadConfig() async {
 }
 
 void main(List<String> args) async {
-  WidgetsFlutterBinding.ensureInitialized();
-  final crashProvider = CrashLogNotifier();
+  runZonedGuarded(() async {
+    WidgetsFlutterBinding.ensureInitialized();
+    final crashProvider = CrashLogNotifier();
 
-  await SvgUtils.preCacheSVGs();
+    await SvgUtils.preCacheSVGs();
 
-  // Check if running on android TV
-  final leanBackEnabled = !kIsWeb && Platform.isAndroid ? await NativeVideoActivity().isLeanBackEnabled() : false;
+    // Check if running on android TV
+    final leanBackEnabled = !kIsWeb && Platform.isAndroid ? await NativeVideoActivity().isLeanBackEnabled() : false;
 
-  if (defaultTargetPlatform == TargetPlatform.windows) {
-    await SMTCWindows.initialize();
-  }
+    if (defaultTargetPlatform == TargetPlatform.windows) {
+      await SMTCWindows.initialize();
+    }
 
     if (kIsWeb) {
     html.document.onContextMenu.listen((event) => event.preventDefault());
@@ -135,6 +137,10 @@ void main(List<String> args) async {
       ),
     ),
   );
+  }, (error, stack) {
+    print('[LAG_DEBUG] Uncaught error: $error');
+    print('[LAG_DEBUG] Stack trace: $stack');
+  });
 }
 
 class Main extends ConsumerStatefulWidget with WindowListener {
@@ -202,7 +208,9 @@ class _MainState extends ConsumerState<Main> with WindowListener, WidgetsBinding
   void initState() {
     super.initState();
     WidgetsBinding.instance.addObserver(this);
-    windowManager.addListener(this);
+    if (_isDesktop) {
+      windowManager.addListener(this);
+    }
     _init();
   }
 
@@ -210,7 +218,9 @@ class _MainState extends ConsumerState<Main> with WindowListener, WidgetsBinding
   void dispose() {
     super.dispose();
     WidgetsBinding.instance.removeObserver(this);
-    windowManager.removeListener(this);
+    if (_isDesktop) {
+      windowManager.removeListener(this);
+    }
   }
 
   @override
@@ -222,29 +232,37 @@ class _MainState extends ConsumerState<Main> with WindowListener, WidgetsBinding
 
   @override
   void onWindowResize() async {
-    final size = await windowManager.getSize();
-    ref.read(clientSettingsProvider.notifier).setWindowSize(size);
+    if (_isDesktop) {
+      final size = await windowManager.getSize();
+      ref.read(clientSettingsProvider.notifier).setWindowSize(size);
+    }
     super.onWindowResize();
   }
 
   @override
   void onWindowResized() async {
-    final size = await windowManager.getSize();
-    ref.read(clientSettingsProvider.notifier).setWindowSize(size);
+    if (_isDesktop) {
+      final size = await windowManager.getSize();
+      ref.read(clientSettingsProvider.notifier).setWindowSize(size);
+    }
     super.onWindowResized();
   }
 
   @override
   void onWindowMove() async {
-    final position = await windowManager.getPosition();
-    ref.read(clientSettingsProvider.notifier).setWindowPosition(position);
+    if (_isDesktop) {
+      final position = await windowManager.getPosition();
+      ref.read(clientSettingsProvider.notifier).setWindowPosition(position);
+    }
     super.onWindowMove();
   }
 
   @override
   void onWindowMoved() async {
-    final position = await windowManager.getPosition();
-    ref.read(clientSettingsProvider.notifier).setWindowPosition(position);
+    if (_isDesktop) {
+      final position = await windowManager.getPosition();
+      ref.read(clientSettingsProvider.notifier).setWindowPosition(position);
+    }
     super.onWindowMoved();
   }
 
@@ -331,7 +349,7 @@ class _MainState extends ConsumerState<Main> with WindowListener, WidgetsBinding
       ));
       
       // Request notification permissions on Android
-      if (Platform.isAndroid) {
+      if (!kIsWeb && Platform.isAndroid) {
         Permission.notification.request();
       }
     }

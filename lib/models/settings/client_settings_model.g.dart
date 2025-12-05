@@ -44,7 +44,7 @@ _ClientSettingsModel _$ClientSettingsModelFromJson(Map<String, dynamic> json) =>
       backgroundImage: $enumDecodeNullable(
               _$BackgroundTypeEnumMap, json['backgroundImage']) ??
           BackgroundType.blurred,
-      checkForUpdates: json['checkForUpdates'] as bool? ?? true,
+      checkForUpdates: json['checkForUpdates'] as bool? ?? false,
       usePosterForLibrary: json['usePosterForLibrary'] as bool? ?? false,
       useSystemIME: json['useSystemIME'] as bool? ?? false,
       lastViewedUpdate: json['lastViewedUpdate'] as String?,

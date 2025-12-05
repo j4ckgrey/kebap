@@ -13,5 +13,6 @@ abstract class SyncSettingsModel with _$SyncSettingsModel {
   factory SyncSettingsModel({
     @Default([]) List<SyncedItem> items,
     @Default(false) bool isLoading,
+    @Default(0) int directorySize,
   }) = _SyncSettignsModel;
 }

@@ -1030,8 +1030,6 @@
             }
         }
     },
-    "aboutCreatedBy": "Created by DonutWare - rebranded by j4ckgrey",
-    "@aboutCreatedBy": {},
     "aboutLicenses": "Licenties",
     "@aboutLicenses": {},
     "addItemsToCollection": "Voeg {itemLength} item(s) toe aan collectie",

@@ -9,6 +9,7 @@ import 'package:path/path.dart';
 
 import 'package:kebap/fake/fake_jellyfin_open_api.dart';
 import 'package:kebap/jellyfin/enum_models.dart';
+import 'package:kebap/jellyfin/jellyfin_open_api.enums.swagger.dart' as enums;
 import 'package:kebap/jellyfin/jellyfin_open_api.swagger.dart';
 import 'package:kebap/models/account_model.dart';
 import 'package:kebap/models/credentials_model.dart';
@@ -427,6 +428,18 @@ class JellyService {
       type,
       itemId,
       data,
+    );
+  }
+
+  Future<Response<dynamic>> usersUserIdImagesImageTypePost({
+    required String userId,
+    required enums.ItemsItemIdImagesImageTypePostImageType imageType,
+    required Object body,
+  }) async {
+    return api.itemsItemIdImagesImageTypePost(
+      itemId: userId,
+      imageType: imageType,
+      body: body,
     );
   }
 

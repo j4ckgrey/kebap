@@ -81,48 +81,42 @@ List<Widget> buildClientSettingsDownload(BuildContext context, WidgetRef ref, Fu
                 )
               : null,
         ),
-        FutureBuilder(
-          future: ref.watch(syncProvider.notifier).directorySize,
-          builder: (context, snapshot) {
-            final data = snapshot.data ?? 0;
-            return SettingsListTile(
-              label: Text(context.localized.downloadsSyncedData),
-              subLabel: Text(data.byteFormat ?? ""),
-              onTap: () {
-                showDefaultAlertDialog(
-                  context,
-                  context.localized.downloadsClearTitle,
-                  context.localized.downloadsClearDesc,
-                  (context) async {
-                    await ref.read(syncProvider.notifier).removeAllSyncedData();
-                    setState(() {});
-                    Navigator.of(context).pop();
-                  },
-                  context.localized.clear,
-                  (context) => Navigator.of(context).pop(),
-                  context.localized.cancel,
-                );
+        SettingsListTile(
+          label: Text(context.localized.downloadsSyncedData),
+          subLabel: Text(ref.watch(syncProvider.select((value) => value.directorySize)).byteFormat ?? ""),
+          onTap: () {
+            showDefaultAlertDialog(
+              context,
+              context.localized.downloadsClearTitle,
+              context.localized.downloadsClearDesc,
+              (context) async {
+                await ref.read(syncProvider.notifier).removeAllSyncedData();
+                setState(() {});
+                Navigator.of(context).pop();
               },
-              trailing: FilledButton(
-                onPressed: () {
-                  showDefaultAlertDialog(
-                    context,
-                    context.localized.downloadsClearTitle,
-                    context.localized.downloadsClearDesc,
-                    (context) async {
-                      await ref.read(syncProvider.notifier).removeAllSyncedData();
-                      setState(() {});
-                      Navigator.of(context).pop();
-                    },
-                    context.localized.clear,
-                    (context) => Navigator.of(context).pop(),
-                    context.localized.cancel,
-                  );
-                },
-                child: Text(context.localized.clear),
-              ),
+              context.localized.clear,
+              (context) => Navigator.of(context).pop(),
+              context.localized.cancel,
             );
           },
+          trailing: FilledButton(
+            onPressed: () {
+              showDefaultAlertDialog(
+                context,
+                context.localized.downloadsClearTitle,
+                context.localized.downloadsClearDesc,
+                (context) async {
+                  await ref.read(syncProvider.notifier).removeAllSyncedData();
+                  setState(() {});
+                  Navigator.of(context).pop();
+                },
+                context.localized.clear,
+                (context) => Navigator.of(context).pop(),
+                context.localized.cancel,
+              );
+            },
+            child: Text(context.localized.clear),
+          ),
         ),
         SettingsListTile(
           label: Text(context.localized.clientSettingsRequireWifiTitle),

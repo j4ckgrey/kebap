@@ -1057,8 +1057,6 @@
             }
         }
     },
-    "aboutCreatedBy": "Created by DonutWare - rebranded by j4ckgrey",
-    "@aboutCreatedBy": {},
     "addedToPlaylist": "Додано до плейлиста {playlistName}",
     "@addedToPlaylist": {
         "placeholders": {

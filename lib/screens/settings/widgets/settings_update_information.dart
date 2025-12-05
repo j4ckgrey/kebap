@@ -37,9 +37,8 @@ class _SettingsUpdateInformationState extends ConsumerState<SettingsUpdateInform
 
   @override
   Widget build(BuildContext context) {
-    final updates = ref.watch(updateProvider);
-    final latestRelease = updates.latestRelease;
-    final otherReleases = updates.lastRelease;
+    final latestRelease = ref.watch(updateProvider.select((value) => value.latestRelease));
+    final otherReleases = ref.watch(updateProvider.select((value) => value.lastRelease));
     final checkForUpdate = ref.watch(clientSettingsProvider.select((value) => value.checkForUpdates));
 
     return Padding(

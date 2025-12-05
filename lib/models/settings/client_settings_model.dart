@@ -81,7 +81,7 @@ abstract class ClientSettingsModel with _$ClientSettingsModel {
     @Default(2) int maxConcurrentDownloads,
     @Default(DynamicSchemeVariant.rainbow) DynamicSchemeVariant schemeVariant,
     @Default(BackgroundType.blurred) BackgroundType backgroundImage,
-    @Default(true) bool checkForUpdates,
+    @Default(false) bool checkForUpdates,
     @Default(false) bool usePosterForLibrary,
     @Default(false) bool useSystemIME,
     String? lastViewedUpdate,
@@ -102,7 +102,7 @@ abstract class ClientSettingsModel with _$ClientSettingsModel {
 
   Future<String?> getSavePath() async {
     if (kIsWeb && syncPath == null) return null;
-    if (Platform.isMacOS) {
+    if (!kIsWeb && Platform.isMacOS) {
       return await DirectoryBookmark().resolveDirectory(syncPathKey);
     }
     return syncPath;
