@@ -77,7 +77,9 @@ class JellyRequest implements Interceptor {
       connectivityNotifier.checkConnectivity();
       return response;
     } catch (e) {
-      connectivityNotifier.onStateChange([ConnectivityResult.none]);
+      if (e is SocketException || e is HandshakeException) {
+         connectivityNotifier.onStateChange([ConnectivityResult.none]);
+      }
       throw Exception('Failed to make request\n$e');
     }
   }

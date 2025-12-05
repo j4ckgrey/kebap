@@ -2,6 +2,7 @@ import 'package:auto_route/auto_route.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import 'package:kebap/providers/user_provider.dart';
+import 'package:kebap/providers/connectivity_provider.dart';
 import 'package:kebap/routes/auto_router.gr.dart';
 import 'package:kebap/screens/login/lock_screen.dart';
 import 'package:kebap/widgets/navigation_scaffold/components/navigation_body.dart';
@@ -116,6 +117,9 @@ class AuthGuard extends AutoRouteGuard {
 
   @override
   Future<void> onNavigation(NavigationResolver resolver, StackRouter router) async {
+    // Check connectivity on navigation
+    ref.read(connectivityStatusProvider.notifier).checkConnectivity();
+
     if (resolver.route == router.current.route) {
       return;
     }

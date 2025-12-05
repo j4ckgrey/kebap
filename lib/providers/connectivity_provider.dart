@@ -41,12 +41,12 @@ class ConnectivityStatus extends _$ConnectivityStatus {
     runZonedGuarded(() {
       try {
         final connectivity = Connectivity();
-        connectivity.onConnectivityChanged.listen(
-          (result) => onStateChange(result),
-          onError: (e) {
-            log('[Connectivity] Stream error: $e');
-          },
-        );
+        // connectivity.onConnectivityChanged.listen(
+        //   (result) => onStateChange(result),
+        //   onError: (e) {
+        //     log('[Connectivity] Stream error: $e');
+        //   },
+        // );
         checkConnectivity();
       } catch (e, s) {
         log('[Connectivity] initialization failed: $e\n$s');
@@ -57,7 +57,8 @@ class ConnectivityStatus extends _$ConnectivityStatus {
     return ConnectionState.mobile;
   }
   // Accept either a single ConnectivityResult or an Iterable/list of them.
-  void onStateChange(dynamic connectivityResult) async {
+  // isInitialCheck: if true, don't debounce offline detection (for startup)
+  void onStateChange(dynamic connectivityResult, {bool isInitialCheck = false}) async {
     List<ConnectivityResult> results;
     if (connectivityResult is Iterable<ConnectivityResult>) {
       results = connectivityResult.cast<ConnectivityResult>().toList();
@@ -69,6 +70,8 @@ class ConnectivityStatus extends _$ConnectivityStatus {
       return;
     }
 
+    log('[Connectivity] onStateChange: results=$results, isInitialCheck=$isInitialCheck');
+
     if (results.contains(ConnectivityResult.ethernet)) {
       state = ConnectionState.ethernet;
     } else if (results.contains(ConnectivityResult.wifi)) {
@@ -76,14 +79,20 @@ class ConnectivityStatus extends _$ConnectivityStatus {
     } else if (results.contains(ConnectivityResult.mobile)) {
       state = ConnectionState.mobile;
     } else if (results.contains(ConnectivityResult.none)) {
-      // Debounce offline state to avoid flickering during network switches
-      await Future.delayed(const Duration(seconds: 2));
-      final current = await Connectivity().checkConnectivity();
-      if (current.contains(ConnectivityResult.none) && 
-          !current.contains(ConnectivityResult.wifi) && 
-          !current.contains(ConnectivityResult.ethernet) && 
-          !current.contains(ConnectivityResult.mobile)) {
+      if (isInitialCheck) {
+        // On initial check, set offline immediately without debounce
         state = ConnectionState.offline;
+        log('[Connectivity] Initial check detected offline, setting state immediately');
+      } else {
+        // Debounce offline state to avoid flickering during network switches
+        await Future.delayed(const Duration(seconds: 2));
+        final current = await Connectivity().checkConnectivity();
+        if (current.contains(ConnectivityResult.none) && 
+            !current.contains(ConnectivityResult.wifi) && 
+            !current.contains(ConnectivityResult.ethernet) && 
+            !current.contains(ConnectivityResult.mobile)) {
+          state = ConnectionState.offline;
+        }
       }
     }
 
@@ -99,7 +108,8 @@ class ConnectivityStatus extends _$ConnectivityStatus {
   void checkConnectivity() async {
     try {
       final connectivityResult = await Connectivity().checkConnectivity();
-      onStateChange(connectivityResult);
+      log('[Connectivity] checkConnectivity: result=$connectivityResult');
+      onStateChange(connectivityResult, isInitialCheck: true);
     } catch (e, s) {
       // Plugin failed (e.g. DBus / NetworkManager not available). Log and keep running.
       log('[Connectivity] checkConnectivity failed: $e\n$s');

@@ -9,6 +9,7 @@ import 'package:kebap/providers/settings/client_settings_provider.dart';
 import 'package:kebap/providers/views_provider.dart';
 import 'package:kebap/providers/connectivity_provider.dart';
 import 'package:kebap/providers/sync_provider.dart';
+import 'package:kebap/models/syncing/sync_settings_model.dart';
 import 'package:kebap/util/list_extensions.dart';
 
 final dashboardProvider = StateNotifierProvider<DashboardNotifier, HomeModel>((ref) {
@@ -16,7 +17,24 @@ final dashboardProvider = StateNotifierProvider<DashboardNotifier, HomeModel>((r
 });
 
 class DashboardNotifier extends StateNotifier<HomeModel> {
-  DashboardNotifier(this.ref) : super(HomeModel());
+  DashboardNotifier(this.ref) : super(HomeModel()) {
+    // Listen to Sync changes: when offline, if local DB loads, update UI
+    ref.listen<SyncSettingsModel>(syncProvider, (previous, next) {
+      if (ref.read(connectivityStatusProvider) == ConnectionState.offline) {
+        // If items changed (e.g. initial load finished), refresh dashboard
+        if (previous?.items != next.items) {
+           fetchNextUpAndResume();
+        }
+      }
+    });
+
+    // Listen to Connection changes: if we go offline, switch to offline view
+    ref.listen<ConnectionState>(connectivityStatusProvider, (previous, next) {
+      if (next == ConnectionState.offline && previous != ConnectionState.offline) {
+         fetchNextUpAndResume();
+      }
+    });
+  }
 
   final Ref ref;
 
@@ -27,9 +45,28 @@ class DashboardNotifier extends StateNotifier<HomeModel> {
     state = state.copyWith(loading: true);
 
     final connectionState = ref.read(connectivityStatusProvider);
+    print('[OFFLINE_DEBUG] fetchNextUpAndResume - connectionState: $connectionState');
+    
     if (connectionState == ConnectionState.offline) {
-      final syncedItems = ref.read(syncProvider).items;
+      print('[OFFLINE_DEBUG] We are OFFLINE - loading sync items');
+      // Wait for sync provider to finish loading items from database
+      var syncState = ref.read(syncProvider);
+      print('[OFFLINE_DEBUG] Initial syncState - items: ${syncState.items.length}, isLoading: ${syncState.isLoading}');
+      
+      if (syncState.items.isEmpty && syncState.isLoading) {
+        print('[OFFLINE_DEBUG] Waiting for sync items to load...');
+        // Wait up to 2 seconds for items to load
+        for (int i = 0; i < 8; i++) {
+          await Future.delayed(const Duration(milliseconds: 250));
+          syncState = ref.read(syncProvider);
+          print('[OFFLINE_DEBUG] Retry $i - items: ${syncState.items.length}, isLoading: ${syncState.isLoading}');
+          if (!syncState.isLoading || syncState.items.isNotEmpty) break;
+        }
+      }
+      
+      final syncedItems = syncState.items;
       final allItems = syncedItems.map((e) => e.itemModel).nonNulls.toList();
+      print('[OFFLINE_DEBUG] Final allItems count: ${allItems.length}');
 
       final videos = allItems.where((e) {
         final type = e.type;

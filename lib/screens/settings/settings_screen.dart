@@ -37,7 +37,10 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen> {
 
   @override
   Widget build(BuildContext context) {
+    final isSingle = AdaptiveLayout.layoutModeOf(context) == LayoutMode.single;
     return AutoTabsRouter(
+      // Disable transition animation on mobile to prevent showing both screens at once
+      duration: isSingle ? Duration.zero : const Duration(milliseconds: 300),
       builder: (context, content) {
         checkForNullIndex(context);
         return PopScope(
@@ -47,13 +50,12 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen> {
               context.tabsRouter.setActiveIndex(0);
             }
           },
-          child: AdaptiveLayout.layoutModeOf(context) == LayoutMode.single
-              ? Card(
-                  elevation: 0,
-                  child: Stack(
-                    children: [const SettingsLeftPane(), content],
-                  ),
-                )
+          child: isSingle
+              // On mobile, show either the settings list (index 0) or the sub-page content,
+              // NOT both in a Stack, to avoid visual doubling/stutter during navigation.
+              ? context.tabsRouter.activeIndex == 0
+                  ? const Card(elevation: 0, child: SettingsLeftPane())
+                  : content
               : Row(
                   mainAxisSize: MainAxisSize.max,
                   crossAxisAlignment: CrossAxisAlignment.stretch,

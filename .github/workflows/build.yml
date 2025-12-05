@@ -225,84 +225,9 @@ env:
           name: kebap-windows-installer
           path: windows\Output\kebap_setup.exe
 
-  build-ios:
-    runs-on: macos-latest
-    needs: [fetch-info]
 
-    steps:
-      # - uses: maxim-lobanov/setup-xcode@v1.6.0
-      #   with:
-      #     xcode-version: latest-stable
 
-      - name: Checkout repository
-        uses: actions/checkout@v4.1.1
 
-      - name: Set up Flutter
-        uses: subosito/flutter-action@v2.19.0
-        with:
-          channel: "stable"
-          flutter-version: ${{needs.fetch-info.outputs.flutter_version}}
-          cache: true
-          cache-key: "flutter-:os:-:channel:-:version:-:arch:-:hash:"
-          cache-path: "${{ runner.tool_cache }}/flutter/:channel:-:version:-:arch:"
-
-      - name: Get dependencies
-        run: flutter pub get
-
-      - name: Build iOS app
-        run: flutter build ipa --no-codesign --flavor production --build-number=${{ github.run_number }}
-
-      - name: Create unsigned IPA
-        run: |
-          cd build/ios/archive/Runner.xcarchive/Products/Applications/
-          mkdir Payload
-          mv Runner.app Payload/
-          zip -r iOS.ipa Payload
-      - name: Archive iOS IPA artifact
-        uses: actions/upload-artifact@v4.0.0
-        with:
-          name: kebap-iOS
-          path: build/ios/archive/Runner.xcarchive/Products/Applications/iOS.ipa
-
-  build-macos:
-    runs-on: macos-latest
-    needs: [fetch-info]
-
-    steps:
-      - name: Checkout repository
-        uses: actions/checkout@v4.1.1
-
-      - name: Set up Flutter
-        uses: subosito/flutter-action@v2.19.0
-        with:
-          channel: "stable"
-          flutter-version: ${{needs.fetch-info.outputs.flutter_version}}
-          cache: true
-          cache-key: "flutter-:os:-:channel:-:version:-:arch:-:hash:"
-          cache-path: "${{ runner.tool_cache }}/flutter/:channel:-:version:-:arch:"
-
-      - name: Get dependencies
-        run: flutter pub get
-
-      - name: Build macOS app
-        run: flutter build macos --flavor production --build-number=${{ github.run_number }}
-
-      - name: Ensure correct app name casing
-        run: |
-          APP_DIR="build/macos/Build/Products/Release-production"
-          mv "$APP_DIR/kebap.app" "$APP_DIR/Kebap.app"
-
-      - name: Install create-dmg
-        run: brew install create-dmg
-
-      - name: Create DMG with custom background
-        run: ./scripts/create_dmg.sh
-
-      - name: Archive macOS artifact
-        uses: actions/upload-artifact@v4.0.0
-        with:
-          name: kebap-macOS
-          path: build/macos/Build/Products/Release-production/macOS.dmg
 
   build-linux:
     runs-on: ubuntu-latest
@@ -444,8 +369,7 @@ env:
       - fetch-info
       - build-android
       - build-windows
-      - build-ios
-      - build-macos
+
       - build-linux
       - build-linux-flatpak
       - build-web
@@ -568,23 +492,7 @@ env:
       - name: Rename Windows installer
         run: mv kebap-windows-installer/kebap_setup.exe Kebap-Windows-${{ steps.version.outputs.version }}-Setup.exe
 
-      - name: Download Artifacts iOS
-        uses: actions/download-artifact@v4
-        with:
-          name: kebap-iOS
-          path: kebap-iOS
 
-      - name: Move iOS
-        run: mv kebap-iOS/iOS.ipa Kebap-iOS-${{ steps.version.outputs.version }}.ipa
-
-      - name: Download Artifacts macOS
-        uses: actions/download-artifact@v4
-        with:
-          name: kebap-macOS
-          path: kebap-macOS
-
-      - name: Move macOS
-        run: mv kebap-macOS/macOS.dmg Kebap-macOS-${{ steps.version.outputs.version }}.dmg
 
       - name: Download Artifacts Linux
         uses: actions/download-artifact@v4
@@ -645,8 +553,7 @@ env:
             Kebap-Android-${{ steps.version.outputs.version }}.aab
             Kebap-Windows-${{ steps.version.outputs.version }}-Setup.exe
             Kebap-Windows-${{ steps.version.outputs.version }}.zip
-            Kebap-iOS-${{ steps.version.outputs.version }}.ipa
-            Kebap-macOS-${{ steps.version.outputs.version }}.dmg
+
             Kebap-Web-${{ steps.version.outputs.version }}.zip
             Kebap-Linux-${{ steps.version.outputs.version }}.zip
             Kebap-Linux-${{ steps.version.outputs.version }}.AppImage
