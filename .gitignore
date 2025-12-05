@@ -101,3 +101,4 @@ lib/l10n/generated
 
 # Release Artifacts
 builds/
+release_alpha.sh

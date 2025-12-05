@@ -243,7 +243,7 @@ if [ -n "$DOCKER_USER" ]; then
 
     echo "   - Pushing to GHCR..."
     # Login to GHCR using provided PAT
-    echo "$GH_TOKEN" | docker login ghcr.io -u j4ckgrey --password-stdin
+    echo "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" | docker login ghcr.io -u j4ckgrey --password-stdin
 
     GHCR_IMAGE="ghcr.io/$DOCKER_USER/kebap"
     for ARCH in amd64 arm64 armv7; do
