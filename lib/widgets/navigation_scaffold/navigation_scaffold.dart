@@ -151,7 +151,7 @@ class _NavigationScaffoldState extends ConsumerState<NavigationScaffold> with Wi
                 return Scaffold(
                   key: _effectiveKey,
                   drawerEnableOpenDragGesture: false,
-                  appBar: fullScreenChildRoute ? null : const KebapAppBar(),
+                  appBar: (fullScreenChildRoute || currentLocation.contains("Settings")) ? null : const KebapAppBar(),
                   extendBodyBehindAppBar: false,
                   resizeToAvoidBottomInset: false,
                   extendBody: true,

@@ -48,6 +48,11 @@ class User extends _$User {
       final customConfig = await api.getCustomConfig();
 
       if (response.isSuccessful && response.body != null) {
+        final newTag = response.body?.primaryImageTag;
+        final oldTag = state?.avatar; // avatar url contains the old tag usually, but let's check the construct
+        print('[LAG_DEBUG] Fetched User Me: ${response.body?.name}, ID: ${response.body?.id}');
+        print('[LAG_DEBUG] New PrimaryImageTag: $newTag');
+        
         userState = state?.copyWith(
           name: response.body?.name ?? state?.name ?? "",
           policy: response.body?.policy,
@@ -58,9 +63,10 @@ class User extends _$User {
           userSettings: customConfig.body,
           avatar: ref.read(imageUtilityProvider).getUserImageUrl(
                 state?.id ?? "",
-                tag: response.body?.primaryImageTag,
+                tag: newTag,
               ),
         );
+        print('[LAG_DEBUG] UserState updated. New Avatar URL: ${state?.avatar}');
         return response.copyWith(body: state);
       }
     } catch (e) {

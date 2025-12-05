@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 
+import 'dart:convert';
+import 'package:image/image.dart' as img; // for base64Encode
 import 'dart:typed_data'; // for Uint8List
 import 'package:auto_route/auto_route.dart';
 import 'package:file_picker/file_picker.dart';
@@ -41,19 +43,50 @@ class _UserSettingsPageState extends ConsumerState<ProfileSettingsPage> {
 
         if (bytes != null) {
           final api = ref.read(jellyApiProvider);
-          // Assuming 'primary' is the correct image type for user profile
+          // Simple mime type detection based on extension
+          String mimeType = 'image/jpeg';
+
+          // Decode image using 'image' package to resize/compress
+          final cmd = img.Command()
+            ..decodeImage(bytes)
+            ..copyResize(width: 512, height: 512, maintainAspect: true)
+            ..encodeJpg(quality: 85);
+            
+
+
+
+
+          final processedBytes = await cmd.getBytesThread();
+          
+          if (processedBytes == null) {
+            print("[LAG_DEBUG] Failed to process image");
+            return;
+          }
+
+          final base64Image = base64Encode(processedBytes);
+          print("[LAG_DEBUG] Uploading processed image (Base64): Length=${base64Image.length}, Mime=image/jpeg");
+          
+          // Upload Resized Base64 String
           final response = await api.usersUserIdImagesImageTypePost(
             userId: userId,
             imageType: jelly_enums.ItemsItemIdImagesImageTypePostImageType.primary, 
-            body: bytes,
+            body: base64Image,
+            mimeType: 'image/jpeg',
           );
 
           if (response.isSuccessful) {
+            print('[LAG_DEBUG] Image upload successful. Triggering updateInformation...');
             await ref.read(userProvider.notifier).updateInformation();
+            print('[LAG_DEBUG] updateInformation completed.');
+          } else {
+             print('[LAG_DEBUG] Image upload failed: ${response.statusCode} - ${response.error}');
           }
         }
+      } else {
+        print('[LAG_DEBUG] File picker cancelled or empty.');
       }
     } catch (e) {
+      print('[LAG_DEBUG] Exception in _pickAndUploadImage: $e');
       debugPrint('Error uploading image: $e');
       if (mounted) {
         ScaffoldMessenger.of(context).showSnackBar(

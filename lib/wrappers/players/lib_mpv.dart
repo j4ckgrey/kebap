@@ -1,4 +1,5 @@
 import 'dart:async';
+import 'dart:io';
 
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
@@ -61,10 +62,18 @@ class LibMPV extends BasePlayer {
     }
 
     if (_player?.platform is mpv.NativePlayer) {
-      await (_player?.platform as dynamic).setProperty(
+      final nativeProperty = _player?.platform as dynamic;
+      await nativeProperty.setProperty(
         'force-seekable',
         'yes',
       );
+
+      if (settings.hardwareAccel) {
+        await nativeProperty.setProperty('hwdec', 'auto');
+        if (!kIsWeb && Platform.isWindows) {
+          await nativeProperty.setProperty('gpu-context', 'd3d11');
+        }
+      }
     }
   }
 

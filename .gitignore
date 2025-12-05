@@ -102,3 +102,5 @@ lib/l10n/generated
 # Release Artifacts
 builds/
 release.sh
+jellyfin/
+Fladder/

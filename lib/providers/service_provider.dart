@@ -435,12 +435,46 @@ class JellyService {
     required String userId,
     required enums.ItemsItemIdImagesImageTypePostImageType imageType,
     required Object body,
+    String mimeType = 'image/jpeg',
   }) async {
-    return api.itemsItemIdImagesImageTypePost(
-      itemId: userId,
-      imageType: imageType,
-      body: body,
-    );
+    // Manual implementation: Generated client maps this to /Items/... which returns 404 for Users
+    final baseUrl = account?.credentials.url.replaceAll(RegExp(r'/$'), '') ?? "";
+    
+    // Format UUID with dashes if missing (32 chars -> 36 chars 8-4-4-4-12)
+    String formattedId = userId;
+    if (userId.length == 32) {
+      formattedId = "${userId.substring(0, 8)}-${userId.substring(8, 12)}-${userId.substring(12, 16)}-${userId.substring(16, 20)}-${userId.substring(20)}";
+    }
+
+    // Try GENERIC Item Image Upload.
+    // 'User' is an Item. SetItemImage in ImageController also supports Base64.
+    // Maybe this bypasses a User-specific controller bug?
+    final url = "$baseUrl/Items/$formattedId/Images/${imageType.value}";
+    final uri = Uri.parse(url);
+    final Map<String, String> headers = {
+      'X-Emby-Token': account?.credentials.token ?? "",
+      'Content-Type': mimeType,
+    };
+    
+    // Body is expected to be Base64 String or Binary Bytes.
+    // http.post handles String body by encoding it (utf8).
+    // http.post handles List<int> as binary.
+    
+    try {
+      final response = await http.post(
+        uri,
+        headers: headers,
+        body: body,
+      );
+      if (response.statusCode >= 200 && response.statusCode < 300) {
+        return Response<dynamic>(response, null);
+      } else {
+        print("[LAG_DEBUG] Upload failed. Code: ${response.statusCode}, Body: ${response.body}");
+        return Response<dynamic>(response, null, error: response.body);
+      }
+    } catch (e) {
+      return Response<dynamic>(http.Response("Error: $e", 500), null, error: e);
+    }
   }
 
   Future<Response> itemsItemIdRemoteImagesDownloadPost({
