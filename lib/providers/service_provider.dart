@@ -446,10 +446,8 @@ class JellyService {
       formattedId = "${userId.substring(0, 8)}-${userId.substring(8, 12)}-${userId.substring(12, 16)}-${userId.substring(16, 20)}-${userId.substring(20)}";
     }
 
-    // Try GENERIC Item Image Upload.
-    // 'User' is an Item. SetItemImage in ImageController also supports Base64.
-    // Maybe this bypasses a User-specific controller bug?
-    final url = "$baseUrl/Items/$formattedId/Images/${imageType.value}";
+    // Use the correct User Image endpoint (not Items endpoint which requires admin)
+    final url = "$baseUrl/Users/$formattedId/Images/${imageType.value}";
     final uri = Uri.parse(url);
     final Map<String, String> headers = {
       'X-Emby-Token': account?.credentials.token ?? "",
