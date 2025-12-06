@@ -138,6 +138,7 @@ dependencies:
   flutter_android_tv_text_field: ^1.0.0
   flutter_local_notifications: ^19.5.0
   image: ^4.5.4
+  js: ^0.7.2
 
 dependency_overrides:
   media_kit:

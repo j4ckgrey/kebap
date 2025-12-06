@@ -18,19 +18,20 @@ class VerticalPageIndicator extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Container(
-      decoration: BoxDecoration(
-        color: Theme.of(context).colorScheme.surface.withOpacity(0.5),
-        borderRadius: BorderRadius.circular(32),
-      ),
-      padding: const EdgeInsets.symmetric(vertical: 8, horizontal: 4),
-      child: Column(
-        mainAxisAlignment: MainAxisAlignment.center,
-        mainAxisSize: MainAxisSize.min,
-        children: [
-          // Up Arrow
-          Opacity(
-            opacity: currentPage > 0 ? 1.0 : 0.0,
+    final backgroundColor = Theme.of(context).colorScheme.surface.withOpacity(0.5);
+    
+    return Column(
+      mainAxisAlignment: MainAxisAlignment.center,
+      mainAxisSize: MainAxisSize.min,
+      children: [
+        // Up Arrow with squared background
+        Opacity(
+          opacity: currentPage > 0 ? 1.0 : 0.0,
+          child: Container(
+            decoration: BoxDecoration(
+              color: backgroundColor,
+              borderRadius: BorderRadius.zero,
+            ),
             child: IconButton(
               icon: Icon(Icons.keyboard_arrow_up, color: color),
               onPressed: currentPage > 0
@@ -43,8 +44,11 @@ class VerticalPageIndicator extends StatelessWidget {
                   : null,
             ),
           ),
-          // Dots
-          Expanded(
+        ),
+        // Dots (no background)
+        Expanded(
+          child: Padding(
+            padding: const EdgeInsets.symmetric(vertical: 8),
             child: Column(
               mainAxisAlignment: MainAxisAlignment.center,
               children: List.generate(itemCount, (index) {
@@ -64,9 +68,15 @@ class VerticalPageIndicator extends StatelessWidget {
               }),
             ),
           ),
-          // Down Arrow
-          Opacity(
-            opacity: currentPage < itemCount - 1 ? 1.0 : 0.0,
+        ),
+        // Down Arrow with squared background
+        Opacity(
+          opacity: currentPage < itemCount - 1 ? 1.0 : 0.0,
+          child: Container(
+            decoration: BoxDecoration(
+              color: backgroundColor,
+              borderRadius: BorderRadius.zero,
+            ),
             child: IconButton(
               icon: Icon(Icons.keyboard_arrow_down, color: color),
               onPressed: currentPage < itemCount - 1
@@ -79,8 +89,8 @@ class VerticalPageIndicator extends StatelessWidget {
                   : null,
             ),
           ),
-        ],
-      ),
+        ),
+      ],
     );
   }
 }
