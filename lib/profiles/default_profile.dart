@@ -4,14 +4,14 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import 'package:kebap/jellyfin/jellyfin_open_api.swagger.dart';
 import 'package:kebap/models/settings/video_player_settings.dart';
-import 'package:kebap/profiles/web_profile.dart';
+import 'package:kebap/profiles/dynamic_web_profile.dart';
 import 'package:kebap/providers/video_player_provider.dart';
 
 final videoProfileProvider = StateProvider.autoDispose<DeviceProfile>((ref) =>
     defaultProfile(ref.read(videoPlayerProvider.select((value) => value.backend)) ?? PlayerOptions.platformDefaults));
 
 DeviceProfile defaultProfile(PlayerOptions player) => kIsWeb
-    ? webProfile
+    ? buildDynamicWebProfile()
     : const DeviceProfile(
         maxStreamingBitrate: 120000000,
         maxStaticBitrate: 120000000,
