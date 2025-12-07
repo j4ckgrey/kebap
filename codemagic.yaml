@@ -25,11 +25,18 @@ workflows:
       ios_signing:
         distribution_type: ad_hoc
         bundle_identifier: nl.jknaapen.kebap
+      groups:
+        - private_deps  # Contains SSH key for private Git repos
       vars:
         FLUTTER_FLAVOR: production
     <<: *cache
     
     scripts:
+      - name: Configure Git for private repos
+        script: |
+          git config --global url."https://x-access-token:${GITHUB_TOKEN}@github.com/".insteadOf "git@github.com:"
+          git config --global url."https://x-access-token:${GITHUB_TOKEN}@github.com/".insteadOf "https://github.com/"
+      
       - name: Get Flutter packages
         script: flutter pub get
       
@@ -59,11 +66,18 @@ workflows:
     
     environment:
       <<: *env
+      groups:
+        - private_deps  # Contains SSH key for private Git repos
       vars:
         FLUTTER_FLAVOR: production
     <<: *cache
     
     scripts:
+      - name: Configure Git for private repos
+        script: |
+          git config --global url."https://x-access-token:${GITHUB_TOKEN}@github.com/".insteadOf "git@github.com:"
+          git config --global url."https://x-access-token:${GITHUB_TOKEN}@github.com/".insteadOf "https://github.com/"
+      
       - name: Get Flutter packages
         script: flutter pub get
       
@@ -102,11 +116,18 @@ workflows:
       ios_signing:
         distribution_type: development
         bundle_identifier: nl.jknaapen.kebap.dev
+      groups:
+        - private_deps  # Contains SSH key for private Git repos
       vars:
         FLUTTER_FLAVOR: development
     <<: *cache
     
     scripts:
+      - name: Configure Git for private repos
+        script: |
+          git config --global url."https://x-access-token:${GITHUB_TOKEN}@github.com/".insteadOf "git@github.com:"
+          git config --global url."https://x-access-token:${GITHUB_TOKEN}@github.com/".insteadOf "https://github.com/"
+      
       - name: Get Flutter packages
         script: flutter pub get
       
