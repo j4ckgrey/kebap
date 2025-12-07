@@ -7,7 +7,7 @@ part of 'connectivity_provider.dart';
 // **************************************************************************
 
 String _$connectivityStatusHash() =>
-    r'5d50060ea3c89d9a4c0788d06e13de6850eb81cb';
+    r'3cd3596f76dee0e3e2a1cf0bbe8d15c36b2eaf68';
 
 /// See also [ConnectivityStatus].
 @ProviderFor(ConnectivityStatus)

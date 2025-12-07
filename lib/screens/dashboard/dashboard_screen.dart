@@ -48,13 +48,7 @@ class _DashboardScreenState extends ConsumerState<DashboardScreen> {
   void initState() {
     super.initState();
     WidgetsBinding.instance.addPostFrameCallback((_) async {
-      print('[OFFLINE_DEBUG] DashboardScreen initState - checking connectivity...');
-      // Ensure connectivity is checked first before fetching dashboard data
-      ref.read(connectivityStatusProvider.notifier).checkConnectivity();
-      // Give connectivity check time to complete (it's async)
-      await Future.delayed(const Duration(milliseconds: 500));
-      final connState = ref.read(connectivityStatusProvider);
-      print('[OFFLINE_DEBUG] DashboardScreen - after delay, connectivity: $connState');
+      // Trigger initial fetch - providers will handle connectivity state
       ref.read(dashboardProvider.notifier).fetchNextUpAndResume();
     });
   }

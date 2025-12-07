@@ -41,12 +41,12 @@ class ConnectivityStatus extends _$ConnectivityStatus {
     runZonedGuarded(() {
       try {
         final connectivity = Connectivity();
-        // connectivity.onConnectivityChanged.listen(
-        //   (result) => onStateChange(result),
-        //   onError: (e) {
-        //     log('[Connectivity] Stream error: $e');
-        //   },
-        // );
+        connectivity.onConnectivityChanged.listen(
+          (result) => onStateChange(result),
+          onError: (e) {
+            log('[Connectivity] Stream error: $e');
+          },
+        );
         checkConnectivity();
       } catch (e, s) {
         log('[Connectivity] initialization failed: $e\n$s');

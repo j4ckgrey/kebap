@@ -92,73 +92,80 @@ class _NavigationBodyState extends ConsumerState<NavigationBody> {
               child: widget.child,
             ),
             // Floating navigation buttons (hidden on TV since remotes have back buttons)
-            if (showNavigation && !isTV)
-              Positioned(
-                top: 0,
-                left: 0,
-                right: 0,
-                child: Padding(
-                  padding: EdgeInsets.only(
-                    top: topInset + 8,
-                    left: 8,
-                    right: 8,
-                  ),
-                  child: Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                    children: [
-                      // Left Button Slot (Hamburger or Back)
-                      if (isDetailsPage)
-                        // Details Page: Back Button on Left
-                        Container(
-                          decoration: BoxDecoration(
-                            color: Theme.of(context).colorScheme.surface.withValues(alpha: 0.8),
-                            borderRadius: BorderRadius.circular(12),
-                          ),
-                          child: IconButton(
-                            icon: const Icon(IconsaxPlusLinear.arrow_left),
-                            onPressed: () {
-                              context.router.maybePop();
-                            },
-                          ),
-                        )
-                      else if (showHamburger)
-                        // Standard Page: Hamburger on Left
-                        Container(
-                          decoration: BoxDecoration(
-                            color: Theme.of(context).colorScheme.surface.withValues(alpha: 0.8),
-                            borderRadius: BorderRadius.circular(12),
-                          ),
-                          child: IconButton(
-                            focusNode: navBarNode,
-                            icon: const Icon(IconsaxPlusLinear.menu),
-                            onPressed: () {
-                              widget.drawerKey.currentState?.openDrawer();
-                            },
-                          ),
-                        )
-                      else
-                        const SizedBox(width: 48), // Spacer if nothing on left
+            // Use AnimatedOpacity to smoothly fade buttons during route transitions
+            Positioned(
+              top: 0,
+              left: 0,
+              right: 0,
+              child: IgnorePointer(
+                ignoring: !showNavigation || isTV,
+                child: AnimatedOpacity(
+                  opacity: (showNavigation && !isTV) ? 1.0 : 0.0,
+                  duration: const Duration(milliseconds: 200),
+                  child: Padding(
+                    padding: EdgeInsets.only(
+                      top: topInset + 8,
+                      left: 8,
+                      right: 8,
+                    ),
+                    child: Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      children: [
+                        // Left Button Slot (Hamburger or Back)
+                        if (isDetailsPage)
+                          // Details Page: Back Button on Left
+                          Container(
+                            decoration: BoxDecoration(
+                              color: Theme.of(context).colorScheme.surface.withValues(alpha: 0.8),
+                              borderRadius: BorderRadius.circular(12),
+                            ),
+                            child: IconButton(
+                              icon: const Icon(IconsaxPlusLinear.arrow_left),
+                              onPressed: () {
+                                context.router.maybePop();
+                              },
+                            ),
+                          )
+                        else if (showHamburger)
+                          // Standard Page: Hamburger on Left
+                          Container(
+                            decoration: BoxDecoration(
+                              color: Theme.of(context).colorScheme.surface.withValues(alpha: 0.8),
+                              borderRadius: BorderRadius.circular(12),
+                            ),
+                            child: IconButton(
+                              focusNode: navBarNode,
+                              icon: const Icon(IconsaxPlusLinear.menu),
+                              onPressed: () {
+                                widget.drawerKey.currentState?.openDrawer();
+                              },
+                            ),
+                          )
+                        else
+                          const SizedBox(width: 48), // Spacer if nothing on left
 
-                      // Right Button Slot (Back button for non-details pages)
-                      if (!isDetailsPage && showBackButton && widget.currentIndex != 0)
-                        Container(
-                          decoration: BoxDecoration(
-                            color: Theme.of(context).colorScheme.surface.withValues(alpha: 0.8),
-                            borderRadius: BorderRadius.circular(12),
-                          ),
-                          child: IconButton(
-                            icon: const Icon(IconsaxPlusLinear.arrow_left),
-                            onPressed: () {
-                              context.router.maybePop();
-                            },
-                          ),
-                        )
-                      else
-                        const SizedBox(width: 48), // Spacer if nothing on right
-                    ],
+                        // Right Button Slot (Back button for non-details pages)
+                        if (!isDetailsPage && showBackButton && widget.currentIndex != 0)
+                          Container(
+                            decoration: BoxDecoration(
+                              color: Theme.of(context).colorScheme.surface.withValues(alpha: 0.8),
+                              borderRadius: BorderRadius.circular(12),
+                            ),
+                            child: IconButton(
+                              icon: const Icon(IconsaxPlusLinear.arrow_left),
+                              onPressed: () {
+                                context.router.maybePop();
+                              },
+                            ),
+                          )
+                        else
+                          const SizedBox(width: 48), // Spacer if nothing on right
+                      ],
+                    ),
                   ),
                 ),
               ),
+            ),
           ],
         ),
       ),

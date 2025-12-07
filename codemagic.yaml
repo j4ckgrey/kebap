@@ -1,0 +1,126 @@
+definitions:
+  environment: &env
+    flutter: stable
+    xcode: latest
+    cocoapods: default
+  
+  # Caching configuration
+  cache: &cache
+    cache_paths:
+      - $HOME/.pub-cache
+      - $FCI_BUILD_DIR/.dart_tool
+      - $HOME/Library/Caches/CocoaPods
+
+workflows:
+  # ============================================
+  # iOS Production Build
+  # ============================================
+  ios-production:
+    name: iOS Production
+    max_build_duration: 60
+    instance_type: mac_mini_m2
+    
+    environment:
+      <<: *env
+      ios_signing:
+        distribution_type: ad_hoc
+        bundle_identifier: nl.jknaapen.kebap
+      vars:
+        FLUTTER_FLAVOR: production
+    <<: *cache
+    
+    scripts:
+      - name: Get Flutter packages
+        script: flutter pub get
+      
+      - name: Install CocoaPods dependencies
+        script: |
+          cd ios
+          pod install --repo-update
+      
+      - name: Build iOS IPA
+        script: |
+          flutter build ipa \
+            --release \
+            --flavor production \
+            --export-options-plist=ios/exportOptions.plist
+    
+    artifacts:
+      - build/ios/ipa/*.ipa
+      - /tmp/xcodebuild_logs/*.log
+
+  # ============================================
+  # macOS Production Build
+  # ============================================
+  macos-production:
+    name: macOS Production
+    max_build_duration: 60
+    instance_type: mac_mini_m2
+    
+    environment:
+      <<: *env
+      vars:
+        FLUTTER_FLAVOR: production
+    <<: *cache
+    
+    scripts:
+      - name: Get Flutter packages
+        script: flutter pub get
+      
+      - name: Install CocoaPods dependencies
+        script: |
+          cd macos
+          pod install --repo-update
+      
+      - name: Build macOS app
+        script: |
+          flutter build macos \
+            --release \
+            --flavor production
+      
+      - name: Create DMG
+        script: |
+          cd build/macos/Build/Products/Release-production
+          APP_NAME=$(ls -d *.app | head -1)
+          DMG_NAME="${APP_NAME%.app}.dmg"
+          hdiutil create -volname "Kebap" -srcfolder "$APP_NAME" -ov -format UDZO "$DMG_NAME"
+    
+    artifacts:
+      - build/macos/Build/Products/Release-production/*.app
+      - build/macos/Build/Products/Release-production/*.dmg
+
+  # ============================================
+  # iOS Development Build (optional)
+  # ============================================
+  ios-development:
+    name: iOS Development
+    max_build_duration: 60
+    instance_type: mac_mini_m2
+    
+    environment:
+      <<: *env
+      ios_signing:
+        distribution_type: development
+        bundle_identifier: nl.jknaapen.kebap.dev
+      vars:
+        FLUTTER_FLAVOR: development
+    <<: *cache
+    
+    scripts:
+      - name: Get Flutter packages
+        script: flutter pub get
+      
+      - name: Install CocoaPods dependencies
+        script: |
+          cd ios
+          pod install --repo-update
+      
+      - name: Build iOS IPA
+        script: |
+          flutter build ipa \
+            --release \
+            --flavor development \
+            --export-options-plist=ios/exportOptions.plist
+    
+    artifacts:
+      - build/ios/ipa/*.ipa
