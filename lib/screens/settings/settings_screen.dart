@@ -51,11 +51,9 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen> {
             }
           },
           child: isSingle
-              // On mobile, show either the settings list (index 0) or the sub-page content,
-              // NOT both in a Stack, to avoid visual doubling/stutter during navigation.
-              ? context.tabsRouter.activeIndex == 0
-                  ? const Card(elevation: 0, child: SettingsLeftPane())
-                  : content
+              // On mobile, just render the content from AutoTabsRouter
+              // SettingsSelectionScreen (index 0) now renders SettingsLeftPane
+              ? content
               : Row(
                   mainAxisSize: MainAxisSize.max,
                   crossAxisAlignment: CrossAxisAlignment.stretch,

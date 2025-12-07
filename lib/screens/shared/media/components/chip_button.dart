@@ -22,8 +22,14 @@ class ChipButton extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
+    final colorScheme = Theme.of(context).colorScheme;
+    final isDarkMode = Theme.of(context).brightness == Brightness.dark;
+    
+    // Use white text in dark mode for better visibility
+    final defaultForeground = isDarkMode ? Colors.white : colorScheme.onSurface;
+    
     return Card(
-      color: backgroundColor ?? Theme.of(context).colorScheme.onSurface,
+      color: backgroundColor ?? colorScheme.surfaceContainerHighest,
       shadowColor: Colors.transparent,
       child: FlatButton(
         onTap: onPressed,
@@ -33,7 +39,7 @@ class ChipButton extends ConsumerWidget {
             label,
             style: Theme.of(context).textTheme.bodyMedium?.copyWith(
               fontWeight: FontWeight.w600,
-              color: foregroundColor ?? Colors.black,
+              color: foregroundColor ?? defaultForeground,
             ),
           ),
         ),

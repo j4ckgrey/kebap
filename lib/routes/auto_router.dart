@@ -38,10 +38,13 @@ class AutoRouter extends RootStackRouter {
       children: [
         ...homeRoutes,
         ...detailsRoutes,
-        AutoRoute(
+        CustomRoute(
           page: SettingsRoute.page,
           path: settingsPageRoute,
           children: _settingsChildren,
+          transitionsBuilder: TransitionsBuilders.fadeIn,
+          durationInMilliseconds: 200,
+          reverseDurationInMilliseconds: 200,
         ),
       ],
     ),
@@ -92,6 +95,7 @@ final List<AutoRoute> _settingsChildren = [
   AutoRoute(page: PlayerSettingsRoute.page, path: 'player'),
   AutoRoute(page: KebapSettingsRoute.page, path: 'kebap'),
   AutoRoute(page: AboutSettingsRoute.page, path: 'about'),
+  AutoRoute(page: ContentFilterSettingsRoute.page, path: 'content-filter'),
 ];
 
 class LockScreenGuard extends AutoRouteGuard {

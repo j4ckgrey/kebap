@@ -28,9 +28,9 @@ class DashboardNotifier extends StateNotifier<HomeModel> {
       }
     });
 
-    // Listen to Connection changes: if we go offline, switch to offline view
+    // Listen to Connection changes: re-fetch data on any connectivity change
     ref.listen<ConnectionState>(connectivityStatusProvider, (previous, next) {
-      if (next == ConnectionState.offline && previous != ConnectionState.offline) {
+      if (previous != next) {
          fetchNextUpAndResume();
       }
     });

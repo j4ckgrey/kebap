@@ -69,8 +69,8 @@ class SettingsScaffold extends ConsumerWidget {
                     ),
                     expandedHeight: 100,
                     collapsedHeight: 80,
-                    pinned: false,
-                    floating: true,
+                    pinned: true,
+                    floating: false,
                   )
                 else
                   SliverToBoxAdapter(

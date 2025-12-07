@@ -49,6 +49,7 @@ class _PlayerSettingsPageState extends ConsumerState<PlayerSettingsPage> {
 
     final userSettings = ref.watch(userProvider.select((value) => value?.userSettings));
 
+
     return SettingsScaffold(
       label: context.localized.settingsPlayerTitle,
       items: [

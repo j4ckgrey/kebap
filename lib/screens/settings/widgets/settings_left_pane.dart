@@ -5,10 +5,10 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:iconsax_plus/iconsax_plus.dart';
 import 'package:kebap/providers/arguments_provider.dart';
 import 'package:kebap/providers/auth_provider.dart';
+import 'package:kebap/providers/profanity_filter_provider.dart';
 import 'package:kebap/providers/update_provider.dart';
 import 'package:kebap/providers/user_provider.dart';
 import 'package:kebap/routes/auto_router.gr.dart';
-import 'package:kebap/screens/login/login_screen.dart';
 import 'package:kebap/screens/settings/quick_connect_window.dart';
 import 'package:kebap/screens/settings/settings_list_tile.dart';
 import 'package:kebap/screens/settings/settings_scaffold.dart';
@@ -38,7 +38,8 @@ class SettingsLeftPane extends ConsumerWidget {
     final hasNewUpdate = ref.watch(hasNewUpdateProvider);
     final htpcMode = ref.watch(argumentsStateProvider.select((value) => value.htpcMode));
 
-    print('[LAG_DEBUG] SettingsLeftPane build. QC: $quickConnectAvailable, Release: ${newRelease?.version}, Update: $hasNewUpdate, HTPC: $htpcMode, Layout: ${AdaptiveLayout.layoutModeOf(context)}');
+    // Check if profanity filter plugin is available on server
+    final profanityPluginAvailable = ref.watch(profanityPluginAvailableProvider).valueOrNull ?? false;
 
     IconData deviceIcon;
     if (AdaptiveLayout.of(context).isDesktop) {
@@ -60,10 +61,9 @@ class SettingsLeftPane extends ConsumerWidget {
       }
     }
 
-    return Padding(
-      padding: EdgeInsets.only(left: AdaptiveLayout.of(context).sideBarWidth),
-      child: Container(
-        color: context.colors.surface,
+    return RepaintBoundary(
+      child: Padding(
+        padding: EdgeInsets.only(left: AdaptiveLayout.of(context).sideBarWidth),
         child: SettingsScaffold(
           label: context.localized.settings,
           showBackButtonNested: true,
@@ -106,6 +106,16 @@ class SettingsLeftPane extends ConsumerWidget {
               icon: IconsaxPlusLinear.video_play,
               onTap: () => navigateTo(const PlayerSettingsRoute()),
             ),
+            // Content Filter - visible to ALL users when Jelly-Guardian plugin is installed
+            if (profanityPluginAvailable)
+              SettingsListTile(
+                key: const ValueKey('content_filter'),
+                label: const Text('Content Filter'),
+                subLabel: const Text('Profanity filter settings'),
+                selected: containsRoute(const ContentFilterSettingsRoute()),
+                icon: IconsaxPlusLinear.shield_tick,
+                onTap: () => navigateTo(const ContentFilterSettingsRoute()),
+              ),
             SettingsListTile(
               key: const ValueKey('about_settings'),
               label: Text(context.localized.about),
