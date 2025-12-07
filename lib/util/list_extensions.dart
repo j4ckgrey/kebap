@@ -1,5 +1,7 @@
 import 'package:collection/collection.dart';
 
+import 'package:kebap/models/item_base_model.dart';
+
 extension ListExtensions<T> on List<T> {
   List<T> replace(T entry) {
     var tempList = toList();
@@ -67,15 +69,27 @@ extension ListExtensions<T> on List<T> {
   }
 
   T? nextOrNull(T item) {
-    int indexOf = this.indexOf(item);
-    if (indexOf + 1 >= length) return null;
-    return elementAtOrNull(indexOf + 1);
+    int index = indexOf(item);
+    
+    // ID-based fallback for ItemBaseModel when standard indexOf fails
+    if (index == -1 && item is ItemBaseModel) {
+      index = indexWhere((e) => e is ItemBaseModel && (e as ItemBaseModel).id == item.id);
+    }
+    
+    if (index == -1 || index + 1 >= length) return null;
+    return elementAtOrNull(index + 1);
   }
 
   T? previousOrNull(T item) {
-    int indexOf = this.indexOf(item);
-    if (indexOf - 1 < 0) return null;
-    return elementAtOrNull(indexOf - 1);
+    int index = indexOf(item);
+    
+    // ID-based fallback for ItemBaseModel when standard indexOf fails
+    if (index == -1 && item is ItemBaseModel) {
+      index = indexWhere((e) => e is ItemBaseModel && (e as ItemBaseModel).id == item.id);
+    }
+    
+    if (index == -1 || index - 1 < 0) return null;
+    return elementAtOrNull(index - 1);
   }
 
   T? nextWhereOrNull(bool Function(T element) test) {
