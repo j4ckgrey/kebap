@@ -111,7 +111,7 @@ class SyncOptionsButton extends ConsumerWidget {
               ),
               onTap: () => ref
                   .read(backgroundDownloaderProvider)
-                  .resumeAll(tasks: pausedTasks.map((e) => e.task).nonNulls.toList()),
+                  ?.resumeAll(tasks: pausedTasks.map((e) => e.task).nonNulls.toList()),
             ),
             PopupMenuItem(
               enabled: runningTasks.isNotEmpty,
@@ -125,7 +125,7 @@ class SyncOptionsButton extends ConsumerWidget {
               onTap: () {
                 ref
                     .read(backgroundDownloaderProvider)
-                    .pauseAll(tasks: runningTasks.map((e) => e.task).nonNulls.toList());
+                    ?.pauseAll(tasks: runningTasks.map((e) => e.task).nonNulls.toList());
               },
             ),
             PopupMenuItem(
@@ -138,7 +138,7 @@ class SyncOptionsButton extends ConsumerWidget {
                 ],
               ),
               onTap: () {
-                ref.read(backgroundDownloaderProvider).cancelAll(
+                ref.read(backgroundDownloaderProvider)?.cancelAll(
                     tasks: [...runningTasks, ...pausedTasks, ...enqueuedTasks].map((e) => e.task).nonNulls.toList());
               },
             ),

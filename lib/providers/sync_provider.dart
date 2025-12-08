@@ -101,7 +101,9 @@ class SyncNotifier extends StateNotifier<SyncSettingsModel> {
 
   void _init() {
     cleanupTemporaryFiles();
-    ref.read(backgroundDownloaderProvider);
+    if (!kIsWeb) {
+      ref.read(backgroundDownloaderProvider);
+    }
     ref.listen(
       userProvider,
       (previous, next) {
@@ -353,13 +355,13 @@ class SyncNotifier extends StateNotifier<SyncSettingsModel> {
               )
               .toList());
 
-      await ref.read(backgroundDownloaderProvider).cancelTaskWithId(item.id);
+      await ref.read(backgroundDownloaderProvider)?.cancelTaskWithId(item.id);
 
       await _db.deleteAllItems([...nestedChildren, item]);
 
       for (var i = 0; i < nestedChildren.length; i++) {
         final element = nestedChildren[i];
-        await ref.read(backgroundDownloaderProvider).cancelTaskWithId(element.id);
+        await ref.read(backgroundDownloaderProvider)?.cancelTaskWithId(element.id);
         if (await element.directory.exists()) {
           await element.directory.delete(recursive: true);
         }
@@ -490,7 +492,7 @@ class SyncNotifier extends StateNotifier<SyncSettingsModel> {
 
     ref.read(downloadTasksProvider(syncedItem.id).notifier).update((state) => DownloadStream.empty());
 
-    ref.read(backgroundDownloaderProvider).cancelTaskWithId(syncedItem.id);
+    ref.read(backgroundDownloaderProvider)?.cancelTaskWithId(syncedItem.id);
 
     cleanupTemporaryFiles();
     refresh();
@@ -589,7 +591,7 @@ class SyncNotifier extends StateNotifier<SyncSettingsModel> {
 
     try {
       if (currentTask.task != null) {
-        await ref.read(backgroundDownloaderProvider).cancelTaskWithId(currentTask.id);
+        await ref.read(backgroundDownloaderProvider)?.cancelTaskWithId(currentTask.id);
       }
       if (!skipDownload) {
         // Calculate display name
@@ -632,7 +634,7 @@ class SyncNotifier extends StateNotifier<SyncSettingsModel> {
 
         final defaultDownloadStream = DownloadStream(id: syncItem.id, task: downloadTask, status: TaskStatus.enqueued);
         ref.read(downloadTasksProvider(syncItem.id).notifier).update((state) => defaultDownloadStream);
-        final result = await ref.read(backgroundDownloaderProvider).enqueue(downloadTask);
+        final result = await ref.read(backgroundDownloaderProvider)?.enqueue(downloadTask);
         calculateDirectorySize();
         return result;
       }

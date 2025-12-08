@@ -146,17 +146,35 @@ class LibMPV extends BasePlayer {
   Future<int> setSubtitleTrack(SubStreamModel? model, PlaybackModel playbackModel) async {
     if (_player == null) return -1;
     final wantedSubtitle = model ?? playbackModel.defaultSubStream;
+    
     if (wantedSubtitle == null) return -1;
-    if (wantedSubtitle.index == SubStreamModel.no().index) {
+
+    debugPrint('[LibMPV] setSubtitleTrack called with: ${wantedSubtitle.title}, url: ${wantedSubtitle.url}, isExternal: ${wantedSubtitle.isExternal}');
+
+    // on Web, we always want to use the URL if available, because internal tracks might be stripped by transcoding
+    final bool shouldLoadUrl = (wantedSubtitle.isExternal || kIsWeb) && wantedSubtitle.url != null;
+
+    if (shouldLoadUrl) {
+      try {
+        debugPrint('[LibMPV] Setting subtitle track via URL: ${wantedSubtitle.url}');
+        await _player?.setSubtitleTrack(mpv.SubtitleTrack.uri(wantedSubtitle.url!));
+        debugPrint('[LibMPV] Subtitle track set successfully via URL.');
+      } catch (e) {
+        debugPrint('[LibMPV] Error setting subtitle track via URL: $e');
+      }
+    } else if (wantedSubtitle.index == SubStreamModel.no().index) {
+      debugPrint('[LibMPV] Setting no subtitle track.');
       await _player?.setSubtitleTrack(mpv.SubtitleTrack.no());
     } else {
-      final internalTrack = subTracks.getRange(2, subTracks.length).toList();
+      final internalTracks = subTracks.getRange(2, subTracks.length).toList();
       final index = playbackModel.subStreams?.sublist(1).indexWhere((element) => element.id == wantedSubtitle.id);
-      final subTrack = internalTrack.elementAtOrNull(index ?? -1);
-      if (wantedSubtitle.isExternal && wantedSubtitle.url != null && subTrack == null) {
-        await _player?.setSubtitleTrack(mpv.SubtitleTrack.uri(wantedSubtitle.url!));
-      } else if (subTrack != null) {
-        await _player?.setSubtitleTrack(subTrack);
+      final subTrack = internalTracks.elementAtOrNull(index ?? -1);
+      
+      if (subTrack != null) {
+         debugPrint('[LibMPV] Setting internal subtitle track: ${subTrack.title}');
+         await _player?.setSubtitleTrack(subTrack);
+      } else {
+         debugPrint('[LibMPV] Internal subtitle track not found.');
       }
     }
     return wantedSubtitle.index;

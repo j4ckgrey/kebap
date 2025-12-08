@@ -1,7 +1,9 @@
+import 'package:flutter/foundation.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import 'package:kebap/jellyfin/jellyfin_open_api.enums.swagger.dart';
 import 'package:kebap/models/home_model.dart';
+import 'package:kebap/models/views_model.dart';
 import 'package:kebap/models/item_base_model.dart';
 import 'package:kebap/providers/api_provider.dart';
 import 'package:kebap/providers/service_provider.dart';
@@ -32,6 +34,13 @@ class DashboardNotifier extends StateNotifier<HomeModel> {
     ref.listen<ConnectionState>(connectivityStatusProvider, (previous, next) {
       if (previous != next) {
          fetchNextUpAndResume();
+      }
+    });
+
+    ref.listen<ViewsModel>(viewsProvider, (previous, next) {
+      if (previous?.views != next.views) {
+        debugPrint('[DashboardProvider] Views updated, re-fetching dashboard');
+        fetchNextUpAndResume();
       }
     });
   }
@@ -125,8 +134,10 @@ class DashboardNotifier extends StateNotifier<HomeModel> {
         limit: limit,
       );
 
+      final items = resumeVideoResponse.body?.items?.map((e) => ItemBaseModel.fromBaseDto(e, ref)).toList();
+
       state = state.copyWith(
-        resumeVideo: resumeVideoResponse.body?.items?.map((e) => ItemBaseModel.fromBaseDto(e, ref)).toList(),
+        resumeVideo: items,
       );
     }
 

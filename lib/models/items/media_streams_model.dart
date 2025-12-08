@@ -1,5 +1,6 @@
 import 'dart:convert';
 
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 
 import 'package:collection/collection.dart';
@@ -8,6 +9,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:kebap/jellyfin/jellyfin_open_api.enums.swagger.dart';
 import 'package:kebap/jellyfin/jellyfin_open_api.swagger.dart' as dto;
 import 'package:kebap/providers/api_provider.dart';
+import 'package:kebap/providers/user_provider.dart';
 import 'package:kebap/util/localization_helper.dart';
 import 'package:kebap/util/video_properties.dart';
 
@@ -366,7 +368,41 @@ class SubStreamModel extends AudioAndSubStreamModel {
     }
   }
 
+  static String _processUrl(String url, String? codec) {
+    if (kIsWeb) {
+      final validCodecs = ['srt', 'ssa', 'ass', 'subrip', 'text', 'vtt', 'webvtt'];
+      final lowerCodec = codec?.toLowerCase() ?? '';
+
+      // If it's already vtt, do nothing
+      if (url.endsWith('.vtt')) return url;
+
+      // If codec is one of the text formats, or URL ends with them
+      if (validCodecs.contains(lowerCodec) ||
+          url.endsWith('.srt') ||
+          url.endsWith('.ssa') ||
+          url.endsWith('.ass')) {
+        // Replace extension with vtt
+        return url.replaceAll(RegExp(r'\.\w+$'), '.vtt');
+      }
+    }
+    return url;
+  }
+
   factory SubStreamModel.fromMediaStream(dto.MediaStream stream, Ref ref) {
+    final token = ref.read(userProvider)?.credentials.token;
+    final server = ref.read(serverUrlProvider) ?? "";
+    final serverUrl = server.endsWith('/') ? server.substring(0, server.length - 1) : server;
+    final deliveryUrl = stream.deliveryUrl ?? "";
+    final cleanDeliveryUrl = deliveryUrl.startsWith('/') ? deliveryUrl : "/$deliveryUrl";
+    
+    final rawUrl = stream.deliveryUrl != null ? "$serverUrl$cleanDeliveryUrl" : null;
+    final authenticatedUrl = rawUrl != null && token != null 
+        ? "$rawUrl${rawUrl.contains('?') ? '&' : '?'}api_key=$token" 
+        : rawUrl;
+    
+    final finalUrl = authenticatedUrl != null ? _processUrl(authenticatedUrl, stream.codec) : null;
+    debugPrint('[MediaStreamsModel] Generated Subtitle URL: $finalUrl for codec: ${stream.codec}');
+
     return SubStreamModel(
       name: stream.title ?? "",
       title: stream.title ?? "",
@@ -376,9 +412,7 @@ class SubStreamModel extends AudioAndSubStreamModel {
       codec: stream.codec ?? "",
       id: stream.hashCode.toString(),
       supportsExternalStream: stream.supportsExternalStream ?? false,
-      url: stream.deliveryUrl != null
-          ? "${ref.read(serverUrlProvider) ?? ""}${stream.deliveryUrl}"
-          : null,
+      url: finalUrl,
       isExternal: stream.isExternal ?? false,
       index: stream.index ?? -1,
     );
