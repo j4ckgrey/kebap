@@ -291,31 +291,23 @@ class _MainState extends ConsumerState<Main> with WindowListener, WidgetsBinding
     // requests forcing local search for TV clients, update the search mode.
 
     // Listen for in-app notifications from requests
-    ref.listen<InAppNotification?>(inAppNotificationProvider, (previous, next) {
-      if (next != null) {
-        kebapSnackbar(
-          context,
-          title: '${next.title}: ${next.body}',
-          duration: const Duration(seconds: 5),
-        );
-      }
-    });
+    // ref.listen moved to build method to comply with Riverpod rules
 
-    ref.listen<AsyncValue>(effectiveBaklavaConfigProvider, (previous, next) {
-      try {
-        final args = ref.read(argumentsStateProvider);
-        final isLeanBack = args.leanBackMode;
-
-        if (isLeanBack) {
-          final cfg = next.asData?.value;
-          if (cfg != null && cfg.forceTVClientLocalSearch == true) {
-            ref.read(searchModeNotifierProvider.notifier).setMode(SearchMode.local);
-          }
-        }
-      } catch (e) {
-        // ignore
-      }
-    });
+    // ref.listen<AsyncValue>(effectiveBaklavaConfigProvider, (previous, next) {
+    //   try {
+    //     final args = ref.read(argumentsStateProvider);
+    //     final isLeanBack = args.leanBackMode;
+    //
+    //     if (isLeanBack) {
+    //       final cfg = next.asData?.value;
+    //       if (cfg != null && cfg.forceTVClientLocalSearch == true) {
+    //         ref.read(searchModeNotifierProvider.notifier).setMode(SearchMode.local);
+    //       }
+    //     }
+    //   } catch (e) {
+    //     // ignore
+    //   }
+    // });
 
     final clientSettings = ref.read(clientSettingsProvider);
 
@@ -368,6 +360,16 @@ class _MainState extends ConsumerState<Main> with WindowListener, WidgetsBinding
     
     // Keep requests provider alive to ensure polling works
     ref.listen(baklavaRequestsProvider, (_, __) {});
+
+    ref.listen<InAppNotification?>(inAppNotificationProvider, (previous, next) {
+      if (next != null) {
+        kebapSnackbar(
+          context,
+          title: '${next.title}: ${next.body}',
+          duration: const Duration(seconds: 5),
+        );
+      }
+    });
 
     final scrollBehaviour = const MaterialScrollBehavior();
     return DynamicColorBuilder(

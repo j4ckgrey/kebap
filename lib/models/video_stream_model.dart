@@ -183,9 +183,12 @@ class VideoStream {
 
       final params = Uri(queryParameters: directOptions).query;
 
-      playbackUrl = '${ref.read(serverUrlProvider) ?? ""}/Videos/${mediaSource.id}/stream?$params';
+      final baseUrl = (ref.read(serverUrlProvider) ?? "").replaceAll(RegExp(r'\/$'), '');
+      playbackUrl = '$baseUrl/Videos/${mediaSource.id}/stream?$params';
     } else if ((mediaSource.supportsTranscoding ?? false) && mediaSource.transcodingUrl != null) {
-      playbackUrl = "${ref.read(serverUrlProvider) ?? ""}${mediaSource.transcodingUrl ?? ""}";
+      final baseUrl = (ref.read(serverUrlProvider) ?? "").replaceAll(RegExp(r'\/$'), '');
+      final transcodePath = (mediaSource.transcodingUrl ?? "").startsWith('/') ? (mediaSource.transcodingUrl ?? "") : "/${mediaSource.transcodingUrl ?? ""}";
+      playbackUrl = "$baseUrl$transcodePath";
       playType = PlaybackType.transcode;
     }
 

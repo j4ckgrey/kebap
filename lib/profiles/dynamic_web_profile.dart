@@ -324,6 +324,7 @@ DeviceProfile buildDynamicWebProfile() {
     method: SubtitleDeliveryMethod.$external,
   ));
 
+
   debugPrint('KEBAP: Built dynamic web profile with ${directPlayProfiles.length} direct play profiles');
 
   return DeviceProfile(

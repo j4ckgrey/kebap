@@ -135,7 +135,7 @@ class SyncProgressBar extends ConsumerWidget {
             if (downloadTask != null) ...{
               if (downloadStatus != TaskStatus.paused && downloadStatus != TaskStatus.enqueued)
                 IconButton(
-                  onPressed: () => ref.read(backgroundDownloaderProvider).pause(downloadTask),
+                  onPressed: () => ref.read(backgroundDownloaderProvider)?.pause(downloadTask),
                   icon: const Icon(IconsaxPlusBold.pause),
                 ),
               if (downloadStatus == TaskStatus.paused) ...[
@@ -155,7 +155,7 @@ class SyncProgressBar extends ConsumerWidget {
                   icon: const Icon(IconsaxPlusBold.stop),
                 ),
                 IconButton(
-                  onPressed: () => ref.read(backgroundDownloaderProvider).resume(downloadTask),
+                  onPressed: () => ref.read(backgroundDownloaderProvider)?.resume(downloadTask),
                   icon: const Icon(IconsaxPlusBold.play),
                 ),
               ],

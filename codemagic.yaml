@@ -15,6 +15,9 @@ workflows:
   # ============================================
   # iOS Production Build
   # ============================================
+  # ============================================
+  # iOS Production Build (Unsigned)
+  # ============================================
   ios-production:
     name: iOS Production
     max_build_duration: 60
@@ -22,9 +25,6 @@ workflows:
     
     environment:
       <<: *env
-      ios_signing:
-        distribution_type: ad_hoc
-        bundle_identifier: nl.jknaapen.kebap
       vars:
         FLUTTER_FLAVOR: production
     <<: *cache
@@ -38,15 +38,22 @@ workflows:
           cd ios
           pod install --repo-update
       
-      - name: Build iOS IPA
+      - name: Build iOS App (Unsigned)
         script: |
-          flutter build ipa \
+          flutter build ios \
             --release \
-            --flavor production \
-            --export-options-plist=ios/exportOptions.plist
+            --no-codesign \
+            --flavor production
+      
+      - name: Package Payload to IPA
+        script: |
+          cd build/ios/iphoneos
+          mkdir Payload
+          cp -r Runner.app Payload/
+          zip -r kebap.ipa Payload
     
     artifacts:
-      - build/ios/ipa/*.ipa
+      - build/ios/iphoneos/kebap.ipa
       - /tmp/xcodebuild_logs/*.log
 
   # ============================================
@@ -76,6 +83,7 @@ workflows:
         script: |
           flutter build macos \
             --release \
+            --no-codesign \
             --flavor production
       
       - name: Create DMG
@@ -92,6 +100,9 @@ workflows:
   # ============================================
   # iOS Development Build (optional)
   # ============================================
+  # ============================================
+  # iOS Development Build (Unsigned)
+  # ============================================
   ios-development:
     name: iOS Development
     max_build_duration: 60
@@ -99,9 +110,6 @@ workflows:
     
     environment:
       <<: *env
-      ios_signing:
-        distribution_type: development
-        bundle_identifier: nl.jknaapen.kebap.dev
       vars:
         FLUTTER_FLAVOR: development
     <<: *cache
@@ -115,12 +123,19 @@ workflows:
           cd ios
           pod install --repo-update
       
-      - name: Build iOS IPA
+      - name: Build iOS App (Unsigned)
         script: |
-          flutter build ipa \
+          flutter build ios \
             --release \
-            --flavor development \
-            --export-options-plist=ios/exportOptions.plist
+            --no-codesign \
+            --flavor development
+      
+      - name: Package Payload to IPA
+        script: |
+          cd build/ios/iphoneos
+          mkdir Payload
+          cp -r Runner.app Payload/
+          zip -r kebap_dev.ipa Payload
     
     artifacts:
-      - build/ios/ipa/*.ipa
+      - build/ios/iphoneos/kebap_dev.ipa

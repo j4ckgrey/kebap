@@ -27,18 +27,19 @@ class _DefaultTitleBarState extends ConsumerState<DefaultTitleBar> with WindowLi
 
   @override
   void initState() {
-    windowManager.addListener(this);
+    if (!kIsWeb) windowManager.addListener(this);
     super.initState();
     _updateWindowState();
   }
 
   @override
   void dispose() {
-    windowManager.removeListener(this);
+    if (!kIsWeb) windowManager.removeListener(this);
     super.dispose();
   }
 
   Future<void> _updateWindowState() async {
+    if (kIsWeb) return;
     final minimized = await windowManager.isMinimized();
     final maximized = await windowManager.isMaximized();
     if (mounted) {
