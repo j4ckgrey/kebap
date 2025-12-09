@@ -11,6 +11,7 @@ import 'dart:math' as math;
 
 import 'package:kebap/util/adaptive_layout/adaptive_layout.dart';
 import 'package:kebap/providers/settings/client_settings_provider.dart';
+import 'package:kebap/providers/settings/kebap_settings_provider.dart';
 import 'package:kebap/util/focus_provider.dart';
 import 'package:kebap/screens/shared/media/vertical_page_indicator.dart';
 
@@ -110,7 +111,9 @@ class _SingleRowViewState extends ConsumerState<SingleRowView> {
             math.pow(AdaptiveLayout.poster(context).ratio, 0.55)) *
         0.72;
 
-    final bannerHeight = viewSize <= ViewSize.phone ? availableHeight * 0.60 : availableHeight * 0.58;
+    // Mobile homepage height ratio from settings (default 0.6, range 0.3-0.7)
+    final mobileHeightRatio = ref.watch(kebapSettingsProvider.select((s) => s.mobileHomepageHeightRatio));
+    final bannerHeight = viewSize <= ViewSize.phone ? availableHeight * mobileHeightRatio : availableHeight * 0.58;
 
     // default scale; reduce size when required heights exceed available height
     double scale = 1.0;

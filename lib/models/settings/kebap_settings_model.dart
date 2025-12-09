@@ -7,6 +7,7 @@ class KebapSettingsModel {
   final bool? forceTVClientLocalSearch;
   final bool disableNonAdminRequests;
   final bool showReviewsCarousel;
+  final double mobileHomepageHeightRatio; // 0.3 to 0.7, controls banner height on phones
 
   const KebapSettingsModel({
     this.useBaklava = false,
@@ -15,6 +16,7 @@ class KebapSettingsModel {
     this.forceTVClientLocalSearch,
     this.disableNonAdminRequests = false,
     this.showReviewsCarousel = true,
+    this.mobileHomepageHeightRatio = 0.6,
   });
 
   KebapSettingsModel copyWith({
@@ -24,6 +26,7 @@ class KebapSettingsModel {
     bool? forceTVClientLocalSearch,
     bool? disableNonAdminRequests,
     bool? showReviewsCarousel,
+    double? mobileHomepageHeightRatio,
   }) {
     return KebapSettingsModel(
       useBaklava: useBaklava ?? this.useBaklava,
@@ -32,6 +35,7 @@ class KebapSettingsModel {
       forceTVClientLocalSearch: forceTVClientLocalSearch ?? this.forceTVClientLocalSearch,
       disableNonAdminRequests: disableNonAdminRequests ?? this.disableNonAdminRequests,
       showReviewsCarousel: showReviewsCarousel ?? this.showReviewsCarousel,
+      mobileHomepageHeightRatio: mobileHomepageHeightRatio ?? this.mobileHomepageHeightRatio,
     );
   }
 
@@ -43,6 +47,7 @@ class KebapSettingsModel {
       'forceTVClientLocalSearch': forceTVClientLocalSearch,
       'disableNonAdminRequests': disableNonAdminRequests,
       'showReviewsCarousel': showReviewsCarousel,
+      'mobileHomepageHeightRatio': mobileHomepageHeightRatio,
     };
   }
 
@@ -55,6 +60,7 @@ class KebapSettingsModel {
       forceTVClientLocalSearch: json['forceTVClientLocalSearch'] as bool?,
       disableNonAdminRequests: json['disableNonAdminRequests'] as bool? ?? false,
       showReviewsCarousel: json['showReviewsCarousel'] as bool? ?? true,
+      mobileHomepageHeightRatio: (json['mobileHomepageHeightRatio'] as num?)?.toDouble() ?? 0.6,
     );
   }
 
@@ -70,3 +76,4 @@ class KebapSettingsModel {
 
   String toStringJson() => jsonEncode(toJson());
 }
+
