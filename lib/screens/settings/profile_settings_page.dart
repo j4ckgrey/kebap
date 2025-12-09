@@ -9,7 +9,9 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:kebap/jellyfin/jellyfin_open_api.swagger.dart' as jelly_api; // ALIAS
 import 'package:kebap/jellyfin/jellyfin_open_api.enums.swagger.dart' as jelly_enums; // ALIAS
 import 'package:kebap/providers/api_provider.dart';
+import 'package:kebap/providers/baklava_config_provider.dart';
 import 'package:kebap/providers/connectivity_provider.dart';
+import 'package:kebap/providers/effective_baklava_config_provider.dart';
 import 'package:kebap/providers/user_provider.dart';
 import 'package:kebap/screens/settings/settings_list_tile.dart';
 import 'package:kebap/screens/settings/settings_scaffold.dart';
@@ -187,6 +189,52 @@ class _UserSettingsPageState extends ConsumerState<ProfileSettingsPage> {
             ),
           ],
         ),
+        // Admin-only settings section
+        if (user?.policy?.isAdministrator == true) ...[
+          const SizedBox(height: 16),
+          ...settingsListGroup(
+            context,
+            const SettingsLabelDivider(label: 'Admin Settings'),
+            [
+              Consumer(builder: (context, ref, _) {
+                final baklavaConfigAsync = ref.watch(effectiveBaklavaConfigProvider);
+                return baklavaConfigAsync.when(
+                  data: (cfg) => SettingsListTile(
+                    label: const Text('Enable Auto Import'),
+                    subLabel: const Text('Non-admin users can import directly without making requests'),
+                    trailing: Switch(
+                      value: cfg.disableNonAdminRequests,
+                      onChanged: (v) async {
+                        try {
+                          await ref.read(baklavaServiceProvider).updateConfig(
+                            disableNonAdminRequests: v,
+                          );
+                          // Refresh the config
+                          ref.invalidate(baklavaConfigProvider);
+                          ref.invalidate(effectiveBaklavaConfigProvider);
+                        } catch (e) {
+                          if (context.mounted) {
+                            ScaffoldMessenger.of(context).showSnackBar(
+                              SnackBar(content: Text('Failed to update: $e')),
+                            );
+                          }
+                        }
+                      },
+                    ),
+                  ),
+                  loading: () => const SettingsListTile(
+                    label: Text('Enable Auto Import'),
+                    subLabel: Text('Loading...'),
+                  ),
+                  error: (_, __) => const SettingsListTile(
+                    label: Text('Enable Auto Import'),
+                    subLabel: Text('Requires Baklava plugin'),
+                  ),
+                );
+              }),
+            ],
+          ),
+        ],
       ],
     );
   }

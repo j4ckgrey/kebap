@@ -5,6 +5,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import 'package:kebap/providers/baklava_config_provider.dart';
 import 'package:kebap/providers/settings/kebap_settings_provider.dart';
+import 'package:kebap/providers/user_provider.dart';
 import 'package:kebap/screens/settings/settings_list_tile.dart';
 import 'package:kebap/screens/settings/settings_scaffold.dart';
 import 'package:kebap/screens/settings/widgets/settings_label_divider.dart';
@@ -39,6 +40,8 @@ class _KebapSettingsPageState extends ConsumerState<KebapSettingsPage> {
     final local = ref.watch(kebapSettingsProvider);
     final baklavaAsync = ref.watch(baklavaConfigProvider);
     final useBaklava = local.useBaklava;
+    final user = ref.watch(userProvider);
+    final isAdmin = user?.policy?.isAdministrator ?? false;
 
     return SettingsScaffold(
       label: "Kebap Settings",
@@ -123,10 +126,34 @@ class _KebapSettingsPageState extends ConsumerState<KebapSettingsPage> {
                   label: const Text('Force TV client local search'),
                   subLabel: Text(cfg.forceTVClientLocalSearch == true ? 'Enabled' : 'Disabled'),
                 ),
-                SettingsListTile(
-                  label: const Text('Disable non-admin requests'),
-                  subLabel: Text(cfg.disableNonAdminRequests ? 'Disabled' : 'Enabled'),
-                ),
+                if (isAdmin)
+                  SettingsListTile(
+                    label: const Text('Enable Auto Import'),
+                    subLabel: const Text('When enabled, non-admin users can import directly without making requests'),
+                    trailing: Switch(
+                      value: cfg.disableNonAdminRequests,
+                      onChanged: (v) async {
+                        try {
+                          await ref.read(baklavaServiceProvider).updateConfig(
+                            disableNonAdminRequests: v,
+                          );
+                          // Refresh the config
+                          ref.invalidate(baklavaConfigProvider);
+                        } catch (e) {
+                          if (context.mounted) {
+                            ScaffoldMessenger.of(context).showSnackBar(
+                              SnackBar(content: Text('Failed to update setting: $e')),
+                            );
+                          }
+                        }
+                      },
+                    ),
+                  )
+                else
+                  SettingsListTile(
+                    label: const Text('Auto Import'),
+                    subLabel: Text(cfg.disableNonAdminRequests ? 'Enabled' : 'Disabled'),
+                  ),
                 SettingsListTile(
                   label: const Text('Show reviews carousel'),
                   subLabel: Text(cfg.showReviewsCarousel ? 'Enabled' : 'Disabled'),
