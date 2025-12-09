@@ -44,10 +44,10 @@ class BaklavaMetadataState {
     bool? loading,
     String? error,
     bool? inLibrary,
-    String? existingRequestId,
-    String? jellyfinItemId,
-    String? requestStatus,
-    String? requestUsername,
+    Object? existingRequestId = _sentinel, // Use sentinel to detect explicit null
+    Object? jellyfinItemId = _sentinel,
+    Object? requestStatus = _sentinel,
+    Object? requestUsername = _sentinel,
   }) {
     return BaklavaMetadataState(
       metadata: metadata ?? this.metadata,
@@ -56,13 +56,24 @@ class BaklavaMetadataState {
       loading: loading ?? this.loading,
       error: error ?? this.error,
       inLibrary: inLibrary ?? this.inLibrary,
-      existingRequestId: existingRequestId ?? this.existingRequestId,
-      jellyfinItemId: jellyfinItemId ?? this.jellyfinItemId,
-      requestStatus: requestStatus ?? this.requestStatus,
-      requestUsername: requestUsername ?? this.requestUsername,
+      existingRequestId: existingRequestId == _sentinel 
+          ? this.existingRequestId 
+          : existingRequestId as String?,
+      jellyfinItemId: jellyfinItemId == _sentinel 
+          ? this.jellyfinItemId 
+          : jellyfinItemId as String?,
+      requestStatus: requestStatus == _sentinel 
+          ? this.requestStatus 
+          : requestStatus as String?,
+      requestUsername: requestUsername == _sentinel 
+          ? this.requestUsername 
+          : requestUsername as String?,
     );
   }
 }
+
+// Sentinel value to differentiate between "not passed" and "explicitly null"
+const _sentinel = Object();
 
 class BaklavaMetadataNotifier extends StateNotifier<BaklavaMetadataState> {
   final Ref ref;

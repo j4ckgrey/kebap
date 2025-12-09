@@ -51,6 +51,62 @@ class BaklavaService {
     }
   }
 
+  /// Update Baklava plugin configuration (admin only)
+  Future<Response<void>> updateConfig({
+    bool? disableNonAdminRequests,
+    bool? showReviewsCarousel,
+    bool? forceTVClientLocalSearch,
+    String? versionUi,
+    String? audioUi,
+    String? subtitleUi,
+  }) async {
+    try {
+      final api = ref.read(jellyApiProvider).api;
+      final serverUrl = ref.read(serverUrlProvider);
+
+      if (serverUrl == null || serverUrl.isEmpty) {
+        throw Exception('Server URL not available');
+      }
+
+      final body = <String, dynamic>{};
+      if (disableNonAdminRequests != null) {
+        body['disableNonAdminRequests'] = disableNonAdminRequests;
+      }
+      if (showReviewsCarousel != null) {
+        body['showReviewsCarousel'] = showReviewsCarousel;
+      }
+      if (forceTVClientLocalSearch != null) {
+        body['forceTVClientLocalSearch'] = forceTVClientLocalSearch;
+      }
+      if (versionUi != null) body['versionUi'] = versionUi;
+      if (audioUi != null) body['audioUi'] = audioUi;
+      if (subtitleUi != null) body['subtitleUi'] = subtitleUi;
+
+      final cleanServerUrl = serverUrl.endsWith('/') 
+          ? serverUrl.substring(0, serverUrl.length - 1) 
+          : serverUrl;
+      final url = '$cleanServerUrl/api/baklava/config';
+      
+      final request = Request(
+        'PUT',
+        Uri.parse(url),
+        Uri.parse(serverUrl),
+        body: body,
+        headers: {'Content-Type': 'application/json'},
+      );
+
+      final response = await api.client.send(request);
+
+      if (!response.isSuccessful) {
+        throw Exception('Failed to update config: ${response.statusCode}');
+      }
+
+      return Response(response.base, null);
+    } catch (e) {
+      throw Exception('Failed to update config: $e');
+    }
+  }
+
   /// Fetch all media requests from Baklava plugin
   Future<Response<List<MediaRequest>>> fetchRequests() async {
     try {

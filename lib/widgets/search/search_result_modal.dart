@@ -261,7 +261,7 @@ class _SearchResultModalState extends ConsumerState<SearchResultModal> {
       orElse: () => false,
     );
 
-    print('DEBUG: SearchResultModal build - inLibrary: ${metadataState.inLibrary}, existingRequestId: ${metadataState.existingRequestId}, isAdmin: $isAdmin');
+    print('DEBUG: SearchResultModal build - user: ${user?.name}, isAdmin: $isAdmin, autoImport: $disableNonAdminRequests, existingRequestId: ${metadataState.existingRequestId}');
 
     return CallbackShortcuts(
       bindings: {
@@ -454,7 +454,11 @@ class _SearchResultModalState extends ConsumerState<SearchResultModal> {
                     icon: const Icon(IconsaxPlusLinear.play),
                     label: const Text('Open'),
                   )
-                else if (metadataState.existingRequestId != null)
+                // Only show "Requested" for PENDING requests (not approved/rejected)
+                // If request is approved/rejected but item not in library, allow re-request
+                else if (metadataState.existingRequestId != null && 
+                         metadataState.requestStatus == 'pending' && 
+                         !disableNonAdminRequests)
                   FilledButton.icon(
                     onPressed: null, // TODO: Open request details
                     icon: const Icon(IconsaxPlusLinear.clock),
@@ -463,6 +467,22 @@ class _SearchResultModalState extends ConsumerState<SearchResultModal> {
                       backgroundColor: theme.colorScheme.tertiaryContainer,
                       foregroundColor: theme.colorScheme.onTertiaryContainer,
                     ),
+                  )
+                else if (metadataState.existingRequestId != null && 
+                         metadataState.requestStatus == 'pending' && 
+                         disableNonAdminRequests && 
+                         !isAdmin)
+                  // Auto-import enabled: non-admins can import even if there's an existing request
+                  FilledButton.icon(
+                    onPressed: _importing ? null : _handleImport,
+                    icon: _importing
+                        ? const SizedBox(
+                            width: 16,
+                            height: 16,
+                            child: CircularProgressIndicator(strokeWidth: 2),
+                          )
+                        : const Icon(IconsaxPlusLinear.import),
+                    label: Text(_importing ? 'Importing...' : 'Import'),
                   )
                 else if (isAdmin)
                   FilledButton.icon(
@@ -481,8 +501,11 @@ class _SearchResultModalState extends ConsumerState<SearchResultModal> {
                     final isConfigLoading = effectiveConfigAsync is AsyncLoading;
                     final isAdminUser = isAdmin;
 
-                    // If request exists and user is admin, show Approve/Reject
-                    if (metadataState.existingRequestId != null && isAdminUser) {
+                    // If PENDING request exists and user is admin, show Approve/Reject
+                    // (Approved/rejected requests fall through to default Import button)
+                    final hasPendingRequest = metadataState.existingRequestId != null && 
+                                              metadataState.requestStatus == 'pending';
+                    if (hasPendingRequest && isAdminUser) {
                       return Row(
                         mainAxisSize: MainAxisSize.min,
                         children: [
@@ -576,10 +599,8 @@ class _SearchResultModalState extends ConsumerState<SearchResultModal> {
                       );
                     }
 
-                    final allowRequest = !disableNonAdminRequests || isAdminUser;
 
-                    // Show a disabled button while config is loading, or a disabled
-                    // button with explanatory tooltip if requests are blocked.
+                    // Show a disabled button while config is loading
                     if (isConfigLoading) {
                       return FilledButton.icon(
                         onPressed: null,
@@ -592,14 +613,19 @@ class _SearchResultModalState extends ConsumerState<SearchResultModal> {
                       );
                     }
 
-                    if (!allowRequest) {
-                      return Tooltip(
-                        message: 'Requests are disabled for non-admin users',
-                        child: FilledButton.icon(
-                          onPressed: null,
-                          icon: const Icon(IconsaxPlusLinear.add),
-                          label: const Text('Requests disabled'),
-                        ),
+                    // Auto Import: when disableNonAdminRequests is true, non-admins
+                    // can import directly (same UI as admins)
+                    if (disableNonAdminRequests) {
+                      return FilledButton.icon(
+                        onPressed: _importing ? null : _handleImport,
+                        icon: _importing
+                            ? const SizedBox(
+                                width: 16,
+                                height: 16,
+                                child: CircularProgressIndicator(strokeWidth: 2),
+                              )
+                            : const Icon(IconsaxPlusLinear.import),
+                        label: Text(_importing ? 'Importing...' : 'Import'),
                       );
                     }
 
