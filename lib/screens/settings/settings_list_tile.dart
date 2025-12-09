@@ -60,7 +60,10 @@ class _SettingsListTileState extends State<SettingsListTile> with AutomaticKeepA
             onTap: widget.onTap,
             autoFocus: widget.autoFocus,
             onFocusChange: (value) {
-              // ensureVisible removed for performance
+              // Ensure focused item is visible on TV clients (dPad navigation)
+              if (value) {
+                Scrollable.ensureVisible(context, alignment: 0.5, duration: const Duration(milliseconds: 200));
+              }
             },
             child: Padding(
               padding: const EdgeInsets.symmetric(
