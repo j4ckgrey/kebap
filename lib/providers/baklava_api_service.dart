@@ -52,6 +52,8 @@ class BaklavaService {
   }
 
   /// Update Baklava plugin configuration (admin only)
+  /// Note: Due to a server-side bug, we must fetch and include the current tmdbApiKey
+  /// to prevent it from being overwritten with null
   Future<Response<void>> updateConfig({
     bool? disableNonAdminRequests,
     bool? showReviewsCarousel,
@@ -68,7 +70,23 @@ class BaklavaService {
         throw Exception('Server URL not available');
       }
 
+      // WORKAROUND: Fetch current config to preserve tmdbApiKey from being overwritten
+      // The server unconditionally overwrites tmdbApiKey even when not provided
+      String? currentTmdbApiKey;
+      try {
+        final currentConfig = await fetchConfig();
+        if (currentConfig.isSuccessful && currentConfig.body != null) {
+          currentTmdbApiKey = currentConfig.body!.tmdbApiKey;
+        }
+      } catch (_) {
+        // Ignore errors, proceed without tmdbApiKey
+      }
+
       final body = <String, dynamic>{};
+      // Include current tmdbApiKey to prevent server from overwriting it
+      if (currentTmdbApiKey != null && currentTmdbApiKey.isNotEmpty) {
+        body['tmdbApiKey'] = currentTmdbApiKey;
+      }
       if (disableNonAdminRequests != null) {
         body['disableNonAdminRequests'] = disableNonAdminRequests;
       }

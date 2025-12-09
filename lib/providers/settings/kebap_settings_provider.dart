@@ -54,4 +54,9 @@ class KebapSettingsNotifier extends StateNotifier<KebapSettingsModel> {
     state = state.copyWith(showReviewsCarousel: value);
     _persist();
   }
+
+  void setMobileHomepageHeightRatio(double value) {
+    state = state.copyWith(mobileHomepageHeightRatio: value.clamp(0.3, 0.7));
+    _persist();
+  }
 }

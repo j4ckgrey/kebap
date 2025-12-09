@@ -5,6 +5,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:kebap/l10n/generated/app_localizations.dart';
 import 'package:kebap/models/settings/client_settings_model.dart';
 import 'package:kebap/providers/settings/client_settings_provider.dart';
+import 'package:kebap/providers/settings/kebap_settings_provider.dart';
 import 'package:kebap/screens/settings/settings_list_tile.dart';
 import 'package:kebap/screens/settings/widgets/settings_label_divider.dart';
 import 'package:kebap/screens/settings/widgets/settings_list_group.dart';
@@ -22,7 +23,10 @@ List<Widget> buildClientSettingsVisual(
   TextEditingController libraryPageSizeController,
 ) {
   final clientSettings = ref.watch(clientSettingsProvider);
+  final kebapSettings = ref.watch(kebapSettingsProvider);
   Locale currentLocale = WidgetsBinding.instance.platformDispatcher.locale;
+  final isPhone = !AdaptiveLayout.of(context).isDesktop;
+  
   return settingsListGroup(
     context,
     SettingsLabelDivider(label: context.localized.settingsVisual),
@@ -200,6 +204,28 @@ List<Widget> buildClientSettingsVisual(
           ),
         ],
       ),
+      // Mobile homepage height slider (only show on phones)
+      if (isPhone)
+        Column(
+          children: [
+            SettingsListTile(
+              label: const Text("Mobile Homepage Banner Height"),
+              subLabel: Text("${(kebapSettings.mobileHomepageHeightRatio * 100).round()}% of screen"),
+            ),
+            Padding(
+              padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+              child: KebapSlider(
+                min: 0.3,
+                max: 0.7,
+                value: kebapSettings.mobileHomepageHeightRatio,
+                divisions: 8,
+                onChanged: (value) =>
+                    ref.read(kebapSettingsProvider.notifier).setMobileHomepageHeightRatio(value),
+              ),
+            ),
+          ],
+        ),
     ],
   );
 }
+
