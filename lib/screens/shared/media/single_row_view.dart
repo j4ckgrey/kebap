@@ -113,18 +113,27 @@ class _SingleRowViewState extends ConsumerState<SingleRowView> {
 
     // Mobile homepage height ratio from settings (default 0.6, range 0.3-0.7)
     final mobileHeightRatio = ref.watch(kebapSettingsProvider.select((s) => s.mobileHomepageHeightRatio));
-    final bannerHeight = viewSize <= ViewSize.phone ? availableHeight * mobileHeightRatio : availableHeight * 0.58;
+    
+    // In landscape (width > height), use a smaller banner to leave room for rows
+    final isLandscape = size.width > size.height;
+    final baseBannerRatio = viewSize <= ViewSize.phone 
+        ? (isLandscape ? 0.35 : mobileHeightRatio) // Smaller in landscape
+        : 0.58;
+    final baseBannerHeight = availableHeight * baseBannerRatio;
 
     // default scale; reduce size when required heights exceed available height
     double scale = 1.0;
     final rowExtent = defaultCardHeight + titleHeight + 16;
-    final requiredHeight = bannerHeight + rowExtent + 16;
+    final requiredHeight = baseBannerHeight + rowExtent + 16;
     if (requiredHeight > availableHeight) {
       scale = (availableHeight / requiredHeight).clamp(0.6, 1.0);
     }
 
     final scaledCardHeight = defaultCardHeight * scale;
-    final scaledBannerHeight = (bannerHeight * ((scale + 1) / 2)).clamp(availableHeight * 0.28, bannerHeight);
+    // Ensure banner never takes more than available minus row space
+    final maxBannerHeight = availableHeight - (scaledCardHeight + titleHeight + 32);
+    final scaledBannerHeight = (baseBannerHeight * ((scale + 1) / 2))
+        .clamp(availableHeight * 0.2, maxBannerHeight.clamp(availableHeight * 0.2, baseBannerHeight));
 
     // Fixed banner (non-scrollable) and rows - return the Column
     return Column(

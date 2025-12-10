@@ -44,6 +44,9 @@ class SeriesModelMapper extends ClassMapperBase<SeriesModel> {
   static List<ItemBaseModel> _$related(SeriesModel v) => v.related;
   static const Field<SeriesModel, List<ItemBaseModel>> _f$related =
       Field('related', _$related, opt: true, def: const []);
+  static String? _$trailerUrl(SeriesModel v) => v.trailerUrl;
+  static const Field<SeriesModel, String> _f$trailerUrl =
+      Field('trailerUrl', _$trailerUrl, opt: true);
   static String _$name(SeriesModel v) => v.name;
   static const Field<SeriesModel, String> _f$name = Field('name', _$name);
   static String _$id(SeriesModel v) => v.id;
@@ -87,6 +90,7 @@ class SeriesModelMapper extends ClassMapperBase<SeriesModel> {
     #sortName: _f$sortName,
     #status: _f$status,
     #related: _f$related,
+    #trailerUrl: _f$trailerUrl,
     #name: _f$name,
     #id: _f$id,
     #overview: _f$overview,
@@ -109,6 +113,7 @@ class SeriesModelMapper extends ClassMapperBase<SeriesModel> {
         sortName: data.dec(_f$sortName),
         status: data.dec(_f$status),
         related: data.dec(_f$related),
+        trailerUrl: data.dec(_f$trailerUrl),
         name: data.dec(_f$name),
         id: data.dec(_f$id),
         overview: data.dec(_f$overview),
@@ -194,6 +199,7 @@ abstract class SeriesModelCopyWith<$R, $In extends SeriesModel, $Out>
       String? sortName,
       String? status,
       List<ItemBaseModel>? related,
+      String? trailerUrl,
       String? name,
       String? id,
       OverviewModel? overview,
@@ -250,6 +256,7 @@ class _SeriesModelCopyWithImpl<$R, $Out>
           String? sortName,
           String? status,
           List<ItemBaseModel>? related,
+          Object? trailerUrl = $none,
           String? name,
           String? id,
           OverviewModel? overview,
@@ -269,6 +276,7 @@ class _SeriesModelCopyWithImpl<$R, $Out>
         if (sortName != null) #sortName: sortName,
         if (status != null) #status: status,
         if (related != null) #related: related,
+        if (trailerUrl != $none) #trailerUrl: trailerUrl,
         if (name != null) #name: name,
         if (id != null) #id: id,
         if (overview != null) #overview: overview,
@@ -291,6 +299,7 @@ class _SeriesModelCopyWithImpl<$R, $Out>
       sortName: data.get(#sortName, or: $value.sortName),
       status: data.get(#status, or: $value.status),
       related: data.get(#related, or: $value.related),
+      trailerUrl: data.get(#trailerUrl, or: $value.trailerUrl),
       name: data.get(#name, or: $value.name),
       id: data.get(#id, or: $value.id),
       overview: data.get(#overview, or: $value.overview),

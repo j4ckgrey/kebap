@@ -27,10 +27,13 @@ class MovieModel extends ItemStreamModel with MovieModelMappable {
   final String status;
   final List<ItemBaseModel> related;
   final List<Chapter> chapters;
+  @override
+  final String? trailerUrl;
   const MovieModel({
     required this.originalTitle,
     this.path,
     this.chapters = const [],
+    this.trailerUrl,
     required this.premiereDate,
     required this.sortName,
     required this.status,
@@ -102,6 +105,7 @@ class MovieModel extends ItemStreamModel with MovieModelMappable {
       canDelete: item.canDelete,
       canDownload: item.canDownload,
       mediaStreams: MediaStreamsModel.fromMediaStreamsList(item.mediaSources, ref),
+      trailerUrl: item.remoteTrailers?.firstOrNull?.url,
     );
   }
 }

@@ -45,8 +45,14 @@ class ImagesData {
     final itemid = item.id;
     if (itemid == null) return null;
     final imageProvider = ref.read(imageUtilityProvider);
+    // Check for Primary image first, then fall back to Thumb (common for episodes)
+    final primaryTag = item.imageTags?['Primary'];
+    final thumbTag = item.imageTags?['Thumb'];
+    final hasPrimary = primaryTag != null;
+    final hasThumb = thumbTag != null;
+    
     final newImgesData = ImagesData(
-      primary: item.imageTags?['Primary'] != null
+      primary: hasPrimary
           ? ImageData(
               path: getOriginalSize
                   ? imageProvider.getItemsOrigImageUrl(
@@ -59,10 +65,26 @@ class ImagesData {
                       maxHeight: primary.height.toInt(),
                       maxWidth: primary.width.toInt(),
                     ),
-              key: "${itemid}_primary_${item.imageTags?['Primary']}",
-              hash: item.imageBlurHashes?.primary?[item.imageTags?['Primary']] ?? "",
+              key: "${itemid}_primary_$primaryTag",
+              hash: item.imageBlurHashes?.primary?[primaryTag] ?? "",
             )
-          : null,
+          : hasThumb
+              ? ImageData(
+                  path: getOriginalSize
+                      ? imageProvider.getItemsOrigImageUrl(
+                          itemid,
+                          type: enums.ImageType.thumb,
+                        )
+                      : imageProvider.getItemsImageUrl(
+                          itemid,
+                          type: enums.ImageType.thumb,
+                          maxHeight: primary.height.toInt(),
+                          maxWidth: primary.width.toInt(),
+                        ),
+                  key: "${itemid}_thumb_$thumbTag",
+                  hash: item.imageBlurHashes?.thumb?[thumbTag] ?? "",
+                )
+              : null,
       logo: item.imageTags?['Logo'] != null
           ? ImageData(
               path: getOriginalSize

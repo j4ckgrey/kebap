@@ -5,7 +5,10 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:iconsax_plus/iconsax_plus.dart';
 
 import 'package:kebap/models/item_base_model.dart';
+import 'package:kebap/models/settings/home_settings_model.dart';
+import 'package:kebap/providers/settings/home_settings_provider.dart';
 import 'package:kebap/screens/shared/media/banner_play_button.dart';
+import 'package:kebap/screens/shared/media/trailer_banner_player.dart';
 import 'package:kebap/util/adaptive_layout/adaptive_layout.dart';
 import 'package:kebap/util/kebap_image.dart';
 import 'package:kebap/util/focus_provider.dart';
@@ -85,8 +88,18 @@ class _MediaBannerState extends ConsumerState<MediaBanner> {
     final overlayColor = ThemesData.of(context).dark.colorScheme.primaryContainer;
     final currentItem = widget.items[currentPage.clamp(0, widget.items.length - 1)];
     final double dragOpacity = (1 - dragOffset.abs()).clamp(0, 1);
+    
+    // Read the banner media type setting
+    // Note: This widget doesn't have ref, so we use Consumer
+    return Consumer(
+      builder: (context, ref, child) {
+        final bannerMediaType = ref.watch(
+          homeSettingsProvider.select((value) => value.bannerMediaType),
+        );
+        final showTrailer = bannerMediaType == HomeBannerMediaType.trailer &&
+            currentItem.trailerUrl != null;
 
-    return Padding(
+        return Padding(
       padding: const EdgeInsets.symmetric(vertical: 6),
       child: Column(
         mainAxisSize: MainAxisSize.min,
@@ -184,10 +197,15 @@ class _MediaBannerState extends ConsumerState<MediaBanner> {
                                 height: double.infinity,
                                 child: Padding(
                                   padding: const EdgeInsets.all(1),
-                                  child: KebapImage(
-                                    fit: BoxFit.cover,
-                                    image: currentItem.bannerImage,
-                                  ),
+                                  child: showTrailer
+                                      ? TrailerBannerPlayer(
+                                          trailerUrl: currentItem.trailerUrl!,
+                                          fallbackImage: currentItem.bannerImage,
+                                        )
+                                      : KebapImage(
+                                          fit: BoxFit.cover,
+                                          image: currentItem.bannerImage,
+                                        ),
                                 ),
                               ),
                             ),
@@ -279,6 +297,8 @@ class _MediaBannerState extends ConsumerState<MediaBanner> {
             const SizedBox(height: 24)
         ],
       ),
+    );
+      },
     );
   }
 

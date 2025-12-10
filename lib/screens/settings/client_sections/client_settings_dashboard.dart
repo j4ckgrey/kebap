@@ -14,6 +14,7 @@ import 'package:kebap/widgets/shared/item_actions.dart';
 
 List<Widget> buildClientSettingsDashboard(BuildContext context, WidgetRef ref) {
   final clientSettings = ref.watch(clientSettingsProvider);
+  final homeSettings = ref.watch(homeSettingsProvider);
   return settingsListGroup(
     context,
     SettingsLabelDivider(label: context.localized.dashboard),
@@ -39,6 +40,65 @@ List<Widget> buildClientSettingsDashboard(BuildContext context, WidgetRef ref) {
         ),
       ),
       SettingsListTile(
+        label: Text(context.localized.bannerMediaType),
+        subLabel: Text(context.localized.bannerMediaTypeDesc),
+        trailing: EnumBox(
+          current: ref.watch(
+            homeSettingsProvider.select(
+              (value) => value.bannerMediaType.label(context),
+            ),
+          ),
+          itemBuilder: (context) => HomeBannerMediaType.values
+              .map(
+                (entry) => ItemActionButton(
+                  label: Text(entry.label(context)),
+                  action: () => ref
+                      .read(homeSettingsProvider.notifier)
+                      .update((context) => context.copyWith(bannerMediaType: entry)),
+                ),
+              )
+              .toList(),
+        ),
+      ),
+      // Show mute toggle only when trailer mode is enabled
+      if (homeSettings.bannerMediaType == HomeBannerMediaType.trailer)
+        SettingsListTile(
+          label: Text(context.localized.bannerTrailerMuted),
+          subLabel: Text(context.localized.bannerTrailerMutedDesc),
+          onTap: () => ref
+              .read(homeSettingsProvider.notifier)
+              .update((current) => current.copyWith(bannerTrailerMuted: !current.bannerTrailerMuted)),
+          trailing: Switch(
+            value: homeSettings.bannerTrailerMuted,
+            onChanged: (value) => ref
+                .read(homeSettingsProvider.notifier)
+                .update((current) => current.copyWith(bannerTrailerMuted: value)),
+          ),
+        ),
+      // Show quality setting only when trailer mode is enabled
+      if (homeSettings.bannerMediaType == HomeBannerMediaType.trailer)
+        SettingsListTile(
+          label: Text(context.localized.bannerTrailerQuality),
+          subLabel: Text(context.localized.bannerTrailerQualityDesc),
+          trailing: EnumBox(
+            current: ref.watch(
+              homeSettingsProvider.select(
+                (value) => value.bannerTrailerQuality.label(context),
+              ),
+            ),
+            itemBuilder: (context) => TrailerQuality.values
+                .map(
+                  (entry) => ItemActionButton(
+                    label: Text(entry.label(context)),
+                    action: () => ref
+                        .read(homeSettingsProvider.notifier)
+                        .update((context) => context.copyWith(bannerTrailerQuality: entry)),
+                  ),
+                )
+                .toList(),
+          ),
+        ),
+      SettingsListTile(
         label: Text(context.localized.clientSettingsShowAllCollectionsTitle),
         subLabel: Text(context.localized.clientSettingsShowAllCollectionsDesc),
         onTap: () => ref
@@ -54,3 +114,5 @@ List<Widget> buildClientSettingsDashboard(BuildContext context, WidgetRef ref) {
     ],
   );
 }
+
+

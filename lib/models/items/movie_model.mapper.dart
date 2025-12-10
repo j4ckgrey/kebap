@@ -33,6 +33,9 @@ class MovieModelMapper extends ClassMapperBase<MovieModel> {
   static List<Chapter> _$chapters(MovieModel v) => v.chapters;
   static const Field<MovieModel, List<Chapter>> _f$chapters =
       Field('chapters', _$chapters, opt: true, def: const []);
+  static String? _$trailerUrl(MovieModel v) => v.trailerUrl;
+  static const Field<MovieModel, String> _f$trailerUrl =
+      Field('trailerUrl', _$trailerUrl, opt: true);
   static DateTime _$premiereDate(MovieModel v) => v.premiereDate;
   static const Field<MovieModel, DateTime> _f$premiereDate =
       Field('premiereDate', _$premiereDate);
@@ -90,6 +93,7 @@ class MovieModelMapper extends ClassMapperBase<MovieModel> {
     #originalTitle: _f$originalTitle,
     #path: _f$path,
     #chapters: _f$chapters,
+    #trailerUrl: _f$trailerUrl,
     #premiereDate: _f$premiereDate,
     #sortName: _f$sortName,
     #status: _f$status,
@@ -115,6 +119,7 @@ class MovieModelMapper extends ClassMapperBase<MovieModel> {
         originalTitle: data.dec(_f$originalTitle),
         path: data.dec(_f$path),
         chapters: data.dec(_f$chapters),
+        trailerUrl: data.dec(_f$trailerUrl),
         premiereDate: data.dec(_f$premiereDate),
         sortName: data.dec(_f$sortName),
         status: data.dec(_f$status),
@@ -199,6 +204,7 @@ abstract class MovieModelCopyWith<$R, $In extends MovieModel, $Out>
       {String? originalTitle,
       String? path,
       List<Chapter>? chapters,
+      String? trailerUrl,
       DateTime? premiereDate,
       String? sortName,
       String? status,
@@ -248,6 +254,7 @@ class _MovieModelCopyWithImpl<$R, $Out>
           {String? originalTitle,
           Object? path = $none,
           List<Chapter>? chapters,
+          Object? trailerUrl = $none,
           DateTime? premiereDate,
           String? sortName,
           String? status,
@@ -270,6 +277,7 @@ class _MovieModelCopyWithImpl<$R, $Out>
         if (originalTitle != null) #originalTitle: originalTitle,
         if (path != $none) #path: path,
         if (chapters != null) #chapters: chapters,
+        if (trailerUrl != $none) #trailerUrl: trailerUrl,
         if (premiereDate != null) #premiereDate: premiereDate,
         if (sortName != null) #sortName: sortName,
         if (status != null) #status: status,
@@ -294,6 +302,7 @@ class _MovieModelCopyWithImpl<$R, $Out>
       originalTitle: data.get(#originalTitle, or: $value.originalTitle),
       path: data.get(#path, or: $value.path),
       chapters: data.get(#chapters, or: $value.chapters),
+      trailerUrl: data.get(#trailerUrl, or: $value.trailerUrl),
       premiereDate: data.get(#premiereDate, or: $value.premiereDate),
       sortName: data.get(#sortName, or: $value.sortName),
       status: data.get(#status, or: $value.status),

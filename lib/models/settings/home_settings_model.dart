@@ -16,6 +16,9 @@ abstract class HomeSettingsModel with _$HomeSettingsModel {
     @Default({...LayoutMode.values}) Set<LayoutMode> screenLayouts,
     @Default({...ViewSize.values}) Set<ViewSize> layoutStates,
     @Default(HomeNextUp.separate) HomeNextUp nextUp,
+    @Default(HomeBannerMediaType.image) HomeBannerMediaType bannerMediaType,
+    @Default(false) bool bannerTrailerMuted,
+    @Default(TrailerQuality.high) TrailerQuality bannerTrailerQuality,
   }) = _HomeSettingsModel;
 
   static HomeSettingsModel defaultModel() {
@@ -57,5 +60,35 @@ enum HomeNextUp {
         HomeNextUp.cont => context.localized.settingsContinue,
         HomeNextUp.combined => context.localized.combined,
         HomeNextUp.separate => context.localized.separate,
+      };
+}
+
+/// Banner media type for homepage banner
+enum HomeBannerMediaType {
+  image,
+  trailer,
+  ;
+
+  const HomeBannerMediaType();
+
+  String label(BuildContext context) => switch (this) {
+        HomeBannerMediaType.image => context.localized.image,
+        HomeBannerMediaType.trailer => context.localized.trailer,
+      };
+}
+
+/// Trailer quality setting for homepage banner
+enum TrailerQuality {
+  low,
+  medium,
+  high,
+  ;
+
+  const TrailerQuality();
+
+  String label(BuildContext context) => switch (this) {
+        TrailerQuality.low => context.localized.qualityLow,
+        TrailerQuality.medium => context.localized.qualityMedium,
+        TrailerQuality.high => context.localized.qualityHigh,
       };
 }

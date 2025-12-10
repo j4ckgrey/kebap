@@ -132,6 +132,9 @@ class ItemBaseModel with ItemBaseModelMappable {
 
   MediaStreamsModel? get streamModel => null;
 
+  /// Remote trailer URL (typically YouTube). Subclasses should override this.
+  String? get trailerUrl => null;
+
   String playText(BuildContext context) => context.localized.play(name);
 
   double get progress => userData.progress;
