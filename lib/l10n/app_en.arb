@@ -1391,5 +1391,16 @@
   "stopDownload": "Stop download",
   "stopDownloadConfirmation": "Are you sure you want to stop this download?",
   "yes": "Yes",
-  "no": "No"
+  "no": "No",
+  "image": "Image",
+  "trailer": "Trailer",
+  "bannerMediaType": "Banner Media",
+  "bannerMediaTypeDesc": "Show image or trailer in homepage banner",
+  "bannerTrailerMuted": "Mute Banner Trailer",
+  "bannerTrailerMutedDesc": "Play trailer audio muted in homepage banner",
+  "bannerTrailerQuality": "Trailer Quality",
+  "bannerTrailerQualityDesc": "Video quality for homepage banner trailers",
+  "qualityLow": "Low",
+  "qualityMedium": "Medium",
+  "qualityHigh": "High"
 }

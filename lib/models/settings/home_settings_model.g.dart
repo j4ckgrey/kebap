@@ -18,6 +18,13 @@ _HomeSettingsModel _$HomeSettingsModelFromJson(Map<String, dynamic> json) =>
           const {...ViewSize.values},
       nextUp: $enumDecodeNullable(_$HomeNextUpEnumMap, json['nextUp']) ??
           HomeNextUp.separate,
+      bannerMediaType: $enumDecodeNullable(
+              _$HomeBannerMediaTypeEnumMap, json['bannerMediaType']) ??
+          HomeBannerMediaType.image,
+      bannerTrailerMuted: json['bannerTrailerMuted'] as bool? ?? false,
+      bannerTrailerQuality: $enumDecodeNullable(
+              _$TrailerQualityEnumMap, json['bannerTrailerQuality']) ??
+          TrailerQuality.high,
     );
 
 Map<String, dynamic> _$HomeSettingsModelToJson(_HomeSettingsModel instance) =>
@@ -27,6 +34,11 @@ Map<String, dynamic> _$HomeSettingsModelToJson(_HomeSettingsModel instance) =>
       'layoutStates':
           instance.layoutStates.map((e) => _$ViewSizeEnumMap[e]!).toList(),
       'nextUp': _$HomeNextUpEnumMap[instance.nextUp]!,
+      'bannerMediaType':
+          _$HomeBannerMediaTypeEnumMap[instance.bannerMediaType]!,
+      'bannerTrailerMuted': instance.bannerTrailerMuted,
+      'bannerTrailerQuality':
+          _$TrailerQualityEnumMap[instance.bannerTrailerQuality]!,
     };
 
 const _$LayoutModeEnumMap = {
@@ -47,4 +59,15 @@ const _$HomeNextUpEnumMap = {
   HomeNextUp.cont: 'cont',
   HomeNextUp.combined: 'combined',
   HomeNextUp.separate: 'separate',
+};
+
+const _$HomeBannerMediaTypeEnumMap = {
+  HomeBannerMediaType.image: 'image',
+  HomeBannerMediaType.trailer: 'trailer',
+};
+
+const _$TrailerQualityEnumMap = {
+  TrailerQuality.low: 'low',
+  TrailerQuality.medium: 'medium',
+  TrailerQuality.high: 'high',
 };

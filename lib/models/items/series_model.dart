@@ -22,6 +22,8 @@ class SeriesModel extends ItemBaseModel with SeriesModelMappable {
   final String sortName;
   final String status;
   final List<ItemBaseModel> related;
+  @override
+  final String? trailerUrl;
   const SeriesModel({
     this.availableEpisodes,
     this.seasons,
@@ -29,6 +31,7 @@ class SeriesModel extends ItemBaseModel with SeriesModelMappable {
     required this.sortName,
     required this.status,
     this.related = const [],
+    this.trailerUrl,
     required super.name,
     required super.id,
     required super.overview,
@@ -95,5 +98,6 @@ class SeriesModel extends ItemBaseModel with SeriesModelMappable {
         canDelete: item.canDelete,
         canDownload: item.canDownload,
         status: item.status ?? "Continuing",
+        trailerUrl: item.remoteTrailers?.firstOrNull?.url,
       );
 }

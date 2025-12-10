@@ -5,7 +5,10 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:iconsax_plus/iconsax_plus.dart';
 
 import 'package:kebap/models/item_base_model.dart';
+import 'package:kebap/models/settings/home_settings_model.dart';
+import 'package:kebap/providers/settings/home_settings_provider.dart';
 import 'package:kebap/screens/shared/media/banner_play_button.dart';
+import 'package:kebap/screens/shared/media/trailer_banner_player.dart';
 import 'package:kebap/util/adaptive_layout/adaptive_layout.dart';
 import 'package:kebap/util/kebap_image.dart';
 import 'package:kebap/util/focus_provider.dart';
@@ -36,8 +39,10 @@ class _CarouselBannerState extends ConsumerState<CarouselBanner> {
   bool showControls = false;
 
   @override
-  Widget build(BuildContext context, WidgetRef ref) {
-    final item = ref.watch(itemProvider);
+  Widget build(BuildContext context) {
+    final bannerMediaType = ref.watch(
+      homeSettingsProvider.select((value) => value.bannerMediaType),
+    );
     return MouseRegion(
       onEnter: (event) => setState(() => showControls = true),
       onExit: (event) => setState(() => showControls = false),
@@ -107,9 +112,27 @@ class _CarouselBannerState extends ConsumerState<CarouselBanner> {
                                     },
                               child: Stack(
                                 children: [
-                                  KebapImage(
-                                    image: item.bannerImage,
-                                    decodeHeight: null,
+                                  // Conditionally show trailer or image based on setting
+                                  Builder(
+                                    builder: (context) {
+                                      final currentItem = widget.items[index];
+                                      final showTrailer = bannerMediaType == HomeBannerMediaType.trailer &&
+                                          currentItem.trailerUrl != null;
+                                      
+                                      debugPrint('[CarouselBanner] Item: ${currentItem.name}, TrailerUrl: ${currentItem.trailerUrl}, ShowTrailer: $showTrailer, BannerMediaType: $bannerMediaType');
+                                      
+                                      if (showTrailer) {
+                                        return TrailerBannerPlayer(
+                                          trailerUrl: currentItem.trailerUrl!,
+                                          fallbackImage: currentItem.bannerImage,
+                                        );
+                                      }
+                                      
+                                      return KebapImage(
+                                        image: currentItem.bannerImage,
+                                        decodeHeight: null,
+                                      );
+                                    },
                                   ),
                                   Container(
                                     decoration: BoxDecoration(
