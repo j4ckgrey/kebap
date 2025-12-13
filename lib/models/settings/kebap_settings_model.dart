@@ -5,7 +5,7 @@ class KebapSettingsModel {
   final String? tmdbApiKey;
   final bool? enableSearchFilter;
   final bool? forceTVClientLocalSearch;
-  final bool disableNonAdminRequests;
+  final bool enableAutoImport;
   final bool showReviewsCarousel;
   final double mobileHomepageHeightRatio; // 0.3 to 0.7, controls banner height on phones
 
@@ -14,7 +14,7 @@ class KebapSettingsModel {
     this.tmdbApiKey,
     this.enableSearchFilter,
     this.forceTVClientLocalSearch,
-    this.disableNonAdminRequests = false,
+    this.enableAutoImport = false,
     this.showReviewsCarousel = true,
     this.mobileHomepageHeightRatio = 0.6,
   });
@@ -24,7 +24,7 @@ class KebapSettingsModel {
     String? tmdbApiKey,
     bool? enableSearchFilter,
     bool? forceTVClientLocalSearch,
-    bool? disableNonAdminRequests,
+    bool? enableAutoImport,
     bool? showReviewsCarousel,
     double? mobileHomepageHeightRatio,
   }) {
@@ -33,7 +33,7 @@ class KebapSettingsModel {
       tmdbApiKey: tmdbApiKey ?? this.tmdbApiKey,
       enableSearchFilter: enableSearchFilter ?? this.enableSearchFilter,
       forceTVClientLocalSearch: forceTVClientLocalSearch ?? this.forceTVClientLocalSearch,
-      disableNonAdminRequests: disableNonAdminRequests ?? this.disableNonAdminRequests,
+      enableAutoImport: enableAutoImport ?? this.enableAutoImport,
       showReviewsCarousel: showReviewsCarousel ?? this.showReviewsCarousel,
       mobileHomepageHeightRatio: mobileHomepageHeightRatio ?? this.mobileHomepageHeightRatio,
     );
@@ -45,7 +45,7 @@ class KebapSettingsModel {
       'tmdbApiKey': tmdbApiKey,
       'enableSearchFilter': enableSearchFilter,
       'forceTVClientLocalSearch': forceTVClientLocalSearch,
-      'disableNonAdminRequests': disableNonAdminRequests,
+      'enableAutoImport': enableAutoImport,
       'showReviewsCarousel': showReviewsCarousel,
       'mobileHomepageHeightRatio': mobileHomepageHeightRatio,
     };
@@ -58,7 +58,7 @@ class KebapSettingsModel {
       tmdbApiKey: json['tmdbApiKey'] as String?,
       enableSearchFilter: json['enableSearchFilter'] as bool?,
       forceTVClientLocalSearch: json['forceTVClientLocalSearch'] as bool?,
-      disableNonAdminRequests: json['disableNonAdminRequests'] as bool? ?? false,
+      enableAutoImport: json['enableAutoImport'] as bool? ?? false,
       showReviewsCarousel: json['showReviewsCarousel'] as bool? ?? true,
       mobileHomepageHeightRatio: (json['mobileHomepageHeightRatio'] as num?)?.toDouble() ?? 0.6,
     );

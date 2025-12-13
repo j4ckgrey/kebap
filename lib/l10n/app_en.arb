@@ -1397,10 +1397,5 @@
   "bannerMediaType": "Banner Media",
   "bannerMediaTypeDesc": "Show image or trailer in homepage banner",
   "bannerTrailerMuted": "Mute Banner Trailer",
-  "bannerTrailerMutedDesc": "Play trailer audio muted in homepage banner",
-  "bannerTrailerQuality": "Trailer Quality",
-  "bannerTrailerQualityDesc": "Video quality for homepage banner trailers",
-  "qualityLow": "Low",
-  "qualityMedium": "Medium",
-  "qualityHigh": "High"
+  "bannerTrailerMutedDesc": "Play trailer audio muted in homepage banner"
 }

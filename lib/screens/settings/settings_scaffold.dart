@@ -7,6 +7,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:kebap/providers/arguments_provider.dart';
 import 'package:kebap/providers/user_provider.dart';
 import 'package:kebap/screens/shared/user_icon.dart';
+import 'package:kebap/screens/shared/default_title_bar.dart';
 import 'package:kebap/util/adaptive_layout/adaptive_layout.dart';
 import 'package:kebap/util/router_extension.dart';
 

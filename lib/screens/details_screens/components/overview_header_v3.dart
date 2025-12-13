@@ -37,7 +37,7 @@ class OverviewHeaderV3 extends ConsumerWidget {
     this.padding,
     this.subTitle,
     this.originalTitle,
-    this.showImage = true,
+    this.showImage = false,
     this.logoAlignment = Alignment.bottomCenter,
     this.onTitleClicked,
     this.productionYear,
@@ -71,6 +71,7 @@ class OverviewHeaderV3 extends ConsumerWidget {
         mainAxisSize: MainAxisSize.min,
         spacing: 8,
         children: [
+          // Show logo if available and showImage=true, otherwise show spacer for layout
           if (showImage)
             ExcludeFocus(
               child: MediaHeader(
@@ -79,7 +80,10 @@ class OverviewHeaderV3 extends ConsumerWidget {
                 onTap: onTitleClicked,
                 alignment: logoAlignment,
               ),
-            ),
+            )
+          else
+            // Spacer to maintain top spacing when logo is hidden
+            SizedBox(height: MediaQuery.sizeOf(context).height * 0.25),
           ExcludeFocus(
             child: Column(
               mainAxisSize: MainAxisSize.min,

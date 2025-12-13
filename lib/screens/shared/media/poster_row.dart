@@ -21,6 +21,7 @@ class PosterRow extends ConsumerWidget {
   final double? explicitHeight; // Explicit height for cards
   final FocusNode? firstItemFocusNode;
   final Function(ItemBaseModel item)? onCardTap;
+  final String? selectedItemId; // ID of item shown in banner for persistent selection
 
   const PosterRow({
     required this.posters,
@@ -34,6 +35,7 @@ class PosterRow extends ConsumerWidget {
     this.explicitHeight,
     this.firstItemFocusNode,
     this.onCardTap,
+    this.selectedItemId,
     super.key,
   });
 
@@ -61,6 +63,7 @@ class PosterRow extends ConsumerWidget {
       },
       itemBuilder: (context, index) {
         final poster = posters[index];
+        final isSelected = selectedItemId == poster.id;
         return PosterWidget(
           key: Key(poster.id),
           focusNode: index == 0 ? firstItemFocusNode : null,
@@ -69,8 +72,10 @@ class PosterRow extends ConsumerWidget {
           primaryPosters: primaryPosters,
           underTitle: !hideLabel, // Hide title when label is hidden (shown in banner)
           onCustomTap: onCardTap != null ? () => onCardTap!(poster) : null,
+          isSelectedForBanner: isSelected, // Persistent selection when shown in banner
         );
       },
     );
   }
 }
+

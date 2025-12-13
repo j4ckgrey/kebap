@@ -5,7 +5,7 @@
 #endif
 
 [Setup]
-AppId={{D573EDD5-117A-47AD-88AC-62C8EBD11DC7}
+AppId={{8B1A2C3D-4E5F-6A7B-8C9D-0E1F2A3B4C5D}
 AppName="Kebap"
 AppVersion={#KEBAP_VERSION}
 AppPublisher="j4ckgrey"

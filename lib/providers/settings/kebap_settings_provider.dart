@@ -45,8 +45,8 @@ class KebapSettingsNotifier extends StateNotifier<KebapSettingsModel> {
     _persist();
   }
 
-  void setDisableNonAdminRequests(bool value) {
-    state = state.copyWith(disableNonAdminRequests: value);
+  void setEnableAutoImport(bool value) {
+    state = state.copyWith(enableAutoImport: value);
     _persist();
   }
 
@@ -57,6 +57,25 @@ class KebapSettingsNotifier extends StateNotifier<KebapSettingsModel> {
 
   void setMobileHomepageHeightRatio(double value) {
     state = state.copyWith(mobileHomepageHeightRatio: value.clamp(0.3, 0.7));
+    _persist();
+  }
+
+  /// Syncs local settings FROM the Baklava server config.
+  /// Called on app startup when useBaklava is enabled.
+  void syncFromBaklava({
+    required bool enableAutoImport,
+    required bool showReviewsCarousel,
+    bool? enableSearchFilter,
+    bool? forceTVClientLocalSearch,
+    String? tmdbApiKey,
+  }) {
+    state = state.copyWith(
+      enableAutoImport: enableAutoImport,
+      showReviewsCarousel: showReviewsCarousel,
+      enableSearchFilter: enableSearchFilter ?? state.enableSearchFilter,
+      forceTVClientLocalSearch: forceTVClientLocalSearch ?? state.forceTVClientLocalSearch,
+      tmdbApiKey: tmdbApiKey ?? state.tmdbApiKey,
+    );
     _persist();
   }
 }

@@ -1,3 +1,6 @@
+import 'dart:io';
+
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 
 import 'package:auto_route/auto_route.dart';
@@ -8,13 +11,16 @@ import 'package:youtube_explode_dart/youtube_explode_dart.dart';
 
 import 'package:kebap/util/kebap_image.dart';
 import 'package:kebap/models/items/images_models.dart';
-import 'package:kebap/models/settings/home_settings_model.dart';
+
 import 'package:kebap/providers/settings/home_settings_provider.dart';
 
 /// A widget that plays a trailer video in the banner area.
 /// Supports both direct video URLs and YouTube URLs.
 /// Falls back to displaying an image if the trailer fails to load.
 class TrailerBannerPlayer extends ConsumerStatefulWidget {
+  // DEBUG: Force use of muxed streams to verify basic playback
+  static const bool FORCE_MUXED = true;
+
   final String trailerUrl;
   final ImageData? fallbackImage;
 
@@ -41,7 +47,14 @@ class _TrailerBannerPlayerState extends ConsumerState<TrailerBannerPlayer>
   void initState() {
     super.initState();
     WidgetsBinding.instance.addObserver(this);
-    _initializePlayer();
+    // Delay initialization on Linux to avoid PipeWire race condition crash
+    if (Platform.isLinux) {
+      Future.delayed(const Duration(milliseconds: 500), () {
+        if (mounted) _initializePlayer();
+      });
+    } else {
+      _initializePlayer();
+    }
   }
 
   // AutoRouteAware callbacks
@@ -96,53 +109,78 @@ class _TrailerBannerPlayerState extends ConsumerState<TrailerBannerPlayer>
     YoutubeExplode? youtubeExplode;
     
     try {
-      String videoUrl = widget.trailerUrl;
-      String? audioUrl;
+      // Ensure MediaKit is initialized first
+      mpv.MediaKit.ensureInitialized();
+
+      // Create the player immediately
+      _player = mpv.Player();
+      _controller = mpv_video.VideoController(_player!);
       
-      // Get quality and mute settings
-      final quality = ref.read(homeSettingsProvider).bannerTrailerQuality;
+      // Set up the player for banner mode
       final isMuted = ref.read(homeSettingsProvider).bannerTrailerMuted;
-      debugPrint('[TrailerBannerPlayer] Quality setting: $quality, muted: $isMuted');
+      debugPrint('[TrailerBannerPlayer] Muted: $isMuted');
+      
+      
+      // Configure player with hardware acceleration and buffer settings
+      // Skip on web as NativePlayer.setProperty is not available on web stub
+      // Use dynamic typing to avoid dart2js compile-time errors
+      if (!kIsWeb) {
+        try {
+          final dynamic nativePlayer = _player!.platform;
+          if (nativePlayer != null) {
+            await nativePlayer.setProperty('config', 'yes');
+            
+            // Enable hardware decoding
+            // This is critical for Windows performance to avoid "squishy" 30fps feel
+            // when software decoding takes up all CPU resources
+            debugPrint('[TrailerBannerPlayer] Enabling hardware acceleration');
+            await nativePlayer.setProperty('hwdec', 'auto');
+            
+            if (Platform.isWindows) {
+               debugPrint('[TrailerBannerPlayer] Setting Windows GPU context to d3d11');
+               await nativePlayer.setProperty('gpu-context', 'd3d11');
+            }
+          }
+        } catch (e) {
+          debugPrint('[TrailerBannerPlayer] Error setting native player properties: $e');
+        }
+      }
+
+      await _player!.setVolume(isMuted ? 0 : 100);
+      await _player!.setPlaylistMode(mpv.PlaylistMode.loop); // Loop
+
+      String videoUrl = widget.trailerUrl;
       
       // Check if this is a YouTube URL
       final youtubeVideoId = _extractYouTubeVideoId(widget.trailerUrl);
       
       if (youtubeVideoId != null) {
-        // Extract direct video URL from YouTube
-        // Always use high-quality video-only streams, add separate audio if not muted
+        // ... (existing logic) ...
         youtubeExplode = YoutubeExplode();
-        final urls = await _getYouTubeStreams(youtubeExplode, youtubeVideoId, quality, isMuted);
+        final urls = await _getYouTubeStreams(youtubeExplode, youtubeVideoId);
         videoUrl = urls.videoUrl;
-        audioUrl = urls.audioUrl;
-        // Close immediately after getting the URLs
+        
+        // Pass audio file if available (skip on web as setProperty not available)
+        // Use dynamic typing to avoid dart2js compile-time errors
+        if (urls.audioUrl != null && !isMuted && !kIsWeb) {
+          try {
+            final dynamic nativePlayer = _player!.platform;
+            debugPrint('[TrailerBannerPlayer] Setting separate audio file: ${urls.audioUrl}');
+            await nativePlayer.setProperty('audio-file', urls.audioUrl!);
+          } catch (e) {
+            debugPrint('[TrailerBannerPlayer] Error setting audio-file property: $e');
+          }
+        }
+        
         youtubeExplode.close();
         youtubeExplode = null;
       }
 
       if (!mounted) return;
 
-      // Ensure MediaKit is initialized
-      mpv.MediaKit.ensureInitialized();
-
-      // Create the player
-      _player = mpv.Player();
-      _controller = mpv_video.VideoController(_player!);
-      
-      // Set up the player for banner mode
-      await _player!.setVolume(isMuted ? 0 : 100);
-      await _player!.setPlaylistMode(mpv.PlaylistMode.loop); // Loop
-
-      // Open the video with optional external audio track for high quality + sound
-      if (audioUrl != null && !isMuted) {
-        // Use MPV's audio-file option to add external audio track
-        debugPrint('[TrailerBannerPlayer] Opening with separate audio track for HQ + sound');
-        await _player!.open(
-          mpv.Media(videoUrl, extras: {'audio-file': audioUrl}),
-          play: true,
-        );
-      } else {
-        await _player!.open(mpv.Media(videoUrl), play: true);
-      }
+      // Open the video stream
+      debugPrint('[TrailerBannerPlayer] Opening stream: $videoUrl');
+      await _player!.open(mpv.Media(videoUrl), play: true);
 
       if (mounted) {
         setState(() {
@@ -173,79 +211,69 @@ class _TrailerBannerPlayerState extends ConsumerState<TrailerBannerPlayer>
     return match?.group(1);
   }
 
-  /// Gets video and audio URLs from YouTube
-  /// Always uses high-quality video-only streams (up to 4K)
-  /// Returns separate audio URL when not muted for MPV to combine
+  /// Gets video URL from YouTube - intelligently picks best available stream
+  /// Strategy:
+  /// 1. Find best video-only stream (Highest resolution, e.g. 1080p, 4K)
+  /// 2. Find best audio-only stream
+  /// 3. Return both to be merged by player
+  /// Fallback: Use muxed stream if no separate streams found
   Future<({String videoUrl, String? audioUrl})> _getYouTubeStreams(
     YoutubeExplode yt, 
-    String videoId, 
-    TrailerQuality quality, 
-    bool isMuted,
+    String videoId,
   ) async {
     final manifest = await yt.videos.streamsClient.getManifest(videoId);
     
-    // Always use video-only streams for highest quality (up to 4K)
+    // 1. Get best candidates
     final videoOnlyStreams = manifest.videoOnly.toList();
+    final audioOnlyStreams = manifest.audioOnly.toList();
+    final muxedStreams = manifest.muxed.toList();
     
-    debugPrint('[TrailerBannerPlayer] Available video-only streams: ${videoOnlyStreams.length}');
-    for (var stream in videoOnlyStreams) {
-      debugPrint('[TrailerBannerPlayer]   Video-only: ${stream.videoQuality.name} ${stream.videoResolution} bitrate: ${stream.bitrate.kiloBitsPerSecond.toStringAsFixed(0)}kbps');
-    }
-    
-    String videoUrl;
-    
-    if (videoOnlyStreams.isNotEmpty) {
-      // Sort by resolution height
-      videoOnlyStreams.sort((a, b) => a.videoResolution.height.compareTo(b.videoResolution.height));
-      
-      final int targetIndex;
-      switch (quality) {
-        case TrailerQuality.low:
-          targetIndex = 0; // Lowest quality (usually 144p)
-        case TrailerQuality.medium:
-          // Find ~720p or middle quality
-          final mediumIndex = videoOnlyStreams.indexWhere((s) => s.videoResolution.height >= 720);
-          targetIndex = mediumIndex != -1 ? mediumIndex : (videoOnlyStreams.length / 2).floor().clamp(0, videoOnlyStreams.length - 1);
-        case TrailerQuality.high:
-          targetIndex = videoOnlyStreams.length - 1; // Highest quality (up to 4K!)
+    // Sort Video-only by resolution (descending)
+    videoOnlyStreams.sort((a, b) => b.videoResolution.height.compareTo(a.videoResolution.height));
+
+    // Sort Audio-only by bitrate (descending)
+    audioOnlyStreams.sort((a, b) => b.bitrate.compareTo(a.bitrate));
+
+    // Sort Muxed by resolution (descending)
+    muxedStreams.sort((a, b) => b.videoResolution.height.compareTo(a.videoResolution.height));
+
+    // 2. Select the Best Strategy
+    final bestSeparateVideo = videoOnlyStreams.isNotEmpty ? videoOnlyStreams.first : null;
+    final bestSeparateAudio = audioOnlyStreams.isNotEmpty ? audioOnlyStreams.first : null;
+    final bestMuxed = muxedStreams.isNotEmpty ? muxedStreams.first : null;
+
+    debugPrint('[TrailerBannerPlayer] Best Separate Candidate: ${bestSeparateVideo?.videoQuality.name} ${bestSeparateVideo?.videoResolution}');
+    debugPrint('[TrailerBannerPlayer] Best Muxed Candidate: ${bestMuxed?.videoQuality.name} ${bestMuxed?.videoResolution}');
+
+    // DEBUG: Force Muxed
+    if (TrailerBannerPlayer.FORCE_MUXED) {
+      debugPrint('[TrailerBannerPlayer] DEBUG: FORCE_MUXED is enabled. Skipping separate stream selection.');
+    } else if (bestSeparateVideo != null && bestSeparateAudio != null) {
+      // ...check if they are actually better than muxed (or if no muxed exists)
+      bool isSeparateBetter = true;
+      if (bestMuxed != null) {
+        // If separate video is smaller than muxed video, don't use it!
+        // E.g. Separate is 144p, Muxed is 360p -> Use Muxed
+        if (bestSeparateVideo.videoResolution.height < bestMuxed.videoResolution.height) {
+          isSeparateBetter = false;
+        }
       }
-      
-      final selected = videoOnlyStreams[targetIndex];
-      debugPrint('[TrailerBannerPlayer] Selected [$quality] video: ${selected.videoQuality.name} ${selected.videoResolution}');
-      videoUrl = selected.url.toString();
-    } else {
-      // Fallback to muxed if no video-only available (rare)
-      final muxedStreams = manifest.muxed.toList();
-      if (muxedStreams.isEmpty) {
-        throw Exception('No video streams available');
-      }
-      muxedStreams.sort((a, b) => a.videoResolution.height.compareTo(b.videoResolution.height));
-      final selected = muxedStreams.last;
-      debugPrint('[TrailerBannerPlayer] Fallback to muxed: ${selected.videoQuality.name} ${selected.videoResolution}');
-      // Muxed already has audio, no need for separate audio track
-      return (videoUrl: selected.url.toString(), audioUrl: null);
-    }
-    
-    // Get audio stream if not muted
-    String? audioUrl;
-    if (!isMuted) {
-      final audioStreams = manifest.audioOnly.toList();
-      
-      debugPrint('[TrailerBannerPlayer] Available audio streams: ${audioStreams.length}');
-      for (var stream in audioStreams) {
-        debugPrint('[TrailerBannerPlayer]   Audio: ${stream.bitrate.kiloBitsPerSecond.toStringAsFixed(0)}kbps codec: ${stream.audioCodec}');
-      }
-      
-      if (audioStreams.isNotEmpty) {
-        // Sort by bitrate, pick highest quality audio
-        audioStreams.sort((a, b) => a.bitrate.compareTo(b.bitrate));
-        final selectedAudio = audioStreams.last;
-        debugPrint('[TrailerBannerPlayer] Selected audio: ${selectedAudio.bitrate.kiloBitsPerSecond.toStringAsFixed(0)}kbps');
-        audioUrl = selectedAudio.url.toString();
+
+      if (isSeparateBetter) {
+        debugPrint('[TrailerBannerPlayer] Selected Strategy: Separate Streams (Better or Equal Quality)');
+        return (videoUrl: bestSeparateVideo.url.toString(), audioUrl: bestSeparateAudio.url.toString());
+      } else {
+        debugPrint('[TrailerBannerPlayer] Strategy Override: Separate stream quality is lower than Muxed. Preferring Muxed.');
       }
     }
     
-    return (videoUrl: videoUrl, audioUrl: audioUrl);
+    // 3. Fallback to Muxed
+    if (bestMuxed != null) {
+      debugPrint('[TrailerBannerPlayer] Selected Strategy: Muxed Stream');
+      return (videoUrl: bestMuxed.url.toString(), audioUrl: null);
+    }
+
+    throw Exception('No video streams available');
   }
 
   @override

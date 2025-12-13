@@ -51,6 +51,7 @@ import 'package:kebap/util/string_extensions.dart';
 import 'package:kebap/util/svg_utils.dart';
 import 'package:kebap/util/themes_data.dart';
 import 'package:kebap/widgets/media_query_scaler.dart';
+import 'package:kebap/widgets/fps_monitor.dart';
 
 bool get _isDesktop {
   if (kIsWeb) return false;
@@ -69,20 +70,19 @@ Future<Map<String, dynamic>> loadConfig() async {
 }
 
 void main(List<String> args) async {
-  runZonedGuarded(() async {
-    WidgetsFlutterBinding.ensureInitialized();
-    final crashProvider = CrashLogNotifier();
+  WidgetsFlutterBinding.ensureInitialized();
+  final crashProvider = CrashLogNotifier();
 
-    await SvgUtils.preCacheSVGs();
+  await SvgUtils.preCacheSVGs();
 
-    // Check if running on android TV
-    final leanBackEnabled = !kIsWeb && Platform.isAndroid ? await NativeVideoActivity().isLeanBackEnabled() : false;
+  // Check if running on android TV
+  final leanBackEnabled = !kIsWeb && Platform.isAndroid ? await NativeVideoActivity().isLeanBackEnabled() : false;
 
-    if (defaultTargetPlatform == TargetPlatform.windows) {
-      await SMTCWindows.initialize();
-    }
+  if (defaultTargetPlatform == TargetPlatform.windows) {
+    await SMTCWindows.initialize();
+  }
 
-    if (kIsWeb) {
+  if (kIsWeb) {
     html.document.onContextMenu.listen((event) => event.preventDefault());
     final result = await loadConfig();
     KebapConfig.fromJson(result);
@@ -137,10 +137,6 @@ void main(List<String> args) async {
       ),
     ),
   );
-  }, (error, stack) {
-    print('[LAG_DEBUG] Uncaught error: $error');
-    print('[LAG_DEBUG] Stack trace: $stack');
-  });
 }
 
 class Main extends ConsumerStatefulWidget with WindowListener {
@@ -322,6 +318,7 @@ class _MainState extends ConsumerState<Main> with WindowListener, WidgetsBinding
       toggleMacTrafficLights(false);
 
         await windowManager.setResizable(true);
+        await windowManager.setMinimumSize(const Size(800, 700)); // Prevent layout issues on small windows
         await windowManager.setTitleBarStyle(TitleBarStyle.hidden);
         await windowManager.show();
         await windowManager.focus();
@@ -349,7 +346,6 @@ class _MainState extends ConsumerState<Main> with WindowListener, WidgetsBinding
 
   @override
   Widget build(BuildContext context) {
-    print('[LAG_DEBUG] ${DateTime.now()} Main build');
     final themeMode = ref.watch(clientSettingsProvider.select((value) => value.themeMode));
     final themeColor = ref.watch(clientSettingsProvider.select((value) => value.themeColor));
     final amoledBlack = ref.watch(clientSettingsProvider.select((value) => value.amoledBlack));
@@ -372,6 +368,7 @@ class _MainState extends ConsumerState<Main> with WindowListener, WidgetsBinding
     });
 
     final scrollBehaviour = const MaterialScrollBehavior();
+    
     return DynamicColorBuilder(
       builder: (ColorScheme? lightDynamic, ColorScheme? darkDynamic) {
         final lightTheme = themeColor == null
@@ -428,11 +425,7 @@ class _MainState extends ConsumerState<Main> with WindowListener, WidgetsBinding
                 ),
               ),
               themeMode: themeMode,
-              routerConfig: autoRouter.config(
-                navigatorObservers: () => [
-                  AutoRouteObserver(),
-                ],
-              ),
+              routerConfig: autoRouter.config(),
             ),
         );
       },

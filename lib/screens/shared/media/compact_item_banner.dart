@@ -139,41 +139,6 @@ class CompactItemBanner extends ConsumerWidget {
                           premiereDate: item!.overview.premiereDate,
                         ),
                       ),
-                      // Open button - hide on TV, keep focusable for mouse/touch on other devices
-                      if (viewSize != ViewSize.television)
-                        Padding(
-                          padding: const EdgeInsets.only(top: 8, bottom: 4),
-                          child: FocusButton(
-                            onTap: () async {
-                              await item!.navigateTo(context, ref: ref);
-                            },
-                            child: Container(
-                              padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
-                              decoration: BoxDecoration(
-                                color: Theme.of(context).colorScheme.primary,
-                                borderRadius: BorderRadius.circular(8),
-                              ),
-                              child: Row(
-                                mainAxisSize: MainAxisSize.min,
-                                children: [
-                                  Icon(
-                                    IconsaxPlusBold.play_circle,
-                                    color: Theme.of(context).colorScheme.onPrimary,
-                                    size: 16,
-                                  ),
-                                  const SizedBox(width: 6),
-                                  Text(
-                                    'Open',
-                                    style: Theme.of(context).textTheme.titleSmall?.copyWith(
-                                      color: Theme.of(context).colorScheme.onPrimary,
-                                      fontWeight: FontWeight.bold,
-                                    ),
-                                  ),
-                                ],
-                              ),
-                            ),
-                          ),
-                        ),
                     ],
                   ),
                 ),

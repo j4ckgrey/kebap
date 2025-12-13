@@ -55,7 +55,7 @@ class BaklavaService {
   /// Note: Due to a server-side bug, we must fetch and include the current tmdbApiKey
   /// to prevent it from being overwritten with null
   Future<Response<void>> updateConfig({
-    bool? disableNonAdminRequests,
+    bool? enableAutoImport,
     bool? showReviewsCarousel,
     bool? forceTVClientLocalSearch,
     String? versionUi,
@@ -87,8 +87,8 @@ class BaklavaService {
       if (currentTmdbApiKey != null && currentTmdbApiKey.isNotEmpty) {
         body['tmdbApiKey'] = currentTmdbApiKey;
       }
-      if (disableNonAdminRequests != null) {
-        body['disableNonAdminRequests'] = disableNonAdminRequests;
+      if (enableAutoImport != null) {
+        body['enableAutoImport'] = enableAutoImport;
       }
       if (showReviewsCarousel != null) {
         body['showReviewsCarousel'] = showReviewsCarousel;

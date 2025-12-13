@@ -19,7 +19,7 @@ final effectiveBaklavaConfigProvider = FutureProvider<BaklavaConfig>((ref) async
       tmdbApiKey: kebap.tmdbApiKey,
       enableSearchFilter: kebap.enableSearchFilter,
       forceTVClientLocalSearch: kebap.forceTVClientLocalSearch,
-      disableNonAdminRequests: kebap.disableNonAdminRequests,
+      enableAutoImport: kebap.enableAutoImport,
       showReviewsCarousel: kebap.showReviewsCarousel,
     );
   }

@@ -131,11 +131,11 @@ class _KebapSettingsPageState extends ConsumerState<KebapSettingsPage> {
                     label: const Text('Enable Auto Import'),
                     subLabel: const Text('When enabled, non-admin users can import directly without making requests'),
                     trailing: Switch(
-                      value: cfg.disableNonAdminRequests,
+                      value: cfg.enableAutoImport,
                       onChanged: (v) async {
                         try {
                           await ref.read(baklavaServiceProvider).updateConfig(
-                            disableNonAdminRequests: v,
+                            enableAutoImport: v,
                           );
                           // Refresh the config
                           ref.invalidate(baklavaConfigProvider);
@@ -152,7 +152,7 @@ class _KebapSettingsPageState extends ConsumerState<KebapSettingsPage> {
                 else
                   SettingsListTile(
                     label: const Text('Auto Import'),
-                    subLabel: Text(cfg.disableNonAdminRequests ? 'Enabled' : 'Disabled'),
+                    subLabel: Text(cfg.enableAutoImport ? 'Enabled' : 'Disabled'),
                   ),
                 SettingsListTile(
                   label: const Text('Show reviews carousel'),

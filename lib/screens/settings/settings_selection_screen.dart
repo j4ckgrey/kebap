@@ -11,6 +11,6 @@ class SettingsSelectionScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return const SettingsLeftPane();
+    return SettingsLeftPane(activeRouteName: "");
   }
 }

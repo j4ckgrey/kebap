@@ -19,7 +19,6 @@ mixin _$HomeSettingsModel {
   HomeNextUp get nextUp;
   HomeBannerMediaType get bannerMediaType;
   bool get bannerTrailerMuted;
-  TrailerQuality get bannerTrailerQuality;
 
   /// Create a copy of HomeSettingsModel
   /// with the given fields replaced by the non-null parameter values.
@@ -45,9 +44,7 @@ mixin _$HomeSettingsModel {
             (identical(other.bannerMediaType, bannerMediaType) ||
                 other.bannerMediaType == bannerMediaType) &&
             (identical(other.bannerTrailerMuted, bannerTrailerMuted) ||
-                other.bannerTrailerMuted == bannerTrailerMuted) &&
-            (identical(other.bannerTrailerQuality, bannerTrailerQuality) ||
-                other.bannerTrailerQuality == bannerTrailerQuality));
+                other.bannerTrailerMuted == bannerTrailerMuted));
   }
 
   @JsonKey(includeFromJson: false, includeToJson: false)
@@ -58,12 +55,11 @@ mixin _$HomeSettingsModel {
       const DeepCollectionEquality().hash(layoutStates),
       nextUp,
       bannerMediaType,
-      bannerTrailerMuted,
-      bannerTrailerQuality);
+      bannerTrailerMuted);
 
   @override
   String toString() {
-    return 'HomeSettingsModel(screenLayouts: $screenLayouts, layoutStates: $layoutStates, nextUp: $nextUp, bannerMediaType: $bannerMediaType, bannerTrailerMuted: $bannerTrailerMuted, bannerTrailerQuality: $bannerTrailerQuality)';
+    return 'HomeSettingsModel(screenLayouts: $screenLayouts, layoutStates: $layoutStates, nextUp: $nextUp, bannerMediaType: $bannerMediaType, bannerTrailerMuted: $bannerTrailerMuted)';
   }
 }
 
@@ -78,8 +74,7 @@ abstract mixin class $HomeSettingsModelCopyWith<$Res> {
       Set<ViewSize> layoutStates,
       HomeNextUp nextUp,
       HomeBannerMediaType bannerMediaType,
-      bool bannerTrailerMuted,
-      TrailerQuality bannerTrailerQuality});
+      bool bannerTrailerMuted});
 }
 
 /// @nodoc
@@ -100,7 +95,6 @@ class _$HomeSettingsModelCopyWithImpl<$Res>
     Object? nextUp = null,
     Object? bannerMediaType = null,
     Object? bannerTrailerMuted = null,
-    Object? bannerTrailerQuality = null,
   }) {
     return _then(_self.copyWith(
       screenLayouts: null == screenLayouts
@@ -123,10 +117,6 @@ class _$HomeSettingsModelCopyWithImpl<$Res>
           ? _self.bannerTrailerMuted
           : bannerTrailerMuted // ignore: cast_nullable_to_non_nullable
               as bool,
-      bannerTrailerQuality: null == bannerTrailerQuality
-          ? _self.bannerTrailerQuality
-          : bannerTrailerQuality // ignore: cast_nullable_to_non_nullable
-              as TrailerQuality,
     ));
   }
 }
@@ -229,21 +219,15 @@ extension HomeSettingsModelPatterns on HomeSettingsModel {
             Set<ViewSize> layoutStates,
             HomeNextUp nextUp,
             HomeBannerMediaType bannerMediaType,
-            bool bannerTrailerMuted,
-            TrailerQuality bannerTrailerQuality)?
+            bool bannerTrailerMuted)?
         $default, {
     required TResult orElse(),
   }) {
     final _that = this;
     switch (_that) {
       case _HomeSettingsModel() when $default != null:
-        return $default(
-            _that.screenLayouts,
-            _that.layoutStates,
-            _that.nextUp,
-            _that.bannerMediaType,
-            _that.bannerTrailerMuted,
-            _that.bannerTrailerQuality);
+        return $default(_that.screenLayouts, _that.layoutStates, _that.nextUp,
+            _that.bannerMediaType, _that.bannerTrailerMuted);
       case _:
         return orElse();
     }
@@ -269,20 +253,14 @@ extension HomeSettingsModelPatterns on HomeSettingsModel {
             Set<ViewSize> layoutStates,
             HomeNextUp nextUp,
             HomeBannerMediaType bannerMediaType,
-            bool bannerTrailerMuted,
-            TrailerQuality bannerTrailerQuality)
+            bool bannerTrailerMuted)
         $default,
   ) {
     final _that = this;
     switch (_that) {
       case _HomeSettingsModel():
-        return $default(
-            _that.screenLayouts,
-            _that.layoutStates,
-            _that.nextUp,
-            _that.bannerMediaType,
-            _that.bannerTrailerMuted,
-            _that.bannerTrailerQuality);
+        return $default(_that.screenLayouts, _that.layoutStates, _that.nextUp,
+            _that.bannerMediaType, _that.bannerTrailerMuted);
       case _:
         throw StateError('Unexpected subclass');
     }
@@ -307,20 +285,14 @@ extension HomeSettingsModelPatterns on HomeSettingsModel {
             Set<ViewSize> layoutStates,
             HomeNextUp nextUp,
             HomeBannerMediaType bannerMediaType,
-            bool bannerTrailerMuted,
-            TrailerQuality bannerTrailerQuality)?
+            bool bannerTrailerMuted)?
         $default,
   ) {
     final _that = this;
     switch (_that) {
       case _HomeSettingsModel() when $default != null:
-        return $default(
-            _that.screenLayouts,
-            _that.layoutStates,
-            _that.nextUp,
-            _that.bannerMediaType,
-            _that.bannerTrailerMuted,
-            _that.bannerTrailerQuality);
+        return $default(_that.screenLayouts, _that.layoutStates, _that.nextUp,
+            _that.bannerMediaType, _that.bannerTrailerMuted);
       case _:
         return null;
     }
@@ -335,8 +307,7 @@ class _HomeSettingsModel extends HomeSettingsModel {
       final Set<ViewSize> layoutStates = const {...ViewSize.values},
       this.nextUp = HomeNextUp.separate,
       this.bannerMediaType = HomeBannerMediaType.image,
-      this.bannerTrailerMuted = false,
-      this.bannerTrailerQuality = TrailerQuality.high})
+      this.bannerTrailerMuted = false})
       : _screenLayouts = screenLayouts,
         _layoutStates = layoutStates,
         super._();
@@ -370,9 +341,6 @@ class _HomeSettingsModel extends HomeSettingsModel {
   @override
   @JsonKey()
   final bool bannerTrailerMuted;
-  @override
-  @JsonKey()
-  final TrailerQuality bannerTrailerQuality;
 
   /// Create a copy of HomeSettingsModel
   /// with the given fields replaced by the non-null parameter values.
@@ -402,9 +370,7 @@ class _HomeSettingsModel extends HomeSettingsModel {
             (identical(other.bannerMediaType, bannerMediaType) ||
                 other.bannerMediaType == bannerMediaType) &&
             (identical(other.bannerTrailerMuted, bannerTrailerMuted) ||
-                other.bannerTrailerMuted == bannerTrailerMuted) &&
-            (identical(other.bannerTrailerQuality, bannerTrailerQuality) ||
-                other.bannerTrailerQuality == bannerTrailerQuality));
+                other.bannerTrailerMuted == bannerTrailerMuted));
   }
 
   @JsonKey(includeFromJson: false, includeToJson: false)
@@ -415,12 +381,11 @@ class _HomeSettingsModel extends HomeSettingsModel {
       const DeepCollectionEquality().hash(_layoutStates),
       nextUp,
       bannerMediaType,
-      bannerTrailerMuted,
-      bannerTrailerQuality);
+      bannerTrailerMuted);
 
   @override
   String toString() {
-    return 'HomeSettingsModel(screenLayouts: $screenLayouts, layoutStates: $layoutStates, nextUp: $nextUp, bannerMediaType: $bannerMediaType, bannerTrailerMuted: $bannerTrailerMuted, bannerTrailerQuality: $bannerTrailerQuality)';
+    return 'HomeSettingsModel(screenLayouts: $screenLayouts, layoutStates: $layoutStates, nextUp: $nextUp, bannerMediaType: $bannerMediaType, bannerTrailerMuted: $bannerTrailerMuted)';
   }
 }
 
@@ -437,8 +402,7 @@ abstract mixin class _$HomeSettingsModelCopyWith<$Res>
       Set<ViewSize> layoutStates,
       HomeNextUp nextUp,
       HomeBannerMediaType bannerMediaType,
-      bool bannerTrailerMuted,
-      TrailerQuality bannerTrailerQuality});
+      bool bannerTrailerMuted});
 }
 
 /// @nodoc
@@ -459,7 +423,6 @@ class __$HomeSettingsModelCopyWithImpl<$Res>
     Object? nextUp = null,
     Object? bannerMediaType = null,
     Object? bannerTrailerMuted = null,
-    Object? bannerTrailerQuality = null,
   }) {
     return _then(_HomeSettingsModel(
       screenLayouts: null == screenLayouts
@@ -482,10 +445,6 @@ class __$HomeSettingsModelCopyWithImpl<$Res>
           ? _self.bannerTrailerMuted
           : bannerTrailerMuted // ignore: cast_nullable_to_non_nullable
               as bool,
-      bannerTrailerQuality: null == bannerTrailerQuality
-          ? _self.bannerTrailerQuality
-          : bannerTrailerQuality // ignore: cast_nullable_to_non_nullable
-              as TrailerQuality,
     ));
   }
 }

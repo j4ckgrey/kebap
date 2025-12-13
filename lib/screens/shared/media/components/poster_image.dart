@@ -36,6 +36,7 @@ class PosterImage extends ConsumerWidget {
   final Function(bool focus)? onFocusChanged;
   final FocusNode? focusNode;
   final VoidCallback? onCustomTap;
+  final bool isSelectedForBanner; // Show persistent selection when shown in banner
 
   const PosterImage({
     required this.poster,
@@ -52,6 +53,7 @@ class PosterImage extends ConsumerWidget {
     this.onFocusChanged,
     this.focusNode,
     this.onCustomTap,
+    this.isSelectedForBanner = false,
     super.key,
   });
 
@@ -96,7 +98,9 @@ class PosterImage extends ConsumerWidget {
           ),
           foregroundDecoration: BoxDecoration(
             borderRadius: radius,
-            border: Border.all(width: 1, color: Colors.white.withAlpha(45)),
+            border: isSelectedForBanner
+                ? Border.all(width: 3, color: Theme.of(context).colorScheme.primary)
+                : Border.all(width: 1, color: Colors.white.withAlpha(45)),
           ),
           child: KebapImage(
             image: primaryPosters
@@ -106,6 +110,40 @@ class PosterImage extends ConsumerWidget {
           ),
         ),
         overlays: [
+          // Persistent CENTERED CLICKABLE "Open" button when selected for banner display
+          if (isSelectedForBanner)
+            Align(
+              alignment: Alignment.center,
+              child: Material(
+                color: Theme.of(context).colorScheme.primary,
+                borderRadius: BorderRadius.circular(8),
+                child: InkWell(
+                  borderRadius: BorderRadius.circular(8),
+                  onTap: () => defaultAction(),
+                  child: Padding(
+                    padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 10),
+                    child: Row(
+                      mainAxisSize: MainAxisSize.min,
+                      children: [
+                        Icon(
+                          IconsaxPlusBold.play_circle,
+                          color: Theme.of(context).colorScheme.onPrimary,
+                          size: 20,
+                        ),
+                        const SizedBox(width: 6),
+                        Text(
+                          'Open',
+                          style: Theme.of(context).textTheme.titleSmall?.copyWith(
+                            color: Theme.of(context).colorScheme.onPrimary,
+                            fontWeight: FontWeight.bold,
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
+                ),
+              ),
+            ),
           if (selected == true)
             Container(
               decoration: BoxDecoration(
@@ -251,19 +289,50 @@ class PosterImage extends ConsumerWidget {
           },
         ],
         focusedOverlays: [
-          if (AdaptiveLayout.inputDeviceOf(context) == InputDevice.pointer) ...[
-            //  Play Button
-            if (poster.playAble)
-              Align(
-                alignment: Alignment.center,
-                child: IconButton.filledTonal(
-                  onPressed: () => playVideo?.call(false),
-                  icon: const Icon(
-                    Icons.play_arrow_rounded,
-                    size: 32,
+          // Colored border when focused
+          IgnorePointer(
+            child: Container(
+              decoration: BoxDecoration(
+                border: Border.all(width: 3, color: Theme.of(context).colorScheme.primary),
+                borderRadius: radius,
+              ),
+            ),
+          ),
+          // CENTERED CLICKABLE Open button - navigates to item details
+          Align(
+            alignment: Alignment.center,
+            child: Material(
+              color: Theme.of(context).colorScheme.primary,
+              borderRadius: BorderRadius.circular(8),
+              child: InkWell(
+                borderRadius: BorderRadius.circular(8),
+                onTap: () => defaultAction(),
+                child: Padding(
+                  padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 10),
+                  child: Row(
+                    mainAxisSize: MainAxisSize.min,
+                    children: [
+                      Icon(
+                        IconsaxPlusBold.play_circle,
+                        color: Theme.of(context).colorScheme.onPrimary,
+                        size: 20,
+                      ),
+                      const SizedBox(width: 6),
+                      Text(
+                        'Open',
+                        style: Theme.of(context).textTheme.titleSmall?.copyWith(
+                          color: Theme.of(context).colorScheme.onPrimary,
+                          fontWeight: FontWeight.bold,
+                        ),
+                      ),
+                    ],
                   ),
                 ),
               ),
+            ),
+          ),
+          if (AdaptiveLayout.inputDeviceOf(context) == InputDevice.pointer) ...[
+            // Menu button in bottom-right
             Align(
               alignment: Alignment.bottomRight,
               child: Row(

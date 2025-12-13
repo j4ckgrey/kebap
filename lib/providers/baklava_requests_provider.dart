@@ -163,14 +163,6 @@ class BaklavaRequests extends _$BaklavaRequests {
         return false;
       }
 
-      // Respect server/local configuration: if non-admin requests are disabled
-      // and the current user is not an admin, block client-side creation.
-      final config = await ref.read(effectiveBaklavaConfigProvider.future);
-      final isAdmin = user.policy?.isAdministrator ?? false;
-      if (config.disableNonAdminRequests == true && !isAdmin) {
-        state = state.copyWith(error: 'Requests are disabled for non-admin users');
-        return false;
-      }
 
       final request = MediaRequest(
         id: '', // Server will generate
