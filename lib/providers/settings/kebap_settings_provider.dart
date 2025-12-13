@@ -60,21 +60,14 @@ class KebapSettingsNotifier extends StateNotifier<KebapSettingsModel> {
     _persist();
   }
 
-  /// Syncs local settings FROM the Baklava server config.
+  /// Syncs ONLY enableAutoImport FROM the Baklava server config.
+  /// All other settings are LOCAL to the client and not synced from server.
   /// Called on app startup when useBaklava is enabled.
   void syncFromBaklava({
     required bool enableAutoImport,
-    required bool showReviewsCarousel,
-    bool? enableSearchFilter,
-    bool? forceTVClientLocalSearch,
-    String? tmdbApiKey,
   }) {
     state = state.copyWith(
       enableAutoImport: enableAutoImport,
-      showReviewsCarousel: showReviewsCarousel,
-      enableSearchFilter: enableSearchFilter ?? state.enableSearchFilter,
-      forceTVClientLocalSearch: forceTVClientLocalSearch ?? state.forceTVClientLocalSearch,
-      tmdbApiKey: tmdbApiKey ?? state.tmdbApiKey,
     );
     _persist();
   }

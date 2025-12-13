@@ -93,7 +93,9 @@ class _ClientSettingsPageState extends ConsumerState<ClientSettingsPage> {
                     .map(
                       (entry) => ItemActionButton(
                         label: Text(entry.label),
-                        action: () => ref.read(mediaStreamViewTypeProvider.notifier).state = entry,
+                        action: () => ref.read(clientSettingsProvider.notifier).update(
+                          (current) => current.copyWith(mediaStreamViewType: entry),
+                        ),
                       ),
                     )
                     .toList(),
