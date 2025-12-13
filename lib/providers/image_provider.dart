@@ -22,7 +22,7 @@ class ImageNotifier {
   }
 
   String getUserImageUrl(String id, {String? tag}) {
-    final url = "$currentServerUrl/Users/$id/Images/${ImageType.primary.value}";
+    final url = "${currentServerUrl}Users/$id/Images/${ImageType.primary.value}";
     if (tag != null) {
       return Uri.decodeFull("$url?tag=$tag");
     }

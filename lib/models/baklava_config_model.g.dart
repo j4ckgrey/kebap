@@ -9,8 +9,7 @@ part of 'baklava_config_model.dart';
 _BaklavaConfig _$BaklavaConfigFromJson(Map<String, dynamic> json) =>
     _BaklavaConfig(
       defaultTmdbId: json['defaultTmdbId'] as String? ?? '',
-      disableNonAdminRequests:
-          json['disableNonAdminRequests'] as bool? ?? false,
+      enableAutoImport: json['enableAutoImport'] as bool? ?? false,
       showReviewsCarousel: json['showReviewsCarousel'] as bool? ?? true,
       tmdbApiKey: json['tmdbApiKey'] as String?,
       enableSearchFilter: json['enableSearchFilter'] as bool?,
@@ -23,7 +22,7 @@ _BaklavaConfig _$BaklavaConfigFromJson(Map<String, dynamic> json) =>
 Map<String, dynamic> _$BaklavaConfigToJson(_BaklavaConfig instance) =>
     <String, dynamic>{
       'defaultTmdbId': instance.defaultTmdbId,
-      'disableNonAdminRequests': instance.disableNonAdminRequests,
+      'enableAutoImport': instance.enableAutoImport,
       'showReviewsCarousel': instance.showReviewsCarousel,
       'tmdbApiKey': instance.tmdbApiKey,
       'enableSearchFilter': instance.enableSearchFilter,

@@ -7,7 +7,7 @@ part 'baklava_config_model.g.dart';
 abstract class BaklavaConfig with _$BaklavaConfig {
   const factory BaklavaConfig({
     @Default('') String defaultTmdbId,
-    @Default(false) bool disableNonAdminRequests,
+    @Default(false) bool enableAutoImport,
     @Default(true) bool showReviewsCarousel,
     String? tmdbApiKey,
     bool? enableSearchFilter,

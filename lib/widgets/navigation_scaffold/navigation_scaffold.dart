@@ -97,7 +97,7 @@ class _NavigationScaffoldState extends ConsumerState<NavigationScaffold> with Wi
 
     if (shouldExit == true) {
       if (!kIsWeb && (Platform.isWindows || Platform.isLinux || Platform.isMacOS)) {
-        await windowManager.destroy();
+        exit(0);
       } else {
         SystemNavigator.pop();
       }
@@ -151,7 +151,7 @@ class _NavigationScaffoldState extends ConsumerState<NavigationScaffold> with Wi
                 return Scaffold(
                   key: _effectiveKey,
                   drawerEnableOpenDragGesture: false,
-                  appBar: (fullScreenChildRoute || currentLocation.contains("Settings")) ? null : const KebapAppBar(),
+                  appBar: (fullScreenChildRoute || (currentLocation.contains("Settings") && !isDesktop)) ? null : const KebapAppBar(),
                   extendBodyBehindAppBar: false,
                   resizeToAvoidBottomInset: false,
                   extendBody: true,

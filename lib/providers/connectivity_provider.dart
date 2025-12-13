@@ -78,6 +78,8 @@ class ConnectivityStatus extends _$ConnectivityStatus {
       state = ConnectionState.wifi;
     } else if (results.contains(ConnectivityResult.mobile)) {
       state = ConnectionState.mobile;
+    } else if (results.contains(ConnectivityResult.vpn) || results.contains(ConnectivityResult.other)) {
+      state = ConnectionState.ethernet;
     } else if (results.contains(ConnectivityResult.none)) {
       if (isInitialCheck) {
         // On initial check, set offline immediately without debounce
@@ -90,7 +92,21 @@ class ConnectivityStatus extends _$ConnectivityStatus {
         if (current.contains(ConnectivityResult.none) && 
             !current.contains(ConnectivityResult.wifi) && 
             !current.contains(ConnectivityResult.ethernet) && 
-            !current.contains(ConnectivityResult.mobile)) {
+            !current.contains(ConnectivityResult.mobile) && 
+            !current.contains(ConnectivityResult.vpn) && 
+            !current.contains(ConnectivityResult.other)) {
+          
+          // Verify with active HTTP check before declaring offline
+          final serverUrl = ref.read(userProvider)?.credentials.localUrl;
+          if (serverUrl != null && serverUrl.isNotEmpty) {
+             final activeCheck = await fetchSystemInfoDynamic(normalizeUrl(serverUrl));
+             if (activeCheck != null) {
+               log('[Connectivity] Active check passed, forcing online state');
+               state = ConnectionState.ethernet;
+               return;
+             }
+          }
+          
           state = ConnectionState.offline;
         }
       }

@@ -15,9 +15,6 @@ import 'package:kebap/screens/settings/quick_connect_window.dart';
 import 'package:kebap/screens/settings/settings_list_tile.dart';
 import 'package:kebap/screens/settings/settings_scaffold.dart';
 import 'package:kebap/screens/settings/widgets/settings_left_pane.dart';
-import 'package:kebap/screens/shared/default_alert_dialog.dart';
-import 'package:kebap/screens/shared/kebap_icon.dart';
-import 'package:kebap/screens/shared/kebap_snackbar.dart';
 import 'package:kebap/util/adaptive_layout/adaptive_layout.dart';
 import 'package:kebap/util/localization_helper.dart';
 import 'package:kebap/util/theme_extensions.dart';
@@ -58,7 +55,7 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen> {
                   mainAxisSize: MainAxisSize.max,
                   crossAxisAlignment: CrossAxisAlignment.stretch,
                   children: [
-                    const Expanded(flex: 2, child: SettingsLeftPane()),
+                    Expanded(flex: 2, child: SettingsLeftPane(activeRouteName: context.tabsRouter.current.name)),
                     Expanded(
                       flex: 3,
                       child: content,

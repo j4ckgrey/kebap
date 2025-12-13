@@ -203,11 +203,11 @@ class _UserSettingsPageState extends ConsumerState<ProfileSettingsPage> {
                     label: const Text('Enable Auto Import'),
                     subLabel: const Text('Non-admin users can import directly without making requests'),
                     trailing: Switch(
-                      value: cfg.disableNonAdminRequests,
+                      value: cfg.enableAutoImport,
                       onChanged: (v) async {
                         try {
                           await ref.read(baklavaServiceProvider).updateConfig(
-                            disableNonAdminRequests: v,
+                            enableAutoImport: v,
                           );
                           // Refresh the config
                           ref.invalidate(baklavaConfigProvider);

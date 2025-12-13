@@ -40,6 +40,8 @@ class _SingleRowViewState extends ConsumerState<SingleRowView> {
   int _currentPage = 0;
   bool _hasAutoFocused = false;
   Timer? _debounceTimer;
+  Timer? _scrollDebounceTimer; // Throttle scroll events
+  DateTime _lastScrollTime = DateTime.now(); // Track last scroll event
 
   @override
   void initState() {
@@ -80,12 +82,17 @@ class _SingleRowViewState extends ConsumerState<SingleRowView> {
     setState(() {
       _currentPage = page;
     });
+    // Auto-select first item of new row so banner updates
+    if (page >= 0 && page < widget.rows.length && widget.rows[page].posters.isNotEmpty) {
+      _onItemFocused(widget.rows[page].posters.first);
+    }
   }
 
   @override
   void dispose() {
     _pageController.dispose();
     _debounceTimer?.cancel();
+    _scrollDebounceTimer?.cancel();
     super.dispose();
   }
 
@@ -138,15 +145,18 @@ class _SingleRowViewState extends ConsumerState<SingleRowView> {
     // Fixed banner (non-scrollable) and rows - return the Column
     return Column(
       children: [
-        SizedBox(
-          height: scaledBannerHeight,
-          child: Consumer(
-            builder: (context, ref, child) {
-              return CompactItemBanner(
-                item: ref.watch(focusedItemProvider),
-                maxHeight: scaledBannerHeight,
-              );
-            },
+        // RepaintBoundary isolates banner repaints from row scrolling
+        RepaintBoundary(
+          child: SizedBox(
+            height: scaledBannerHeight,
+            child: Consumer(
+              builder: (context, ref, child) {
+                return CompactItemBanner(
+                  item: ref.watch(focusedItemProvider),
+                  maxHeight: scaledBannerHeight,
+                );
+              },
+            ),
           ),
         ),
         // Scrollable rows via PageView
@@ -180,25 +190,30 @@ class _SingleRowViewState extends ConsumerState<SingleRowView> {
                 child: Listener(
                   onPointerSignal: (pointerSignal) {
                     if (pointerSignal is PointerScrollEvent) {
-                      // Ignore if we are already animating or strictly debouncing
+                      // Ignore if we are already animating
                       if (_pageController.position.isScrollingNotifier.value) return;
                       
+                      // Throttle scroll events - minimum 150ms between page changes
+                      final now = DateTime.now();
+                      if (now.difference(_lastScrollTime).inMilliseconds < 150) return;
+                      
                       final double scrollDelta = pointerSignal.scrollDelta.dy;
-                      if (scrollDelta.abs() > 20) { // Threshold for scroll
+                      if (scrollDelta.abs() > 30) { // Higher threshold for scroll
+                        _lastScrollTime = now;
                          if (scrollDelta > 0) {
                            // Scroll Down -> Next Page
                            if (_currentPage < widget.rows.length - 1) {
                              _pageController.nextPage(
-                               duration: const Duration(milliseconds: 300),
-                               curve: Curves.easeInOut,
+                               duration: const Duration(milliseconds: 350), // Slower animation
+                               curve: Curves.easeOutCubic,
                              );
                            }
                          } else {
                            // Scroll Up -> Previous Page
                            if (_currentPage > 0) {
                              _pageController.previousPage(
-                               duration: const Duration(milliseconds: 300),
-                               curve: Curves.easeInOut,
+                               duration: const Duration(milliseconds: 350), // Slower animation
+                               curve: Curves.easeOutCubic,
                              );
                            }
                          }
@@ -256,18 +271,24 @@ class _SingleRowViewState extends ConsumerState<SingleRowView> {
                               // Poster cards
                               SizedBox(
                                 height: cardHeight,
-                                child: PosterRow(
-                                  contentPadding: EdgeInsets.only(
-                                    left: widget.contentPadding.left,
-                                    right: widget.contentPadding.right + 24, // Extra right padding for indicator
-                                  ),
-                                  label: row.label,
-                                  hideLabel: true, // Hide label, shown above instead
-                                  posters: row.posters,
-                                  collectionAspectRatio: row.aspectRatio,
-                                  onLabelClick: row.onLabelClick,
-                                  explicitHeight: cardHeight,
-                                  onCardTap: _onItemFocused,
+                                child: Consumer(
+                                  builder: (context, ref, child) {
+                                    final focusedItem = ref.watch(focusedItemProvider);
+                                    return PosterRow(
+                                      contentPadding: EdgeInsets.only(
+                                        left: widget.contentPadding.left,
+                                        right: widget.contentPadding.right + 24, // Extra right padding for indicator
+                                      ),
+                                      label: row.label,
+                                      hideLabel: true, // Hide label, shown above instead
+                                      posters: row.posters,
+                                      collectionAspectRatio: row.aspectRatio,
+                                      onLabelClick: row.onLabelClick,
+                                      explicitHeight: cardHeight,
+                                      onCardTap: _onItemFocused,
+                                      selectedItemId: focusedItem?.id, // Show persistent selection
+                                    );
+                                  },
                                 ),
                               ),
                             ],

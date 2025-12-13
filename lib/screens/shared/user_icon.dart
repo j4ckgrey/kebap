@@ -60,8 +60,14 @@ class UserIcon extends ConsumerWidget {
               children: [
                 CachedNetworkImage(
                   imageUrl: user?.avatar ?? "",
+                  cacheKey: user?.avatar, // Explicitly use the full URL (including tag) as the key
                   progressIndicatorBuilder: (context, url, progress) => placeHolder(),
-                  errorWidget: (context, url, error) => placeHolder(),
+                  errorWidget: (context, url, error) {
+                    print('[UserIcon] Failed to load avatar: $url, Error: $error');
+                    // Consider evicting from cache if it was a 404 or similar, to allow retry later
+                    PaintingBinding.instance.imageCache.evict(NetworkImage(url));
+                    return placeHolder();
+                  },
                   memCacheHeight: 128,
                   fit: BoxFit.cover,
                 ),

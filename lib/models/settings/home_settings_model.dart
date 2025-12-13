@@ -18,7 +18,6 @@ abstract class HomeSettingsModel with _$HomeSettingsModel {
     @Default(HomeNextUp.separate) HomeNextUp nextUp,
     @Default(HomeBannerMediaType.image) HomeBannerMediaType bannerMediaType,
     @Default(false) bool bannerTrailerMuted,
-    @Default(TrailerQuality.high) TrailerQuality bannerTrailerQuality,
   }) = _HomeSettingsModel;
 
   static HomeSettingsModel defaultModel() {
@@ -77,18 +76,4 @@ enum HomeBannerMediaType {
       };
 }
 
-/// Trailer quality setting for homepage banner
-enum TrailerQuality {
-  low,
-  medium,
-  high,
-  ;
 
-  const TrailerQuality();
-
-  String label(BuildContext context) => switch (this) {
-        TrailerQuality.low => context.localized.qualityLow,
-        TrailerQuality.medium => context.localized.qualityMedium,
-        TrailerQuality.high => context.localized.qualityHigh,
-      };
-}

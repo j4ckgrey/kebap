@@ -75,29 +75,7 @@ List<Widget> buildClientSettingsDashboard(BuildContext context, WidgetRef ref) {
                 .update((current) => current.copyWith(bannerTrailerMuted: value)),
           ),
         ),
-      // Show quality setting only when trailer mode is enabled
-      if (homeSettings.bannerMediaType == HomeBannerMediaType.trailer)
-        SettingsListTile(
-          label: Text(context.localized.bannerTrailerQuality),
-          subLabel: Text(context.localized.bannerTrailerQualityDesc),
-          trailing: EnumBox(
-            current: ref.watch(
-              homeSettingsProvider.select(
-                (value) => value.bannerTrailerQuality.label(context),
-              ),
-            ),
-            itemBuilder: (context) => TrailerQuality.values
-                .map(
-                  (entry) => ItemActionButton(
-                    label: Text(entry.label(context)),
-                    action: () => ref
-                        .read(homeSettingsProvider.notifier)
-                        .update((context) => context.copyWith(bannerTrailerQuality: entry)),
-                  ),
-                )
-                .toList(),
-          ),
-        ),
+
       SettingsListTile(
         label: Text(context.localized.clientSettingsShowAllCollectionsTitle),
         subLabel: Text(context.localized.clientSettingsShowAllCollectionsDesc),

@@ -256,12 +256,12 @@ class _SearchResultModalState extends ConsumerState<SearchResultModal> {
     final metadata = metadataState.metadata;
     final credits = metadataState.credits;
     final effectiveConfigAsync = ref.watch(effectiveBaklavaConfigProvider);
-    final disableNonAdminRequests = effectiveConfigAsync.maybeWhen(
-      data: (cfg) => cfg.disableNonAdminRequests == true,
+    final enableAutoImport = effectiveConfigAsync.maybeWhen(
+      data: (cfg) => cfg.enableAutoImport == true,
       orElse: () => false,
     );
 
-    print('DEBUG: SearchResultModal build - user: ${user?.name}, isAdmin: $isAdmin, autoImport: $disableNonAdminRequests, existingRequestId: ${metadataState.existingRequestId}');
+    print('DEBUG: SearchResultModal build - user: ${user?.name}, isAdmin: $isAdmin, autoImport: $enableAutoImport, existingRequestId: ${metadataState.existingRequestId}');
 
     return CallbackShortcuts(
       bindings: {
@@ -458,7 +458,7 @@ class _SearchResultModalState extends ConsumerState<SearchResultModal> {
                 // If request is approved/rejected but item not in library, allow re-request
                 else if (metadataState.existingRequestId != null && 
                          metadataState.requestStatus == 'pending' && 
-                         !disableNonAdminRequests)
+                         !enableAutoImport)
                   FilledButton.icon(
                     onPressed: null, // TODO: Open request details
                     icon: const Icon(IconsaxPlusLinear.clock),
@@ -470,7 +470,7 @@ class _SearchResultModalState extends ConsumerState<SearchResultModal> {
                   )
                 else if (metadataState.existingRequestId != null && 
                          metadataState.requestStatus == 'pending' && 
-                         disableNonAdminRequests && 
+                         enableAutoImport && 
                          !isAdmin)
                   // Auto-import enabled: non-admins can import even if there's an existing request
                   FilledButton.icon(
@@ -615,7 +615,7 @@ class _SearchResultModalState extends ConsumerState<SearchResultModal> {
 
                     // Auto Import: when disableNonAdminRequests is true, non-admins
                     // can import directly (same UI as admins)
-                    if (disableNonAdminRequests) {
+                    if (enableAutoImport) {
                       return FilledButton.icon(
                         onPressed: _importing ? null : _handleImport,
                         icon: _importing

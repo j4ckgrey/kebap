@@ -37,7 +37,6 @@ class _SettingsListTileState extends State<SettingsListTile> with AutomaticKeepA
   @override
   Widget build(BuildContext context) {
     super.build(context);
-    // print('[LAG_DEBUG] ${DateTime.now()} SettingsListTile build: ${widget.label}');
     final iconWidget = widget.icon != null ? Icon(widget.icon) : null;
 
     final leadingWidget = (widget.leading ?? iconWidget) != null

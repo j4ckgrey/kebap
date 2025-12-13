@@ -65,7 +65,7 @@ class FlatButton extends ConsumerWidget {
               borderRadius: borderRadiusGeometry ?? BorderRadius.circular(10),
               splashColor: splashColor ?? Theme.of(context).colorScheme.primary.withValues(alpha: 0.5),
               hoverColor: showFeedback ? null : Colors.transparent,
-              splashFactory: InkRipple.splashFactory,
+              splashFactory: NoSplash.splashFactory,
             ),
           ),
         ),

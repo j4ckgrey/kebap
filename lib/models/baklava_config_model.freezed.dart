@@ -15,7 +15,7 @@ T _$identity<T>(T value) => value;
 /// @nodoc
 mixin _$BaklavaConfig {
   String get defaultTmdbId;
-  bool get disableNonAdminRequests;
+  bool get enableAutoImport;
   bool get showReviewsCarousel;
   String? get tmdbApiKey;
   bool? get enableSearchFilter;
@@ -42,9 +42,8 @@ mixin _$BaklavaConfig {
             other is BaklavaConfig &&
             (identical(other.defaultTmdbId, defaultTmdbId) ||
                 other.defaultTmdbId == defaultTmdbId) &&
-            (identical(
-                    other.disableNonAdminRequests, disableNonAdminRequests) ||
-                other.disableNonAdminRequests == disableNonAdminRequests) &&
+            (identical(other.enableAutoImport, enableAutoImport) ||
+                other.enableAutoImport == enableAutoImport) &&
             (identical(other.showReviewsCarousel, showReviewsCarousel) ||
                 other.showReviewsCarousel == showReviewsCarousel) &&
             (identical(other.tmdbApiKey, tmdbApiKey) ||
@@ -66,7 +65,7 @@ mixin _$BaklavaConfig {
   int get hashCode => Object.hash(
       runtimeType,
       defaultTmdbId,
-      disableNonAdminRequests,
+      enableAutoImport,
       showReviewsCarousel,
       tmdbApiKey,
       enableSearchFilter,
@@ -77,7 +76,7 @@ mixin _$BaklavaConfig {
 
   @override
   String toString() {
-    return 'BaklavaConfig(defaultTmdbId: $defaultTmdbId, disableNonAdminRequests: $disableNonAdminRequests, showReviewsCarousel: $showReviewsCarousel, tmdbApiKey: $tmdbApiKey, enableSearchFilter: $enableSearchFilter, forceTVClientLocalSearch: $forceTVClientLocalSearch, versionUi: $versionUi, audioUi: $audioUi, subtitleUi: $subtitleUi)';
+    return 'BaklavaConfig(defaultTmdbId: $defaultTmdbId, enableAutoImport: $enableAutoImport, showReviewsCarousel: $showReviewsCarousel, tmdbApiKey: $tmdbApiKey, enableSearchFilter: $enableSearchFilter, forceTVClientLocalSearch: $forceTVClientLocalSearch, versionUi: $versionUi, audioUi: $audioUi, subtitleUi: $subtitleUi)';
   }
 }
 
@@ -89,7 +88,7 @@ abstract mixin class $BaklavaConfigCopyWith<$Res> {
   @useResult
   $Res call(
       {String defaultTmdbId,
-      bool disableNonAdminRequests,
+      bool enableAutoImport,
       bool showReviewsCarousel,
       String? tmdbApiKey,
       bool? enableSearchFilter,
@@ -113,7 +112,7 @@ class _$BaklavaConfigCopyWithImpl<$Res>
   @override
   $Res call({
     Object? defaultTmdbId = null,
-    Object? disableNonAdminRequests = null,
+    Object? enableAutoImport = null,
     Object? showReviewsCarousel = null,
     Object? tmdbApiKey = freezed,
     Object? enableSearchFilter = freezed,
@@ -127,9 +126,9 @@ class _$BaklavaConfigCopyWithImpl<$Res>
           ? _self.defaultTmdbId
           : defaultTmdbId // ignore: cast_nullable_to_non_nullable
               as String,
-      disableNonAdminRequests: null == disableNonAdminRequests
-          ? _self.disableNonAdminRequests
-          : disableNonAdminRequests // ignore: cast_nullable_to_non_nullable
+      enableAutoImport: null == enableAutoImport
+          ? _self.enableAutoImport
+          : enableAutoImport // ignore: cast_nullable_to_non_nullable
               as bool,
       showReviewsCarousel: null == showReviewsCarousel
           ? _self.showReviewsCarousel
@@ -258,7 +257,7 @@ extension BaklavaConfigPatterns on BaklavaConfig {
   TResult maybeWhen<TResult extends Object?>(
     TResult Function(
             String defaultTmdbId,
-            bool disableNonAdminRequests,
+            bool enableAutoImport,
             bool showReviewsCarousel,
             String? tmdbApiKey,
             bool? enableSearchFilter,
@@ -274,7 +273,7 @@ extension BaklavaConfigPatterns on BaklavaConfig {
       case _BaklavaConfig() when $default != null:
         return $default(
             _that.defaultTmdbId,
-            _that.disableNonAdminRequests,
+            _that.enableAutoImport,
             _that.showReviewsCarousel,
             _that.tmdbApiKey,
             _that.enableSearchFilter,
@@ -304,7 +303,7 @@ extension BaklavaConfigPatterns on BaklavaConfig {
   TResult when<TResult extends Object?>(
     TResult Function(
             String defaultTmdbId,
-            bool disableNonAdminRequests,
+            bool enableAutoImport,
             bool showReviewsCarousel,
             String? tmdbApiKey,
             bool? enableSearchFilter,
@@ -319,7 +318,7 @@ extension BaklavaConfigPatterns on BaklavaConfig {
       case _BaklavaConfig():
         return $default(
             _that.defaultTmdbId,
-            _that.disableNonAdminRequests,
+            _that.enableAutoImport,
             _that.showReviewsCarousel,
             _that.tmdbApiKey,
             _that.enableSearchFilter,
@@ -348,7 +347,7 @@ extension BaklavaConfigPatterns on BaklavaConfig {
   TResult? whenOrNull<TResult extends Object?>(
     TResult? Function(
             String defaultTmdbId,
-            bool disableNonAdminRequests,
+            bool enableAutoImport,
             bool showReviewsCarousel,
             String? tmdbApiKey,
             bool? enableSearchFilter,
@@ -363,7 +362,7 @@ extension BaklavaConfigPatterns on BaklavaConfig {
       case _BaklavaConfig() when $default != null:
         return $default(
             _that.defaultTmdbId,
-            _that.disableNonAdminRequests,
+            _that.enableAutoImport,
             _that.showReviewsCarousel,
             _that.tmdbApiKey,
             _that.enableSearchFilter,
@@ -382,7 +381,7 @@ extension BaklavaConfigPatterns on BaklavaConfig {
 class _BaklavaConfig implements BaklavaConfig {
   const _BaklavaConfig(
       {this.defaultTmdbId = '',
-      this.disableNonAdminRequests = false,
+      this.enableAutoImport = false,
       this.showReviewsCarousel = true,
       this.tmdbApiKey,
       this.enableSearchFilter,
@@ -398,7 +397,7 @@ class _BaklavaConfig implements BaklavaConfig {
   final String defaultTmdbId;
   @override
   @JsonKey()
-  final bool disableNonAdminRequests;
+  final bool enableAutoImport;
   @override
   @JsonKey()
   final bool showReviewsCarousel;
@@ -437,9 +436,8 @@ class _BaklavaConfig implements BaklavaConfig {
             other is _BaklavaConfig &&
             (identical(other.defaultTmdbId, defaultTmdbId) ||
                 other.defaultTmdbId == defaultTmdbId) &&
-            (identical(
-                    other.disableNonAdminRequests, disableNonAdminRequests) ||
-                other.disableNonAdminRequests == disableNonAdminRequests) &&
+            (identical(other.enableAutoImport, enableAutoImport) ||
+                other.enableAutoImport == enableAutoImport) &&
             (identical(other.showReviewsCarousel, showReviewsCarousel) ||
                 other.showReviewsCarousel == showReviewsCarousel) &&
             (identical(other.tmdbApiKey, tmdbApiKey) ||
@@ -461,7 +459,7 @@ class _BaklavaConfig implements BaklavaConfig {
   int get hashCode => Object.hash(
       runtimeType,
       defaultTmdbId,
-      disableNonAdminRequests,
+      enableAutoImport,
       showReviewsCarousel,
       tmdbApiKey,
       enableSearchFilter,
@@ -472,7 +470,7 @@ class _BaklavaConfig implements BaklavaConfig {
 
   @override
   String toString() {
-    return 'BaklavaConfig(defaultTmdbId: $defaultTmdbId, disableNonAdminRequests: $disableNonAdminRequests, showReviewsCarousel: $showReviewsCarousel, tmdbApiKey: $tmdbApiKey, enableSearchFilter: $enableSearchFilter, forceTVClientLocalSearch: $forceTVClientLocalSearch, versionUi: $versionUi, audioUi: $audioUi, subtitleUi: $subtitleUi)';
+    return 'BaklavaConfig(defaultTmdbId: $defaultTmdbId, enableAutoImport: $enableAutoImport, showReviewsCarousel: $showReviewsCarousel, tmdbApiKey: $tmdbApiKey, enableSearchFilter: $enableSearchFilter, forceTVClientLocalSearch: $forceTVClientLocalSearch, versionUi: $versionUi, audioUi: $audioUi, subtitleUi: $subtitleUi)';
   }
 }
 
@@ -486,7 +484,7 @@ abstract mixin class _$BaklavaConfigCopyWith<$Res>
   @useResult
   $Res call(
       {String defaultTmdbId,
-      bool disableNonAdminRequests,
+      bool enableAutoImport,
       bool showReviewsCarousel,
       String? tmdbApiKey,
       bool? enableSearchFilter,
@@ -510,7 +508,7 @@ class __$BaklavaConfigCopyWithImpl<$Res>
   @pragma('vm:prefer-inline')
   $Res call({
     Object? defaultTmdbId = null,
-    Object? disableNonAdminRequests = null,
+    Object? enableAutoImport = null,
     Object? showReviewsCarousel = null,
     Object? tmdbApiKey = freezed,
     Object? enableSearchFilter = freezed,
@@ -524,9 +522,9 @@ class __$BaklavaConfigCopyWithImpl<$Res>
           ? _self.defaultTmdbId
           : defaultTmdbId // ignore: cast_nullable_to_non_nullable
               as String,
-      disableNonAdminRequests: null == disableNonAdminRequests
-          ? _self.disableNonAdminRequests
-          : disableNonAdminRequests // ignore: cast_nullable_to_non_nullable
+      enableAutoImport: null == enableAutoImport
+          ? _self.enableAutoImport
+          : enableAutoImport // ignore: cast_nullable_to_non_nullable
               as bool,
       showReviewsCarousel: null == showReviewsCarousel
           ? _self.showReviewsCarousel

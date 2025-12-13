@@ -21,14 +21,15 @@ import 'package:kebap/util/theme_extensions.dart';
 import 'package:window_manager/window_manager.dart';
 
 class SettingsLeftPane extends ConsumerWidget {
-  const SettingsLeftPane({super.key});
+  final String activeRouteName;
+  const SettingsLeftPane({required this.activeRouteName, super.key});
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     void navigateTo(PageRouteInfo route) => context.tabsRouter.navigate(route);
 
     bool containsRoute(PageRouteInfo route) =>
-        AdaptiveLayout.layoutModeOf(context) == LayoutMode.dual && context.tabsRouter.current.name == route.routeName;
+        AdaptiveLayout.layoutModeOf(context) == LayoutMode.dual && activeRouteName == route.routeName;
 
     final quickConnectAvailable =
         ref.watch(userProvider.select((value) => value?.serverConfiguration?.quickConnectAvailable ?? false));
@@ -85,7 +86,6 @@ class SettingsLeftPane extends ConsumerWidget {
               key: const ValueKey('client_settings'),
               label: Text(context.localized.settingsClientTitle),
               subLabel: Text(context.localized.settingsClientDesc),
-              autoFocus: true,
               selected: containsRoute(const ClientSettingsRoute()),
               icon: deviceIcon,
               onTap: () => navigateTo(const ClientSettingsRoute()),

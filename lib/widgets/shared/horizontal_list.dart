@@ -320,15 +320,18 @@ class _HorizontalListState extends ConsumerState<HorizontalList> with TickerProv
                 scrollDirection: Axis.horizontal,
                 padding: widget.contentPadding,
                 cacheExtent: _firstItemWidth ?? 250 * 3,
-                itemBuilder: (context, index) => index == widget.items.length
-                    ? PosterPlaceHolder(
-                        onTap: widget.onLabelClick ?? () {},
-                        aspectRatio: widget.dominantRatio ?? AdaptiveLayout.poster(context).ratio,
-                      )
-                    : Container(
-                        key: index == 0 ? _firstItemKey : null,
-                        child: widget.itemBuilder(context, index),
-                      ),
+                // RepaintBoundary around each item to isolate card repaints from scroll
+                itemBuilder: (context, index) => RepaintBoundary(
+                  child: index == widget.items.length
+                      ? PosterPlaceHolder(
+                          onTap: widget.onLabelClick ?? () {},
+                          aspectRatio: widget.dominantRatio ?? AdaptiveLayout.poster(context).ratio,
+                        )
+                      : Container(
+                          key: index == 0 ? _firstItemKey : null,
+                          child: widget.itemBuilder(context, index),
+                        ),
+                ),
                 separatorBuilder: (context, index) => SizedBox(width: contentPadding),
                 itemCount: widget.onLabelClick != null && AdaptiveLayout.inputDeviceOf(context) == InputDevice.dPad
                     ? widget.items.length + 1
