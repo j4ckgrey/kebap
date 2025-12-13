@@ -46,10 +46,12 @@ class _VideoSubtitleControlsState extends ConsumerState<VideoSubtitleControls> {
   bool showPartial = true;
   bool hideControls = false;
 
-  void setOpacity(Key? key) => setState(() {
-        activeKey = key;
-        showPartial = !(activeKey != null);
-      });
+  // Removed setOpacity method - it was causing subtitle menu to resize on TV 
+  // when navigating with D-pad (focus changes triggered visibility changes)
+  void setOpacity(Key? key) {
+    // No-op - keeping method signature for compatibility but removing behavior
+  }
+
 
   @override
   Widget build(BuildContext context) {
