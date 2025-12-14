@@ -402,7 +402,10 @@ class _LibrarySearchScreenState extends ConsumerState<LibrarySearchScreen> {
                                       resultsFocusNode.requestFocus();
                                     },
                                     onDown: () {
-                                      resultsFocusNode.requestFocus();
+                                      final moved = FocusScope.of(context).focusInDirection(TraversalDirection.down);
+                                      if (!moved) {
+                                        resultsFocusNode.requestFocus();
+                                      }
                                     },
                                   ),
                                 ),

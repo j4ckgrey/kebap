@@ -46,6 +46,7 @@ class NavigationScaffold extends ConsumerStatefulWidget {
 
 class _NavigationScaffoldState extends ConsumerState<NavigationScaffold> with WindowListener {
   final GlobalKey<ScaffoldState> _key = GlobalKey();
+  final FocusNode _drawerFirstItemFocusNode = FocusNode();
   GlobalKey<ScaffoldState> get _effectiveKey => widget.scaffoldKey ?? _key;
 
   int get currentIndex =>
@@ -67,6 +68,7 @@ class _NavigationScaffoldState extends ConsumerState<NavigationScaffold> with Wi
   @override
   void dispose() {
     windowManager.removeListener(this);
+    _drawerFirstItemFocusNode.dispose();
     super.dispose();
   }
 
@@ -155,7 +157,15 @@ class _NavigationScaffoldState extends ConsumerState<NavigationScaffold> with Wi
                   extendBodyBehindAppBar: false,
                   resizeToAvoidBottomInset: false,
                   extendBody: true,
-                  onDrawerChanged: (isOpened) {
+                onDrawerChanged: (isOpened) {
+                    // When drawer opens, focus its first item
+                    if (isOpened) {
+                      Future.delayed(const Duration(milliseconds: 50), () {
+                        if (_drawerFirstItemFocusNode.context != null) {
+                          _drawerFirstItemFocusNode.requestFocus();
+                        }
+                      });
+                    }
                     // When drawer closes, restore focus to the previously focused content item
                     if (!isOpened && lastMainFocus != null && lastMainFocus!.context != null && lastMainFocus!.canRequestFocus) {
                       // Use a short delay to ensure drawer animation completes
@@ -179,6 +189,7 @@ class _NavigationScaffoldState extends ConsumerState<NavigationScaffold> with Wi
                               views: views,
                               destinations: widget.destinations,
                               currentLocation: currentLocation,
+                              firstItemFocusNode: _drawerFirstItemFocusNode,
                             );
                           },
                         )

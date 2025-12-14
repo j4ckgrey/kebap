@@ -32,6 +32,7 @@ class PosterWidget extends ConsumerWidget {
   final Function(bool focus)? onFocusChanged;
   final FocusNode? focusNode;
   final VoidCallback? onCustomTap;
+  final VoidCallback? onCustomAction;
   final bool isSelectedForBanner; // Show persistent selection when card is shown in banner
 
   const PosterWidget({
@@ -52,6 +53,7 @@ class PosterWidget extends ConsumerWidget {
     this.onFocusChanged,
     this.focusNode,
     this.onCustomTap,
+    this.onCustomAction,
     this.isSelectedForBanner = false,
     super.key,
   });
@@ -80,6 +82,7 @@ class PosterWidget extends ConsumerWidget {
               primaryPosters: primaryPosters,
               onFocusChanged: onFocusChanged,
               onCustomTap: onCustomTap,
+              onCustomAction: onCustomAction,
               isSelectedForBanner: isSelectedForBanner,
             ),
           ),

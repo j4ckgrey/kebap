@@ -42,38 +42,79 @@ class _SingleRowViewState extends ConsumerState<SingleRowView> {
   Timer? _debounceTimer;
   Timer? _scrollDebounceTimer; // Throttle scroll events
   DateTime _lastScrollTime = DateTime.now(); // Track last scroll event
+  String? _lastFocusedRowLabel; // Track active row for focus restoration
 
   @override
   void initState() {
     super.initState();
     _initializeFocus();
-    WidgetsBinding.instance.addPostFrameCallback((_) {
-      _hasAutoFocused = true;
-    });
   }
 
   @override
   void didUpdateWidget(SingleRowView oldWidget) {
     super.didUpdateWidget(oldWidget);
-    if (widget.rows.length != oldWidget.rows.length) {
+    if (widget.rows.length != oldWidget.rows.length ||
+        (widget.rows.isNotEmpty && oldWidget.rows.isNotEmpty && widget.rows[0].label != oldWidget.rows[0].label)) {
+      // Logic to handle row updates (e.g. Libraries loading in)
+      if (widget.rows.isNotEmpty && oldWidget.rows.isNotEmpty && widget.rows[0].label != oldWidget.rows[0].label) {
+         // If the first row replaced (e.g. Libraries loaded above Next Up), reset autofocus
+         _hasAutoFocused = false;
+      }
       _initializeFocus();
     }
   }
 
   void _initializeFocus() {
     WidgetsBinding.instance.addPostFrameCallback((_) {
-      if (widget.rows.isNotEmpty && widget.rows[0].posters.isNotEmpty) {
-        // Set initial banner item
+      if (!mounted) return;
+      
+      // Check if we already have system focus in this view
+      final hasSystemFocus = FocusScope.of(context).hasFocus;
+      final firstRowChanged = widget.rows.isNotEmpty && widget.rows[0].label != _lastFocusedRowLabel;
+
+      if (hasSystemFocus && !firstRowChanged) {
+         // If we have system focus, ensure our internal state matches it to avoid "double selection" visual
+         final currentFocus = ref.read(focusedItemProvider);
+         if (currentFocus != null && _lastFocusedRowLabel == null) {
+            for (final row in widget.rows) {
+              if (row.posters.any((p) => p.id == currentFocus.id)) {
+                 setState(() {
+                   _lastFocusedRowLabel = row.label;
+                 });
+                 break;
+              }
+            }
+         }
+         return; 
+      }
+
+      final currentFocus = ref.read(focusedItemProvider);
+      if (currentFocus == null && widget.rows.isNotEmpty && widget.rows[0].posters.isNotEmpty) {
+        // Set initial banner item only if none selected
         ref.read(focusedItemProvider.notifier).state = widget.rows[0].posters.first;
+        setState(() {
+          _lastFocusedRowLabel = widget.rows[0].label;
+          _hasAutoFocused = true;
+        });
+      } else if (widget.rows.isNotEmpty && widget.rows[0].label != _lastFocusedRowLabel && !_hasAutoFocused) {
+         // Force focus to new top row (Libraries) if we haven't locked focus yet
+        ref.read(focusedItemProvider.notifier).state = widget.rows[0].posters.first;
+        setState(() {
+          _lastFocusedRowLabel = widget.rows[0].label;
+          _hasAutoFocused = true;
+        });
       }
     });
   }
 
-  void _onItemFocused(ItemBaseModel item) {
+  void _onItemFocused(ItemBaseModel item, String label) {
     _debounceTimer?.cancel();
     _debounceTimer = Timer(const Duration(milliseconds: 200), () {
       if (mounted) {
         ref.read(focusedItemProvider.notifier).state = item;
+        setState(() {
+           _lastFocusedRowLabel = label;
+        });
       }
     });
   }
@@ -84,7 +125,7 @@ class _SingleRowViewState extends ConsumerState<SingleRowView> {
     });
     // Auto-select first item of new row so banner updates
     if (page >= 0 && page < widget.rows.length && widget.rows[page].posters.isNotEmpty) {
-      _onItemFocused(widget.rows[page].posters.first);
+      _onItemFocused(widget.rows[page].posters.first, widget.rows[page].label);
     }
   }
 
@@ -104,7 +145,8 @@ class _SingleRowViewState extends ConsumerState<SingleRowView> {
     final bottomPadding = MediaQuery.paddingOf(context).bottom;
     final navbarHeight = topPadding + 56.0;
     // Add a little extra bottom padding to avoid content clipping under system bars
-    final extraBottomPadding = bottomPadding + 12.0;
+    // REDUCED PADDING
+    final extraBottomPadding = bottomPadding + 4.0; 
     // Subtract bottom safe area as well to avoid clipping on devices with navigation bars
     final availableHeight = size.height - navbarHeight - extraBottomPadding;
 
@@ -130,10 +172,12 @@ class _SingleRowViewState extends ConsumerState<SingleRowView> {
 
     // default scale; reduce size when required heights exceed available height
     double scale = 1.0;
-    final rowExtent = defaultCardHeight + titleHeight + 16;
-    final requiredHeight = baseBannerHeight + rowExtent + 16;
+    // FIX: Include extraBottomPadding in rowExtent. REDUCED FIXED PADDING 16->8
+    final rowExtent = defaultCardHeight + titleHeight + 8 + extraBottomPadding;
+    final requiredHeight = baseBannerHeight + rowExtent + 8; // REDUCED 16->8
     if (requiredHeight > availableHeight) {
-      scale = (availableHeight / requiredHeight).clamp(0.6, 1.0);
+      // FIX: Aggressively lower clamp to 0.2 to ensure fit on very small initial windows
+      scale = (availableHeight / requiredHeight).clamp(0.2, 1.0);
     }
 
     final scaledCardHeight = defaultCardHeight * scale;
@@ -145,12 +189,12 @@ class _SingleRowViewState extends ConsumerState<SingleRowView> {
     // Fixed banner (non-scrollable) and rows - return the Column
     return Column(
       children: [
-        // RepaintBoundary isolates banner repaints from row scrolling
         RepaintBoundary(
-          child: SizedBox(
-            height: scaledBannerHeight,
-            child: Consumer(
-              builder: (context, ref, child) {
+          child: ClipRect(
+            child: SizedBox(
+              height: scaledBannerHeight,
+              child: Consumer(
+                builder: (context, ref, child) {
                 return CompactItemBanner(
                   item: ref.watch(focusedItemProvider),
                   maxHeight: scaledBannerHeight,
@@ -159,6 +203,7 @@ class _SingleRowViewState extends ConsumerState<SingleRowView> {
             ),
           ),
         ),
+      ),
         // Scrollable rows via PageView
         Expanded(
           child: Stack(
@@ -224,17 +269,6 @@ class _SingleRowViewState extends ConsumerState<SingleRowView> {
                     controller: _pageController,
                     scrollDirection: Axis.vertical,
                     physics: const NeverScrollableScrollPhysics(),
-                    // actually keeping Clamping or default is better for touch, but for mouse we want to override.
-                    // Let's stick to default physics for touch, but the Listener will intercept mouse wheel.
-                    // However, default PageView scroll with mouse wheel is 'slow'. 
-                    // If we want ONLY custom logic for mouse wheel, we might need to be careful not to break touch.
-                    // The Listener sees the event first. If we handle it, good.
-                    
-                    // NOTE: Flutter's PageView consumes scroll events. If we want to override mouse wheel specifically:
-                    // 1. We can use `physics: const PageScrollPhysics()` which is standard.
-                    // 2. The Listener above allows "flicking" pages with the wheel.
-                    // To avoid conflict, we can leave physics as is. The issue is usually that the wheel adds small offsets that don't trigger the page snap easily.
-                    
                     onPageChanged: _onPageChanged,
                     allowImplicitScrolling: true,
                     itemCount: widget.rows.length,
@@ -244,8 +278,9 @@ class _SingleRowViewState extends ConsumerState<SingleRowView> {
   
                       // compute dominant ratio per row like PosterRow does
                       final dominantRatio = row.aspectRatio ?? AdaptiveLayout.poster(context).ratio;
+                      final ratioForHeight = row.useStandardHeight ? AdaptiveLayout.poster(context).ratio : dominantRatio;
                       final cardHeight = (((AdaptiveLayout.poster(context).size * posterSizeMultiplier) /
-                                  math.pow(dominantRatio, 0.55)) *
+                                  math.pow(ratioForHeight, 0.55)) *
                               0.72) *
                           scale;
   
@@ -260,7 +295,8 @@ class _SingleRowViewState extends ConsumerState<SingleRowView> {
                             children: [
                               // Row title
                               Padding(
-                                padding: const EdgeInsets.only(left: 16, top: 8, bottom: 4),
+                                // REDUCED TOP/BOTTOM PADDING
+                                padding: const EdgeInsets.only(left: 16, top: 4, bottom: 2), 
                                 child: Text(
                                   row.label,
                                   style: Theme.of(context).textTheme.titleMedium?.copyWith(
@@ -285,8 +321,17 @@ class _SingleRowViewState extends ConsumerState<SingleRowView> {
                                       collectionAspectRatio: row.aspectRatio,
                                       onLabelClick: row.onLabelClick,
                                       explicitHeight: cardHeight,
-                                      onCardTap: _onItemFocused,
-                                      selectedItemId: focusedItem?.id, // Show persistent selection
+                                      onFocused: (item) => _onItemFocused(item, row.label), // Explicitly handle focus for banner
+                                      selectedItemId: row.label == _lastFocusedRowLabel ? focusedItem?.id : null, // persistent selection only for active row
+                                    onCardTap: (item) {
+                                      if (row.onItemTap != null) {
+                                        row.onItemTap!(item);
+                                      } else {
+                                        // Default behavior: Focus the item for banner
+                                         _onItemFocused(item, row.label);
+                                      }
+                                    },
+                                    onCardAction: row.onItemOpen,
                                     );
                                   },
                                 ),
@@ -328,13 +373,19 @@ class _SingleRowViewState extends ConsumerState<SingleRowView> {
 class RowData {
   final String label;
   final List<ItemBaseModel> posters;
-  final double? aspectRatio;
   final Function()? onLabelClick;
+  final Function(ItemBaseModel item)? onItemTap;
+  final Function(ItemBaseModel item)? onItemOpen;
+  final double? aspectRatio;
+  final bool useStandardHeight;
 
   const RowData({
     required this.label,
     required this.posters,
     this.aspectRatio,
     this.onLabelClick,
+    this.onItemTap,
+    this.onItemOpen,
+    this.useStandardHeight = false,
   });
 }

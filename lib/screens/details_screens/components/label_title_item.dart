@@ -3,7 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 class LabelTitleItem extends ConsumerWidget {
-  final Text? title;
+  final Widget? title;
   final String? label;
   final Widget? content;
   const LabelTitleItem({
@@ -19,10 +19,10 @@ class LabelTitleItem extends ConsumerWidget {
       color: Colors.transparent,
       textStyle: Theme.of(context).textTheme.titleLarge?.copyWith(fontWeight: FontWeight.bold),
       child: Row(
-        mainAxisSize: MainAxisSize.min,
+        mainAxisSize: MainAxisSize.max,
         children: [
           Opacity(
-              opacity: 0.6,
+              opacity: 1.0, // Remove opacity for emojis to pop
               child: Material(
                   color: Colors.transparent, textStyle: Theme.of(context).textTheme.titleMedium, child: title)),
           const SizedBox(width: 12),
@@ -30,7 +30,7 @@ class LabelTitleItem extends ConsumerWidget {
               ? SelectableText(
                   label!,
                 )
-              : Flexible(child: content!),
+              : Expanded(child: content!),
         ].nonNulls.toList(),
       ),
     );

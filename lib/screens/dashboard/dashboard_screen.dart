@@ -12,7 +12,9 @@ import 'package:window_manager/window_manager.dart';
 import 'package:kebap/jellyfin/jellyfin_open_api.enums.swagger.dart';
 import 'package:kebap/jellyfin/jellyfin_open_api.swagger.dart';
 import 'package:kebap/models/collection_types.dart';
+import 'package:kebap/models/items/overview_model.dart';
 import 'package:kebap/models/item_base_model.dart';
+import 'package:kebap/models/items/item_shared_models.dart';
 import 'package:kebap/models/library_search/library_search_options.dart';
 import 'package:kebap/models/settings/home_settings_model.dart';
 import 'package:kebap/providers/baklava_requests_provider.dart';
@@ -149,6 +151,30 @@ class _DashboardScreenState extends ConsumerState<DashboardScreen> {
                   final offlineShows = allResume.where((e) => e.type == KebapItemType.episode || e.type == KebapItemType.series).toList();
 
                   final rows = [
+                    // Libraries Row (Top of Dashboard)
+                    if (views.dashboardViews.isNotEmpty)
+                      RowData(
+                        label: context.localized.library(2),
+                        aspectRatio: 1.2, // Much wider
+                        useStandardHeight: true,
+                        // onItemTap not provided -> Defaults to Focus behavior (updates banner)
+                        onItemOpen: (item) => context.router.push(LibrarySearchRoute(viewModelId: item.id)),
+                        posters: views.dashboardViews.map((view) => ItemBaseModel(
+                          name: view.name,
+                          id: view.id,
+                          overview: OverviewModel(), 
+                          parentId: null,
+                          playlistId: null,
+                          images: view.imageData,
+                          childCount: null,
+                          primaryRatio: null,
+                          userData: UserData(),
+                          canDownload: false,
+                          canDelete: false,
+                          jellyType: view.dtoKind, 
+                        )).toList(),
+                      ),
+
                     if (isOffline) ...[
                       if (offlineMovies.isNotEmpty)
                         RowData(

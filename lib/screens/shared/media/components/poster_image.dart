@@ -35,7 +35,8 @@ class PosterImage extends ConsumerWidget {
   final bool primaryPosters;
   final Function(bool focus)? onFocusChanged;
   final FocusNode? focusNode;
-  final VoidCallback? onCustomTap;
+  final VoidCallback? onCustomTap; // Used for Card Tap (Focus)
+  final VoidCallback? onCustomAction; // Used for Open/Enter (Navigation)
   final bool isSelectedForBanner; // Show persistent selection when shown in banner
 
   const PosterImage({
@@ -53,6 +54,7 @@ class PosterImage extends ConsumerWidget {
     this.onFocusChanged,
     this.focusNode,
     this.onCustomTap,
+    this.onCustomAction,
     this.isSelectedForBanner = false,
     super.key,
   });
@@ -62,8 +64,13 @@ class PosterImage extends ConsumerWidget {
     final radius = KebapTheme.smallShape.borderRadius;
     final padding = const EdgeInsets.all(5);
     final myKey = key ?? UniqueKey();
-
+    
     void defaultAction() async {
+      if (onCustomAction != null) {
+        onCustomAction?.call();
+        return;
+      }
+      
       if (onPressed != null) {
         onPressed?.call(() async {
           await poster.navigateTo(context, ref: ref, tag: myKey);
@@ -102,11 +109,15 @@ class PosterImage extends ConsumerWidget {
                 ? Border.all(width: 3, color: Theme.of(context).colorScheme.primary)
                 : Border.all(width: 1, color: Colors.white.withAlpha(45)),
           ),
-          child: KebapImage(
-            image: primaryPosters
-                ? poster.images?.primary
-                : poster.getPosters?.primary ?? poster.getPosters?.backDrop?.lastOrNull,
-            placeHolder: PosterPlaceholder(item: poster),
+          child: ClipRRect(
+            borderRadius: radius,
+            clipBehavior: Clip.antiAlias,
+            child: KebapImage(
+              image: primaryPosters
+                  ? poster.images?.primary
+                  : poster.getPosters?.primary ?? poster.getPosters?.backDrop?.lastOrNull,
+              placeHolder: PosterPlaceholder(item: poster),
+            ),
           ),
         ),
         overlays: [
@@ -119,7 +130,9 @@ class PosterImage extends ConsumerWidget {
                 borderRadius: BorderRadius.circular(8),
                 child: InkWell(
                   borderRadius: BorderRadius.circular(8),
-                  onTap: () => defaultAction(),
+                  onTap: () {
+                    defaultAction();
+                  },
                   child: Padding(
                     padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 10),
                     child: Row(
@@ -306,7 +319,9 @@ class PosterImage extends ConsumerWidget {
               borderRadius: BorderRadius.circular(8),
               child: InkWell(
                 borderRadius: BorderRadius.circular(8),
-                onTap: () => defaultAction(),
+                onTap: () {
+                  defaultAction();
+                },
                 child: Padding(
                   padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 10),
                   child: Row(

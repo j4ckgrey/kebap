@@ -59,7 +59,16 @@ class EpisodeDetailsProvider extends StateNotifier<EpisodeDetailModel> {
 
       if (episodes.body == null) return null;
 
+      state = state.copyWith(
+        series: seriesResponse.bodyOrThrow as SeriesModel,
+      );
+
       var episode = (await api.usersUserIdItemsItemIdGet(itemId: item.id)).bodyOrThrow as EpisodeModel;
+
+      // Preserve existing media streams if new state has none (prevents UI flicker)
+      if (state.episode?.mediaStreams.versionStreams.isNotEmpty == true && episode.mediaStreams.versionStreams.isEmpty) {
+        episode = episode.copyWith(mediaStreams: state.episode!.mediaStreams);
+      }
 
       // If item has no media sources (non-Gelato items), fetch from PlaybackInfo
       if (episode.mediaStreams.versionStreams.isEmpty) {

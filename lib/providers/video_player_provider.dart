@@ -127,25 +127,32 @@ class VideoPlayerNotifier extends StateNotifier<MediaControlsWrapper> {
     PlaybackModel? newPlaybackModel = model;
 
     if (media != null) {
-      await state.loadVideo(model, startPosition, false);
-      await state.setVolume(ref.read(videoPlayerSettingsProvider).volume);
-      state.stateStream?.takeWhile((event) => event.buffering == true).listen(
-        null,
-        onDone: () async {
-          final start = startPosition;
-          if (start != Duration.zero) {
-            await state.seek(start);
-          }
-          await state.setAudioTrack(null, model);
-          await state.setSubtitleTrack(null, model);
-          state.play();
-          ref.read(playBackModel.notifier).update((state) => newPlaybackModel);
-        },
-      );
+      try {
+        await state.loadVideo(model, startPosition, false);
+        await state.setVolume(ref.read(videoPlayerSettingsProvider).volume);
+        state.stateStream?.takeWhile((event) => event.buffering == true).listen(
+          null,
+          onDone: () async {
+            final start = startPosition;
+            if (start != Duration.zero) {
+              await state.seek(start);
+            }
+            await state.setAudioTrack(null, model);
+            await state.setSubtitleTrack(null, model);
+            state.play();
+            ref.read(playBackModel.notifier).update((state) => newPlaybackModel);
+          },
+        );
 
-      ref.read(playBackModel.notifier).update((state) => model);
+        ref.read(playBackModel.notifier).update((state) => model);
 
-      return true;
+        return true;
+      } catch (e) {
+        // Handle network errors (404, connection refused, etc.) gracefully
+        debugPrint('[VideoPlayerProvider] Error loading video: $e');
+        mediaState.update((state) => state.copyWith(errorPlaying: true, buffering: false));
+        return false;
+      }
     }
 
     mediaState.update((state) => state.copyWith(errorPlaying: true));

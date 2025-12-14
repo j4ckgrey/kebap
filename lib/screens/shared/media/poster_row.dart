@@ -21,6 +21,7 @@ class PosterRow extends ConsumerWidget {
   final double? explicitHeight; // Explicit height for cards
   final FocusNode? firstItemFocusNode;
   final Function(ItemBaseModel item)? onCardTap;
+  final Function(ItemBaseModel item)? onCardAction;
   final String? selectedItemId; // ID of item shown in banner for persistent selection
 
   const PosterRow({
@@ -35,6 +36,7 @@ class PosterRow extends ConsumerWidget {
     this.explicitHeight,
     this.firstItemFocusNode,
     this.onCardTap,
+    this.onCardAction,
     this.selectedItemId,
     super.key,
   });
@@ -42,24 +44,35 @@ class PosterRow extends ConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final dominantRatio = primaryPosters ? 1.2 : collectionAspectRatio ?? posters.getMostCommonType.aspectRatio;
+    
+    // Calculate start index based on selected item ID
+    int? startIndex;
+    if (selectedItemId != null) {
+      final index = posters.indexWhere((element) => element.id == selectedItemId);
+      if (index != -1) {
+        startIndex = index;
+      }
+    }
+
     return HorizontalList(
       contentPadding: contentPadding,
       label: label,
       hideLabel: hideLabel,
-      autoFocus: FocusProvider.autoFocusOf(context),
+      autoFocus: FocusProvider.autoFocusOf(context) || startIndex != null,
       onLabelClick: onLabelClick,
       dominantRatio: dominantRatio,
       items: posters,
+      startIndex: startIndex, // Pass the calculated start index
       height: explicitHeight, // Use explicit height if provided
       onFocused: (index) {
         if (onFocused != null) {
           onFocused?.call(posters[index]);
         }
-        // ensureVisible removed to prevent jumpy page transitions
-        // Also update banner when navigating with arrow keys
-        if (onCardTap != null) {
-          onCardTap!(posters[index]);
-        }
+        // Only trigger tap action on focus if NO explicit tap handler is provided
+        // This preserves "Focus updates banner" vs "Tap navigates" distinction
+        // if (onCardTap != null && onLabelClick == null) {
+        //   onCardTap!(posters[index]);
+        // }
       },
       itemBuilder: (context, index) {
         final poster = posters[index];
@@ -70,12 +83,12 @@ class PosterRow extends ConsumerWidget {
           poster: poster,
           aspectRatio: dominantRatio,
           primaryPosters: primaryPosters,
-          underTitle: !hideLabel, // Hide title when label is hidden (shown in banner)
+          underTitle: !hideLabel, 
           onCustomTap: onCardTap != null ? () => onCardTap!(poster) : null,
-          isSelectedForBanner: isSelected, // Persistent selection when shown in banner
+          onCustomAction: onCardAction != null ? () => onCardAction!(poster) : null,
+          isSelectedForBanner: isSelected, 
         );
       },
     );
   }
 }
-

@@ -85,6 +85,7 @@ class _OutlinedTextFieldState extends ConsumerState<OutlinedTextField> {
 
   bool hasFocus = false;
   bool keyboardFocus = false;
+  bool _isTypingActive = false;
 
   @override
   void dispose() {
@@ -121,13 +122,27 @@ class _OutlinedTextFieldState extends ConsumerState<OutlinedTextField> {
     if (isDPad && event is KeyDownEvent) {
       if (event.logicalKey == LogicalKeyboardKey.arrowUp ||
           event.logicalKey == LogicalKeyboardKey.arrowDown ||
-          event.logicalKey == LogicalKeyboardKey.arrowLeft ||
-          event.logicalKey == LogicalKeyboardKey.arrowRight ||
           event.logicalKey == LogicalKeyboardKey.select ||
           event.logicalKey == LogicalKeyboardKey.enter ||
           event.logicalKey == LogicalKeyboardKey.numpadEnter ||
           event.logicalKey == LogicalKeyboardKey.gameButtonA) {
             return KeyEventResult.skipRemainingHandlers;
+      }
+      
+      if (event.logicalKey == LogicalKeyboardKey.arrowLeft) {
+        if (controller.selection.baseOffset == 0) {
+          FocusScope.of(context).focusInDirection(TraversalDirection.left);
+          return KeyEventResult.handled;
+        }
+        return KeyEventResult.skipRemainingHandlers;
+      }
+
+      if (event.logicalKey == LogicalKeyboardKey.arrowRight) {
+        if (controller.selection.baseOffset == controller.text.length) {
+          FocusScope.of(context).focusInDirection(TraversalDirection.right);
+          return KeyEventResult.handled;
+        }
+        return KeyEventResult.skipRemainingHandlers;
       }
     }
     return KeyEventResult.ignored;
@@ -145,10 +160,21 @@ class _OutlinedTextFieldState extends ConsumerState<OutlinedTextField> {
       final useCustomKeyboard = (AdaptiveLayout.inputDeviceOf(context) == InputDevice.dPad || widget.useFocusWrapper) &&
           ref.read(clientSettingsProvider.select((value) => !value.useSystemIME));
       if (widget.autoFocus) {
-        _wrapperFocus.requestFocus();
+        if (useCustomKeyboard) {
+          _wrapperFocus.requestFocus();
+        } else {
+          _textFocus.requestFocus();
+        }
       }
       _textFocus.addListener(() {
-        if (mounted) setState(() {});
+        if (mounted) {
+           setState(() {
+             // Reset typing active state when focus is lost
+             if (!_textFocus.hasFocus) {
+               _isTypingActive = false;
+             }
+           });
+        }
       });
     });
   }
@@ -159,12 +185,19 @@ class _OutlinedTextFieldState extends ConsumerState<OutlinedTextField> {
     final useCustomKeyboard = (AdaptiveLayout.inputDeviceOf(context) == InputDevice.dPad || widget.useFocusWrapper) &&
         ref.watch(clientSettingsProvider.select((value) => !value.useSystemIME));
 
+    // Calculate effective read-only state:
+    // If NOT using custom keyboard (Desktop/Mobile) -> readOnly = false (Native)
+    // If using custom keyboard (TV):
+    //    If _isTypingActive -> readOnly = false (Allow native input)
+    //    Else -> readOnly = true (Wrapper handles focus)
+    final bool isReadOnly = useCustomKeyboard && !_isTypingActive;
+
     final textField = TextField(
       controller: controller,
       onChanged: widget.onChanged,
       focusNode: _textFocus,
       onTap: widget.onTap,
-      readOnly: useCustomKeyboard,
+      readOnly: isReadOnly,
       autofillHints: widget.autoFillHints,
       keyboardType: widget.keyboardType,
       autocorrect: widget.autocorrect,
@@ -172,7 +205,7 @@ class _OutlinedTextFieldState extends ConsumerState<OutlinedTextField> {
         widget.onSubmitted?.call(value);
         Future.microtask(() async {
           await Future.delayed(const Duration(milliseconds: 125));
-          if (mounted) _wrapperFocus.requestFocus();
+          if (mounted && useCustomKeyboard) _wrapperFocus.requestFocus();
         });
       },
       textInputAction: widget.textInputAction,
@@ -229,14 +262,63 @@ class _OutlinedTextFieldState extends ConsumerState<OutlinedTextField> {
               ignoring: widget.enabled == false,
               child: Focus(
                 focusNode: _wrapperFocus,
-                canRequestFocus: true,
-                skipTraversal: false,
+                canRequestFocus: useCustomKeyboard,
+                skipTraversal: !useCustomKeyboard,
                 onFocusChange: (value) {
                   setState(() {
                     hasFocus = value;
                   });
                 },
                 onKeyEvent: (node, event) {
+                  // Explicitly check for character input to auto-open keyboard/focus
+                  if (event is KeyDownEvent) {
+                     // Check for Backspace
+                    if (event.logicalKey == LogicalKeyboardKey.backspace) {
+                      if (_wrapperFocus.hasFocus) {
+                        setState(() => _isTypingActive = true);
+                        _textFocus.requestFocus();
+                        final text = controller.text;
+                        if (text.isNotEmpty) {
+                          final newText = text.substring(0, text.length - 1);
+                          controller.value = TextEditingValue(
+                            text: newText,
+                            selection: TextSelection.collapsed(offset: newText.length),
+                          );
+                          widget.onChanged?.call(newText);
+                        }
+                        return KeyEventResult.handled;
+                      }
+                    }
+                    
+                    // Check for Characters (including Space)
+                    // We allow Space even if it's in acceptKeys, IF it's typed text.
+                    // To do this, we prioritize this check over acceptKeys check.
+                    final isSpace = event.logicalKey == LogicalKeyboardKey.space;
+                    final isChar = event.character != null && event.character!.isNotEmpty;
+                    
+                    if (isChar && 
+                        (isSpace || !acceptKeys.contains(event.logicalKey)) &&
+                        !{LogicalKeyboardKey.tab, LogicalKeyboardKey.arrowLeft, LogicalKeyboardKey.arrowRight, LogicalKeyboardKey.arrowUp, LogicalKeyboardKey.arrowDown, LogicalKeyboardKey.escape}.contains(event.logicalKey)
+                      ) {
+                        // Pass character start typing
+                        if (_wrapperFocus.hasFocus) {
+                           setState(() => _isTypingActive = true);
+                           _textFocus.requestFocus();
+                           final char = event.character!;
+                           // Only append if it's a valid printable char (simple check)
+                           if (char.runes.length == 1 && char.runes.first >= 32) {
+                               final newText = controller.text + char;
+                               controller.value = TextEditingValue(
+                                 text: newText,
+                                 selection: TextSelection.collapsed(offset: newText.length),
+                               );
+                               widget.onChanged?.call(newText);
+                           }
+                           return KeyEventResult.handled;
+                        }
+                    }
+                  }
+
                   if (keyboardFocus || AdaptiveLayout.inputDeviceOf(context) != InputDevice.dPad) return KeyEventResult.ignored;
                   if (event is KeyDownEvent && acceptKeys.contains(event.logicalKey)) {
                     if (_textFocus.hasFocus) {
@@ -280,7 +362,10 @@ class _OutlinedTextFieldState extends ConsumerState<OutlinedTextField> {
                   }
                   return KeyEventResult.ignored;
                 },
-                child: ExcludeFocusTraversal(child: textField),
+                child: ExcludeFocusTraversal(
+                  excluding: isReadOnly, // Use isReadOnly logic: Is active? Don't exclude child.
+                  child: textField,
+                ),
               ),
             ),
           ),

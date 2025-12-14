@@ -133,4 +133,18 @@ class ViewModel {
   String toString() {
     return 'ViewModel(name: $name, id: $id, serverId: $serverId, dateCreated: $dateCreated, canDelete: $canDelete, canDownload: $canDownload, parentId: $parentId, collectionType: $collectionType, playAccess: $playAccess, recentlyAdded: $recentlyAdded, childCount: $childCount)';
   }
+
+  dto.BaseItemKind get dtoKind => switch (collectionType) {
+        CollectionType.movies => dto.BaseItemKind.movie,
+        CollectionType.tvshows => dto.BaseItemKind.series,
+        CollectionType.music => dto.BaseItemKind.musicalbum,
+        CollectionType.books => dto.BaseItemKind.book,
+        CollectionType.homevideos => dto.BaseItemKind.video,
+        CollectionType.boxsets => dto.BaseItemKind.boxset,
+        CollectionType.playlists => dto.BaseItemKind.playlist,
+        CollectionType.photos => dto.BaseItemKind.photo,
+        CollectionType.folders => dto.BaseItemKind.folder,
+        CollectionType.livetv => dto.BaseItemKind.collectionfolder,
+         _ => dto.BaseItemKind.collectionfolder,
+      };
 }

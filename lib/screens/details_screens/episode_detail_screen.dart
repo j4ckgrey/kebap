@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 
 import 'package:auto_route/auto_route.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -40,12 +41,23 @@ class EpisodeDetailScreen extends ConsumerStatefulWidget {
 class _ItemDetailScreenState extends ConsumerState<EpisodeDetailScreen> {
   AutoDisposeStateNotifierProvider<EpisodeDetailsProvider, EpisodeDetailModel> get providerInstance =>
       episodeDetailsProvider(widget.item.id);
+  final FocusNode _playButtonNode = FocusNode(); // Re-add FocusNode
+  final FocusNode _mediaInfoNode = FocusNode();
+
+  @override
+  void dispose() {
+    _playButtonNode.dispose();
+    _mediaInfoNode.dispose();
+    super.dispose();
+  }
 
   @override
   Widget build(BuildContext context) {
     final details = ref.watch(providerInstance);
+
     final seasonDetails = details.series;
     final episodeDetails = details.episode;
+    // Layout alignment
     final wrapAlignment =
         AdaptiveLayout.viewSizeOf(context) != ViewSize.phone ? WrapAlignment.start : WrapAlignment.center;
 
@@ -69,8 +81,11 @@ class _ItemDetailScreenState extends ConsumerState<EpisodeDetailScreen> {
       ),
       onRefresh: () async => await ref.read(providerInstance.notifier).fetchDetails(widget.item),
       backDrops: details.episode?.images ?? details.series?.images,
-      content: (padding) => seasonDetails != null && episodeDetails != null
-          ? Padding(
+      content: (padding) {
+        if (seasonDetails == null || episodeDetails == null) {
+          return const Center(child: CircularProgressIndicator());
+        }
+        return Padding(
               padding: const EdgeInsets.only(bottom: 64),
               child: Column(
                 mainAxisAlignment: MainAxisAlignment.start,
@@ -87,10 +102,11 @@ class _ItemDetailScreenState extends ConsumerState<EpisodeDetailScreen> {
                       children: [
                         if (episodeDetails.playAble)
                           MediaPlayButton(
+                            focusNode: _playButtonNode, // Use FocusNode
                             autofocus: true,
                             item: episodeDetails,
                             onPressed: (restart) async {
-                              await details.episode.play(
+                              await details.episode!.play(
                                 context,
                                 ref,
                                 startPosition: restart ? Duration.zero : null,
@@ -98,7 +114,7 @@ class _ItemDetailScreenState extends ConsumerState<EpisodeDetailScreen> {
                               ref.read(providerInstance.notifier).fetchDetails(widget.item);
                             },
                             onLongPressed: (restart) async {
-                              await details.episode.play(
+                              await details.episode!.play(
                                 context,
                                 ref,
                                 showPlaybackOption: true,
@@ -127,20 +143,25 @@ class _ItemDetailScreenState extends ConsumerState<EpisodeDetailScreen> {
                           selectedIcon: IconsaxPlusBold.tick_circle,
                           icon: IconsaxPlusLinear.tick_circle,
                         ),
-                        SelectableIconButton(
-                          onPressed: () async {
-                            await showBottomSheetPill(
-                              context: context,
-                              content: (context, scrollController) => ListView(
-                                controller: scrollController,
-                                shrinkWrap: true,
-                                children:
-                                    episodeDetails.generateActions(context, ref).listTileItems(context, useIcons: true),
-                              ),
-                            );
+                        Shortcuts(
+                          shortcuts: {
+                            const SingleActivator(LogicalKeyboardKey.arrowRight): const DoNothingIntent(),
                           },
-                          selected: false,
-                          icon: IconsaxPlusLinear.more,
+                          child: SelectableIconButton(
+                            onPressed: () async {
+                              await showBottomSheetPill(
+                                context: context,
+                                content: (context, scrollController) => ListView(
+                                  controller: scrollController,
+                                  shrinkWrap: true,
+                                  children:
+                                      episodeDetails.generateActions(context, ref).listTileItems(context, useIcons: true),
+                                ),
+                              );
+                            },
+                            selected: false,
+                            icon: IconsaxPlusLinear.more,
+                          ),
                         ),
                       ].nonNulls.toList(),
                     ),
@@ -160,6 +181,7 @@ class _ItemDetailScreenState extends ConsumerState<EpisodeDetailScreen> {
                     Padding(
                       padding: padding,
                       child: MediaStreamInformation(
+                        focusNode: _mediaInfoNode,
                         mediaStream: details.episode!.mediaStreams,
                         onVersionIndexChanged: (index) {
                           ref.read(providerInstance.notifier).setVersionIndex(index);
@@ -222,8 +244,8 @@ class _ItemDetailScreenState extends ConsumerState<EpisodeDetailScreen> {
                     )
                 ].addPadding(const EdgeInsets.symmetric(vertical: 16)),
               ),
-            )
-          : Container(),
+            );
+          },
     );
   }
 }

@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
@@ -26,6 +27,22 @@ class MediaPlayButton extends ConsumerWidget {
     final progress = (item?.progress ?? 0) / 100.0;
     final theme = Theme.of(context).colorScheme;
 
+    // Use consistent padding logic matching SelectableIconButton
+    // SelectableIconButton uses EdgeInsets.symmetric(vertical: 10) on content, zero on button
+    // And implicit minimumSize form theme (usually 64x40)
+
+    final buttonStyle = (Color bgColor, Color fgColor) => ButtonStyle(
+      elevation: const WidgetStatePropertyAll(0),
+      backgroundColor: WidgetStatePropertyAll(bgColor),
+      iconColor: WidgetStatePropertyAll(fgColor),
+      foregroundColor: WidgetStatePropertyAll(fgColor),
+      padding: const WidgetStatePropertyAll(EdgeInsets.zero), // Use zero button padding
+      // Remove fixed minimumSize to allow theme default (wider)
+    );
+
+    const contentPadding = EdgeInsets.symmetric(vertical: 10);
+    const iconSize = 24.0;
+
     if (progress > 0) {
       return Row(
         mainAxisSize: MainAxisSize.min,
@@ -34,37 +51,36 @@ class MediaPlayButton extends ConsumerWidget {
           // Resume Button (Primary)
           Tooltip(
             message: context.localized.resumeLabel,
-            child: ElevatedButton(
-              focusNode: focusNode,
-              autofocus: autofocus,
-              style: ButtonStyle(
-                elevation: const WidgetStatePropertyAll(0),
-                backgroundColor: WidgetStatePropertyAll(theme.primaryContainer),
-                iconColor: WidgetStatePropertyAll(theme.onPrimaryContainer),
-                foregroundColor: WidgetStatePropertyAll(theme.onPrimaryContainer),
-                padding: const WidgetStatePropertyAll(EdgeInsets.all(12)),
-                minimumSize: const WidgetStatePropertyAll(Size(48, 48)),
+            child: Shortcuts(
+              shortcuts: {
+                const SingleActivator(LogicalKeyboardKey.arrowLeft): const DoNothingIntent(),
+              },
+              child: ElevatedButton(
+                focusNode: focusNode,
+                autofocus: autofocus,
+                style: buttonStyle(theme.primaryContainer, theme.onPrimaryContainer),
+                onPressed: onPressed == null ? null : () => onPressed?.call(false),
+                onLongPress: onLongPressed == null ? null : () => onLongPressed?.call(false),
+                child: const Padding(
+                  padding: contentPadding,
+                  child: Icon(Icons.replay, size: iconSize),
+                ),
               ),
-              onPressed: onPressed == null ? null : () => onPressed?.call(false),
-              onLongPress: onLongPressed == null ? null : () => onLongPressed?.call(false),
-              child: const Icon(Icons.replay, size: 24),
             ),
           ),
           // Play from Start Button (Secondary)
           Tooltip(
             message: context.localized.playFromStartLabel,
             child: ElevatedButton(
-              style: ButtonStyle(
-                elevation: const WidgetStatePropertyAll(0),
-                backgroundColor: WidgetStatePropertyAll(theme.surfaceContainerLow),
-                padding: const WidgetStatePropertyAll(EdgeInsets.all(12)),
-                minimumSize: const WidgetStatePropertyAll(Size(48, 48)),
-              ),
+              style: buttonStyle(theme.surfaceContainerLow, theme.onSurface),
               onPressed: onPressed == null ? null : () => onPressed?.call(true),
               onLongPress: onLongPressed == null ? null : () => onLongPressed?.call(true),
-              child: Opacity(
-                opacity: 0.65,
-                child: const Icon(Icons.play_arrow, size: 24),
+              child: Padding(
+                padding: contentPadding,
+                child: Opacity(
+                  opacity: 0.65,
+                  child: const Icon(Icons.play_arrow, size: iconSize),
+                ),
               ),
             ),
           ),
@@ -75,20 +91,21 @@ class MediaPlayButton extends ConsumerWidget {
     // Default Play Button (No progress)
     return Tooltip(
       message: item?.playButtonLabel(context) ?? context.localized.playLabel,
-      child: ElevatedButton(
-        focusNode: focusNode,
-        autofocus: autofocus,
-        style: ButtonStyle(
-          elevation: const WidgetStatePropertyAll(0),
-          backgroundColor: WidgetStatePropertyAll(theme.primaryContainer),
-          iconColor: WidgetStatePropertyAll(theme.onPrimaryContainer),
-          foregroundColor: WidgetStatePropertyAll(theme.onPrimaryContainer),
-          padding: const WidgetStatePropertyAll(EdgeInsets.all(12)),
-          minimumSize: const WidgetStatePropertyAll(Size(48, 48)),
+      child: Shortcuts(
+        shortcuts: {
+          const SingleActivator(LogicalKeyboardKey.arrowLeft): const DoNothingIntent(),
+        },
+        child: ElevatedButton(
+          focusNode: focusNode,
+          autofocus: autofocus,
+          style: buttonStyle(theme.primaryContainer, theme.onPrimaryContainer),
+          onPressed: onPressed == null ? null : () => onPressed?.call(false),
+          onLongPress: onLongPressed == null ? null : () => onLongPressed?.call(false),
+          child: const Padding(
+            padding: contentPadding,
+            child: Icon(Icons.play_arrow, size: iconSize),
+          ),
         ),
-        onPressed: onPressed == null ? null : () => onPressed?.call(false),
-        onLongPress: onLongPressed == null ? null : () => onLongPressed?.call(false),
-        child: const Icon(Icons.play_arrow, size: 24),
       ),
     );
   }

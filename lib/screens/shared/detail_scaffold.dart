@@ -131,9 +131,7 @@ class _DetailScaffoldState extends ConsumerState<DetailScaffold> {
           child: Scaffold(
             backgroundColor: Theme.of(context).colorScheme.surface,
             extendBodyBehindAppBar: true,
-            body: FocusTraversalGroup(
-              policy: GlobalFallbackTraversalPolicy(fallbackNode: navBarNode),
-              child: Stack(
+            body: Stack(
               children: [
                 SingleChildScrollView(
                   physics: const AlwaysScrollableScrollPhysics(),
@@ -227,7 +225,6 @@ class _DetailScaffoldState extends ConsumerState<DetailScaffold> {
                 // Top row buttons: show only the item actions and refresh. Back/home/user icons removed.
                 // Floating button group removed as per user request
               ],
-            ),
             ),
             ),
         );
