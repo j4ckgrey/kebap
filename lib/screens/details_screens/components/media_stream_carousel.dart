@@ -33,6 +33,7 @@ class _MediaStreamCarouselState extends ConsumerState<MediaStreamCarousel> {
 
   @override
   Widget build(BuildContext context) {
+    // Media Stream Carousel Build
     final mediaStream = widget.mediaStream;
     final hasAnyAudioStreams = mediaStream.versionStreams.any((v) => v.audioStreams.isNotEmpty);
     final hasAnySubStreams = mediaStream.versionStreams.any((v) => v.subStreams.isNotEmpty);
@@ -50,7 +51,7 @@ class _MediaStreamCarouselState extends ConsumerState<MediaStreamCarousel> {
           Padding(
             padding: const EdgeInsets.only(left: 16, top: 8, bottom: 8),
             child: Text(
-              "${context.localized.version} (${(_focusedVersionIndex ?? mediaStream.versionStreams.indexWhere((v) => mediaStream.currentVersionStream == v)).clamp(0, mediaStream.versionStreams.length - 1) + 1}/${mediaStream.versionStreams.length})",
+              "💿 (${(_focusedVersionIndex ?? mediaStream.versionStreams.indexWhere((v) => mediaStream.currentVersionStream == v)).clamp(0, mediaStream.versionStreams.length - 1) + 1}/${mediaStream.versionStreams.length})",
               style: Theme.of(context).textTheme.titleMedium?.copyWith(
                 fontWeight: FontWeight.bold,
               ),
@@ -87,7 +88,7 @@ class _MediaStreamCarouselState extends ConsumerState<MediaStreamCarousel> {
           Padding(
             padding: const EdgeInsets.only(left: 16, top: 16, bottom: 8),
             child: Text(
-              "${context.localized.audio} (${mediaStream.isLoading ? '...' : '${(_focusedAudioIndex ?? mediaStream.audioStreams.indexWhere((a) => mediaStream.currentAudioStream?.index == a.index)).clamp(0, math.max(0, mediaStream.audioStreams.length - 1)) + 1}/${mediaStream.audioStreams.length}'})",
+              "🔊 (${mediaStream.isLoading ? '...' : '${(_focusedAudioIndex ?? mediaStream.audioStreams.indexWhere((a) => mediaStream.currentAudioStream?.index == a.index)).clamp(0, math.max(0, mediaStream.audioStreams.length - 1)) + 1}/${mediaStream.audioStreams.length}'})",
               style: Theme.of(context).textTheme.titleMedium?.copyWith(
                 fontWeight: FontWeight.bold,
               ),
@@ -128,7 +129,7 @@ class _MediaStreamCarouselState extends ConsumerState<MediaStreamCarousel> {
           Padding(
             padding: const EdgeInsets.only(left: 16, top: 16, bottom: 8),
             child: Text(
-              "${context.localized.subtitles} (${mediaStream.isLoading ? '...' : '${(_focusedSubIndex ?? (mediaStream.currentSubStream == null ? 0 : mediaStream.subStreams.indexWhere((s) => mediaStream.currentSubStream?.index == s.index) + 1)).clamp(0, mediaStream.subStreams.length)}/${mediaStream.subStreams.length + 1}'})",
+              "💬 (${mediaStream.isLoading ? '...' : '${(_focusedSubIndex ?? (mediaStream.currentSubStream == null ? 0 : mediaStream.subStreams.indexWhere((s) => mediaStream.currentSubStream?.index == s.index) + 1)).clamp(0, mediaStream.subStreams.length)}/${mediaStream.subStreams.length + 1}'})",
               style: Theme.of(context).textTheme.titleMedium?.copyWith(
                 fontWeight: FontWeight.bold,
               ),
@@ -202,7 +203,10 @@ class _CarouselCard extends StatefulWidget {
     required this.isSelected,
     this.onTap,
     this.onFocused,
+    this.focusNode,
   });
+
+  final FocusNode? focusNode;
 
   @override
   State<_CarouselCard> createState() => _CarouselCardState();
@@ -217,6 +221,7 @@ class _CarouselCardState extends State<_CarouselCard> {
     final isFocused = _isFocused;
 
     return InkWell(
+      focusNode: widget.focusNode,
       onTap: widget.onTap,
       onFocusChange: (value) {
         setState(() => _isFocused = value);

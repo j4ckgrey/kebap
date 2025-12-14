@@ -178,20 +178,22 @@ class _ReviewsCarouselWidgetState extends State<_ReviewsCarouselWidget> {
               ),
             ),
             if (isDesktop)
-              Row(
-                mainAxisSize: MainAxisSize.min,
-                children: [
-                  IconButton(
-                    onPressed: _currentPage > 0 ? _scrollToPrevious : null,
-                    icon: const Icon(Icons.arrow_back_ios),
-                    iconSize: 20,
-                  ),
-                  IconButton(
-                    onPressed: _currentPage < widget.reviews.length - 1 ? _scrollToNext : null,
-                    icon: const Icon(Icons.arrow_forward_ios),
-                    iconSize: 20,
-                  ),
-                ],
+              ExcludeFocus(
+                child: Row(
+                  mainAxisSize: MainAxisSize.min,
+                  children: [
+                    IconButton(
+                      onPressed: _currentPage > 0 ? _scrollToPrevious : null,
+                      icon: const Icon(Icons.arrow_back_ios),
+                      iconSize: 20,
+                    ),
+                    IconButton(
+                      onPressed: _currentPage < widget.reviews.length - 1 ? _scrollToNext : null,
+                      icon: const Icon(Icons.arrow_forward_ios),
+                      iconSize: 20,
+                    ),
+                  ],
+                ),
               ),
           ],
         ),

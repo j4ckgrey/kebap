@@ -28,6 +28,11 @@ class MovieDetails extends _$MovieDetails {
       if (response.body == null) return null;
       newState = (response.bodyOrThrow as MovieModel).copyWith(related: state?.related);
       
+      // Preserve existing media streams if new state has none (prevents UI flicker)
+      if (state?.mediaStreams.versionStreams.isNotEmpty == true && newState.mediaStreams.versionStreams.isEmpty) {
+        newState = newState.copyWith(mediaStreams: state!.mediaStreams);
+      }
+      
       // If item has no media sources (non-Gelato items), fetch from PlaybackInfo
       if (newState.mediaStreams.versionStreams.isEmpty) {
         try {

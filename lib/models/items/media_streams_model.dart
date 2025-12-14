@@ -401,7 +401,7 @@ class SubStreamModel extends AudioAndSubStreamModel {
         : rawUrl;
     
     final finalUrl = authenticatedUrl != null ? _processUrl(authenticatedUrl, stream.codec) : null;
-    debugPrint('[MediaStreamsModel] Generated Subtitle URL: $finalUrl for codec: ${stream.codec}');
+    // debugPrint('[MediaStreamsModel] Generated Subtitle URL: $finalUrl for codec: ${stream.codec}');
 
     return SubStreamModel(
       name: stream.title ?? "",

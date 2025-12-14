@@ -58,9 +58,19 @@ class _SeriesDetailScreenState extends ConsumerState<SeriesDetailScreen> {
     super.dispose();
   }
 
+  bool _initialFocusRequested = false;
+
   @override
   Widget build(BuildContext context) {
     final details = ref.watch(providerId);
+
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      if (!_initialFocusRequested && details != null && details.nextUp != null && _playButtonNode.canRequestFocus) {
+        _playButtonNode.requestFocus();
+        _initialFocusRequested = true;
+      }
+    });
+
     final wrapAlignment =
         AdaptiveLayout.viewSizeOf(context) != ViewSize.phone ? WrapAlignment.start : WrapAlignment.center;
 

@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:iconsax_plus/iconsax_plus.dart';
 
 import 'package:kebap/models/items/media_streams_model.dart';
 import 'package:kebap/models/settings/media_stream_view_type.dart';
@@ -35,8 +37,11 @@ class MediaStreamInformation extends ConsumerWidget {
     required this.onVersionIndexChanged,
     this.onAudioIndexChanged,
     this.onSubIndexChanged,
+    this.focusNode,
     super.key,
   });
+
+  final FocusNode? focusNode;
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
@@ -66,11 +71,12 @@ class MediaStreamInformation extends ConsumerWidget {
       mainAxisSize: MainAxisSize.min,
       crossAxisAlignment: CrossAxisAlignment.stretch,
       children: [
+          // Stream Options
           if (mediaStream.versionStreams.length > 1)
             Padding(
               padding: const EdgeInsets.symmetric(vertical: 2),
               child: _StreamOptionSelect(
-                label: Text(context.localized.version),
+                label: const Icon(IconsaxPlusBold.cd),
                 currentQuality: parseVersionName(mediaStream.currentVersionStream?.name ?? "").quality,
                 currentFilename: "${mediaStream.currentVersionStream?.size.byteFormat ?? ''}",
                 itemBuilder: (context) => mediaStream.versionStreams
@@ -107,7 +113,7 @@ class MediaStreamInformation extends ConsumerWidget {
             Padding(
               padding: const EdgeInsets.symmetric(vertical: 2),
               child: _StreamOptionSelect(
-                label: Text(context.localized.audio),
+                label: const Icon(IconsaxPlusBold.volume_high),
                 current: mediaStream.isLoading 
                     ? context.localized.loading 
                     : (mediaStream.currentAudioStream?.displayTitle ?? context.localized.none),
@@ -132,7 +138,7 @@ class MediaStreamInformation extends ConsumerWidget {
             Padding(
               padding: const EdgeInsets.symmetric(vertical: 2),
               child: _StreamOptionSelect(
-                label: Text(context.localized.subtitles),
+                label: const Icon(IconsaxPlusBold.message_text_1),
                 current: mediaStream.isLoading
                     ? context.localized.loading
                     : (mediaStream.currentSubStream?.displayTitle ?? context.localized.none),
@@ -168,12 +174,13 @@ class MediaStreamInformation extends ConsumerWidget {
 }
 
 class _StreamOptionSelect<T> extends StatelessWidget {
-  final Text label;
+  final Widget label;
   final String? current;
   final String? currentQuality;
   final String? currentFilename;
   final bool isLoading;
   final List<ItemAction> Function(BuildContext context) itemBuilder;
+  final FocusNode? focusNode;
   const _StreamOptionSelect({
     required this.label,
     this.current,
@@ -181,6 +188,7 @@ class _StreamOptionSelect<T> extends StatelessWidget {
     this.currentFilename,
     this.isLoading = false,
     required this.itemBuilder,
+    this.focusNode,
   });
 
   @override
@@ -189,7 +197,6 @@ class _StreamOptionSelect<T> extends StatelessWidget {
     // Force use of FocusButton/BottomSheet logic to ensure keyboard navigation works reliably
     // even if the device reports as having a pointer (e.g. Linux desktop with mouse).
     // This fixes the issue where dropdowns were skipped during focus traversal.
-    final useBottomSheet = true; // AdaptiveLayout.inputDeviceOf(context) != InputDevice.pointer;
     
     return Padding(
       padding: const EdgeInsets.symmetric(vertical: 3),
@@ -222,47 +229,32 @@ class _StreamOptionSelect<T> extends StatelessWidget {
                     ],
                   ),
                 )
-              : Align(
-                  alignment: Alignment.centerLeft,
+              : SizedBox(
+                  width: double.infinity,
                   child: Card(
                     color: itemList.length > 1 ? Theme.of(context).colorScheme.primaryContainer : Colors.transparent,
                     shadowColor: Colors.transparent,
                     elevation: 0,
-                    child: useBottomSheet
-                        ? FocusButton(
+                    child: FocusButton(
+                            focusNode: focusNode,
                             darkOverlay: false,
-                            onTap: itemList.length > 1
-                                ? () => showBottomSheetPill(
-                                      context: context,
-                                      content: (context, scrollController) => ListView(
-                                        shrinkWrap: true,
-                                        controller: scrollController,
-                                        children: [
-                                          const SizedBox(height: 6),
-                                          ...itemList.map((e) => e.toListItem(context)),
-                                        ],
-                                      ),
-                                    )
-                                : null,
+                            onTap: () {
+                              if (itemList.length > 1) {
+                                showBottomSheetPill(
+                                  context: context,
+                                  content: (context, scrollController) => ListView(
+                                    shrinkWrap: true,
+                                    controller: scrollController,
+                                    children: [
+                                      const SizedBox(height: 6),
+                                      ...itemList.map((e) => e.toListItem(context)),
+                                    ],
+                                  ),
+                                );
+                              }
+                            },
                             child: _buildDropdownContent(context, itemList),
-                          )
-                        : LayoutBuilder(
-                            builder: (context, constraints) {
-                            return PopupMenuButton(
-                              tooltip: '',
-                              shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
-                              enabled: itemList.length > 1,
-                              itemBuilder: (context) => itemList.map((e) => e.toPopupMenuItem()).toList(),
-                              padding: EdgeInsets.zero,
-                              position: PopupMenuPosition.under,
-                              constraints: BoxConstraints(
-                                minWidth: 400,
-                                maxWidth: 500,
-                              ),
-                              child: _buildDropdownContent(context, itemList),
-                            );
-                          },
-                        ),
+                          ),
                   ),
                 ),
       ),

@@ -27,6 +27,7 @@ class SettingsUserIcon extends ConsumerWidget {
       child: FlatButton(
         onLongPress: () => context.router.push(const LockRoute()),
         onTap: () {
+          Scaffold.maybeOf(context)?.closeDrawer();
           if (AdaptiveLayout.layoutModeOf(context) == LayoutMode.single) {
             context.router.push(const SettingsRoute());
           } else {
@@ -36,9 +37,11 @@ class SettingsUserIcon extends ConsumerWidget {
         child: Stack(
           alignment: Alignment.bottomRight,
           children: [
-            UserIcon(
-              user: user,
-              cornerRadius: 8,
+            ClipOval(
+              child: UserIcon(
+                user: user,
+                cornerRadius: 100,
+              ),
             ),
             if (hasNewUpdate)
               Transform.translate(

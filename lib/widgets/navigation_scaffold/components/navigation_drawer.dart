@@ -37,19 +37,21 @@ class NestedNavigationDrawer extends ConsumerWidget {
       required this.destinations,
       required this.views,
       required this.currentLocation,
+      this.firstItemFocusNode,
       super.key});
+
+  final FocusNode? firstItemFocusNode;
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final useLibraryPosters = ref.watch(clientSettingsProvider.select((value) => value.usePosterForLibrary));
-    return CallbackShortcuts(
-      bindings: {
-        const SingleActivator(LogicalKeyboardKey.backspace): () => Scaffold.of(context).closeDrawer(),
-        const SingleActivator(LogicalKeyboardKey.escape): () => Scaffold.of(context).closeDrawer(),
-        const SingleActivator(LogicalKeyboardKey.arrowRight): () => Scaffold.of(context).closeDrawer(),
-      },
-      child: FocusTraversalGroup(
-        policy: CyclicTraversalPolicy(),
+    return FocusTraversalGroup(
+      policy: WidgetOrderTraversalPolicy(),
+      child: CallbackShortcuts(
+        bindings: {
+          const SingleActivator(LogicalKeyboardKey.backspace): () => Scaffold.of(context).closeDrawer(),
+          const SingleActivator(LogicalKeyboardKey.escape): () => Scaffold.of(context).closeDrawer(),
+        },
         child: NavigationDrawer(
           key: const Key('navigation_drawer'),
           backgroundColor: isExpanded ? Colors.transparent : null,
@@ -57,49 +59,105 @@ class NestedNavigationDrawer extends ConsumerWidget {
           children: [
             Padding(
               padding: EdgeInsets.fromLTRB(28, AdaptiveLayout.of(context).isDesktop || kIsWeb ? 0 : 16, 16, 0),
-              child: Row(
-                children: [
-                  Expanded(
-                    child: FocusButton(
-                      onTap: () {
-                        context.router.push(LibrarySearchRoute());
-                        Scaffold.of(context).closeDrawer();
-                      },
-                      borderRadius: BorderRadius.circular(12),
-                      child: Container(
-                        padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
-                        decoration: BoxDecoration(
-                          color: Theme.of(context).colorScheme.surfaceContainerHighest.withValues(alpha: 0.5),
-                          borderRadius: BorderRadius.circular(12),
-                        ),
-                        child: Row(
-                          children: [
-                            Icon(
-                              IconsaxPlusLinear.search_normal,
-                              size: 20,
-                              color: Theme.of(context).colorScheme.onSurface.withValues(alpha: 0.7),
-                            ),
-                            const SizedBox(width: 12),
-                            Text(
-                              context.localized.search,
-                              style: Theme.of(context).textTheme.bodyMedium?.copyWith(
-                                color: Theme.of(context).colorScheme.onSurface.withValues(alpha: 0.7),
+              child: Shortcuts(
+                shortcuts: {
+                  const SingleActivator(LogicalKeyboardKey.arrowLeft): const DoNothingIntent(),
+                },
+                child: Row(
+                  children: [
+                    Expanded(
+                      child: Focus(
+                        focusNode: firstItemFocusNode,
+                        autofocus: true,
+                        onKey: (node, event) {
+                          if (event is RawKeyDownEvent) {
+                            if (event.logicalKey == LogicalKeyboardKey.enter ||
+                                event.logicalKey == LogicalKeyboardKey.select ||
+                                event.logicalKey == LogicalKeyboardKey.numpadEnter) {
+                              context.router.push(LibrarySearchRoute());
+                              Scaffold.of(context).closeDrawer();
+                              return KeyEventResult.handled;
+                            }
+                          }
+                          return KeyEventResult.ignored;
+                        },
+                        onFocusChange: (hasFocus) {
+                          if (hasFocus && isExpanded == false) {
+                            // Ensure drawer is open if somehow focused while closed? Unlikely but safe.
+                          }
+                        },
+                        child: Builder(builder: (context) {
+                          final hasFocus = Focus.of(context).hasFocus;
+                          return InkWell(
+                            onTap: () {
+                              context.router.push(LibrarySearchRoute());
+                              Scaffold.of(context).closeDrawer();
+                            },
+                            borderRadius: BorderRadius.circular(12),
+                            child: Container(
+                              padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+                              decoration: BoxDecoration(
+                                color: hasFocus
+                                    ? Theme.of(context).colorScheme.primaryContainer
+                                    : Theme.of(context).colorScheme.surfaceContainerHighest.withValues(alpha: 0.5),
+                                borderRadius: BorderRadius.circular(12),
+                                border: Border.all(
+                                  color: hasFocus ? Theme.of(context).colorScheme.primary : Colors.transparent,
+                                  width: 2,
+                                ),
+                              ),
+                              child: Row(
+                                children: [
+                                  Icon(
+                                    IconsaxPlusLinear.search_normal,
+                                    size: 20,
+                                    color: hasFocus
+                                        ? Theme.of(context).colorScheme.onPrimaryContainer
+                                        : Theme.of(context).colorScheme.onSurface.withValues(alpha: 0.7),
+                                  ),
+                                  const SizedBox(width: 12),
+                                  Text(
+                                    context.localized.search,
+                                    style: Theme.of(context).textTheme.bodyMedium?.copyWith(
+                                      color: hasFocus
+                                          ? Theme.of(context).colorScheme.onPrimaryContainer
+                                          : Theme.of(context).colorScheme.onSurface.withValues(alpha: 0.7),
+                                    ),
+                                  ),
+                                ],
                               ),
                             ),
-                          ],
-                        ),
+                          );
+                        }),
                       ),
                     ),
-                  ),
-                  const SizedBox(width: 8),
-                  if (AdaptiveLayout.viewSizeOf(context) != ViewSize.television)
-                    IconButton(
-                      onPressed: () => toggleExpanded(false),
-                      icon: const Icon(IconsaxPlusLinear.sidebar_left),
-                    ),
-                ],
+                    if (AdaptiveLayout.viewSizeOf(context) != ViewSize.television) ...[
+                      const SizedBox(width: 8),
+                      Focus(
+                        onKey: (node, event) {
+                          if (event is RawKeyDownEvent) {
+                            if (event.logicalKey == LogicalKeyboardKey.arrowRight) {
+                              Scaffold.of(context).closeDrawer();
+                              return KeyEventResult.handled;
+                            } else if (event.logicalKey == LogicalKeyboardKey.arrowLeft) {
+                               firstItemFocusNode?.requestFocus();
+                               return KeyEventResult.handled;
+                            }
+                          }
+                          return KeyEventResult.ignored;
+                        },
+                        child: const SizedBox(
+                          width: 40,
+                          height: 40,
+                          child: SettingsUserIcon(),
+                        ),
+                      ),
+                    ],
+                  ],
+                ),
               ),
             ),
+            const SizedBox(height: 32),
             Padding(
               padding: EdgeInsets.symmetric(horizontal: 12, vertical: actionButton != null ? 8 : 0),
               child: AnimatedFadeSize(
@@ -113,113 +171,29 @@ class NestedNavigationDrawer extends ConsumerWidget {
               ),
             ),
             ...destinations.map(
-              (destination) => DrawerListButton(
-                key: ValueKey(destination.label),
-                label: destination.label,
-                selected: context.router.current.name == destination.route?.routeName,
-                autofocus: context.router.current.name == destination.route?.routeName,
-                selectedIcon: destination.selectedIcon!,
-                icon: destination.icon!,
-                badge: destination.badge,
-                onPressed: () {
-                  destination.action!();
-                  Scaffold.of(context).closeDrawer();
+              (destination) => Focus(
+                onKey: (node, event) {
+                  if (event is RawKeyDownEvent && event.logicalKey == LogicalKeyboardKey.arrowRight) {
+                    Scaffold.of(context).closeDrawer();
+                    return KeyEventResult.handled;
+                  }
+                  return KeyEventResult.ignored;
                 },
-              ),
-            ),
-            if (views.isNotEmpty) ...{
-              const Divider(indent: 28, endIndent: 28),
-              Padding(
-                padding: const EdgeInsets.fromLTRB(28, 16, 16, 10),
-                child: Text(
-                  context.localized.library(2),
-                  style: Theme.of(context).textTheme.titleMedium,
-                ),
-              ),
-              ...views.map((library) {
-                var selected = context.router.currentUrl.contains(library.id);
-                final Widget? posterIcon = useLibraryPosters
-                    ? ClipRRect(
-                        borderRadius: KebapTheme.smallShape.borderRadius,
-                        child: AspectRatio(
-                          aspectRatio: 1.0,
-                          child: KebapImage(
-                            image: library.imageData?.primary,
-                            placeHolder: Card(
-                              child: Icon(
-                                selected ? library.collectionType.icon : library.collectionType.iconOutlined,
-                              ),
-                            ),
-                          ),
-                        ),
-                      )
-                    : null;
-                return DrawerListButton(
-                    key: ValueKey(library.id),
-                    label: library.name,
-                    selected: selected,
-                    autofocus: selected,
-                    actions: [
-                      ItemActionButton(
-                        label: Text(context.localized.scanLibrary),
-                        icon: const Icon(IconsaxPlusLinear.refresh),
-                        action: () => showRefreshPopup(context, library.id, library.name),
-                      ),
-                    ],
-                    onPressed: () {
-                      context.router.push(LibrarySearchRoute(viewModelId: library.id));
-                      Scaffold.of(context).closeDrawer();
-                    },
-                    selectedIcon: posterIcon ?? Icon(library.collectionType.icon),
-                    icon: posterIcon ?? Icon(library.collectionType.iconOutlined));
-              }),
-            },
-
-            const Divider(indent: 28, endIndent: 28),
-
-            if (isExpanded)
-              Transform.translate(
-                offset: const Offset(-8, 0),
                 child: DrawerListButton(
-                  key: const ValueKey('settings_expanded'),
-                  label: context.localized.settings,
-                  selectedIcon: const Icon(IconsaxPlusBold.setting_3),
-                  selected: currentLocation.contains(const SettingsRoute().routeName),
-                  autofocus: currentLocation.contains(const SettingsRoute().routeName),
-                  icon: const SizedBox(width: 35, height: 35, child: SettingsUserIcon()),
+                  key: ValueKey(destination.label),
+                  label: destination.label,
+                  selected: context.router.current.name == destination.route?.routeName,
+                  autofocus: context.router.current.name == destination.route?.routeName,
+                  selectedIcon: destination.selectedIcon!,
+                  icon: destination.icon!,
+                  badge: destination.badge,
                   onPressed: () {
-                    switch (AdaptiveLayout.layoutModeOf(context)) {
-                      case LayoutMode.single:
-                        const SettingsRoute().push(context);
-                        break;
-                      case LayoutMode.dual:
-                        context.router.push(const ClientSettingsRoute());
-                        break;
-                    }
+                    destination.action!();
                     Scaffold.of(context).closeDrawer();
                   },
                 ),
-              )
-            else
-              DrawerListButton(
-                key: const ValueKey('settings_collapsed'),
-                label: context.localized.settings,
-                selectedIcon: const Icon(IconsaxPlusBold.setting_2),
-                icon: const Icon(IconsaxPlusLinear.setting_2),
-                selected: currentLocation.contains(const SettingsRoute().routeName),
-                autofocus: currentLocation.contains(const SettingsRoute().routeName),
-                onPressed: () {
-                  switch (AdaptiveLayout.layoutModeOf(context)) {
-                    case LayoutMode.single:
-                      const SettingsRoute().push(context);
-                      break;
-                    case LayoutMode.dual:
-                      context.router.push(const ClientSettingsRoute());
-                      break;
-                  }
-                  Scaffold.of(context).closeDrawer();
-                },
               ),
+            ),
             if (AdaptiveLayout.of(context).isDesktop || kIsWeb) const SizedBox(height: 8),
           ],
         ),

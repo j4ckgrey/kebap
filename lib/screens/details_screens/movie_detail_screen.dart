@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 
 import 'package:auto_route/auto_route.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -38,6 +39,7 @@ class MovieDetailScreen extends ConsumerStatefulWidget {
 class _ItemDetailScreenState extends ConsumerState<MovieDetailScreen> {
   MovieDetailsProvider get providerInstance => movieDetailsProvider(widget.item.id);
   final FocusNode _playButtonNode = FocusNode();
+  final FocusNode _mediaInfoNode = FocusNode(); // NEW FOCUS NODE
 
   @override
   void initState() {
@@ -51,6 +53,7 @@ class _ItemDetailScreenState extends ConsumerState<MovieDetailScreen> {
   @override
   void dispose() {
     _playButtonNode.dispose();
+    _mediaInfoNode.dispose();
     super.dispose();
   }
 
@@ -58,6 +61,7 @@ class _ItemDetailScreenState extends ConsumerState<MovieDetailScreen> {
   Widget build(BuildContext context) {
     print('[LAG_DEBUG] ${DateTime.now()} MovieDetailScreen build: ${widget.item.name}');
     final details = ref.watch(providerInstance);
+
     final wrapAlignment =
         AdaptiveLayout.viewSizeOf(context) != ViewSize.phone ? WrapAlignment.start : WrapAlignment.center;
 
@@ -80,8 +84,11 @@ class _ItemDetailScreenState extends ConsumerState<MovieDetailScreen> {
       ),
       onRefresh: () async => await ref.read(providerInstance.notifier).fetchDetails(widget.item),
       backDrops: details?.images,
-      content: (padding) => details != null
-          ? Padding(
+      content: (padding) {
+        if (details == null) {
+          return const Center(child: CircularProgressIndicator());
+        }
+        return Padding(
               padding: const EdgeInsets.only(bottom: 64),
               child: Column(
                 mainAxisAlignment: MainAxisAlignment.start,
@@ -135,19 +142,24 @@ class _ItemDetailScreenState extends ConsumerState<MovieDetailScreen> {
                           selectedIcon: IconsaxPlusBold.tick_circle,
                           icon: IconsaxPlusLinear.tick_circle,
                         ),
-                        SelectableIconButton(
-                          onPressed: () async {
-                            await showBottomSheetPill(
-                              context: context,
-                              content: (context, scrollController) => ListView(
-                                controller: scrollController,
-                                shrinkWrap: true,
-                                children: details.generateActions(context, ref).listTileItems(context, useIcons: true),
-                              ),
-                            );
+                        Shortcuts(
+                          shortcuts: {
+                            const SingleActivator(LogicalKeyboardKey.arrowRight): const DoNothingIntent(),
                           },
-                          selected: false,
-                          icon: IconsaxPlusLinear.more,
+                          child: SelectableIconButton(
+                            onPressed: () async {
+                              await showBottomSheetPill(
+                                context: context,
+                                content: (context, scrollController) => ListView(
+                                  controller: scrollController,
+                                  shrinkWrap: true,
+                                  children: details.generateActions(context, ref).listTileItems(context, useIcons: true),
+                                ),
+                              );
+                            },
+                            selected: false,
+                            icon: IconsaxPlusLinear.more,
+                          ),
                         ),
                       ],
                     ),
@@ -160,8 +172,9 @@ class _ItemDetailScreenState extends ConsumerState<MovieDetailScreen> {
                     communityRating: details.overview.communityRating,
                     premiereDate: details.overview.premiereDate,
                   ),
-                  if (details.mediaStreams.versionStreams.isNotEmpty)
+                  if (details.mediaStreams.versionStreams.isNotEmpty || details.mediaStreams.isLoading)
                     MediaStreamInformation(
+                      focusNode: _mediaInfoNode,
                       onVersionIndexChanged: (index) {
                         ref.read(providerInstance.notifier).setVersionIndex(index);
                       },
@@ -210,8 +223,8 @@ class _ItemDetailScreenState extends ConsumerState<MovieDetailScreen> {
                     )
                 ].addPadding(const EdgeInsets.symmetric(vertical: 16)),
               ),
-            )
-          : Container(),
+            );
+        },
     );
   }
 }

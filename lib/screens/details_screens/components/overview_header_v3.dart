@@ -29,6 +29,7 @@ class OverviewHeaderV3 extends ConsumerWidget {
   final List<Studio> studios;
   final List<GenreItems> genres;
   final DateTime? premiereDate;
+  final bool enableSpacer;
 
   const OverviewHeaderV3({
     required this.name,
@@ -48,6 +49,7 @@ class OverviewHeaderV3 extends ConsumerWidget {
     this.genres = const [],
     this.studios = const [],
     this.premiereDate,
+    this.enableSpacer = true,
     super.key,
   });
 
@@ -71,7 +73,7 @@ class OverviewHeaderV3 extends ConsumerWidget {
         mainAxisSize: MainAxisSize.min,
         spacing: 8,
         children: [
-          // Show logo if available and showImage=true, otherwise show spacer for layout
+          // Show logo if available and showImage=true, otherwise check spacer
           if (showImage)
             ExcludeFocus(
               child: MediaHeader(
@@ -81,9 +83,11 @@ class OverviewHeaderV3 extends ConsumerWidget {
                 alignment: logoAlignment,
               ),
             )
-          else
-            // Spacer to maintain top spacing when logo is hidden
-            SizedBox(height: MediaQuery.sizeOf(context).height * 0.25),
+          else if (enableSpacer)
+            // Restore the spacer as requested, but only if enabled
+            SizedBox(height: MediaQuery.sizeOf(context).height * 0.25)
+          else 
+            const SizedBox.shrink(),
           ExcludeFocus(
             child: Column(
               mainAxisSize: MainAxisSize.min,

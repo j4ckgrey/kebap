@@ -126,6 +126,7 @@ class CompactItemBanner extends ConsumerWidget {
                                   : item!.label(context),
                           image: item!.getPosters,
                           showImage: false,
+                          enableSpacer: false, // Fix overlap on homepage
                           logoAlignment: Alignment.centerLeft,
                           summary: (item!.overview.summary.isNotEmpty) 
                               ? item!.overview.summary 
