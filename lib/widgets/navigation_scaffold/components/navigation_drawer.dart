@@ -8,6 +8,7 @@ import 'package:iconsax_plus/iconsax_plus.dart';
 
 import 'package:kebap/models/collection_types.dart';
 import 'package:kebap/models/view_model.dart';
+import 'package:kebap/models/settings/client_settings_model.dart';
 import 'package:kebap/providers/settings/client_settings_provider.dart';
 import 'package:kebap/routes/auto_router.gr.dart';
 import 'package:kebap/screens/metadata/refresh_metadata.dart';
@@ -45,6 +46,8 @@ class NestedNavigationDrawer extends ConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final useLibraryPosters = ref.watch(clientSettingsProvider.select((value) => value.usePosterForLibrary));
+    final libraryLocation = ref.watch(clientSettingsProvider.select((value) => value.libraryLocation));
+
     return FocusTraversalGroup(
       policy: WidgetOrderTraversalPolicy(),
       child: CallbackShortcuts(
@@ -131,7 +134,7 @@ class NestedNavigationDrawer extends ConsumerWidget {
                         }),
                       ),
                     ),
-                    if (AdaptiveLayout.viewSizeOf(context) != ViewSize.television) ...[
+                    if (true) ...[
                       const SizedBox(width: 8),
                       Focus(
                         onKey: (node, event) {
@@ -172,6 +175,7 @@ class NestedNavigationDrawer extends ConsumerWidget {
             ),
             ...destinations.map(
               (destination) => Focus(
+                canRequestFocus: false,
                 onKey: (node, event) {
                   if (event is RawKeyDownEvent && event.logicalKey == LogicalKeyboardKey.arrowRight) {
                     Scaffold.of(context).closeDrawer();
@@ -194,6 +198,62 @@ class NestedNavigationDrawer extends ConsumerWidget {
                 ),
               ),
             ),
+            if (views.isNotEmpty && libraryLocation == LibraryLocation.sidebar) ...{
+              const Divider(indent: 28, endIndent: 28),
+              Padding(
+                padding: const EdgeInsets.fromLTRB(28, 16, 16, 10),
+                child: Text(
+                  context.localized.library(2),
+                  style: Theme.of(context).textTheme.titleMedium,
+                ),
+              ),
+              ...views.map((library) {
+                var selected = context.router.currentUrl.contains(library.id);
+                final Widget? posterIcon = useLibraryPosters
+                    ? ClipRRect(
+                        borderRadius: KebapTheme.smallShape.borderRadius,
+                        child: AspectRatio(
+                          aspectRatio: 1.0,
+                          child: KebapImage(
+                            image: library.imageData?.primary,
+                            placeHolder: Card(
+                              child: Icon(
+                                selected ? library.collectionType.icon : library.collectionType.iconOutlined,
+                              ),
+                            ),
+                          ),
+                        ),
+                      )
+                    : null;
+                return Focus(
+                   canRequestFocus: false,
+                    onKey: (node, event) {
+                      if (event is RawKeyDownEvent && event.logicalKey == LogicalKeyboardKey.arrowRight) {
+                        Scaffold.of(context).closeDrawer();
+                        return KeyEventResult.handled;
+                      }
+                      return KeyEventResult.ignored;
+                    },
+                  child: DrawerListButton(
+                      label: library.name,
+                      selected: selected,
+                      actions: [
+                        ItemActionButton(
+                          label: Text(context.localized.scanLibrary),
+                          icon: const Icon(IconsaxPlusLinear.refresh),
+                          action: () => showRefreshPopup(context, library.id, library.name),
+                        ),
+                      ],
+                      onPressed: () {
+                        context.router.push(LibrarySearchRoute(viewModelId: library.id));
+                        Scaffold.of(context).closeDrawer();
+                      },
+                      selectedIcon: posterIcon ?? Icon(library.collectionType.icon),
+                      icon: posterIcon ?? Icon(library.collectionType.iconOutlined),
+                    ),
+                );
+              }),
+            },
             if (AdaptiveLayout.of(context).isDesktop || kIsWeb) const SizedBox(height: 8),
           ],
         ),

@@ -21,6 +21,8 @@ import 'package:kebap/providers/baklava_requests_provider.dart';
 import 'package:kebap/providers/connectivity_provider.dart';
 import 'package:kebap/providers/dashboard_provider.dart';
 import 'package:kebap/providers/settings/home_settings_provider.dart';
+import 'package:kebap/providers/settings/client_settings_provider.dart';
+import 'package:kebap/models/settings/client_settings_model.dart';
 import 'package:kebap/providers/user_provider.dart';
 import 'package:kebap/providers/views_provider.dart';
 import 'package:kebap/routes/auto_router.gr.dart';
@@ -42,9 +44,10 @@ class DashboardScreen extends ConsumerStatefulWidget {
   ConsumerState<ConsumerStatefulWidget> createState() => _DashboardScreenState();
 }
 
-class _DashboardScreenState extends ConsumerState<DashboardScreen> {
+class _DashboardScreenState extends ConsumerState<DashboardScreen> with AutoRouteAwareStateMixin<DashboardScreen> {
   final ValueNotifier<ItemBaseModel?> selectedPoster = ValueNotifier(null);
   final FocusScopeNode _focusScopeNode = FocusScopeNode();
+  FocusNode? _lastFocusedNode;
 
   @override
   void initState() {
@@ -58,13 +61,43 @@ class _DashboardScreenState extends ConsumerState<DashboardScreen> {
   @override
   void didChangeDependencies() {
     super.didChangeDependencies();
-    final routeData = context.routeData;
-    final router = context.router;
-    router.addListener(() {
-      if (router.current.name == routeData.name) {
-        // We are back on this screen
+  }
+
+  @override
+  void didPushNext() {
+    super.didPushNext();
+    debugPrint('[FocusRestore] didPushNext - saving focus');
+    // A route is about to be pushed on top - save the current focus
+    _saveCurrentFocus();
+  }
+
+  @override
+  void didPopNext() {
+    super.didPopNext();
+    debugPrint('[FocusRestore] didPopNext - restoring focus');
+    // Returning from a pushed route - restore focus
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      if (mounted && _lastFocusedNode != null && _lastFocusedNode!.canRequestFocus) {
+        debugPrint('[FocusRestore] Restoring focus to saved node');
+        _lastFocusedNode!.requestFocus();
+      } else if (mounted) {
+        debugPrint('[FocusRestore] No saved node, falling back to scope');
+        // Fallback: focus the scope itself which will find a focusable child
+        _focusScopeNode.requestFocus();
       }
     });
+  }
+
+  void _saveCurrentFocus() {
+    // Save the currently focused node before navigating away
+    final focusManager = FocusManager.instance;
+    debugPrint('[FocusRestore] _saveCurrentFocus - primaryFocus: ${focusManager.primaryFocus?.debugLabel}, hasFocus: ${_focusScopeNode.hasFocus}');
+    if (focusManager.primaryFocus != null && _focusScopeNode.hasFocus) {
+      _lastFocusedNode = focusManager.primaryFocus;
+      debugPrint('[FocusRestore] Saved focus node: ${_lastFocusedNode?.debugLabel}');
+    } else {
+      debugPrint('[FocusRestore] Could not save focus - scope does not have focus');
+    }
   }
 
   @override
@@ -108,6 +141,7 @@ class _DashboardScreenState extends ConsumerState<DashboardScreen> {
     final dashboardData = ref.watch(dashboardProvider);
     final views = ref.watch(viewsProvider);
     final homeSettings = ref.watch(homeSettingsProvider);
+    final clientSettings = ref.watch(clientSettingsProvider);
     final resumeVideo = dashboardData.resumeVideo;
     final resumeAudio = dashboardData.resumeAudio;
     final resumeBooks = dashboardData.resumeBooks;
@@ -152,7 +186,7 @@ class _DashboardScreenState extends ConsumerState<DashboardScreen> {
 
                   final rows = [
                     // Libraries Row (Top of Dashboard)
-                    if (views.dashboardViews.isNotEmpty)
+                    if (views.dashboardViews.isNotEmpty && clientSettings.libraryLocation == LibraryLocation.dashboard)
                       RowData(
                         label: context.localized.library(2),
                         aspectRatio: 1.2, // Much wider

@@ -78,10 +78,10 @@ android {
 
     buildTypes {
         release {
-            minifyEnabled true
-            shrinkResources true
+            minifyEnabled false
+            shrinkResources false
             proguardFiles getDefaultProguardFile("proguard-android.txt"), "proguard-rules.pro"
-            // Signing disabled - build will produce unsigned AAB
+            signingConfig signingConfigs.debug
         }
     }
 

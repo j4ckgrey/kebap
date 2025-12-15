@@ -2,6 +2,7 @@ import 'dart:async';
 import 'dart:convert';
 import 'dart:developer';
 
+import 'package:flutter/widgets.dart';
 import 'package:connectivity_plus/connectivity_plus.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:http/http.dart' as http;
@@ -28,11 +29,16 @@ enum ConnectionState {
 }
 
 @Riverpod(keepAlive: true)
-class ConnectivityStatus extends _$ConnectivityStatus {
+class ConnectivityStatus extends _$ConnectivityStatus with WidgetsBindingObserver {
   String? localUrl;
 
   @override
   ConnectionState build() {
+    WidgetsBinding.instance.addObserver(this);
+    ref.onDispose(() {
+      WidgetsBinding.instance.removeObserver(this);
+    });
+
     ref.watch(userProvider);
     // Wrap connectivity plugin initialization in try/catch to avoid unhandled
     // DBus exceptions on platforms without NetworkManager (WSL, minimal VMs).

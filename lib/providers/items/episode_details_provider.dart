@@ -315,4 +315,93 @@ class EpisodeDetailsProvider extends StateNotifier<EpisodeDetailModel> {
       );
     }
   }
+  Future<void> refreshStreams() async {
+    final currentEpisode = state.episode;
+    if (currentEpisode == null) return;
+
+    final firstVersion = currentEpisode.mediaStreams.versionStreams.firstOrNull;
+    final totalStreams = (firstVersion?.videoStreams.length ?? 0) +
+        (firstVersion?.audioStreams.length ?? 0) +
+        (firstVersion?.subStreams.length ?? 0);
+
+    if (firstVersion != null && totalStreams == 0 && firstVersion.id != null) {
+      try {
+        final playbackInfo = await api.itemsItemIdPlaybackInfoPost(
+          itemId: currentEpisode.id,
+          body: PlaybackInfoDto(
+            enableDirectPlay: true,
+            enableDirectStream: true,
+            enableTranscoding: false,
+            autoOpenLiveStream: true,
+            mediaSourceId: firstVersion.id,
+          ),
+        );
+
+        if (playbackInfo.body?.mediaSources?.firstOrNull != null) {
+          final sourceWithStreams = playbackInfo.body!.mediaSources!.first;
+
+          if (sourceWithStreams.mediaStreams != null) {
+            final streams = sourceWithStreams.mediaStreams!;
+            final updatedFirstVersion = VersionStreamModel(
+              name: firstVersion.name,
+              index: firstVersion.index,
+              id: firstVersion.id,
+              defaultAudioStreamIndex: sourceWithStreams.defaultAudioStreamIndex,
+              defaultSubStreamIndex: sourceWithStreams.defaultSubtitleStreamIndex,
+              videoStreams: streams
+                  .where((element) => element.type == MediaStreamType.video)
+                  .map((e) => VideoStreamModel.fromMediaStream(e))
+                  .toList(),
+              audioStreams: streams
+                  .where((element) => element.type == MediaStreamType.audio)
+                  .map((e) => AudioStreamModel.fromMediaStream(e))
+                  .toList(),
+              subStreams: streams
+                  .where((element) => element.type == MediaStreamType.subtitle)
+                  .map((sub) => SubStreamModel.fromMediaStream(sub, ref))
+                  .toList(),
+            );
+
+            final updatedVersionStreams = [
+              updatedFirstVersion,
+              ...currentEpisode.mediaStreams.versionStreams.skip(1),
+            ];
+
+            state = state.copyWith(
+              episode: currentEpisode.copyWith(
+                mediaStreams: currentEpisode.mediaStreams.copyWith(
+                  versionStreams: updatedVersionStreams,
+                  defaultAudioStreamIndex: sourceWithStreams.defaultAudioStreamIndex,
+                  defaultSubStreamIndex: sourceWithStreams.defaultSubtitleStreamIndex,
+                ),
+              ),
+            );
+          }
+        }
+      } catch (e) {
+        // Ignore error
+      }
+    } else if (currentEpisode.mediaStreams.versionStreams.isEmpty) {
+      try {
+        final playbackInfo = await api.itemsItemIdPlaybackInfoPost(
+          itemId: currentEpisode.id,
+          body: const PlaybackInfoDto(
+            enableDirectPlay: true,
+            enableDirectStream: true,
+            enableTranscoding: false,
+          ),
+        );
+
+        if (playbackInfo.body?.mediaSources != null && playbackInfo.body!.mediaSources!.isNotEmpty) {
+          state = state.copyWith(
+            episode: currentEpisode.copyWith(
+              mediaStreams: MediaStreamsModel.fromMediaStreamsList(playbackInfo.body!.mediaSources, ref),
+            ),
+          );
+        }
+      } catch (e) {
+        // Ignore error
+      }
+    }
+  }
 }

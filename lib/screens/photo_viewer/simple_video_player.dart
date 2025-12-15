@@ -225,7 +225,7 @@ class _SimpleVideoPlayerState extends ConsumerState<SimpleVideoPlayer> with Wind
                                 }
                               },
                               icon: Icon(
-                                player.lastState.playing ? IconsaxPlusBold.pause_circle : IconsaxPlusBold.play_circle,
+                                player.lastState.playing ? Icons.pause_circle_rounded : Icons.play_circle_rounded,
                               ),
                             )
                           ],

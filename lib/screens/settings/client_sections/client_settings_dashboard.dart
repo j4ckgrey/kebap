@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import 'package:kebap/models/settings/home_settings_model.dart';
+import 'package:kebap/models/settings/client_settings_model.dart';
 import 'package:kebap/providers/settings/client_settings_provider.dart';
 import 'package:kebap/providers/settings/home_settings_provider.dart';
 import 'package:kebap/screens/settings/settings_list_tile.dart';
@@ -87,6 +88,36 @@ List<Widget> buildClientSettingsDashboard(BuildContext context, WidgetRef ref) {
           onChanged: (value) => ref
               .read(clientSettingsProvider.notifier)
               .update((current) => current.copyWith(showAllCollectionTypes: value)),
+        ),
+      ),
+      SettingsListTile(
+        label: Text(context.localized.libraryLocation),
+        subLabel: Text(context.localized.libraryLocationDesc),
+        trailing: EnumBox(
+          current: ref.watch(
+            clientSettingsProvider.select(
+              (value) => value.libraryLocation.label(context),
+            ),
+          ),
+          itemBuilder: (context) => LibraryLocation.values
+              .map(
+                (entry) => ItemActionButton(
+                  label: Text(entry.label(context)),
+                  action: () => ref
+                      .read(clientSettingsProvider.notifier)
+                      .update((context) => context.copyWith(libraryLocation: entry)),
+                ),
+              )
+              .toList(),
+        ),
+      ),
+      SettingsListTile(
+        label: Text(context.localized.showSimilarToRecommendations),
+        subLabel: Text(context.localized.showSimilarToRecommendationsDesc),
+        trailing: Switch(
+          value: clientSettings.showSimilarTo,
+          onChanged: (value) =>
+              ref.read(clientSettingsProvider.notifier).update((t) => t.copyWith(showSimilarTo: value)),
         ),
       ),
     ],

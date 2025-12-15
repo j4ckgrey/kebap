@@ -80,14 +80,19 @@ class TranscodePlaybackModel extends PlaybackModel {
   Future<PlaybackModel?> playbackStopped(Duration position, Duration? totalDuration, Ref ref) async {
     ref.read(playBackModel.notifier).update((state) => null);
 
-    await ref.read(jellyApiProvider).sessionsPlayingStoppedPost(
-          body: PlaybackStopInfo(
-            itemId: item.id,
-            mediaSourceId: item.id,
-            playSessionId: playbackInfo?.playSessionId,
-            positionTicks: position.toRuntimeTicks,
-          ),
-        );
+    try {
+      await ref.read(jellyApiProvider).sessionsPlayingStoppedPost(
+            body: PlaybackStopInfo(
+              itemId: item.id,
+              mediaSourceId: playbackInfo?.mediaSources?.firstOrNull?.id ?? item.id,
+              playSessionId: playbackInfo?.playSessionId,
+              positionTicks: position.toRuntimeTicks,
+            ),
+          );
+    } catch (e) {
+      // Ignore errors when stopping playback
+      debugPrint("Error stopping playback session: $e");
+    }
 
     return null;
   }

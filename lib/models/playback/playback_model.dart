@@ -198,10 +198,17 @@ class PlaybackModelHelper {
     Duration? startPosition,
     String? preferredVersionName,
   }) async {
+    print("[PlaybackModelHelper] createPlaybackModel called for item: ${item?.name}");
     try {
-      if (item == null) return null;
+      if (item == null) {
+        print("[PlaybackModelHelper] Item is null");
+        return null;
+      }
       final userId = ref.read(userProvider)?.id;
-      if (userId?.isEmpty == true) return null;
+      if (userId?.isEmpty == true) {
+        print("[PlaybackModelHelper] User ID is empty");
+        return null;
+      }
 
       final queue = oldModel?.queue ?? libraryQueue ?? await collectQueue(item);
 
@@ -210,11 +217,18 @@ class PlaybackModelHelper {
         _ => item,
       };
 
-      if (firstItemToPlay == null) return null;
+      if (firstItemToPlay == null) {
+        print("[PlaybackModelHelper] firstItemToPlay is null");
+        return null;
+      }
 
+      print("[PlaybackModelHelper] Fetching full item details for: ${firstItemToPlay.id}");
       final fullItem = (await api.usersUserIdItemsItemIdGet(itemId: firstItemToPlay.id)).body;
 
-      if (fullItem == null) return null;
+      if (fullItem == null) {
+        print("[PlaybackModelHelper] Fetched fullItem is null");
+        return null;
+      }
 
       SyncedItem? syncedItem = await ref.read(syncProvider.notifier).getSyncedItem(fullItem.id);
 
@@ -226,8 +240,19 @@ class PlaybackModelHelper {
         if (firstItemIsSynced) PlaybackType.offline,
       };
 
-      final isOffline = ref.read(connectivityStatusProvider.select((value) => value == ConnectionState.offline));
+      // offline check
+      final isOffline = ref.read(connectivityStatusProvider) == ConnectionState.offline;
+      print('[PlaybackModelHelper] isOffline: $isOffline');
 
+      if (isOffline) {
+        print('[PlaybackModelHelper] Creating offline playback model');
+        return _createOfflinePlaybackModel(
+          fullItem,
+          item.streamModel,
+          syncedItem,
+        );
+      }
+      
       if (((showPlaybackOptions || firstItemIsSynced) && !isOffline) && context != null) {
         final playbackType = await showPlaybackTypeSelection(
           context: context,
@@ -253,6 +278,7 @@ class PlaybackModelHelper {
           null => null
         };
       } else {
+        print("[PlaybackModelHelper] Creating server playback model (or offline if failed/preferred)...");
         return (await _createServerPlaybackModel(
               fullItem,
               item.streamModel,
@@ -268,8 +294,9 @@ class PlaybackModelHelper {
               syncedItem,
             );
       }
-    } catch (e) {
-      log("Error creating playback model: ${e.toString()}");
+    } catch (e, stack) {
+      print("Error creating playback model: ${e.toString()}");
+      // debugPrintStack(stackTrace: stack); // Stack trace might be too verbose/stripped in release, but error msg is key.
       return null;
     }
   }

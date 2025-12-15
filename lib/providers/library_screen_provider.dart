@@ -13,6 +13,7 @@ import 'package:kebap/models/recommended_model.dart';
 import 'package:kebap/models/view_model.dart';
 import 'package:kebap/providers/api_provider.dart';
 import 'package:kebap/providers/service_provider.dart';
+import 'package:kebap/providers/settings/client_settings_provider.dart';
 import 'package:kebap/providers/views_provider.dart';
 import 'package:kebap/util/localization_helper.dart';
 
@@ -122,20 +123,24 @@ class LibraryScreen extends _$LibraryScreen {
       ),
     ];
 
+    final showSimilarTo = ref.read(clientSettingsProvider).showSimilarTo;
+
     if (viewModel.collectionType == CollectionType.movies) {
-      final response = await api.moviesRecommendationsGet(
-        parentId: viewModel.id,
-        categoryLimit: 6,
-        itemLimit: 9,
-        fields: [ItemFields.mediasourcecount],
-      );
-      newRecommendations = [
-        ...newRecommendations,
-        ...(response.body?.map(
-              (e) => RecommendedModel.fromBaseDto(e, ref),
-            ) ??
-            [])
-      ];
+      if (showSimilarTo) {
+        final response = await api.moviesRecommendationsGet(
+          parentId: viewModel.id,
+          categoryLimit: 6,
+          itemLimit: 9,
+          fields: [ItemFields.mediasourcecount],
+        );
+        newRecommendations = [
+          ...newRecommendations,
+          ...(response.body?.map(
+                (e) => RecommendedModel.fromBaseDto(e, ref),
+              ) ??
+              [])
+        ];
+      }
     } else {
       final nextUp = await api.showsNextUpGet(
         parentId: viewModel.id,

@@ -1,4 +1,5 @@
 import 'dart:async';
+import 'dart:developer';
 
 import 'package:flutter/material.dart';
 
@@ -113,76 +114,81 @@ class NativePlayer extends BasePlayer implements VideoPlayerListenerCallback {
     PlaybackModel model,
     Duration startPosition,
   ) async {
-    final playableData = PlayableData(
-      currentItem: model.item.toSimpleItem(context),
-      startPosition: startPosition.inMilliseconds,
-      description: model.item.overview.summary,
-      defaultAudioTrack: model.mediaStreams?.defaultAudioStreamIndex ?? 1,
-      nextVideo: model.nextVideo?.toSimpleItem(context),
-      previousVideo: model.previousVideo?.toSimpleItem(context),
-      audioTracks: model.audioStreams
-              ?.map(
-                (audio) => AudioTrack(
-                  name: audio.displayTitle,
-                  languageCode: audio.language,
-                  codec: audio.codec,
-                  index: audio.index,
-                  external: false,
-                ),
-              )
-              .toList() ??
-          [],
-      defaultSubtrack: model.mediaStreams?.defaultSubStreamIndex ?? 1,
-      subtitleTracks: model.subStreams
-              ?.map(
-                (sub) => SubtitleTrack(
-                  name: sub.displayTitle,
-                  languageCode: sub.language,
-                  codec: sub.codec,
-                  index: sub.index,
-                  external: sub.isExternal,
-                  url: sub.url,
-                ),
-              )
-              .toList() ??
-          [],
-      segments: model.mediaSegments?.segments
-              .map(
-                (e) => MediaSegment(
-                  type: MediaSegmentType.values.firstWhere((element) => element.name == e.type.name),
-                  name: context != null ? e.type.label(context) : e.type.name,
-                  start: e.start.inMilliseconds,
-                  end: e.end.inMilliseconds,
-                ),
-              )
-              .toList() ??
-          [],
-      trickPlayModel: model.trickPlay != null
-          ? TrickPlayModel(
-              width: model.trickPlay!.width,
-              height: model.trickPlay!.height,
-              tileWidth: model.trickPlay!.tileWidth,
-              tileHeight: model.trickPlay!.tileHeight,
-              thumbnailCount: model.trickPlay!.thumbnailCount,
-              interval: model.trickPlay!.interval.inMilliseconds,
-              images: model.trickPlay?.images ?? [])
-          : null,
-      chapters: model.chapters
-              ?.map((e) => Chapter(name: e.name, url: e.imageUrl, time: e.startPosition.inMilliseconds))
-              .toList() ??
-          [],
-      mediaInfo: MediaInfo(
-        playbackType: switch (model) {
-          DirectPlaybackModel() => PlaybackType.direct,
-          OfflinePlaybackModel() => PlaybackType.offline,
-          TranscodePlaybackModel() => PlaybackType.transcoded,
-          _ => PlaybackType.direct,
-        },
-        videoInformation: model.item.streamModel?.mediaInfoTag ?? " ",
-      ),
-      url: model.media?.url ?? "",
-      headers: model.media?.httpHeaders,
-    );
-    await player.sendPlayableModel(playableData);
+    try {
+      final playableData = PlayableData(
+        currentItem: model.item.toSimpleItem(context),
+        startPosition: startPosition.inMilliseconds,
+        description: model.item.overview.summary,
+        defaultAudioTrack: model.mediaStreams?.defaultAudioStreamIndex ?? 1,
+        nextVideo: model.nextVideo?.toSimpleItem(context),
+        previousVideo: model.previousVideo?.toSimpleItem(context),
+        audioTracks: model.audioStreams
+                ?.map(
+                  (audio) => AudioTrack(
+                    name: audio.displayTitle,
+                    languageCode: audio.language,
+                    codec: audio.codec,
+                    index: audio.index,
+                    external: false,
+                  ),
+                )
+                .toList() ??
+            [],
+        defaultSubtrack: model.mediaStreams?.defaultSubStreamIndex ?? 1,
+        subtitleTracks: model.subStreams
+                ?.map(
+                  (sub) => SubtitleTrack(
+                    name: sub.displayTitle,
+                    languageCode: sub.language,
+                    codec: sub.codec,
+                    index: sub.index,
+                    external: sub.isExternal,
+                    url: sub.url,
+                  ),
+                )
+                .toList() ??
+            [],
+        segments: model.mediaSegments?.segments
+                .map(
+                  (e) => MediaSegment(
+                    type: MediaSegmentType.values.firstWhere((element) => element.name == e.type.name),
+                    name: context != null ? e.type.label(context) : e.type.name,
+                    start: e.start.inMilliseconds,
+                    end: e.end.inMilliseconds,
+                  ),
+                )
+                .toList() ??
+            [],
+        trickPlayModel: model.trickPlay != null
+            ? TrickPlayModel(
+                width: model.trickPlay!.width,
+                height: model.trickPlay!.height,
+                tileWidth: model.trickPlay!.tileWidth,
+                tileHeight: model.trickPlay!.tileHeight,
+                thumbnailCount: model.trickPlay!.thumbnailCount,
+                interval: model.trickPlay!.interval.inMilliseconds,
+                images: model.trickPlay?.images ?? [])
+            : null,
+        chapters: model.chapters
+                ?.map((e) => Chapter(name: e.name, url: e.imageUrl, time: e.startPosition.inMilliseconds))
+                .toList() ??
+            [],
+        mediaInfo: MediaInfo(
+          playbackType: switch (model) {
+            DirectPlaybackModel() => PlaybackType.direct,
+            OfflinePlaybackModel() => PlaybackType.offline,
+            TranscodePlaybackModel() => PlaybackType.transcoded,
+            _ => PlaybackType.direct,
+          },
+          videoInformation: model.item.streamModel?.mediaInfoTag ?? " ",
+        ),
+        url: model.media?.url ?? "",
+        headers: model.media?.httpHeaders,
+      );
+      await player.sendPlayableModel(playableData);
+    } catch (e, stack) {
+      log("[NativePlayer] Error sending playback data: $e", error: e, stackTrace: stack); // Use log
+      // Fallback or rethrow if critical, for now we log and maybe it proceeds partially or fails gracefully
+    }
   }
 }

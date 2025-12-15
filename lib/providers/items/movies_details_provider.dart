@@ -1,4 +1,5 @@
 import 'package:chopper/chopper.dart';
+import 'package:flutter/foundation.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
 
 import 'package:kebap/jellyfin/jellyfin_open_api.swagger.dart';
@@ -236,6 +237,102 @@ class MovieDetails extends _$MovieDetails {
           defaultSubStreamIndex: currentVersion?.defaultSubStreamIndex,
         ),
       );
+    }
+  }
+  Future<void> refreshStreams() async {
+    final currentState = state;
+    if (currentState == null) return;
+
+    final firstVersion = currentState.mediaStreams.versionStreams.firstOrNull;
+    final totalStreams = (firstVersion?.videoStreams.length ?? 0) +
+        (firstVersion?.audioStreams.length ?? 0) +
+        (firstVersion?.subStreams.length ?? 0);
+
+    if (firstVersion != null && totalStreams == 0 && firstVersion.id != null) {
+      debugPrint('[StreamRefresh] Polling specific version: ${firstVersion.id}');
+      try {
+        final playbackInfo = await api.itemsItemIdPlaybackInfoPost(
+          itemId: currentState.id,
+          body: PlaybackInfoDto(
+            enableDirectPlay: true,
+            enableDirectStream: true,
+            enableTranscoding: false,
+            autoOpenLiveStream: true,
+            mediaSourceId: firstVersion.id,
+          ),
+        );
+
+        debugPrint('[StreamRefresh] PlaybackInfo response code: ${playbackInfo.statusCode}');
+        if (playbackInfo.body?.mediaSources?.firstOrNull != null) {
+          final sourceWithStreams = playbackInfo.body!.mediaSources!.first;
+          debugPrint('[StreamRefresh] Found source. Streams count: ${sourceWithStreams.mediaStreams?.length}');
+
+          if (sourceWithStreams.mediaStreams != null) {
+            final streams = sourceWithStreams.mediaStreams!;
+            final updatedFirstVersion = VersionStreamModel(
+              name: firstVersion.name,
+              index: firstVersion.index,
+              id: firstVersion.id,
+              defaultAudioStreamIndex: sourceWithStreams.defaultAudioStreamIndex,
+              defaultSubStreamIndex: sourceWithStreams.defaultSubtitleStreamIndex,
+              videoStreams: streams
+                  .where((element) => element.type == MediaStreamType.video)
+                  .map((e) => VideoStreamModel.fromMediaStream(e))
+                  .toList(),
+              audioStreams: streams
+                  .where((element) => element.type == MediaStreamType.audio)
+                  .map((e) => AudioStreamModel.fromMediaStream(e))
+                  .toList(),
+              subStreams: streams
+                  .where((element) => element.type == MediaStreamType.subtitle)
+                  .map((sub) => SubStreamModel.fromMediaStream(sub, ref))
+                  .toList(),
+            );
+
+            final updatedVersionStreams = [
+              updatedFirstVersion,
+              ...currentState.mediaStreams.versionStreams.skip(1),
+            ];
+
+            state = state?.copyWith(
+              mediaStreams: state!.mediaStreams.copyWith(
+                versionStreams: updatedVersionStreams,
+                defaultAudioStreamIndex: sourceWithStreams.defaultAudioStreamIndex,
+                defaultSubStreamIndex: sourceWithStreams.defaultSubtitleStreamIndex,
+                // Do not set isLoading: false here as we didn't set it to true
+              ),
+            );
+          }
+        }
+      } catch (e) {
+        // Ignore error
+      }
+    } else if (currentState.mediaStreams.versionStreams.isEmpty) {
+      debugPrint('[StreamRefresh] No versions found. Polling for initial media sources...');
+      try {
+        final playbackInfo = await api.itemsItemIdPlaybackInfoPost(
+          itemId: currentState.id,
+          body: const PlaybackInfoDto(
+            enableDirectPlay: true,
+            enableDirectStream: true,
+            enableTranscoding: false,
+          ),
+        );
+
+        debugPrint('[StreamRefresh] Initial PlaybackInfo response code: ${playbackInfo.statusCode}');
+        if (playbackInfo.body?.mediaSources != null) {
+             debugPrint('[StreamRefresh] Found sources: ${playbackInfo.body!.mediaSources!.length}');
+        }
+
+        if (playbackInfo.body?.mediaSources != null && playbackInfo.body!.mediaSources!.isNotEmpty) {
+          state = state?.copyWith(
+            mediaStreams: MediaStreamsModel.fromMediaStreamsList(playbackInfo.body!.mediaSources, ref),
+          );
+        }
+      } catch (e) {
+        debugPrint('[StreamRefresh] Error polling initial sources: $e');
+        // Ignore error
+      }
     }
   }
 }

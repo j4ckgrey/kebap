@@ -1,3 +1,4 @@
+import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 
@@ -6,6 +7,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:iconsax_plus/iconsax_plus.dart';
 
 import 'package:kebap/models/item_base_model.dart';
+import 'package:kebap/models/items/movie_model.dart';
 import 'package:kebap/providers/items/movies_details_provider.dart';
 import 'package:kebap/providers/user_provider.dart';
 import 'package:kebap/screens/details_screens/components/media_stream_information.dart';
@@ -41,17 +43,118 @@ class _ItemDetailScreenState extends ConsumerState<MovieDetailScreen> {
   final FocusNode _playButtonNode = FocusNode();
   final FocusNode _mediaInfoNode = FocusNode(); // NEW FOCUS NODE
 
+  Timer? _pollingTimer;
+  int _pollCount = 0;
+  static const int _maxPolls = 15; // 30 seconds max (2s interval)
+
+  bool _focusLocked = false;  // Set to true once all async ops complete
+  Timer? _lockTimer;  // Debounce timer for focus lock
+
   @override
   void initState() {
     super.initState();
-    WidgetsBinding.instance.addPostFrameCallback((_) {
-      if (mounted) {
+    _playButtonNode.addListener(_onPlayButtonFocusChange);
+  }
+
+  void _onPlayButtonFocusChange() {
+    // Not used for locking anymore, but kept for potential future use
+  }
+
+  void _scheduleFocusLock() {
+    // Cancel any pending lock timer and restart
+    _lockTimer?.cancel();
+    // Lock focus 2 seconds after the LAST build (no more rebuilds = async complete)
+    _lockTimer = Timer(const Duration(seconds: 2), () {
+      _focusLocked = true;
+      debugPrint('[FocusDebug] Focus locked - no rebuilds for 2 seconds');
+    });
+  }
+
+  void _requestPlayButtonFocus() {
+    if (_focusLocked) return;
+    
+    // Reset the lock timer on every focus request (debounce)
+    _scheduleFocusLock();
+    
+    // Use a delay to ensure widgets have built, then ALWAYS request focus
+    Future.delayed(const Duration(milliseconds: 300), () {
+      if (mounted && !_focusLocked && _playButtonNode.canRequestFocus) {
+        _playButtonNode.requestFocus();
+        debugPrint('[FocusDebug] Play button focus requested (delayed)');
       }
+    });
+  }
+
+  void _checkAndStartPolling(MovieModel? details) {
+    if (details == null) return;
+    if (_pollingTimer != null && _pollingTimer!.isActive) return; // Don't restart if active
+
+    debugPrint('[StreamRefresh] Checking if polling is needed for ${details.name}');
+
+    bool shouldPoll = false;
+    if (details.mediaStreams.versionStreams.isEmpty) {
+      debugPrint('[StreamRefresh] No version streams found. Polling required.');
+      shouldPoll = true;
+    } else {
+      final first = details.mediaStreams.versionStreams.firstOrNull;
+      final totalStreams = (first?.videoStreams.length ?? 0) +
+          (first?.audioStreams.length ?? 0) +
+          (first?.subStreams.length ?? 0);
+      debugPrint('[StreamRefresh] First version has $totalStreams streams.');
+      if (totalStreams == 0) shouldPoll = true;
+    }
+
+    if (shouldPoll) {
+      _startPolling();
+    }
+  }
+
+  void _startPolling() {
+    debugPrint('[StreamRefresh] Starting polling timer (max $_maxPolls polls)...');
+    _pollingTimer?.cancel();
+    _pollingTimer = Timer.periodic(const Duration(seconds: 2), (timer) async {
+      if (!mounted) {
+        timer.cancel();
+        return;
+      }
+
+      _pollCount++;
+       debugPrint('[StreamRefresh] Poll #$_pollCount...');
+      if (_pollCount > _maxPolls) {
+        debugPrint('[StreamRefresh] Max polls reached. Stopping.');
+        timer.cancel();
+        return;
+      }
+
+      final details = ref.read(providerInstance);
+      if (details == null) return;
+
+      bool hasStreams = false;
+      if (details.mediaStreams.versionStreams.isNotEmpty) {
+        final first = details.mediaStreams.versionStreams.firstOrNull;
+        final totalStreams = (first?.videoStreams.length ?? 0) +
+            (first?.audioStreams.length ?? 0) +
+            (first?.subStreams.length ?? 0);
+        if (totalStreams > 0) hasStreams = true;
+      }
+
+      if (hasStreams) {
+        debugPrint('[StreamRefresh] Streams found! Stopping polling.');
+        timer.cancel();
+        // Request focus after streams are loaded
+        _requestPlayButtonFocus();
+        return;
+      }
+
+      await ref.read(providerInstance.notifier).refreshStreams();
     });
   }
 
   @override
   void dispose() {
+    _pollingTimer?.cancel();
+    _lockTimer?.cancel();
+    _playButtonNode.removeListener(_onPlayButtonFocusChange);
     _playButtonNode.dispose();
     _mediaInfoNode.dispose();
     super.dispose();
@@ -60,6 +163,19 @@ class _ItemDetailScreenState extends ConsumerState<MovieDetailScreen> {
   @override
   Widget build(BuildContext context) {
     print('[LAG_DEBUG] ${DateTime.now()} MovieDetailScreen build: ${widget.item.name}');
+    
+    // Request focus after EVERY build to overcome late async rebuilds
+    if (!_focusLocked) {
+      WidgetsBinding.instance.addPostFrameCallback((_) {
+        _requestPlayButtonFocus();
+      });
+    }
+    
+    ref.listen(providerInstance, (prev, next) {
+      if (next != null) {
+         _checkAndStartPolling(next);
+      }
+    });
     final details = ref.watch(providerInstance);
 
     final wrapAlignment =
