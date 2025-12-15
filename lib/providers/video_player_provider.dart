@@ -134,18 +134,66 @@ class VideoPlayerNotifier extends StateNotifier<MediaControlsWrapper> {
         
         final start = startPosition;
         
-        state.stateStream?.takeWhile((event) => event.buffering == true).listen(
-          null,
-          onDone: () async {
-            if (start != Duration.zero) {
-              await state.seek(start);
-            }
-            await state.setAudioTrack(null, model);
-            await state.setSubtitleTrack(null, model);
-            state.play();
-            ref.read(playBackModel.notifier).update((state) => newPlaybackModel);
-          },
-        );
+        debugPrint('[VideoPlayerProvider] Loading video with startPosition: ${start.inSeconds}s');
+        
+        // Use a more robust approach: wait for buffering to complete AND for the player to be ready
+        final completer = Completer<void>();
+        StreamSubscription? subscription;
+        Timer? timeoutTimer;
+        
+        subscription = state.stateStream?.listen((event) {
+          // debugPrint('[VideoPlayerProvider] State update: buffering=${event.buffering}, position=${event.position.inSeconds}s');
+          
+          if (!event.buffering && !completer.isCompleted) {
+            debugPrint('[VideoPlayerProvider] Buffering complete, seeking to ${start.inSeconds}s');
+            completer.complete();
+            subscription?.cancel();
+            timeoutTimer?.cancel();
+            
+            // Perform seek, audio/subtitle setup, and play in sequence
+            Future.microtask(() async {
+              try {
+                if (start != Duration.zero) {
+                  await state.seek(start);
+                  debugPrint('[VideoPlayerProvider] Seek completed to ${start.inSeconds}s');
+                  // Give the player a moment to process the seek
+                  await Future.delayed(const Duration(milliseconds: 100));
+                }
+                await state.setAudioTrack(null, model);
+                await state.setSubtitleTrack(null, model);
+                await state.play();
+                debugPrint('[VideoPlayerProvider] Playback started');
+                ref.read(playBackModel.notifier).update((state) => newPlaybackModel);
+              } catch (e) {
+                debugPrint('[VideoPlayerProvider] Error in post-buffering setup: $e');
+              }
+            });
+          }
+        });
+        
+        // Add a timeout to handle cases where buffering never completes
+        timeoutTimer = Timer(const Duration(seconds: 30), () {
+          if (!completer.isCompleted) {
+            debugPrint('[VideoPlayerProvider] Buffering timeout reached, forcing playback start');
+            completer.complete();
+            subscription?.cancel();
+            
+            // Try to start anyway
+            Future.microtask(() async {
+              try {
+                if (start != Duration.zero) {
+                  await state.seek(start);
+                }
+                await state.setAudioTrack(null, model);
+                await state.setSubtitleTrack(null, model);
+                await state.play();
+                ref.read(playBackModel.notifier).update((state) => newPlaybackModel);
+              } catch (e) {
+                debugPrint('[VideoPlayerProvider] Error in timeout fallback: $e');
+              }
+            });
+          }
+        });
 
         ref.read(playBackModel.notifier).update((state) => model);
 

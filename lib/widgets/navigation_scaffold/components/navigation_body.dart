@@ -1,3 +1,4 @@
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 
@@ -104,7 +105,7 @@ class _NavigationBodyState extends ConsumerState<NavigationBody> {
                   duration: const Duration(milliseconds: 200),
                   child: Padding(
                     padding: EdgeInsets.only(
-                      top: topInset + 8,
+                      top: topInset + (kIsWeb ? 24 : 8),
                       left: 8,
                       right: 8,
                     ),

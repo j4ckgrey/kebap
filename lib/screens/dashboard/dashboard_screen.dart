@@ -33,6 +33,7 @@ import 'package:kebap/screens/shared/nested_scaffold.dart';
 import 'package:kebap/util/adaptive_layout/adaptive_layout.dart';
 import 'package:kebap/util/localization_helper.dart';
 import 'package:kebap/widgets/navigation_scaffold/components/background_image.dart';
+import 'package:kebap/widgets/shared/pull_to_refresh.dart';
 
 @RoutePage()
 class DashboardScreen extends ConsumerStatefulWidget {
@@ -147,7 +148,10 @@ class _DashboardScreenState extends ConsumerState<DashboardScreen> with AutoRout
               );
             },
           ),
-          body: FocusScope(
+          body: PullToRefresh(
+            refreshOnStart: false,
+            onRefresh: _refreshHome,
+            child: FocusScope(
             node: _focusScopeNode,
             autofocus: true,
             child: Builder(
@@ -270,6 +274,7 @@ class _DashboardScreenState extends ConsumerState<DashboardScreen> with AutoRout
             ),
           ),
         ),
+      ),
     );
   }
 }
