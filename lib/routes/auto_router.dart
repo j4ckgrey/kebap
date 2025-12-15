@@ -90,12 +90,21 @@ final List<AutoRoute> _defaultRoutes = [
 
 final List<AutoRoute> _settingsChildren = [
   AutoRoute(page: SettingsSelectionRoute.page, path: 'list'),
-  AutoRoute(page: ClientSettingsRoute.page, path: 'client'),
+  // New categorized settings pages - Dashboard is first (default)
+  AutoRoute(page: DashboardSettingsRoute.page, path: 'dashboard'),
+  AutoRoute(page: DetailsSettingsRoute.page, path: 'details'),
+  AutoRoute(page: DownloadsSettingsRoute.page, path: 'downloads'),
+  AutoRoute(page: LibrariesSettingsRoute.page, path: 'libraries'),
+  AutoRoute(page: GeneralUiSettingsRoute.page, path: 'general-ui'),
+  AutoRoute(page: AdvancedSettingsRoute.page, path: 'advanced'),
+  // Original settings pages (Profile, Player, About kept. Client/Kebap deprecated)
   AutoRoute(page: ProfileSettingsRoute.page, path: 'security'),
   AutoRoute(page: PlayerSettingsRoute.page, path: 'player'),
-  AutoRoute(page: KebapSettingsRoute.page, path: 'kebap'),
   AutoRoute(page: AboutSettingsRoute.page, path: 'about'),
   AutoRoute(page: ContentFilterSettingsRoute.page, path: 'content-filter'),
+  // Deprecated - settings moved to categorized pages above
+  // AutoRoute(page: ClientSettingsRoute.page, path: 'client'),
+  // AutoRoute(page: KebapSettingsRoute.page, path: 'kebap'),
 ];
 
 class LockScreenGuard extends AutoRouteGuard {

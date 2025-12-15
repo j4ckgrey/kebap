@@ -202,6 +202,22 @@ class _UserSettingsPageState extends ConsumerState<ProfileSettingsPage> {
                   data: (cfg) => SettingsListTile(
                     label: const Text('Enable Auto Import'),
                     subLabel: const Text('Non-admin users can import directly without making requests'),
+                    onTap: () async {
+                      try {
+                        await ref.read(baklavaServiceProvider).updateConfig(
+                          enableAutoImport: !cfg.enableAutoImport,
+                        );
+                        // Refresh the config
+                        ref.invalidate(baklavaConfigProvider);
+                        ref.invalidate(effectiveBaklavaConfigProvider);
+                      } catch (e) {
+                        if (context.mounted) {
+                          ScaffoldMessenger.of(context).showSnackBar(
+                            SnackBar(content: Text('Failed to update: $e')),
+                          );
+                        }
+                      }
+                    },
                     trailing: Switch(
                       value: cfg.enableAutoImport,
                       onChanged: (v) async {

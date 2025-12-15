@@ -57,18 +57,23 @@ class KebapImage extends ConsumerWidget {
               height: 16,
             ),
           if (!blurOnly && imageProvider != null)
-            FadeInImage(
-              placeholder: MemoryImage(kTransparentImage),
+            Image(
               fit: fit,
-              placeholderFit: fit,
               alignment: alignment ?? Alignment.center,
-              imageErrorBuilder: imageErrorBuilder,
+              errorBuilder: imageErrorBuilder,
               image: decodeHeight != null
                   ? ResizeImage(
                       imageProvider,
                       height: decodeHeight,
                     )
                   : imageProvider,
+              frameBuilder: frameBuilder ?? (context, child, frame, wasSynchronouslyLoaded) {
+                if (wasSynchronouslyLoaded || frame != null) {
+                  return child;
+                }
+                // Show blur hash or placeholder while loading
+                return Container();
+              },
             )
         ],
       );

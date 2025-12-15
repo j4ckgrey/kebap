@@ -71,10 +71,11 @@ class _CarouselBannerState extends ConsumerState<CarouselBanner> {
                     itemExtent: itemExtent,
                     children: [
                       ...widget.items.mapIndexed(
-                        (index, item) => LayoutBuilder(
-                          builder: (context, constraints) {
-                            final opacity = (constraints.maxWidth / maxExtent);
-                            return FocusButton(
+                        (index, item) => RepaintBoundary(
+                          child: LayoutBuilder(
+                            builder: (context, constraints) {
+                              final opacity = (constraints.maxWidth / maxExtent);
+                              return FocusButton(
                               onTap: () => widget.items[index].navigateTo(context),
                               borderRadius: border,
                               onFocusChanged: (hover) {
@@ -202,7 +203,8 @@ class _CarouselBannerState extends ConsumerState<CarouselBanner> {
                                 ),
                               ],
                             );
-                          },
+                            },
+                          ),
                         ),
                       )
                     ],

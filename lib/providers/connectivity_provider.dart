@@ -39,7 +39,8 @@ class ConnectivityStatus extends _$ConnectivityStatus with WidgetsBindingObserve
       WidgetsBinding.instance.removeObserver(this);
     });
 
-    ref.watch(userProvider);
+    // Don't watch userProvider here to avoid dependency issues in async callbacks
+    // Instead, read it when needed in onStateChange
     // Wrap connectivity plugin initialization in try/catch to avoid unhandled
     // DBus exceptions on platforms without NetworkManager (WSL, minimal VMs).
     // Wrap connectivity plugin initialization in runZonedGuarded to catch
@@ -62,6 +63,14 @@ class ConnectivityStatus extends _$ConnectivityStatus with WidgetsBindingObserve
     });
     return ConnectionState.mobile;
   }
+
+  @override
+  void didChangeAppLifecycleState(AppLifecycleState state) {
+    if (state == AppLifecycleState.resumed) {
+      log('[Connectivity] App resumed from background, rechecking connectivity');
+      checkConnectivity();
+    }
+  }
   // Accept either a single ConnectivityResult or an Iterable/list of them.
   // isInitialCheck: if true, don't debounce offline detection (for startup)
   void onStateChange(dynamic connectivityResult, {bool isInitialCheck = false}) async {
@@ -77,6 +86,11 @@ class ConnectivityStatus extends _$ConnectivityStatus with WidgetsBindingObserve
     }
 
     log('[Connectivity] onStateChange: results=$results, isInitialCheck=$isInitialCheck');
+    
+    // Read user provider values at the start to avoid ref access issues during async operations
+    final userCredentials = ref.read(userProvider)?.credentials;
+    final serverUrl = userCredentials?.url;
+    final serverId = userCredentials?.serverId;
 
     if (results.contains(ConnectivityResult.ethernet)) {
       state = ConnectionState.ethernet;
@@ -103,7 +117,6 @@ class ConnectivityStatus extends _$ConnectivityStatus with WidgetsBindingObserve
             !current.contains(ConnectivityResult.other)) {
           
           // Verify with active HTTP check before declaring offline
-          final serverUrl = ref.read(userProvider)?.credentials.localUrl;
           if (serverUrl != null && serverUrl.isNotEmpty) {
              final activeCheck = await fetchSystemInfoDynamic(normalizeUrl(serverUrl));
              if (activeCheck != null) {
@@ -118,12 +131,12 @@ class ConnectivityStatus extends _$ConnectivityStatus with WidgetsBindingObserve
       }
     }
 
-    final newUrl = ref.read(userProvider.select((value) => value?.credentials.localUrl));
+    final newUrl = userCredentials?.localUrl;
     if (localUrl == newUrl) return;
     localUrl = newUrl;
     final localConnection =
         localUrl != null && localUrl?.isNotEmpty == true ? await fetchSystemInfoDynamic(normalizeUrl(localUrl!)) : null;
-    final correctServerResponse = localConnection?.id == ref.read(userProvider.select((value) => value?.credentials.serverId));
+    final correctServerResponse = localConnection?.id == serverId;
     ref.read(localConnectionAvailableProvider.notifier).update((state) => correctServerResponse);
   }
 

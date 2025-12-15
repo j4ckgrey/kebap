@@ -6,6 +6,7 @@ import 'package:kebap/models/item_base_model.dart';
 import 'package:kebap/models/view_model.dart';
 import 'package:kebap/models/views_model.dart';
 import 'package:kebap/providers/api_provider.dart';
+import 'package:kebap/providers/connectivity_provider.dart';
 import 'package:kebap/providers/service_provider.dart';
 import 'package:kebap/providers/settings/client_settings_provider.dart';
 import 'package:kebap/providers/user_provider.dart';
@@ -28,7 +29,15 @@ final viewsProvider = StateNotifierProvider<ViewsNotifier, ViewsModel>((ref) {
 });
 
 class ViewsNotifier extends StateNotifier<ViewsModel> {
-  ViewsNotifier(this.ref) : super(ViewsModel());
+  ViewsNotifier(this.ref) : super(ViewsModel()) {
+    // Listen to connectivity changes: refresh views when coming back online
+    ref.listen<ConnectionState>(connectivityStatusProvider, (previous, next) {
+      if (previous == ConnectionState.offline && next != ConnectionState.offline) {
+        debugPrint('[ViewsProvider] Device came back online, refreshing views');
+        fetchViews();
+      }
+    });
+  }
 
   final Ref ref;
 

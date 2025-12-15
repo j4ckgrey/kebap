@@ -201,34 +201,8 @@ class BaklavaMetadataNotifier extends StateNotifier<BaklavaMetadataState> {
           requestUsername = req['username'] as String?;
         }
 
-        // If in library, try to find the Jellyfin ID so we can navigate to it
-        String? foundItemId;
-        if (inLibrary) {
-          try {
-            final api = ref.read(jellyApiProvider);
-            // Search for item by IMDB ID or TMDB ID to get the Jellyfin ID
-            String? searchTerm;
-            if (imdbId != null && imdbId.isNotEmpty) {
-              searchTerm = imdbId;
-            } else if (tmdbId != null && tmdbId.isNotEmpty) {
-              searchTerm = 'tmdb_$tmdbId';
-            }
-
-            if (searchTerm != null) {
-              final searchResponse = await api.itemsGet(
-                searchTerm: searchTerm,
-                recursive: true,
-                limit: 1,
-                includeItemTypes: itemType.toLowerCase().contains('series') ? [BaseItemKind.series] : [BaseItemKind.movie],
-              );
-              if (searchResponse.body?.items.isNotEmpty ?? false) {
-                foundItemId = searchResponse.body!.items.first.id;
-              }
-            }
-          } catch (e) {
-            print('DEBUG: Failed to fetch Jellyfin ID after confirmed in library: $e');
-          }
-        }
+        // Get the Jellyfin ID directly from Baklava response
+        String? foundItemId = data['jellyfinId'] as String?;
         
         state = state.copyWith(
           inLibrary: inLibrary,

@@ -48,6 +48,10 @@ class BrowserCodecDetector {
   // Feature detection
   bool supportsHdr10() => true;
   bool supportsHlg() => true;
+
+  // Browser/Platform info - stub methods for non-web platforms
+  String getUserAgent() => 'Native Platform';
+  String getPlatform() => 'Native';
   bool supportsDolbyVision() => true;
   int getMaxAudioChannels() => 8;
 }

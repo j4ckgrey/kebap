@@ -12,8 +12,10 @@ import 'package:kebap/providers/api_provider.dart';
 import 'package:kebap/models/tmdb_metadata_model.dart';
 import 'package:kebap/providers/baklava_metadata_provider.dart';
 import 'package:kebap/providers/baklava_requests_provider.dart';
+import 'package:kebap/providers/dashboard_provider.dart';
 import 'package:kebap/providers/effective_baklava_config_provider.dart';
 import 'package:kebap/providers/user_provider.dart';
+import 'package:kebap/providers/views_provider.dart';
 import 'package:kebap/screens/shared/kebap_snackbar.dart';
 import 'package:kebap/util/focus_provider.dart';
 import 'package:kebap/widgets/shared/item_details_reviews_carousel.dart';
@@ -34,6 +36,7 @@ class _SearchResultModalState extends ConsumerState<SearchResultModal> {
   bool _importing = false;
   bool _requesting = false;
   bool _metadataFetched = false;
+  bool _checkingLibraryStatus = true;
 
   @override
   void didChangeDependencies() {
@@ -47,6 +50,7 @@ class _SearchResultModalState extends ConsumerState<SearchResultModal> {
 
   Future<void> _fetchMetadata() async {
     if (!mounted) return;
+    setState(() => _checkingLibraryStatus = true);
     final metadataNotifier = ref.read(baklavaMetadataProvider.notifier);
 
     // Extract IDs from item
@@ -81,6 +85,10 @@ class _SearchResultModalState extends ConsumerState<SearchResultModal> {
 
       // Check library status (includes request status check)
       await metadataNotifier.checkLibraryStatus(effectiveImdbId, effectiveTmdbId, itemType);
+    }
+    
+    if (mounted) {
+      setState(() => _checkingLibraryStatus = false);
     }
   }
 
@@ -187,6 +195,11 @@ class _SearchResultModalState extends ConsumerState<SearchResultModal> {
             if (mounted) {
               // Refresh library status
               ref.read(baklavaMetadataProvider.notifier).setLibraryStatus(stremioItemId);
+              
+              // Refresh views and dashboard to reflect new item
+              ref.read(viewsProvider.notifier).fetchViews();
+              ref.read(dashboardProvider.notifier).fetchNextUpAndResume();
+              
               return true;
             }
           } catch (e) {
@@ -213,7 +226,12 @@ class _SearchResultModalState extends ConsumerState<SearchResultModal> {
   Future<void> _handleImport() async {
     setState(() => _importing = true);
     try {
-      await _performImport();
+      final success = await _performImport();
+      if (success && mounted) {
+        // Refresh views and dashboard to reflect new item
+        ref.read(viewsProvider.notifier).fetchViews();
+        ref.read(dashboardProvider.notifier).fetchNextUpAndResume();
+      }
     } finally {
       if (mounted) setState(() => _importing = false);
     }
@@ -440,7 +458,17 @@ class _SearchResultModalState extends ConsumerState<SearchResultModal> {
             Row(
               mainAxisAlignment: MainAxisAlignment.end,
               children: [
-                if (metadataState.inLibrary)
+                if (_checkingLibraryStatus)
+                  FilledButton.icon(
+                    onPressed: null,
+                    icon: const SizedBox(
+                      width: 16,
+                      height: 16,
+                      child: CircularProgressIndicator(strokeWidth: 2),
+                    ),
+                    label: const Text('Checking...'),
+                  )
+                else if (metadataState.inLibrary)
                   FilledButton.icon(
                     onPressed: () {
                       Navigator.of(context).pop();
@@ -553,6 +581,10 @@ class _SearchResultModalState extends ConsumerState<SearchResultModal> {
                                     metadataState.existingRequestId!,
                                     user?.name ?? 'admin',
                                   );
+
+                                  // 3. Refresh views and dashboard to reflect new item
+                                  ref.read(viewsProvider.notifier).fetchViews();
+                                  ref.read(dashboardProvider.notifier).fetchNextUpAndResume();
 
                                   if (context.mounted) {
                                     kebapSnackbar(context, title: 'Request approved');

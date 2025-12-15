@@ -17,7 +17,7 @@ import 'package:kebap/widgets/shared/custom_shader_mask.dart';
 
 /// Compact banner for displaying focused item details above horizontal rows.
 /// Optimized for all devices with centered poster and "Open" button.
-class CompactItemBanner extends ConsumerWidget {
+class CompactItemBanner extends StatelessWidget {
   final ItemBaseModel? item;
   final double? maxHeight;
 
@@ -28,7 +28,7 @@ class CompactItemBanner extends ConsumerWidget {
   });
 
   @override
-  Widget build(BuildContext context, WidgetRef ref) {
+  Widget build(BuildContext context) {
     if (item == null) return const SizedBox.shrink();
 
     final size = MediaQuery.sizeOf(context);
@@ -37,10 +37,13 @@ class CompactItemBanner extends ConsumerWidget {
     
     final bannerHeight = maxHeight ?? (size.height * 0.38);
 
-    // Check banner media type setting
-    final bannerMediaType = ref.watch(
-      homeSettingsProvider.select((value) => value.bannerMediaType),
-    );
+    // Use Consumer only for the specific settings we need
+    return Consumer(
+      builder: (context, ref, child) {
+        // Check banner media type setting with select to avoid unnecessary rebuilds
+        final bannerMediaType = ref.watch(
+          homeSettingsProvider.select((value) => value.bannerMediaType),
+        );
     
     // Only fetch trailer URL if trailer mode is enabled and item type supports trailers
     // For episodes, we fetch the trailer from the parent series
@@ -54,30 +57,29 @@ class CompactItemBanner extends ConsumerWidget {
         ? item!.parentBaseModel.id  // Parent series ID
         : item!.id;
     
-    // Fetch trailer URL on-demand (cached by riverpod)
-    final trailerUrlAsync = shouldFetchTrailer && trailerItemId.isNotEmpty
-        ? ref.watch(trailerUrlProvider(trailerItemId))
-        : const AsyncData<String?>(null);
-    
-    final trailerUrl = trailerUrlAsync.valueOrNull;
-    final showTrailer = trailerUrl != null;
-    
-    debugPrint('[CompactItemBanner] Item: ${item!.name}, Type: ${item!.type}, TrailerItemId: $trailerItemId, TrailerUrl: $trailerUrl, ShowTrailer: $showTrailer');
-
-    // Check if we need to fetch a fallback overview
-    String? fallbackOverview;
-    if (item?.type == KebapItemType.episode && (item?.overview.summary.isEmpty ?? true)) {
-      final seriesOverviewAsync = ref.watch(seriesOverviewProvider(item?.parentId ?? ''));
-      fallbackOverview = seriesOverviewAsync.value;
+    // Conditionally watch trailer provider ONLY when needed
+    String? trailerUrl;
+    if (shouldFetchTrailer && trailerItemId.isNotEmpty) {
+      final trailerUrlAsync = ref.watch(trailerUrlProvider(trailerItemId));
+      trailerUrl = trailerUrlAsync.valueOrNull;
     }
+    
+    final showTrailer = trailerUrl != null;
 
-    return SizedBox(
-      width: double.infinity,
-      height: bannerHeight,
-      child: Stack(
-        children: [
-          // Backdrop image or trailer - full width
-          ExcludeFocus(
+        // Check if we need to fetch a fallback overview (only for episodes with empty overview)
+        String? fallbackOverview;
+        if (item!.type == KebapItemType.episode && item!.overview.summary.isEmpty) {
+          final seriesOverviewAsync = ref.watch(seriesOverviewProvider(item!.parentId ?? ''));
+          fallbackOverview = seriesOverviewAsync.value;
+        }
+
+        return SizedBox(
+          width: double.infinity,
+          height: bannerHeight,
+          child: Stack(
+            children: [
+              // Backdrop image or trailer - full width
+              ExcludeFocus(
             child: Align(
               alignment: viewSize < ViewSize.desktop ? Alignment.center : Alignment.centerRight,
               child: FractionallySizedBox(
@@ -148,6 +150,8 @@ class CompactItemBanner extends ConsumerWidget {
           ),
         ],
       ),
+        );
+      },
     );
   }
 }

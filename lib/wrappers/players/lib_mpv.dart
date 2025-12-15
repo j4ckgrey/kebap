@@ -152,7 +152,7 @@ class LibMPV extends BasePlayer {
     debugPrint('[LibMPV] setSubtitleTrack called with: ${wantedSubtitle.title}, url: ${wantedSubtitle.url}, isExternal: ${wantedSubtitle.isExternal}');
 
     // on Web, we always want to use the URL if available, because internal tracks might be stripped by transcoding
-    final bool shouldLoadUrl = (wantedSubtitle.isExternal || kIsWeb) && wantedSubtitle.url != null;
+    final bool shouldLoadUrl = (wantedSubtitle.isExternal || kIsWeb) && wantedSubtitle.url != null && wantedSubtitle.url!.isNotEmpty;
 
     if (shouldLoadUrl) {
       try {

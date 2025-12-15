@@ -8,8 +8,10 @@ import 'package:kebap/models/book_model.dart';
 import 'package:kebap/models/item_base_model.dart';
 import 'package:kebap/models/items/episode_model.dart';
 import 'package:kebap/models/items/item_shared_models.dart';
+import 'package:kebap/providers/dashboard_provider.dart';
 import 'package:kebap/providers/sync_provider.dart';
 import 'package:kebap/providers/user_provider.dart';
+import 'package:kebap/providers/views_provider.dart';
 import 'package:kebap/screens/collections/add_to_collection.dart';
 import 'package:kebap/screens/metadata/edit_item.dart';
 import 'package:kebap/screens/metadata/identifty_screen.dart';
@@ -301,6 +303,9 @@ extension ItemBaseModelExtensions on ItemBaseModel {
             if (response?.isSuccessful == true) {
               onDeleteSuccesFully?.call(this);
               if (context.mounted) {
+                // Refresh views and dashboard to remove deleted item
+                await ref.read(viewsProvider.notifier).fetchViews();
+                await ref.read(dashboardProvider.notifier).fetchNextUpAndResume();
                 context.refreshData();
               }
             } else {

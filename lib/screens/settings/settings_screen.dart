@@ -55,10 +55,55 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen> {
                   mainAxisSize: MainAxisSize.max,
                   crossAxisAlignment: CrossAxisAlignment.stretch,
                   children: [
-                    Expanded(flex: 2, child: SettingsLeftPane(activeRouteName: context.tabsRouter.current.name)),
+                    Expanded(
+                      flex: 2,
+                      child: SettingsLeftPane(activeRouteName: context.tabsRouter.current.name),
+                    ),
                     Expanded(
                       flex: 3,
-                      child: content,
+                      child: Focus(
+                        skipTraversal: true,
+                        canRequestFocus: false,
+                        onKeyEvent: (node, event) {
+                          // Check if we should block the key
+                          if (event is! KeyDownEvent && event is! KeyRepeatEvent) {
+                            return KeyEventResult.ignored;
+                          }
+                          
+                          final key = event.logicalKey;
+                          if (key != LogicalKeyboardKey.arrowUp && key != LogicalKeyboardKey.arrowDown) {
+                            return KeyEventResult.ignored;
+                          }
+                          
+                          // Find the primary focus
+                          final primaryFocus = FocusManager.instance.primaryFocus;
+                          if (primaryFocus == null) return KeyEventResult.ignored;
+                          
+                          // Check if the focused widget is a descendant of this node
+                          if (!node.descendants.contains(primaryFocus)) {
+                            return KeyEventResult.ignored;
+                          }
+                          
+                          // Get all focusable descendants in tree order
+                          final descendants = node.descendants.where((n) => n.canRequestFocus).toList();
+                          
+                          if (descendants.isEmpty) return KeyEventResult.ignored;
+                          
+                          final currentIndex = descendants.indexOf(primaryFocus);
+                          if (currentIndex == -1) return KeyEventResult.ignored;
+                          
+                          // Block up at first item, down at last item
+                          if (key == LogicalKeyboardKey.arrowUp && currentIndex == 0) {
+                            return KeyEventResult.handled;
+                          }
+                          if (key == LogicalKeyboardKey.arrowDown && currentIndex == descendants.length - 1) {
+                            return KeyEventResult.handled;
+                          }
+                          
+                          return KeyEventResult.ignored;
+                        },
+                        child: content,
+                      ),
                     ),
                   ],
                 ),

@@ -190,7 +190,7 @@ class _AdaptiveLayoutBuilderState extends ConsumerState<AdaptiveLayoutBuilder> {
 
   @override
   Widget build(BuildContext context) {
-    print('[LAG_DEBUG] ${DateTime.now()} AdaptiveLayoutBuilder build');
+    // print('[LAG_DEBUG] ${DateTime.now()} AdaptiveLayoutBuilder build');
     final arguments = ref.watch(argumentsStateProvider);
     final htpcMode = arguments.htpcMode;
     final acceptedLayouts =
@@ -223,10 +223,12 @@ class _AdaptiveLayoutBuilderState extends ConsumerState<AdaptiveLayoutBuilder> {
       child: (input) => MediaQuery(
         data: mediaQuery.copyWith(
           navigationMode: input == InputDevice.dPad ? NavigationMode.directional : NavigationMode.traditional,
-          padding: (isDesktop || kIsWeb
+          padding: (isDesktop
               ? const EdgeInsets.only(top: defaultTitleBarHeight, bottom: 16)
-              : mediaQuery.padding),
-          viewPadding: isDesktop || kIsWeb ? const EdgeInsets.only(top: defaultTitleBarHeight, bottom: 16) : null,
+              : kIsWeb
+                  ? const EdgeInsets.only(top: 32, bottom: 16)  // More top padding to fully clear hamburger button
+                  : mediaQuery.padding),
+          viewPadding: isDesktop ? const EdgeInsets.only(top: defaultTitleBarHeight, bottom: 16) : null,
         ),
         child: AdaptiveLayout(
           data: currentLayout.copyWith(

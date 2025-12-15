@@ -157,6 +157,9 @@ class _NavigationScaffoldState extends ConsumerState<NavigationScaffold> with Wi
                     if (didPop) return;
                     if (_effectiveKey.currentState?.isDrawerOpen ?? false) {
                       _effectiveKey.currentState?.closeDrawer();
+                    } else if (context.router.canPop()) {
+                      // If we're on a nested route (like details page), pop back instead of exit
+                      context.router.maybePop();
                     } else {
                        _handleExit();
                     }
@@ -225,12 +228,14 @@ class _NavigationScaffoldState extends ConsumerState<NavigationScaffold> with Wi
                                 drawerKey: _effectiveKey,
                               ),
                               if (!currentLocation.contains("Settings"))
-                                const Align(
-                                  alignment: Alignment.topCenter,
-                                  child: SafeArea(
-                                    child: Padding(
-                                      padding: EdgeInsets.only(top: 8.0),
-                                      child: ClockBadge(),
+                                IgnorePointer(
+                                  child: const Align(
+                                    alignment: Alignment.topCenter,
+                                    child: SafeArea(
+                                      child: Padding(
+                                        padding: EdgeInsets.only(top: 8.0),
+                                        child: ClockBadge(),
+                                      ),
                                     ),
                                   ),
                                 ),

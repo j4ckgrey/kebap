@@ -25,6 +25,16 @@ class BrowserCodecDetector {
     return result.isNotEmpty && result != 'no';
   }
 
+  /// Get user agent string for debugging
+  String getUserAgent() {
+    return html.window.navigator.userAgent;
+  }
+
+  /// Get platform string for debugging
+  String getPlatform() {
+    return html.window.navigator.platform ?? 'unknown';
+  }
+
   // ============ VIDEO CODEC DETECTION ============
 
   /// H.264/AVC - universally supported
@@ -36,10 +46,33 @@ class BrowserCodecDetector {
   /// HEVC/H.265 - Safari, Edge, some Chrome
   bool canPlayHevc() {
     // Test multiple HEVC codec strings as browsers report differently
-    return _canPlayVideoType('video/mp4; codecs="hvc1.1.L120"') ||
+    final hevcSupported = _canPlayVideoType('video/mp4; codecs="hvc1.1.L120"') ||
         _canPlayVideoType('video/mp4; codecs="hev1.1.L120"') ||
         _canPlayVideoType('video/mp4; codecs="hvc1.1.0.L120"') ||
         _canPlayVideoType('video/mp4; codecs="hev1.1.0.L120"');
+    
+    if (hevcSupported) {
+      return true;
+    }
+    
+    // Jellyfin web's approach: Only assume HEVC support for specific platforms
+    // See: https://github.com/jellyfin/jellyfin-web/blob/master/src/scripts/browserDeviceProfile.js
+    final userAgent = html.window.navigator.userAgent.toLowerCase();
+    final platform = html.window.navigator.platform?.toLowerCase() ?? '';
+    
+    // Safari on macOS/iOS - always supports HEVC
+    if (userAgent.contains('safari') && !userAgent.contains('chrome')) {
+      return true;
+    }
+    
+    // Edge Chromium on Windows - needs explicit support check
+    if (userAgent.contains('edg/') && platform.contains('win')) {
+      return hevcSupported; // Only if canPlayType confirms
+    }
+    
+    // Chrome on Chrome OS, macOS, Windows - very limited support
+    // Most systems do NOT support HEVC in Chrome
+    return false;
   }
 
   /// VP8 - Chrome, Firefox

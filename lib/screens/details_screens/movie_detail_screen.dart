@@ -38,7 +38,8 @@ class MovieDetailScreen extends ConsumerStatefulWidget {
   ConsumerState<ConsumerStatefulWidget> createState() => _ItemDetailScreenState();
 }
 
-class _ItemDetailScreenState extends ConsumerState<MovieDetailScreen> {
+class _ItemDetailScreenState extends ConsumerState<MovieDetailScreen> 
+    with AutoRouteAwareStateMixin<MovieDetailScreen> {
   MovieDetailsProvider get providerInstance => movieDetailsProvider(widget.item.id);
   final FocusNode _playButtonNode = FocusNode();
   final FocusNode _mediaInfoNode = FocusNode(); // NEW FOCUS NODE
@@ -54,6 +55,14 @@ class _ItemDetailScreenState extends ConsumerState<MovieDetailScreen> {
   void initState() {
     super.initState();
     _playButtonNode.addListener(_onPlayButtonFocusChange);
+  }
+
+  // AutoRouteAware callback - called when returning to this screen from another route (e.g. video player)
+  @override
+  void didPopNext() {
+    debugPrint('[MovieDetailScreen] didPopNext - refreshing details for resume button');
+    // Refresh the item details so that playback progress/resume button updates
+    ref.read(providerInstance.notifier).fetchDetails(widget.item);
   }
 
   void _onPlayButtonFocusChange() {
@@ -162,7 +171,7 @@ class _ItemDetailScreenState extends ConsumerState<MovieDetailScreen> {
 
   @override
   Widget build(BuildContext context) {
-    print('[LAG_DEBUG] ${DateTime.now()} MovieDetailScreen build: ${widget.item.name}');
+    // print('[LAG_DEBUG] ${DateTime.now()} MovieDetailScreen build: ${widget.item.name}');
     
     // Request focus after EVERY build to overcome late async rebuilds
     if (!_focusLocked) {

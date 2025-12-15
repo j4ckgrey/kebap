@@ -28,6 +28,7 @@ import 'package:kebap/util/adaptive_layout/adaptive_layout.dart';
 import 'package:kebap/util/bitrate_helper.dart';
 import 'package:kebap/util/box_fit_extension.dart';
 import 'package:kebap/util/localization_helper.dart';
+import 'package:kebap/util/option_dialogue.dart';
 import 'package:kebap/widgets/shared/enum_selection.dart';
 import 'package:kebap/widgets/shared/item_actions.dart';
 
@@ -81,17 +82,23 @@ class _PlayerSettingsPageState extends ConsumerState<PlayerSettingsPage> {
               ),
             SettingsListTile(
               label: Text(context.localized.videoScaling),
-              trailing: EnumBox(
-                current: videoSettings.videoFit.label(context),
-                itemBuilder: (context) => BoxFit.values
-                    .map(
-                      (entry) => ItemActionButton(
-                        label: Text(entry.label(context)),
-                        action: () => ref.read(videoPlayerSettingsProvider.notifier).setFitType(entry),
-                      ),
-                    )
-                    .toList(),
-              ),
+              onTap: () async {
+                final items = BoxFit.values;
+                await openMultiSelectOptions<BoxFit>(
+                  context,
+                  label: context.localized.videoScaling,
+                  items: items,
+                  selected: [videoSettings.videoFit],
+                  itemBuilder: (type, selected, tap) => CheckboxListTile(
+                    contentPadding: EdgeInsets.zero,
+                    value: selected,
+                    onChanged: (value) => tap(),
+                    title: Text(type.label(context)),
+                  ),
+                  onChanged: (values) => ref.read(videoPlayerSettingsProvider.notifier).setFitType(values.first),
+                );
+              },
+              trailing: Text(videoSettings.videoFit.label(context)),
             ),
             SettingsListTile(
               label: _StatusIndicator(
@@ -99,20 +106,26 @@ class _PlayerSettingsPageState extends ConsumerState<PlayerSettingsPage> {
                 label: Text(context.localized.homeStreamingQualityTitle),
               ),
               subLabel: Text(context.localized.homeStreamingQualityDesc),
-              trailing: EnumBox(
-                current: ref.watch(
-                  videoPlayerSettingsProvider.select((value) => value.maxHomeBitrate.label(context)),
-                ),
-                itemBuilder: (context) => Bitrate.values
-                    .map(
-                      (entry) => ItemActionButton(
-                        label: Text(entry.label(context)),
-                        action: () => ref.read(videoPlayerSettingsProvider.notifier).state =
-                            videoSettings.copyWith(maxHomeBitrate: entry),
-                      ),
-                    )
-                    .toList(),
-              ),
+              onTap: () async {
+                final items = Bitrate.values;
+                await openMultiSelectOptions<Bitrate>(
+                  context,
+                  label: context.localized.homeStreamingQualityTitle,
+                  items: items,
+                  selected: [videoSettings.maxHomeBitrate],
+                  itemBuilder: (type, selected, tap) => CheckboxListTile(
+                    contentPadding: EdgeInsets.zero,
+                    value: selected,
+                    onChanged: (value) => tap(),
+                    title: Text(type.label(context)),
+                  ),
+                  onChanged: (values) =>
+                      ref.read(videoPlayerSettingsProvider.notifier).state = videoSettings.copyWith(maxHomeBitrate: values.first),
+                );
+              },
+              trailing: Text(ref.watch(
+                videoPlayerSettingsProvider.select((value) => value.maxHomeBitrate.label(context)),
+              )),
             ),
             SettingsListTile(
               label: _StatusIndicator(
@@ -120,20 +133,26 @@ class _PlayerSettingsPageState extends ConsumerState<PlayerSettingsPage> {
                 label: Text(context.localized.internetStreamingQualityTitle),
               ),
               subLabel: Text(context.localized.internetStreamingQualityDesc),
-              trailing: EnumBox(
-                current: ref.watch(
-                  videoPlayerSettingsProvider.select((value) => value.maxInternetBitrate.label(context)),
-                ),
-                itemBuilder: (context) => Bitrate.values
-                    .map(
-                      (entry) => ItemActionButton(
-                        label: Text(entry.label(context)),
-                        action: () => ref.read(videoPlayerSettingsProvider.notifier).state =
-                            videoSettings.copyWith(maxInternetBitrate: entry),
-                      ),
-                    )
-                    .toList(),
-              ),
+              onTap: () async {
+                final items = Bitrate.values;
+                await openMultiSelectOptions<Bitrate>(
+                  context,
+                  label: context.localized.internetStreamingQualityTitle,
+                  items: items,
+                  selected: [videoSettings.maxInternetBitrate],
+                  itemBuilder: (type, selected, tap) => CheckboxListTile(
+                    contentPadding: EdgeInsets.zero,
+                    value: selected,
+                    onChanged: (value) => tap(),
+                    title: Text(type.label(context)),
+                  ),
+                  onChanged: (values) => ref.read(videoPlayerSettingsProvider.notifier).state =
+                      videoSettings.copyWith(maxInternetBitrate: values.first),
+                );
+              },
+              trailing: Text(ref.watch(
+                videoPlayerSettingsProvider.select((value) => value.maxInternetBitrate.label(context)),
+              )),
             ),
           ],
         ),
@@ -142,34 +161,30 @@ class _PlayerSettingsPageState extends ConsumerState<PlayerSettingsPage> {
           context,
           SettingsLabelDivider(label: context.localized.mediaSegmentActions), [
           ...videoSettings.segmentSkipSettings.entries.sorted((a, b) => b.key.index.compareTo(a.key.index)).map(
-                (entry) => Padding(
-                  padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
-                  child: Row(
-                    children: [
-                      Expanded(
-                        child: Text(
-                          entry.key.label(context),
-                          style: Theme.of(context).textTheme.titleLarge,
-                        ),
+                (entry) => SettingsListTile(
+                  label: Text(entry.key.label(context)),
+                  onTap: () async {
+                    final items = SegmentSkip.values;
+                    await openMultiSelectOptions<SegmentSkip>(
+                      context,
+                      label: entry.key.label(context),
+                      items: items,
+                      selected: [entry.value],
+                      itemBuilder: (type, selected, tap) => CheckboxListTile(
+                        contentPadding: EdgeInsets.zero,
+                        value: selected,
+                        onChanged: (value) => tap(),
+                        title: Text(type.label(context)),
                       ),
-                      EnumBox(
-                        current: entry.value.label(context),
-                        itemBuilder: (context) => SegmentSkip.values
-                            .map(
-                              (value) => ItemActionButton(
-                                label: Text(value.label(context)),
-                                action: () {
-                                  final newEntries = videoSettings.segmentSkipSettings.map(
-                                      (key, currentValue) => MapEntry(key, key == entry.key ? value : currentValue));
-                                  ref.read(videoPlayerSettingsProvider.notifier).state =
-                                      videoSettings.copyWith(segmentSkipSettings: newEntries);
-                                },
-                              ),
-                            )
-                            .toList(),
-                      )
-                    ],
-                  ),
+                      onChanged: (values) {
+                        final newEntries = videoSettings.segmentSkipSettings
+                            .map((key, currentValue) => MapEntry(key, key == entry.key ? values.first : currentValue));
+                        ref.read(videoPlayerSettingsProvider.notifier).state =
+                            videoSettings.copyWith(segmentSkipSettings: newEntries);
+                      },
+                    );
+                  },
+                  trailing: Text(entry.value.label(context)),
                 ),
               ),
         ]),
@@ -273,33 +288,34 @@ class _PlayerSettingsPageState extends ConsumerState<PlayerSettingsPage> {
           SettingsLabelDivider(label: context.localized.advanced),
           [
             if (PlayerOptions.available.length != 1)
+            if (PlayerOptions.available.length != 1)
               SettingsListTile(
                 label: Text(context.localized.playerSettingsBackendTitle),
                 subLabel: Text(context.localized.playerSettingsBackendDesc),
-                trailing: Builder(builder: (context) {
-                  final wantedPlayer = videoSettings.wantedPlayer;
+                onTap: () async {
                   final currentPlayer = videoSettings.playerOptions;
-                  return EnumBox(
-                    current: currentPlayer == null
-                        ? "${context.localized.defaultLabel} (${PlayerOptions.platformDefaults.label(context)})"
-                        : wantedPlayer.label(context),
-                    itemBuilder: (context) => [
-                      ItemActionButton(
-                        label: Text(
-                            "${context.localized.defaultLabel} (${PlayerOptions.platformDefaults.label(context)})"),
-                        action: () => ref.read(videoPlayerSettingsProvider.notifier).state =
-                            videoSettings.copyWith(playerOptions: null),
-                      ),
-                      ...PlayerOptions.available.map(
-                        (entry) => ItemActionButton(
-                          label: Text(entry.label(context)),
-                          action: () => ref.read(videoPlayerSettingsProvider.notifier).state =
-                              videoSettings.copyWith(playerOptions: entry),
-                        ),
-                      )
-                    ],
+                  await openMultiSelectOptions<PlayerOptions?>(
+                    context,
+                    label: context.localized.playerSettingsBackendTitle,
+                    items: [null, ...PlayerOptions.available],
+                    selected: [currentPlayer],
+                    itemBuilder: (type, selected, tap) => CheckboxListTile(
+                      contentPadding: EdgeInsets.zero,
+                      value: selected,
+                      onChanged: (value) => tap(),
+                      title: Text(type == null
+                          ? "${context.localized.defaultLabel} (${PlayerOptions.platformDefaults.label(context)})"
+                          : type.label(context)),
+                    ),
+                    onChanged: (values) => ref.read(videoPlayerSettingsProvider.notifier).state =
+                        videoSettings.copyWith(playerOptions: values.first),
                   );
-                }),
+                },
+                trailing: Text(
+                  videoSettings.playerOptions == null
+                      ? "${context.localized.defaultLabel} (${PlayerOptions.platformDefaults.label(context)})"
+                      : videoSettings.playerOptions!.label(context),
+                ),
               ),
             AnimatedFadeSize(
               child: switch (videoSettings.wantedPlayer) {
@@ -379,17 +395,23 @@ class _PlayerSettingsPageState extends ConsumerState<PlayerSettingsPage> {
                         SettingsListTile(
                           label: Text(context.localized.playerSettingsScreensaverTitle),
                           subLabel: Text(context.localized.playerSettingsScreensaverDesc),
-                          trailing: EnumBox(
-                            current: videoSettings.screensaver.label(context),
-                            itemBuilder: (context) => Screensaver.values
-                                .map(
-                                  (entry) => ItemActionButton(
-                                    label: Text(entry.label(context)),
-                                    action: () => provider.setScreensaver(entry),
-                                  ),
-                                )
-                                .toList(),
-                          ),
+                          onTap: () async {
+                            final items = Screensaver.values;
+                            await openMultiSelectOptions<Screensaver>(
+                              context,
+                              label: context.localized.playerSettingsScreensaverTitle,
+                              items: items,
+                              selected: [videoSettings.screensaver],
+                              itemBuilder: (type, selected, tap) => CheckboxListTile(
+                                contentPadding: EdgeInsets.zero,
+                                value: selected,
+                                onChanged: (value) => tap(),
+                                title: Text(type.label(context)),
+                              ),
+                              onChanged: (values) => provider.setScreensaver(values.first),
+                            );
+                          },
+                          trailing: Text(videoSettings.screensaver.label(context)),
                         ),
                     ],
                   ),
@@ -403,22 +425,28 @@ class _PlayerSettingsPageState extends ConsumerState<PlayerSettingsPage> {
                 SettingsListTile(
                   label: Text(context.localized.settingsAutoNextTitle),
                   subLabel: Text(context.localized.settingsAutoNextDesc),
-                  trailing: EnumBox(
-                    current: ref.watch(
-                      videoPlayerSettingsProvider.select(
-                        (value) => value.nextVideoType.label(context),
+                  onTap: () async {
+                    final items = AutoNextType.values;
+                    await openMultiSelectOptions<AutoNextType>(
+                      context,
+                      label: context.localized.settingsAutoNextTitle,
+                      items: items,
+                      selected: [ref.read(videoPlayerSettingsProvider).nextVideoType],
+                      itemBuilder: (type, selected, tap) => CheckboxListTile(
+                        contentPadding: EdgeInsets.zero,
+                        value: selected,
+                        onChanged: (value) => tap(),
+                        title: Text(type.label(context)),
                       ),
+                      onChanged: (values) => ref.read(videoPlayerSettingsProvider.notifier).state =
+                          videoSettings.copyWith(nextVideoType: values.first),
+                    );
+                  },
+                  trailing: Text(ref.watch(
+                    videoPlayerSettingsProvider.select(
+                      (value) => value.nextVideoType.label(context),
                     ),
-                    itemBuilder: (context) => AutoNextType.values
-                        .map(
-                          (entry) => ItemActionButton(
-                            label: Text(entry.label(context)),
-                            action: () => ref.read(videoPlayerSettingsProvider.notifier).state =
-                                videoSettings.copyWith(nextVideoType: entry),
-                          ),
-                        )
-                        .toList(),
-                  ),
+                  )),
                 ),
                 AnimatedFadeSize(
                   child: switch (ref.watch(videoPlayerSettingsProvider.select((value) => value.nextVideoType))) {
