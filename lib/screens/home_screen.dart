@@ -173,7 +173,9 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
                   route: const SyncedRoute(),
                   action: () => e.navigate(context),
                 );
+
               }
+              return null;
             case HomeTabs.library:
               return DestinationModel(
                 label: context.localized.library(0),

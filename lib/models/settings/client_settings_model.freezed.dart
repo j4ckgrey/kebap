@@ -44,6 +44,8 @@ mixin _$ClientSettingsModel implements DiagnosticableTreeMixin {
   bool get showClock;
   bool get use12HourClock;
   MediaStreamViewType get mediaStreamViewType;
+  LibraryLocation get libraryLocation;
+  bool get showSimilarTo;
   Map<GlobalHotKeys, KeyCombination> get shortcuts;
 
   /// Create a copy of ClientSettingsModel
@@ -92,6 +94,8 @@ mixin _$ClientSettingsModel implements DiagnosticableTreeMixin {
       ..add(DiagnosticsProperty('showClock', showClock))
       ..add(DiagnosticsProperty('use12HourClock', use12HourClock))
       ..add(DiagnosticsProperty('mediaStreamViewType', mediaStreamViewType))
+      ..add(DiagnosticsProperty('libraryLocation', libraryLocation))
+      ..add(DiagnosticsProperty('showSimilarTo', showSimilarTo))
       ..add(DiagnosticsProperty('shortcuts', shortcuts));
   }
 
@@ -156,6 +160,10 @@ mixin _$ClientSettingsModel implements DiagnosticableTreeMixin {
                 other.use12HourClock == use12HourClock) &&
             (identical(other.mediaStreamViewType, mediaStreamViewType) ||
                 other.mediaStreamViewType == mediaStreamViewType) &&
+            (identical(other.libraryLocation, libraryLocation) ||
+                other.libraryLocation == libraryLocation) &&
+            (identical(other.showSimilarTo, showSimilarTo) ||
+                other.showSimilarTo == showSimilarTo) &&
             const DeepCollectionEquality().equals(other.shortcuts, shortcuts));
   }
 
@@ -192,12 +200,14 @@ mixin _$ClientSettingsModel implements DiagnosticableTreeMixin {
         showClock,
         use12HourClock,
         mediaStreamViewType,
+        libraryLocation,
+        showSimilarTo,
         const DeepCollectionEquality().hash(shortcuts)
       ]);
 
   @override
   String toString({DiagnosticLevel minLevel = DiagnosticLevel.info}) {
-    return 'ClientSettingsModel(syncPath: $syncPath, position: $position, size: $size, timeOut: $timeOut, nextUpDateCutoff: $nextUpDateCutoff, themeMode: $themeMode, themeColor: $themeColor, deriveColorsFromItem: $deriveColorsFromItem, amoledBlack: $amoledBlack, blurPlaceHolders: $blurPlaceHolders, blurUpcomingEpisodes: $blurUpcomingEpisodes, selectedLocale: $selectedLocale, enableMediaKeys: $enableMediaKeys, posterSize: $posterSize, pinchPosterZoom: $pinchPosterZoom, mouseDragSupport: $mouseDragSupport, requireWifi: $requireWifi, showAllCollectionTypes: $showAllCollectionTypes, maxConcurrentDownloads: $maxConcurrentDownloads, schemeVariant: $schemeVariant, backgroundImage: $backgroundImage, checkForUpdates: $checkForUpdates, usePosterForLibrary: $usePosterForLibrary, useSystemIME: $useSystemIME, lastViewedUpdate: $lastViewedUpdate, libraryPageSize: $libraryPageSize, showClock: $showClock, use12HourClock: $use12HourClock, mediaStreamViewType: $mediaStreamViewType, shortcuts: $shortcuts)';
+    return 'ClientSettingsModel(syncPath: $syncPath, position: $position, size: $size, timeOut: $timeOut, nextUpDateCutoff: $nextUpDateCutoff, themeMode: $themeMode, themeColor: $themeColor, deriveColorsFromItem: $deriveColorsFromItem, amoledBlack: $amoledBlack, blurPlaceHolders: $blurPlaceHolders, blurUpcomingEpisodes: $blurUpcomingEpisodes, selectedLocale: $selectedLocale, enableMediaKeys: $enableMediaKeys, posterSize: $posterSize, pinchPosterZoom: $pinchPosterZoom, mouseDragSupport: $mouseDragSupport, requireWifi: $requireWifi, showAllCollectionTypes: $showAllCollectionTypes, maxConcurrentDownloads: $maxConcurrentDownloads, schemeVariant: $schemeVariant, backgroundImage: $backgroundImage, checkForUpdates: $checkForUpdates, usePosterForLibrary: $usePosterForLibrary, useSystemIME: $useSystemIME, lastViewedUpdate: $lastViewedUpdate, libraryPageSize: $libraryPageSize, showClock: $showClock, use12HourClock: $use12HourClock, mediaStreamViewType: $mediaStreamViewType, libraryLocation: $libraryLocation, showSimilarTo: $showSimilarTo, shortcuts: $shortcuts)';
   }
 }
 
@@ -237,6 +247,8 @@ abstract mixin class $ClientSettingsModelCopyWith<$Res> {
       bool showClock,
       bool use12HourClock,
       MediaStreamViewType mediaStreamViewType,
+      LibraryLocation libraryLocation,
+      bool showSimilarTo,
       Map<GlobalHotKeys, KeyCombination> shortcuts});
 }
 
@@ -282,6 +294,8 @@ class _$ClientSettingsModelCopyWithImpl<$Res>
     Object? showClock = null,
     Object? use12HourClock = null,
     Object? mediaStreamViewType = null,
+    Object? libraryLocation = null,
+    Object? showSimilarTo = null,
     Object? shortcuts = null,
   }) {
     return _then(_self.copyWith(
@@ -401,6 +415,14 @@ class _$ClientSettingsModelCopyWithImpl<$Res>
           ? _self.mediaStreamViewType
           : mediaStreamViewType // ignore: cast_nullable_to_non_nullable
               as MediaStreamViewType,
+      libraryLocation: null == libraryLocation
+          ? _self.libraryLocation
+          : libraryLocation // ignore: cast_nullable_to_non_nullable
+              as LibraryLocation,
+      showSimilarTo: null == showSimilarTo
+          ? _self.showSimilarTo
+          : showSimilarTo // ignore: cast_nullable_to_non_nullable
+              as bool,
       shortcuts: null == shortcuts
           ? _self.shortcuts
           : shortcuts // ignore: cast_nullable_to_non_nullable
@@ -532,6 +554,8 @@ extension ClientSettingsModelPatterns on ClientSettingsModel {
             bool showClock,
             bool use12HourClock,
             MediaStreamViewType mediaStreamViewType,
+            LibraryLocation libraryLocation,
+            bool showSimilarTo,
             Map<GlobalHotKeys, KeyCombination> shortcuts)?
         $default, {
     required TResult orElse(),
@@ -569,6 +593,8 @@ extension ClientSettingsModelPatterns on ClientSettingsModel {
             _that.showClock,
             _that.use12HourClock,
             _that.mediaStreamViewType,
+            _that.libraryLocation,
+            _that.showSimilarTo,
             _that.shortcuts);
       case _:
         return orElse();
@@ -620,6 +646,8 @@ extension ClientSettingsModelPatterns on ClientSettingsModel {
             bool showClock,
             bool use12HourClock,
             MediaStreamViewType mediaStreamViewType,
+            LibraryLocation libraryLocation,
+            bool showSimilarTo,
             Map<GlobalHotKeys, KeyCombination> shortcuts)
         $default,
   ) {
@@ -656,6 +684,8 @@ extension ClientSettingsModelPatterns on ClientSettingsModel {
             _that.showClock,
             _that.use12HourClock,
             _that.mediaStreamViewType,
+            _that.libraryLocation,
+            _that.showSimilarTo,
             _that.shortcuts);
       case _:
         throw StateError('Unexpected subclass');
@@ -706,6 +736,8 @@ extension ClientSettingsModelPatterns on ClientSettingsModel {
             bool showClock,
             bool use12HourClock,
             MediaStreamViewType mediaStreamViewType,
+            LibraryLocation libraryLocation,
+            bool showSimilarTo,
             Map<GlobalHotKeys, KeyCombination> shortcuts)?
         $default,
   ) {
@@ -742,6 +774,8 @@ extension ClientSettingsModelPatterns on ClientSettingsModel {
             _that.showClock,
             _that.use12HourClock,
             _that.mediaStreamViewType,
+            _that.libraryLocation,
+            _that.showSimilarTo,
             _that.shortcuts);
       case _:
         return null;
@@ -783,6 +817,8 @@ class _ClientSettingsModel extends ClientSettingsModel
       this.showClock = true,
       this.use12HourClock = false,
       this.mediaStreamViewType = MediaStreamViewType.dropdown,
+      this.libraryLocation = LibraryLocation.dashboard,
+      this.showSimilarTo = true,
       final Map<GlobalHotKeys, KeyCombination> shortcuts = const {}})
       : _shortcuts = shortcuts,
         super._();
@@ -871,6 +907,12 @@ class _ClientSettingsModel extends ClientSettingsModel
   @override
   @JsonKey()
   final MediaStreamViewType mediaStreamViewType;
+  @override
+  @JsonKey()
+  final LibraryLocation libraryLocation;
+  @override
+  @JsonKey()
+  final bool showSimilarTo;
   final Map<GlobalHotKeys, KeyCombination> _shortcuts;
   @override
   @JsonKey()
@@ -931,6 +973,8 @@ class _ClientSettingsModel extends ClientSettingsModel
       ..add(DiagnosticsProperty('showClock', showClock))
       ..add(DiagnosticsProperty('use12HourClock', use12HourClock))
       ..add(DiagnosticsProperty('mediaStreamViewType', mediaStreamViewType))
+      ..add(DiagnosticsProperty('libraryLocation', libraryLocation))
+      ..add(DiagnosticsProperty('showSimilarTo', showSimilarTo))
       ..add(DiagnosticsProperty('shortcuts', shortcuts));
   }
 
@@ -995,6 +1039,10 @@ class _ClientSettingsModel extends ClientSettingsModel
                 other.use12HourClock == use12HourClock) &&
             (identical(other.mediaStreamViewType, mediaStreamViewType) ||
                 other.mediaStreamViewType == mediaStreamViewType) &&
+            (identical(other.libraryLocation, libraryLocation) ||
+                other.libraryLocation == libraryLocation) &&
+            (identical(other.showSimilarTo, showSimilarTo) ||
+                other.showSimilarTo == showSimilarTo) &&
             const DeepCollectionEquality()
                 .equals(other._shortcuts, _shortcuts));
   }
@@ -1032,12 +1080,14 @@ class _ClientSettingsModel extends ClientSettingsModel
         showClock,
         use12HourClock,
         mediaStreamViewType,
+        libraryLocation,
+        showSimilarTo,
         const DeepCollectionEquality().hash(_shortcuts)
       ]);
 
   @override
   String toString({DiagnosticLevel minLevel = DiagnosticLevel.info}) {
-    return 'ClientSettingsModel(syncPath: $syncPath, position: $position, size: $size, timeOut: $timeOut, nextUpDateCutoff: $nextUpDateCutoff, themeMode: $themeMode, themeColor: $themeColor, deriveColorsFromItem: $deriveColorsFromItem, amoledBlack: $amoledBlack, blurPlaceHolders: $blurPlaceHolders, blurUpcomingEpisodes: $blurUpcomingEpisodes, selectedLocale: $selectedLocale, enableMediaKeys: $enableMediaKeys, posterSize: $posterSize, pinchPosterZoom: $pinchPosterZoom, mouseDragSupport: $mouseDragSupport, requireWifi: $requireWifi, showAllCollectionTypes: $showAllCollectionTypes, maxConcurrentDownloads: $maxConcurrentDownloads, schemeVariant: $schemeVariant, backgroundImage: $backgroundImage, checkForUpdates: $checkForUpdates, usePosterForLibrary: $usePosterForLibrary, useSystemIME: $useSystemIME, lastViewedUpdate: $lastViewedUpdate, libraryPageSize: $libraryPageSize, showClock: $showClock, use12HourClock: $use12HourClock, mediaStreamViewType: $mediaStreamViewType, shortcuts: $shortcuts)';
+    return 'ClientSettingsModel(syncPath: $syncPath, position: $position, size: $size, timeOut: $timeOut, nextUpDateCutoff: $nextUpDateCutoff, themeMode: $themeMode, themeColor: $themeColor, deriveColorsFromItem: $deriveColorsFromItem, amoledBlack: $amoledBlack, blurPlaceHolders: $blurPlaceHolders, blurUpcomingEpisodes: $blurUpcomingEpisodes, selectedLocale: $selectedLocale, enableMediaKeys: $enableMediaKeys, posterSize: $posterSize, pinchPosterZoom: $pinchPosterZoom, mouseDragSupport: $mouseDragSupport, requireWifi: $requireWifi, showAllCollectionTypes: $showAllCollectionTypes, maxConcurrentDownloads: $maxConcurrentDownloads, schemeVariant: $schemeVariant, backgroundImage: $backgroundImage, checkForUpdates: $checkForUpdates, usePosterForLibrary: $usePosterForLibrary, useSystemIME: $useSystemIME, lastViewedUpdate: $lastViewedUpdate, libraryPageSize: $libraryPageSize, showClock: $showClock, use12HourClock: $use12HourClock, mediaStreamViewType: $mediaStreamViewType, libraryLocation: $libraryLocation, showSimilarTo: $showSimilarTo, shortcuts: $shortcuts)';
   }
 }
 
@@ -1079,6 +1129,8 @@ abstract mixin class _$ClientSettingsModelCopyWith<$Res>
       bool showClock,
       bool use12HourClock,
       MediaStreamViewType mediaStreamViewType,
+      LibraryLocation libraryLocation,
+      bool showSimilarTo,
       Map<GlobalHotKeys, KeyCombination> shortcuts});
 }
 
@@ -1124,6 +1176,8 @@ class __$ClientSettingsModelCopyWithImpl<$Res>
     Object? showClock = null,
     Object? use12HourClock = null,
     Object? mediaStreamViewType = null,
+    Object? libraryLocation = null,
+    Object? showSimilarTo = null,
     Object? shortcuts = null,
   }) {
     return _then(_ClientSettingsModel(
@@ -1243,6 +1297,14 @@ class __$ClientSettingsModelCopyWithImpl<$Res>
           ? _self.mediaStreamViewType
           : mediaStreamViewType // ignore: cast_nullable_to_non_nullable
               as MediaStreamViewType,
+      libraryLocation: null == libraryLocation
+          ? _self.libraryLocation
+          : libraryLocation // ignore: cast_nullable_to_non_nullable
+              as LibraryLocation,
+      showSimilarTo: null == showSimilarTo
+          ? _self.showSimilarTo
+          : showSimilarTo // ignore: cast_nullable_to_non_nullable
+              as bool,
       shortcuts: null == shortcuts
           ? _self._shortcuts
           : shortcuts // ignore: cast_nullable_to_non_nullable

@@ -55,6 +55,20 @@ enum BackgroundType {
   }
 }
 
+enum LibraryLocation {
+  dashboard,
+  sidebar;
+
+  const LibraryLocation();
+
+  String label(BuildContext context) {
+    return switch (this) {
+      LibraryLocation.dashboard => context.localized.dashboard,
+      LibraryLocation.sidebar => context.localized.sidebar,
+    };
+  }
+}
+
 @Freezed(copyWith: true)
 abstract class ClientSettingsModel with _$ClientSettingsModel {
   const ClientSettingsModel._();
@@ -89,6 +103,8 @@ abstract class ClientSettingsModel with _$ClientSettingsModel {
     @Default(true) bool showClock,
     @Default(false) bool use12HourClock,
     @Default(MediaStreamViewType.dropdown) MediaStreamViewType mediaStreamViewType,
+    @Default(LibraryLocation.dashboard) LibraryLocation libraryLocation,
+    @Default(true) bool showSimilarTo,
     @Default({}) Map<GlobalHotKeys, KeyCombination> shortcuts,
   }) = _ClientSettingsModel;
 
@@ -97,6 +113,8 @@ abstract class ClientSettingsModel with _$ClientSettingsModel {
       blurPlaceHolders: leanBackMode ? false : true,
       backgroundImage: leanBackMode ? BackgroundType.disabled : BackgroundType.blurred,
       themeMode: leanBackMode ? ThemeMode.dark : ThemeMode.system,
+      libraryLocation: LibraryLocation.dashboard,
+      showSimilarTo: true,
     );
   }
 

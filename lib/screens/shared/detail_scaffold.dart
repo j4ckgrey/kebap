@@ -12,6 +12,7 @@ import 'package:kebap/util/kebap_image.dart';
 import 'package:kebap/widgets/navigation_scaffold/components/navigation_body.dart';
 import 'package:kebap/widgets/shared/item_actions.dart';
 import 'package:kebap/widgets/shared/pull_to_refresh.dart';
+import 'package:kebap/util/focus_provider.dart';
 
 Future<Color?> getDominantColor(ImageProvider imageProvider) async {
   final paletteGenerator = await PaletteGeneratorMaster.fromImageProvider(
@@ -212,9 +213,12 @@ class _DetailScaffoldState extends ConsumerState<DetailScaffold> {
                               minHeight: size.height,
                               maxWidth: size.width,
                             ),
-                            child: widget.content(
-                              padding.copyWith(
-                                left: 25 + MediaQuery.paddingOf(context).left,
+                            child: FocusProvider(
+                              autoFocus: false, // Prevent carousels from autofocusing
+                              child: widget.content(
+                                padding.copyWith(
+                                  left: 25 + MediaQuery.paddingOf(context).left,
+                                ),
                               ),
                             ),
                           ),

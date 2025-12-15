@@ -98,7 +98,9 @@ Future<void> _playVideo(
 
   await ref.read(videoPlayerProvider.notifier).openPlayer(context);
   if (AdaptiveLayout.of(context).isDesktop) {
-    fullScreenHelper.closeFullScreen(ref);
+    try {
+      fullScreenHelper.closeFullScreen(ref);
+    } catch (_) {}
   }
 
   if (context.mounted) {
@@ -200,16 +202,22 @@ extension ItemBaseModelExtensions on ItemBaseModel? {
     Duration? startPosition,
     bool showPlaybackOption = false,
   }) async {
-    if (itemModel == null) return;
+    print("[ItemBaseModelExtensions] _default called for item: ${itemModel?.name} (ID: ${itemModel?.id})");
+    if (itemModel == null) {
+      print("[ItemBaseModelExtensions] Item model is null, returning.");
+      return;
+    }
 
     _showLoadingIndicator(context);
 
+    print("[ItemBaseModelExtensions] Calling createPlaybackModel...");
     PlaybackModel? model = await ref.read(playbackModelHelper).createPlaybackModel(
           context,
           itemModel,
           showPlaybackOptions: showPlaybackOption,
           startPosition: startPosition,
         );
+    print("[ItemBaseModelExtensions] createPlaybackModel returned: ${model != null ? 'Model found' : 'Null'}");
 
     await _playVideo(context, startPosition: startPosition, current: model, ref: ref);
   }

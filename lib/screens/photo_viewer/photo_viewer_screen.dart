@@ -470,8 +470,8 @@ class _PhotoViewerScreenState extends ConsumerState<PhotoViewerScreen> with Widg
                               .read(photoViewSettingsProvider.notifier)
                               .update((state) => state.copyWith(autoPlay: !state.autoPlay)),
                           icon: ref.watch(photoViewSettingsProvider.select((value) => value.autoPlay))
-                              ? IconsaxPlusLinear.play_remove
-                              : IconsaxPlusLinear.play,
+                              ? Icons.pause_circle_rounded
+                              : Icons.play_circle_rounded,
                         ),
                         ElevatedIconButtonLabel(
                           label: context.localized.backgroundBlur,

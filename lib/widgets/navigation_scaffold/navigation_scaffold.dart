@@ -48,6 +48,7 @@ class _NavigationScaffoldState extends ConsumerState<NavigationScaffold> with Wi
   final GlobalKey<ScaffoldState> _key = GlobalKey();
   final FocusNode _drawerFirstItemFocusNode = FocusNode();
   GlobalKey<ScaffoldState> get _effectiveKey => widget.scaffoldKey ?? _key;
+  bool _isDrawerOpen = false;
 
   int get currentIndex =>
       widget.destinations.indexWhere((element) => element.route?.routeName == widget.currentRouteName);
@@ -150,26 +151,42 @@ class _NavigationScaffoldState extends ConsumerState<NavigationScaffold> with Wi
               ),
               //Builder to correctly apply new padding
               child: Builder(builder: (context) {
-                return Scaffold(
-                  key: _effectiveKey,
+                return PopScope(
+                  canPop: false,
+                  onPopInvoked: (didPop) {
+                    if (didPop) return;
+                    if (_effectiveKey.currentState?.isDrawerOpen ?? false) {
+                      _effectiveKey.currentState?.closeDrawer();
+                    } else {
+                       _handleExit();
+                    }
+                  },
+                  child: Scaffold(
+                    key: _effectiveKey,
                   drawerEnableOpenDragGesture: false,
                   appBar: (fullScreenChildRoute || (currentLocation.contains("Settings") && !isDesktop)) ? null : const KebapAppBar(),
                   extendBodyBehindAppBar: false,
                   resizeToAvoidBottomInset: false,
                   extendBody: true,
-                onDrawerChanged: (isOpened) {
+                  onDrawerChanged: (isOpened) {
+                    setState(() {
+                      _isDrawerOpen = isOpened;
+                    });
                     // When drawer opens, focus its first item
                     if (isOpened) {
-                      Future.delayed(const Duration(milliseconds: 50), () {
-                        if (_drawerFirstItemFocusNode.context != null) {
-                          _drawerFirstItemFocusNode.requestFocus();
+                      // Use postFrameCallback to ensure the drawer widget is fully built and attached
+                      WidgetsBinding.instance.addPostFrameCallback((_) {
+                        // Double check if it's still open to avoid race conditions
+                        if (_effectiveKey.currentState?.isDrawerOpen ?? false) {
+                           if (_drawerFirstItemFocusNode.context != null) {
+                            _drawerFirstItemFocusNode.requestFocus();
+                          }
                         }
                       });
                     }
                     // When drawer closes, restore focus to the previously focused content item
                     if (!isOpened && lastMainFocus != null && lastMainFocus!.context != null && lastMainFocus!.canRequestFocus) {
-                      // Use a short delay to ensure drawer animation completes
-                      Future.delayed(const Duration(milliseconds: 100), () {
+                       WidgetsBinding.instance.addPostFrameCallback((_) {
                         if (lastMainFocus != null && lastMainFocus!.context != null && lastMainFocus!.canRequestFocus) {
                           lastMainFocus!.requestFocus();
                         }
@@ -195,30 +212,34 @@ class _NavigationScaffoldState extends ConsumerState<NavigationScaffold> with Wi
                         )
                       : null,
                   body: widget.nestedChild != null
-                      ? Stack(
-                          children: [
-                            NavigationBody(
-                              child: widget.nestedChild!,
-                              parentContext: context,
-                              currentIndex: currentIndex,
-                              destinations: widget.destinations,
-                              currentLocation: currentLocation,
-                              drawerKey: _effectiveKey,
-                            ),
-                            if (!currentLocation.contains("Settings"))
-                              const Align(
-                                alignment: Alignment.topCenter,
-                                child: SafeArea(
-                                  child: Padding(
-                                    padding: EdgeInsets.only(top: 8.0),
-                                    child: ClockBadge(),
+                      ? FocusScope(
+                          canRequestFocus: !_isDrawerOpen,
+                          child: Stack(
+                            children: [
+                              NavigationBody(
+                                child: widget.nestedChild!,
+                                parentContext: context,
+                                currentIndex: currentIndex,
+                                destinations: widget.destinations,
+                                currentLocation: currentLocation,
+                                drawerKey: _effectiveKey,
+                              ),
+                              if (!currentLocation.contains("Settings"))
+                                const Align(
+                                  alignment: Alignment.topCenter,
+                                  child: SafeArea(
+                                    child: Padding(
+                                      padding: EdgeInsets.only(top: 8.0),
+                                      child: ClockBadge(),
+                                    ),
                                   ),
                                 ),
-                              ),
-                          ],
+                            ],
+                          ),
                         )
                       : null,
-                );
+                ),
+              );
               }),
             ),
           ),

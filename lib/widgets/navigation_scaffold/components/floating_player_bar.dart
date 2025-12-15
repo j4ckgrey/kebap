@@ -92,7 +92,7 @@ class _CurrentlyPlayingBarState extends ConsumerState<FloatingPlayerBar> {
       ItemActionButton(
         label: Text(context.localized.stop),
         action: () async => stopPlayer(),
-        icon: const Icon(IconsaxPlusBold.stop),
+        icon: const Icon(Icons.stop_rounded),
       ),
       ItemActionButton(
         label: Text(isFavourite ? context.localized.removeAsFavorite : context.localized.addAsFavorite),

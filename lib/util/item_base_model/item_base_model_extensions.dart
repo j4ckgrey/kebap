@@ -116,7 +116,7 @@ extension ItemBaseModelExtensions on ItemBaseModel {
         if (playAble)
           ItemActionButton(
             action: () => play(context, ref),
-            icon: const Icon(IconsaxPlusLinear.play),
+            icon: const Icon(Icons.play_arrow_rounded),
             label: Text(playButtonLabel(context)),
           ),
       if (parentId?.isNotEmpty == true) ...[

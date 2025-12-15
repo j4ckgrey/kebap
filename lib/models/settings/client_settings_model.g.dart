@@ -54,6 +54,10 @@ _ClientSettingsModel _$ClientSettingsModelFromJson(Map<String, dynamic> json) =>
       mediaStreamViewType: $enumDecodeNullable(
               _$MediaStreamViewTypeEnumMap, json['mediaStreamViewType']) ??
           MediaStreamViewType.dropdown,
+      libraryLocation: $enumDecodeNullable(
+              _$LibraryLocationEnumMap, json['libraryLocation']) ??
+          LibraryLocation.dashboard,
+      showSimilarTo: json['showSimilarTo'] as bool? ?? true,
       shortcuts: (json['shortcuts'] as Map<String, dynamic>?)?.map(
             (k, e) => MapEntry($enumDecode(_$GlobalHotKeysEnumMap, k),
                 KeyCombination.fromJson(e as Map<String, dynamic>)),
@@ -94,6 +98,8 @@ Map<String, dynamic> _$ClientSettingsModelToJson(
       'use12HourClock': instance.use12HourClock,
       'mediaStreamViewType':
           _$MediaStreamViewTypeEnumMap[instance.mediaStreamViewType]!,
+      'libraryLocation': _$LibraryLocationEnumMap[instance.libraryLocation]!,
+      'showSimilarTo': instance.showSimilarTo,
       'shortcuts': instance.shortcuts
           .map((k, e) => MapEntry(_$GlobalHotKeysEnumMap[k]!, e)),
     };
@@ -143,6 +149,11 @@ const _$BackgroundTypeEnumMap = {
 const _$MediaStreamViewTypeEnumMap = {
   MediaStreamViewType.dropdown: 'dropdown',
   MediaStreamViewType.carousel: 'carousel',
+};
+
+const _$LibraryLocationEnumMap = {
+  LibraryLocation.dashboard: 'dashboard',
+  LibraryLocation.sidebar: 'sidebar',
 };
 
 const _$GlobalHotKeysEnumMap = {

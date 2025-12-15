@@ -138,7 +138,12 @@ class _VideoOptionsMobileState extends ConsumerState<VideoOptions> {
           SpacedListTile(
             title: Text(context.localized.subtitles),
             content: Text(currentMediaStreams?.currentSubStream?.label(context) ?? context.localized.off),
-            onTap: currentMediaStreams?.subStreams.isNotEmpty == true ? () => showSubSelection(context) : null,
+            onTap: () {
+               debugPrint('[VideoOptions] Subtitle tile tapped. Streams: ${currentMediaStreams?.subStreams.length}');
+               if (currentMediaStreams?.subStreams.isNotEmpty == true) {
+                 showSubSelection(context);
+               }
+            },
           ),
           SpacedListTile(
             title: Text(context.localized.audio),
