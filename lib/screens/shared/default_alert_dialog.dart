@@ -22,15 +22,13 @@ Future<void> showDefaultAlertDialog(
       content: content != null ? Text(content) : null,
       actions: [
         if (decline != null)
-          Consumer(
-            builder: (context, ref, child) => ElevatedButton(
-              autofocus: ref.read(argumentsStateProvider).htpcMode,
-              onPressed: () => decline.call(context),
-              child: Text(declineTitle),
-            ),
+          ElevatedButton(
+            onPressed: () => decline.call(context),
+            child: Text(declineTitle),
           ),
         if (accept != null)
           ElevatedButton(
+            autofocus: true,
             style: ElevatedButton.styleFrom(
               backgroundColor: Theme.of(context).colorScheme.errorContainer,
               foregroundColor: Theme.of(context).colorScheme.onErrorContainer,
@@ -66,6 +64,7 @@ Future<void> showDefaultActionDialog(
           ),
         if (accept != null)
           ElevatedButton(
+            autofocus: true,
             style: ElevatedButton.styleFrom(
               backgroundColor: Theme.of(context).colorScheme.primaryContainer,
               foregroundColor: Theme.of(context).colorScheme.onPrimaryContainer,

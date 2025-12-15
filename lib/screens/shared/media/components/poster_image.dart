@@ -130,6 +130,7 @@ class PosterImage extends ConsumerWidget {
                 borderRadius: BorderRadius.circular(8),
                 child: InkWell(
                   borderRadius: BorderRadius.circular(8),
+                  hoverColor: Theme.of(context).colorScheme.onPrimary.withOpacity(0.2),
                   onTap: () {
                     defaultAction();
                   },
@@ -319,6 +320,7 @@ class PosterImage extends ConsumerWidget {
               borderRadius: BorderRadius.circular(8),
               child: InkWell(
                 borderRadius: BorderRadius.circular(8),
+                hoverColor: Theme.of(context).colorScheme.onPrimary.withOpacity(0.2),
                 onTap: () {
                   defaultAction();
                 },
