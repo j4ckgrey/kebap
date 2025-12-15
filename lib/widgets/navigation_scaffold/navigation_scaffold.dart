@@ -151,17 +151,31 @@ class _NavigationScaffoldState extends ConsumerState<NavigationScaffold> with Wi
               ),
               //Builder to correctly apply new padding
               child: Builder(builder: (context) {
+                // Check if we're on a details/nested page (not a main home tab)
+                final isDetailsOrNestedPage = currentLocation.toLowerCase().contains('details') ||
+                    currentLocation.toLowerCase().contains('settings');
+                
                 return PopScope(
                   canPop: false,
                   onPopInvoked: (didPop) {
                     if (didPop) return;
                     if (_effectiveKey.currentState?.isDrawerOpen ?? false) {
                       _effectiveKey.currentState?.closeDrawer();
+                    } else if (isDetailsOrNestedPage) {
+                      // We're on a details/nested page, always try to pop first
+                      // This fixes web issue where canPop() returns false after staying on details page
+                      context.router.maybePop().then((didPop) {
+                        if (!didPop) {
+                          // Only show exit dialog if maybePop actually failed
+                          _handleExit();
+                        }
+                      });
                     } else if (context.router.canPop()) {
-                      // If we're on a nested route (like details page), pop back instead of exit
+                      // On home screen, check if we can pop (shouldn't normally happen)
                       context.router.maybePop();
                     } else {
-                       _handleExit();
+                      // On home screen and can't pop, show exit dialog
+                      _handleExit();
                     }
                   },
                   child: Scaffold(
