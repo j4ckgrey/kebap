@@ -111,29 +111,6 @@ class _DashboardScreenState extends ConsumerState<DashboardScreen> with AutoRout
     await ref.read(dashboardProvider.notifier).fetchNextUpAndResume();
   }
 
-  Future<void> _handleExit() async {
-    showDefaultAlertDialog(
-      context,
-      context.localized.exitKebapTitle,
-      context.localized.exitKebapDesc,
-      (context) async {
-        if (!kIsWeb && (Platform.isWindows || Platform.isLinux || Platform.isMacOS)) {
-          final manager = WindowManager.instance;
-          if (await manager.isClosable()) {
-            manager.close();
-          } else {
-            kebapSnackbar(context, title: context.localized.somethingWentWrong);
-          }
-        } else {
-          SystemNavigator.pop();
-        }
-      },
-      context.localized.close,
-      (context) => context.pop(),
-      context.localized.cancel,
-    );
-  }
-
   @override
   Widget build(BuildContext context) {
     final padding = AdaptiveLayout.adaptivePadding(context);
@@ -148,26 +125,19 @@ class _DashboardScreenState extends ConsumerState<DashboardScreen> with AutoRout
 
     final allResume = [...resumeVideo, ...resumeAudio, ...resumeBooks].toList();
 
-    return PopScope(
-      canPop: false,
-      onPopInvokedWithResult: (didPop, result) async {
-        debugPrint('[DashboardScreen] onPopInvokedWithResult: didPop=$didPop');
-        if (didPop) return;
-        _handleExit();
-      },
-      child: MediaQuery.removeViewInsets(
-        context: context,
-        child: NestedScaffold(
-          background: ValueListenableBuilder<ItemBaseModel?>(
-            valueListenable: selectedPoster,
-            builder: (_, value, __) {
-              return BackgroundImage(
-                images: (value != null
-                        ? [value]
-                        : [
-                            ...dashboardData.nextUp,
-                            ...allResume,
-                          ])
+    return MediaQuery.removeViewInsets(
+      context: context,
+      child: NestedScaffold(
+        background: ValueListenableBuilder<ItemBaseModel?>(
+          valueListenable: selectedPoster,
+          builder: (_, value, __) {
+            return BackgroundImage(
+              images: (value != null
+                      ? [value]
+                      : [
+                          ...dashboardData.nextUp,
+                          ...allResume,
+                        ])
                     .map((e) => e.images)
                     .nonNulls
                     .toList(),
@@ -299,7 +269,6 @@ class _DashboardScreenState extends ConsumerState<DashboardScreen> with AutoRout
             ),
           ),
         ),
-      ),
     );
   }
 }

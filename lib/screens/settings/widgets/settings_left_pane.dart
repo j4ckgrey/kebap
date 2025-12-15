@@ -84,6 +84,7 @@ class SettingsLeftPane extends ConsumerWidget {
             ],
             SettingsListTile(
               key: const ValueKey('client_settings'),
+              autoFocus: htpcMode,
               label: Text(context.localized.settingsClientTitle),
               subLabel: Text(context.localized.settingsClientDesc),
               selected: containsRoute(const ClientSettingsRoute()),

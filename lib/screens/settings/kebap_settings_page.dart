@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:auto_route/auto_route.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
+import 'package:kebap/providers/arguments_provider.dart';
 import 'package:kebap/providers/baklava_config_provider.dart';
 import 'package:kebap/providers/settings/kebap_settings_provider.dart';
 import 'package:kebap/providers/user_provider.dart';
@@ -42,11 +43,13 @@ class _KebapSettingsPageState extends ConsumerState<KebapSettingsPage> {
     final useBaklava = local.useBaklava;
     final user = ref.watch(userProvider);
     final isAdmin = user?.policy?.isAdministrator ?? false;
+    final htpcMode = ref.watch(argumentsStateProvider.select((value) => value.htpcMode));
 
     return SettingsScaffold(
       label: "Kebap Settings",
       items: [
         SettingsListTile(
+          autoFocus: htpcMode,
           label: const Text('Use Baklava plugin config'),
           subLabel: const Text('When enabled, Kebap will prefer the Baklava plugin settings'),
           trailing: Switch(
