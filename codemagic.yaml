@@ -48,13 +48,24 @@ workflows:
       - name: Package Payload to IPA
         script: |
           cd build/ios/iphoneos
-          mkdir Payload
-          cp -r Runner.app Payload/
-          zip -r kebap.ipa Payload
+          mkdir -p Payload
+          cp -r Runner.app Payload/Runner.app
+          zip -r -y kebap.ipa Payload
+          mv kebap.ipa ../../../
+          echo "IPA created at: $(pwd)/../../../kebap.ipa"
+          ls -lh ../../../kebap.ipa
     
     artifacts:
-      - build/ios/iphoneos/kebap.ipa
+      - kebap.ipa
       - /tmp/xcodebuild_logs/*.log
+    
+    publishing:
+      email:
+        recipients:
+          - $CM_EMAIL
+        notify:
+          success: true
+          failure: true
 
   # ============================================
   # macOS Production Build
@@ -90,12 +101,23 @@ workflows:
         script: |
           cd build/macos/Build/Products/Release-production
           APP_NAME=$(ls -d *.app | head -1)
-          DMG_NAME="${APP_NAME%.app}.dmg"
+          DMG_NAME="Kebap.dmg"
+          echo "Creating DMG for: $APP_NAME"
           hdiutil create -volname "Kebap" -srcfolder "$APP_NAME" -ov -format UDZO "$DMG_NAME"
+          mv "$DMG_NAME" ../../../../
+          echo "DMG created at: $(pwd)/../../../../$DMG_NAME"
+          ls -lh "../../../../$DMG_NAME"
     
     artifacts:
-      - build/macos/Build/Products/Release-production/*.app
-      - build/macos/Build/Products/Release-production/*.dmg
+      - Kebap.dmg
+    
+    publishing:
+      email:
+        recipients:
+          - $CM_EMAIL
+        notify:
+          success: true
+          failure: true
 
   # ============================================
   # iOS Development Build (optional)
@@ -133,9 +155,19 @@ workflows:
       - name: Package Payload to IPA
         script: |
           cd build/ios/iphoneos
-          mkdir Payload
-          cp -r Runner.app Payload/
-          zip -r kebap_dev.ipa Payload
+          mkdir -p Payload
+          cp -r Runner.app Payload/Runner.app
+          zip -r -y kebap_dev.ipa Payload
+          mv kebap_dev.ipa ../../../
+          echo "IPA created at: $(pwd)/../../../kebap_dev.ipa"
+          ls -lh ../../../kebap_dev.ipa
     
     artifacts:
-      - build/ios/iphoneos/kebap_dev.ipa
+      - kebap_dev.ipa    
+    publishing:
+      email:
+        recipients:
+          - $CM_EMAIL
+        notify:
+          success: true
+          failure: true

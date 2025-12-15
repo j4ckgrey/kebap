@@ -116,9 +116,12 @@ class _DashboardScreenState extends ConsumerState<DashboardScreen> with AutoRout
     final padding = AdaptiveLayout.adaptivePadding(context);
 
     final dashboardData = ref.watch(dashboardProvider);
-    final views = ref.watch(viewsProvider);
+    final dashboardViews = ref.watch(viewsProvider.select((v) => v.dashboardViews));
+    final viewsList = ref.watch(viewsProvider.select((v) => v.views));
     final homeSettings = ref.watch(homeSettingsProvider);
-    final clientSettings = ref.watch(clientSettingsProvider);
+    final libraryLocation = ref.watch(clientSettingsProvider.select((s) => s.libraryLocation));
+    final isOffline = ref.watch(connectivityStatusProvider.select((s) => s == ConnectionState.offline));
+    
     final resumeVideo = dashboardData.resumeVideo;
     final resumeAudio = dashboardData.resumeAudio;
     final resumeBooks = dashboardData.resumeBooks;
@@ -149,21 +152,19 @@ class _DashboardScreenState extends ConsumerState<DashboardScreen> with AutoRout
             autofocus: true,
             child: Builder(
               builder: (context) {
-                  final isOffline = ref.watch(connectivityStatusProvider) == ConnectionState.offline;
-
                   final offlineMovies = allResume.where((e) => e.type == KebapItemType.movie || e.type == KebapItemType.video).toList();
                   final offlineShows = allResume.where((e) => e.type == KebapItemType.episode || e.type == KebapItemType.series).toList();
 
                   final rows = [
                     // Libraries Row (Top of Dashboard)
-                    if (views.dashboardViews.isNotEmpty && clientSettings.libraryLocation == LibraryLocation.dashboard)
+                    if (dashboardViews.isNotEmpty && libraryLocation == LibraryLocation.dashboard)
                       RowData(
                         label: context.localized.library(2),
                         aspectRatio: 1.2, // Much wider
                         useStandardHeight: true,
                         // onItemTap not provided -> Defaults to Focus behavior (updates banner)
                         onItemOpen: (item) => context.router.push(LibrarySearchRoute(viewModelId: item.id)),
-                        posters: views.dashboardViews.map((view) => ItemBaseModel(
+                        posters: dashboardViews.map((view) => ItemBaseModel(
                           name: view.name,
                           id: view.id,
                           overview: OverviewModel(), 
@@ -228,7 +229,7 @@ class _DashboardScreenState extends ConsumerState<DashboardScreen> with AutoRout
                         label: context.localized.dashboardContinue,
                         posters: [...allResume, ...dashboardData.nextUp],
                       ),
-                    ...views.views
+                    ...viewsList
                         .where((element) => element.recentlyAdded.isNotEmpty)
                         .map(
                           (view) => RowData(

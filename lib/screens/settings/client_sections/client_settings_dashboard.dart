@@ -10,6 +10,7 @@ import 'package:kebap/screens/settings/settings_list_tile.dart';
 import 'package:kebap/screens/settings/widgets/settings_label_divider.dart';
 import 'package:kebap/screens/settings/widgets/settings_list_group.dart';
 import 'package:kebap/util/localization_helper.dart';
+import 'package:kebap/util/option_dialogue.dart';
 import 'package:kebap/widgets/shared/enum_selection.dart';
 import 'package:kebap/widgets/shared/item_actions.dart';
 
@@ -23,22 +24,29 @@ List<Widget> buildClientSettingsDashboard(BuildContext context, WidgetRef ref) {
       SettingsListTile(
         label: Text(context.localized.settingsHomeNextUpTitle),
         subLabel: Text(context.localized.settingsHomeNextUpDesc),
-        trailing: EnumBox(
-          current: ref.watch(
-            homeSettingsProvider.select(
-              (value) => value.nextUp.label(context),
+        onTap: () async {
+          final items = HomeNextUp.values;
+          await openMultiSelectOptions<HomeNextUp>(
+            context,
+            label: context.localized.settingsHomeNextUpTitle,
+            items: items,
+            selected: [ref.read(homeSettingsProvider).nextUp],
+            itemBuilder: (type, selected, tap) => CheckboxListTile(
+              contentPadding: EdgeInsets.zero,
+              value: selected,
+              onChanged: (value) => tap(),
+              title: Text(type.label(context)),
             ),
+            onChanged: (values) => ref
+                .read(homeSettingsProvider.notifier)
+                .update((context) => context.copyWith(nextUp: values.first)),
+          );
+        },
+        trailing: Text(ref.watch(
+          homeSettingsProvider.select(
+            (value) => value.nextUp.label(context),
           ),
-          itemBuilder: (context) => HomeNextUp.values
-              .map(
-                (entry) => ItemActionButton(
-                  label: Text(entry.label(context)),
-                  action: () =>
-                      ref.read(homeSettingsProvider.notifier).update((context) => context.copyWith(nextUp: entry)),
-                ),
-              )
-              .toList(),
-        ),
+        )),
       ),
       SettingsListTile(
         label: Text(context.localized.bannerMediaType),
@@ -93,27 +101,36 @@ List<Widget> buildClientSettingsDashboard(BuildContext context, WidgetRef ref) {
       SettingsListTile(
         label: Text(context.localized.libraryLocation),
         subLabel: Text(context.localized.libraryLocationDesc),
-        trailing: EnumBox(
-          current: ref.watch(
-            clientSettingsProvider.select(
-              (value) => value.libraryLocation.label(context),
+        onTap: () async {
+          final items = LibraryLocation.values;
+          await openMultiSelectOptions<LibraryLocation>(
+            context,
+            label: context.localized.libraryLocation,
+            items: items,
+            selected: [ref.read(clientSettingsProvider).libraryLocation],
+            itemBuilder: (type, selected, tap) => CheckboxListTile(
+              contentPadding: EdgeInsets.zero,
+              value: selected,
+              onChanged: (value) => tap(),
+              title: Text(type.label(context)),
             ),
+            onChanged: (values) => ref
+                .read(clientSettingsProvider.notifier)
+                .update((context) => context.copyWith(libraryLocation: values.first)),
+          );
+        },
+        trailing: Text(ref.watch(
+          clientSettingsProvider.select(
+            (value) => value.libraryLocation.label(context),
           ),
-          itemBuilder: (context) => LibraryLocation.values
-              .map(
-                (entry) => ItemActionButton(
-                  label: Text(entry.label(context)),
-                  action: () => ref
-                      .read(clientSettingsProvider.notifier)
-                      .update((context) => context.copyWith(libraryLocation: entry)),
-                ),
-              )
-              .toList(),
-        ),
+        )),
       ),
       SettingsListTile(
         label: Text(context.localized.showSimilarToRecommendations),
         subLabel: Text(context.localized.showSimilarToRecommendationsDesc),
+        onTap: () => ref
+            .read(clientSettingsProvider.notifier)
+            .update((t) => t.copyWith(showSimilarTo: !t.showSimilarTo)),
         trailing: Switch(
           value: clientSettings.showSimilarTo,
           onChanged: (value) =>

@@ -44,9 +44,12 @@ class _MultiRowViewState extends ConsumerState<MultiRowView> {
       children: [
         SizedBox(
           height: bannerHeight,
-          child: CompactItemBanner(
-            item: ref.watch(focusedItemProvider),
-            maxHeight: bannerHeight,
+          child: RepaintBoundary(
+            child: CompactItemBanner(
+              key: ValueKey(ref.watch(focusedItemProvider)?.id),
+              item: ref.watch(focusedItemProvider),
+              maxHeight: bannerHeight,
+            ),
           ),
         ),
         Expanded(
@@ -60,7 +63,12 @@ class _MultiRowViewState extends ConsumerState<MultiRowView> {
                 posters: row.posters,
                 collectionAspectRatio: row.aspectRatio,
                 onLabelClick: row.onLabelClick,
-                onFocused: (item) => ref.read(focusedItemProvider.notifier).state = item,
+                onFocused: (item) {
+                  final current = ref.read(focusedItemProvider);
+                  if (current?.id != item.id) {
+                    ref.read(focusedItemProvider.notifier).state = item;
+                  }
+                },
               );
             },
             separatorBuilder: (_, __) => const SizedBox(height: 12),

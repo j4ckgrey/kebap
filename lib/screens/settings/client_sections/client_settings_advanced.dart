@@ -84,6 +84,7 @@ List<Widget> buildClientSettingsAdvanced(BuildContext context, WidgetRef ref) {
         SettingsListTile(
           label: const Text("Use System Keyboard"),
           subLabel: const Text("Use the system keyboard instead of the custom one"),
+          onTap: () => ref.read(clientSettingsProvider.notifier).useSystemIME(!ref.read(clientSettingsProvider).useSystemIME),
           trailing: Switch(
             value: ref.watch(clientSettingsProvider).useSystemIME,
             onChanged: (value) => ref.read(clientSettingsProvider.notifier).useSystemIME(value),

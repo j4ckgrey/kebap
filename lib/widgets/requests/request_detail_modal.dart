@@ -33,6 +33,7 @@ class RequestDetailModal extends ConsumerStatefulWidget {
 class _RequestDetailModalState extends ConsumerState<RequestDetailModal> {
   bool _isApproving = false;
   bool _isRejecting = false;
+  bool _isDeleting = false;
   bool _metadataFetched = false;
 
   @override
@@ -108,6 +109,51 @@ class _RequestDetailModalState extends ConsumerState<RequestDetailModal> {
       }
     } finally {
       if (mounted) setState(() => _isRejecting = false);
+    }
+  }
+
+  Future<void> _handleDelete() async {
+    // Show confirmation dialog
+    final confirmed = await showDialog<bool>(
+      context: context,
+      builder: (context) => AlertDialog(
+        title: const Text('Delete Request'),
+        content: Text('Delete ${widget.request.status} request for "${widget.request.title}"?'),
+        actions: [
+          TextButton(
+            onPressed: () => Navigator.of(context).pop(false),
+            child: const Text('Cancel'),
+          ),
+          TextButton(
+            onPressed: () => Navigator.of(context).pop(true),
+            style: TextButton.styleFrom(
+              foregroundColor: Theme.of(context).colorScheme.error,
+            ),
+            child: const Text('Delete'),
+          ),
+        ],
+      ),
+    );
+
+    if (confirmed != true) return;
+
+    setState(() => _isDeleting = true);
+    try {
+      final success = await ref.read(baklavaRequestsProvider.notifier).deleteRequest(widget.request.id);
+      if (mounted) {
+        if (success) {
+          Navigator.of(context).pop();
+          kebapSnackbar(context, title: 'Request deleted');
+        } else {
+          kebapSnackbar(context, title: 'Failed to delete request');
+        }
+      }
+    } catch (e) {
+      if (mounted) {
+        kebapSnackbar(context, title: 'Failed to delete request: $e');
+      }
+    } finally {
+      if (mounted) setState(() => _isDeleting = false);
     }
   }
 
@@ -383,44 +429,69 @@ class _RequestDetailModalState extends ConsumerState<RequestDetailModal> {
 
             // Action buttons
             Row(
-              mainAxisAlignment: MainAxisAlignment.end,
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
-                // Open in Jellyfin (if approved and has ID)
-                if (widget.request.status == 'approved' && widget.request.jellyfinId != null)
-                  FilledButton.icon(
-                    onPressed: _handleOpenInJellyfin,
-                    icon: const Icon(IconsaxPlusLinear.play),
-                    label: const Text('Open'),
-                  )
-                // Admin actions (pending requests only)
-                else if (isAdmin && widget.request.status == 'pending') ...[
+                // Delete button for approved/rejected requests (admin only)
+                if (isAdmin && (widget.request.status == 'approved' || widget.request.status == 'rejected'))
                   OutlinedButton.icon(
-                    onPressed: _isRejecting ? null : _handleReject,
-                    icon: _isRejecting
+                    onPressed: _isDeleting ? null : _handleDelete,
+                    icon: _isDeleting
                         ? const SizedBox(
                             width: 16,
                             height: 16,
                             child: CircularProgressIndicator(strokeWidth: 2),
                           )
-                        : const Icon(IconsaxPlusLinear.close_circle),
-                    label: Text(_isRejecting ? 'Rejecting...' : 'Reject'),
+                        : const Icon(IconsaxPlusLinear.trash),
+                    label: Text(_isDeleting ? 'Deleting...' : 'Delete'),
                     style: OutlinedButton.styleFrom(
                       foregroundColor: theme.colorScheme.error,
                     ),
-                  ),
-                  const SizedBox(width: 8),
-                  FilledButton.icon(
-                    onPressed: _isApproving ? null : _handleApprove,
-                    icon: _isApproving
-                        ? const SizedBox(
-                            width: 16,
-                            height: 16,
-                            child: CircularProgressIndicator(strokeWidth: 2),
-                          )
-                        : const Icon(IconsaxPlusLinear.tick_circle),
-                    label: Text(_isApproving ? 'Approving...' : 'Approve'),
-                  ),
-                ],
+                  )
+                else
+                  const SizedBox.shrink(),
+                
+                // Right-aligned action buttons
+                Row(
+                  mainAxisSize: MainAxisSize.min,
+                  children: [
+                    // Open in Jellyfin (if approved and has ID)
+                    if (widget.request.status == 'approved' && widget.request.jellyfinId != null)
+                      FilledButton.icon(
+                        onPressed: _handleOpenInJellyfin,
+                        icon: const Icon(IconsaxPlusLinear.play),
+                        label: const Text('Open'),
+                      )
+                    // Admin actions (pending requests only)
+                    else if (isAdmin && widget.request.status == 'pending') ...[
+                      OutlinedButton.icon(
+                        onPressed: _isRejecting ? null : _handleReject,
+                        icon: _isRejecting
+                            ? const SizedBox(
+                                width: 16,
+                                height: 16,
+                                child: CircularProgressIndicator(strokeWidth: 2),
+                              )
+                            : const Icon(IconsaxPlusLinear.close_circle),
+                        label: Text(_isRejecting ? 'Rejecting...' : 'Reject'),
+                        style: OutlinedButton.styleFrom(
+                          foregroundColor: theme.colorScheme.error,
+                        ),
+                      ),
+                      const SizedBox(width: 8),
+                      FilledButton.icon(
+                        onPressed: _isApproving ? null : _handleApprove,
+                        icon: _isApproving
+                            ? const SizedBox(
+                                width: 16,
+                                height: 16,
+                                child: CircularProgressIndicator(strokeWidth: 2),
+                              )
+                            : const Icon(IconsaxPlusLinear.tick_circle),
+                        label: Text(_isApproving ? 'Approving...' : 'Approve'),
+                      ),
+                    ],
+                  ],
+                ),
               ],
             ),
           ],

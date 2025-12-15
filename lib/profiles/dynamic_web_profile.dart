@@ -13,6 +13,8 @@ DeviceProfile buildDynamicWebProfile() {
 
   // Log detected codecs for debugging - these will show in browser console
   debugPrint('=== KEBAP: Building dynamic web profile ===');
+  debugPrint('KEBAP Browser: ${detector.getUserAgent()}');
+  debugPrint('KEBAP Platform: ${detector.getPlatform()}');
   debugPrint('KEBAP Video Codecs - H.264: ${detector.canPlayH264()}, HEVC: ${detector.canPlayHevc()}, VP8: ${detector.canPlayVp8()}, VP9: ${detector.canPlayVp9()}, AV1: ${detector.canPlayAv1()}');
   debugPrint('KEBAP Audio Codecs - AAC: ${detector.canPlayAac()}, MP3: ${detector.canPlayMp3()}, Opus: ${detector.canPlayOpus()}, AC3: ${detector.canPlayAc3()}');
   debugPrint('KEBAP Containers - MP4: ${detector.canPlayMp4()}, WebM: ${detector.canPlayWebm()}, MKV: ${detector.canPlayMkv()}');
@@ -182,8 +184,29 @@ DeviceProfile buildDynamicWebProfile() {
   // ============ HLS DIRECT PLAY ============
 
   if (detector.canPlayHls()) {
-    // HLS with H.264 is most compatible
+    // HLS video codecs
+    final hlsVideoCodecs = <String>[];
     final hlsAudioCodecs = <String>['aac'];
+
+    // H.264 is always supported for HLS
+    if (detector.canPlayH264()) {
+      hlsVideoCodecs.add('h264');
+    }
+
+    // HEVC/H.265 in HLS (Safari, some Edge)
+    if (detector.canPlayHevc()) {
+      hlsVideoCodecs.add('hevc');
+    }
+
+    // VP9 in HLS (limited support)
+    if (detector.canPlayVp9()) {
+      hlsVideoCodecs.add('vp9');
+    }
+
+    // AV1 in HLS (Chrome, Firefox on some systems)
+    if (detector.canPlayAv1()) {
+      hlsVideoCodecs.add('av1');
+    }
 
     if (detector.canPlayMp3()) {
       hlsAudioCodecs.add('mp3');
@@ -192,12 +215,14 @@ DeviceProfile buildDynamicWebProfile() {
       hlsAudioCodecs.add('mp2');
     }
 
-    directPlayProfiles.add(DirectPlayProfile(
-      container: 'hls',
-      type: DlnaProfileType.video,
-      videoCodec: 'h264',
-      audioCodec: hlsAudioCodecs.join(','),
-    ));
+    if (hlsVideoCodecs.isNotEmpty) {
+      directPlayProfiles.add(DirectPlayProfile(
+        container: 'hls',
+        type: DlnaProfileType.video,
+        videoCodec: hlsVideoCodecs.join(','),
+        audioCodec: hlsAudioCodecs.join(','),
+      ));
+    }
   }
 
   // ============ TRANSCODING PROFILES ============
@@ -205,12 +230,19 @@ DeviceProfile buildDynamicWebProfile() {
   // HLS transcoding - always use as fallback
   // Determine best audio codec for transcoding
   final transcodingAudioCodec = detector.canPlayAac() ? 'aac' : 'mp3';
+  
+  // Determine best video codec for transcoding
+  // CRITICAL: Use H.264 ONLY for HLS transcoding on web!
+  // HLS.js uses MSE which doesn't support HEVC in Chrome/Firefox.
+  // Even though canPlayHevc() returns true (for native playback), hls.js cannot decode it.
+  // Including HEVC causes Jellyfin to COPY it instead of transcoding to H.264!
+  final transcodingVideoCodec = 'h264';
 
   // HLS in TS container (most compatible)
   transcodingProfiles.add(TranscodingProfile(
     container: 'ts',
     type: DlnaProfileType.video,
-    videoCodec: 'h264',
+    videoCodec: transcodingVideoCodec,
     audioCodec: transcodingAudioCodec,
     context: EncodingContext.streaming,
     protocol: MediaStreamProtocol.hls,
@@ -224,7 +256,7 @@ DeviceProfile buildDynamicWebProfile() {
     transcodingProfiles.add(TranscodingProfile(
       container: 'mp4',
       type: DlnaProfileType.video,
-      videoCodec: 'h264',
+      videoCodec: transcodingVideoCodec,
       audioCodec: transcodingAudioCodec,
       context: EncodingContext.streaming,
       protocol: MediaStreamProtocol.hls,
@@ -325,7 +357,14 @@ DeviceProfile buildDynamicWebProfile() {
   ));
 
 
+  // Count profiles for debugging
   debugPrint('KEBAP: Built dynamic web profile with ${directPlayProfiles.length} direct play profiles');
+  
+  // Log HLS profile details
+  final hlsProfile = directPlayProfiles.where((p) => p.container?.contains('hls') == true).firstOrNull;
+  if (hlsProfile != null) {
+    debugPrint('KEBAP HLS Profile - Video: ${hlsProfile.videoCodec}, Audio: ${hlsProfile.audioCodec}');
+  }
 
   return DeviceProfile(
     maxStreamingBitrate: 120000000,

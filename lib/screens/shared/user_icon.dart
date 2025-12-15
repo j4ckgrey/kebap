@@ -26,7 +26,7 @@ class UserIcon extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    print('[LAG_DEBUG] ${DateTime.now()} UserIcon build: ${user?.name}');
+    // print('[LAG_DEBUG] ${DateTime.now()} UserIcon build: ${user?.name}');
     Widget placeHolder() {
       return Container(
         color: Theme.of(context).colorScheme.primaryContainer,

@@ -1,4 +1,3 @@
-import 'dart:async';
 import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -39,9 +38,6 @@ class _SingleRowViewState extends ConsumerState<SingleRowView> {
   final PageController _pageController = PageController();
   int _currentPage = 0;
   bool _hasAutoFocused = false;
-  Timer? _debounceTimer;
-  Timer? _scrollDebounceTimer; // Throttle scroll events
-  DateTime _lastScrollTime = DateTime.now(); // Track last scroll event
   String? _lastFocusedRowLabel; // Track active row for focus restoration
 
   @override
@@ -108,15 +104,16 @@ class _SingleRowViewState extends ConsumerState<SingleRowView> {
   }
 
   void _onItemFocused(ItemBaseModel item, String label) {
-    _debounceTimer?.cancel();
-    _debounceTimer = Timer(const Duration(milliseconds: 200), () {
-      if (mounted) {
-        ref.read(focusedItemProvider.notifier).state = item;
-        setState(() {
-           _lastFocusedRowLabel = label;
-        });
-      }
-    });
+    final currentFocused = ref.read(focusedItemProvider);
+    // Only update if item actually changed
+    if (currentFocused?.id != item.id) {
+      ref.read(focusedItemProvider.notifier).state = item;
+    }
+    if (_lastFocusedRowLabel != label) {
+      setState(() {
+        _lastFocusedRowLabel = label;
+      });
+    }
   }
 
   void _onPageChanged(int page) {
@@ -132,8 +129,6 @@ class _SingleRowViewState extends ConsumerState<SingleRowView> {
   @override
   void dispose() {
     _pageController.dispose();
-    _debounceTimer?.cancel();
-    _scrollDebounceTimer?.cancel();
     super.dispose();
   }
 
@@ -195,15 +190,18 @@ class _SingleRowViewState extends ConsumerState<SingleRowView> {
               height: scaledBannerHeight,
               child: Consumer(
                 builder: (context, ref, child) {
-                return CompactItemBanner(
-                  item: ref.watch(focusedItemProvider),
-                  maxHeight: scaledBannerHeight,
-                );
-              },
+                  // Only rebuild when focused item ID changes
+                  final focusedItem = ref.watch(focusedItemProvider);
+                  return CompactItemBanner(
+                    key: ValueKey(focusedItem?.id),
+                    item: focusedItem,
+                    maxHeight: scaledBannerHeight,
+                  );
+                },
+              ),
             ),
           ),
         ),
-      ),
         // Scrollable rows via PageView
         Expanded(
           child: Stack(
@@ -238,13 +236,8 @@ class _SingleRowViewState extends ConsumerState<SingleRowView> {
                       // Ignore if we are already animating
                       if (_pageController.position.isScrollingNotifier.value) return;
                       
-                      // Throttle scroll events - minimum 150ms between page changes
-                      final now = DateTime.now();
-                      if (now.difference(_lastScrollTime).inMilliseconds < 150) return;
-                      
                       final double scrollDelta = pointerSignal.scrollDelta.dy;
                       if (scrollDelta.abs() > 30) { // Higher threshold for scroll
-                        _lastScrollTime = now;
                          if (scrollDelta > 0) {
                            // Scroll Down -> Next Page
                            if (_currentPage < widget.rows.length - 1) {

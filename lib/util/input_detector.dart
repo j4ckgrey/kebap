@@ -96,7 +96,7 @@ class _InputDetectorState extends State<InputDetector> {
 
   @override
   Widget build(BuildContext context) {
-    print('[LAG_DEBUG] ${DateTime.now()} InputDetector build');
+    // print('[LAG_DEBUG] ${DateTime.now()} InputDetector build');
     return Listener(
       onPointerDown: _handlePointerEvent,
       behavior: HitTestBehavior.translucent,

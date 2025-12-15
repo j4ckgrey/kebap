@@ -392,6 +392,17 @@ class PlaybackModelHelper {
 
       if (mediaSource == null) return null;
 
+      // Debug: Log playback decision
+      print('[PlaybackModel] MediaSource ID: ${mediaSource.id}');
+      print('[PlaybackModel] SupportsDirectPlay: ${mediaSource.supportsDirectPlay}');
+      print('[PlaybackModel] SupportsDirectStream: ${mediaSource.supportsDirectStream}');
+      print('[PlaybackModel] SupportsTranscoding: ${mediaSource.supportsTranscoding}');
+      print('[PlaybackModel] TranscodingUrl: ${mediaSource.transcodingUrl}');
+      print('[PlaybackModel] TranscodingSubProtocol: ${mediaSource.transcodingSubProtocol}');
+      print('[PlaybackModel] Path: ${mediaSource.path}');
+      print('[PlaybackModel] Container: ${mediaSource.container}');
+      print('[PlaybackModel] VideoCodec: ${mediaSource.mediaStreams?.firstWhere((s) => s.type == MediaStreamType.video, orElse: () => MediaStream()).codec}');
+
       final mediaStreamsWithUrls = MediaStreamsModel.fromMediaStreamsList(playbackInfo.mediaSources, ref).copyWith(
         defaultAudioStreamIndex: audioStreamIndex,
         defaultSubStreamIndex: subStreamIndex,

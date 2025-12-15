@@ -1,5 +1,6 @@
 import 'dart:async';
 
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -130,10 +131,12 @@ class VideoPlayerNotifier extends StateNotifier<MediaControlsWrapper> {
       try {
         await state.loadVideo(model, startPosition, false);
         await state.setVolume(ref.read(videoPlayerSettingsProvider).volume);
+        
+        final start = startPosition;
+        
         state.stateStream?.takeWhile((event) => event.buffering == true).listen(
           null,
           onDone: () async {
-            final start = startPosition;
             if (start != Duration.zero) {
               await state.seek(start);
             }
