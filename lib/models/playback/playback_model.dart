@@ -770,8 +770,9 @@ class PlaybackModelHelper {
           codec: s['codec'] ?? '',
           id: (s['index'] ?? -1).toString(),
           isDefault: s['isDefault'] ?? false,
-          isExternal: false,
-          supportsExternalStream: false,
+          isExternal: s['isExternal'] ?? false,
+          supportsExternalStream: s['isExternal'] ?? false,
+          url: s['externalUrl'],
         );
       }).toList();
 

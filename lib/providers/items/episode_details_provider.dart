@@ -9,6 +9,7 @@ import 'package:kebap/models/items/item_shared_models.dart';
 import 'package:kebap/models/items/media_streams_model.dart';
 import 'package:kebap/models/items/series_model.dart';
 import 'package:kebap/providers/api_provider.dart';
+import 'package:kebap/providers/baklava_requests_provider.dart';
 import 'package:kebap/providers/service_provider.dart';
 import 'package:kebap/providers/sync_provider.dart';
 
@@ -92,77 +93,87 @@ class EpisodeDetailsProvider extends StateNotifier<EpisodeDetailModel> {
         }
       }
 
-      // Check if first version has 0 streams and fetch them
       final firstVersion = episode.mediaStreams.versionStreams.firstOrNull;
       final totalStreams = (firstVersion?.videoStreams.length ?? 0) + 
                            (firstVersion?.audioStreams.length ?? 0) + 
                            (firstVersion?.subStreams.length ?? 0);
       
       if (firstVersion != null && totalStreams == 0 && firstVersion.id != null) {
-        // Set loading state before fetching
         episode = episode.copyWith(
           mediaStreams: episode.mediaStreams.copyWith(isLoading: true),
         );
         state = state.copyWith(episode: episode);
         
         try {
-          final playbackInfo = await api.itemsItemIdPlaybackInfoPost(
+          final baklavaService = ref.read(baklavaServiceProvider);
+          final streamsResponse = await baklavaService.getMediaStreams(
             itemId: item.id,
-            body: PlaybackInfoDto(
-              enableDirectPlay: true,
-              enableDirectStream: true,
-              enableTranscoding: false,
-              autoOpenLiveStream: true,
-              mediaSourceId: firstVersion.id,
-            ),
+            mediaSourceId: firstVersion.id,
           );
           
-          final mediaSources = playbackInfo.body?.mediaSources;
-          if (mediaSources != null && mediaSources.firstOrNull != null) {
-            final sourceWithStreams = mediaSources.first;
+          if (streamsResponse.body != null) {
+            final audioList = (streamsResponse.body!['audio'] as List?)?.cast<Map<String, dynamic>>() ?? [];
+            final subsList = (streamsResponse.body!['subs'] as List?)?.cast<Map<String, dynamic>>() ?? [];
             
-            if (sourceWithStreams.mediaStreams != null) {
-              final streams = sourceWithStreams.mediaStreams!;
-              final updatedFirstVersion = VersionStreamModel(
-                name: firstVersion.name,
-                index: firstVersion.index,
-                id: firstVersion.id,
-                defaultAudioStreamIndex: sourceWithStreams.defaultAudioStreamIndex,
-                defaultSubStreamIndex: sourceWithStreams.defaultSubtitleStreamIndex,
-                videoStreams: streams
-                    .where((element) => element.type == MediaStreamType.video)
-                    .map((e) => VideoStreamModel.fromMediaStream(e))
-                    .toList(),
-                audioStreams: streams
-                    .where((element) => element.type == MediaStreamType.audio)
-                    .map((e) => AudioStreamModel.fromMediaStream(e))
-                    .toList(),
-                subStreams: streams
-                    .where((element) => element.type == MediaStreamType.subtitle)
-                    .map((sub) => SubStreamModel.fromMediaStream(sub, ref))
-                    .toList(),
-              );
-              
-                final updatedVersionStreams = [
-                updatedFirstVersion,
-                ...episode.mediaStreams.versionStreams.skip(1),
-              ];
-              
-              episode = episode.copyWith(
-                mediaStreams: episode.mediaStreams.copyWith(
-                  versionStreams: updatedVersionStreams,
-                  defaultAudioStreamIndex: sourceWithStreams.defaultAudioStreamIndex,
-                  defaultSubStreamIndex: sourceWithStreams.defaultSubtitleStreamIndex,
-                  isLoading: false,
-                ),
-              );
-            }
+            final audioStreams = <AudioStreamModel>[
+              for (final a in audioList)
+                AudioStreamModel(
+                  displayTitle: (a['title'] as String?) ?? 'Audio ${a['index']}',
+                  name: (a['title'] as String?) ?? '',
+                  codec: (a['codec'] as String?) ?? '',
+                  isDefault: false,
+                  isExternal: false,
+                  index: a['index'] as int,
+                  language: (a['language'] as String?) ?? '',
+                  channelLayout: '',
+                )
+            ];
+            
+            final subStreams = <SubStreamModel>[
+              for (final s in subsList)
+                SubStreamModel(
+                  name: (s['title'] as String?) ?? '',
+                  id: s['index'].toString(),
+                  title: (s['title'] as String?) ?? 'Subtitle ${s['index']}',
+                  displayTitle: (s['title'] as String?) ?? 'Subtitle ${s['index']}',
+                  language: (s['language'] as String?) ?? '',
+                  codec: (s['codec'] as String?) ?? '',
+                  isDefault: s['isDefault'] as bool? ?? false,
+                  isExternal: false,
+                  index: s['index'] as int,
+                )
+            ];
+            
+            final updatedFirstVersion = VersionStreamModel(
+              name: firstVersion.name,
+              index: firstVersion.index,
+              id: firstVersion.id,
+              defaultAudioStreamIndex: audioStreams.isNotEmpty ? 0 : null,
+              defaultSubStreamIndex: null,
+              videoStreams: [],
+              audioStreams: audioStreams,
+              subStreams: subStreams,
+            );
+            
+            final updatedVersionStreams = [
+              updatedFirstVersion,
+              ...episode.mediaStreams.versionStreams.skip(1),
+            ];
+            
+            episode = episode.copyWith(
+              mediaStreams: episode.mediaStreams.copyWith(
+                versionStreams: updatedVersionStreams,
+                defaultAudioStreamIndex: audioStreams.isNotEmpty ? 0 : null,
+                defaultSubStreamIndex: null,
+                isLoading: false,
+              ),
+            );
           }
         } catch (e) {
           // Ignore error, use empty streams, clear loading state
           episode = episode.copyWith(
-              mediaStreams: episode.mediaStreams.copyWith(isLoading: false),
-            );
+            mediaStreams: episode.mediaStreams.copyWith(isLoading: false),
+          );
         }
       }
 

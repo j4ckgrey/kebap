@@ -447,9 +447,14 @@ class BaklavaService {
         final dynamic bodyData = response.body is String 
             ? jsonDecode(response.body as String)
             : response.body;
+        
+        // DEBUG LOGGING
+        print('Baklava: getMediaStreams response for $itemId: ${jsonEncode(bodyData)}');
+        
         return Response(response.base, bodyData as Map<String, dynamic>);
       }
-
+      
+      print('Baklava: Failed to get media streams: ${response.statusCode}, Body: ${response.body}');
       throw Exception('Failed to get media streams: ${response.statusCode}');
     } catch (e) {
       throw Exception('Failed to get media streams: $e');
