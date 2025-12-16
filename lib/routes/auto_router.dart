@@ -39,6 +39,17 @@ class AutoRouter extends RootStackRouter {
         ...homeRoutes,
         ...detailsRoutes,
         CustomRoute(
+          page: AdminDashboardRoute.page,
+          path: 'admin',
+          children: _adminChildren,
+          transitionsBuilder: TransitionsBuilders.fadeIn,
+          durationInMilliseconds: 200,
+          reverseDurationInMilliseconds: 200,
+        ),
+        AutoRoute(page: AdminUserEditRoute.page, path: 'admin/users/edit'),
+        AutoRoute(page: AdminTaskDetailRoute.page, path: 'admin/tasks/:taskId'),
+        AutoRoute(page: AdminLibraryDetailRoute.page, path: 'admin/libraries/:libraryId'),
+        CustomRoute(
           page: SettingsRoute.page,
           path: settingsPageRoute,
           children: _settingsChildren,
@@ -81,6 +92,26 @@ final List<AutoRoute> detailsRoutes = [
   AutoRoute(page: DetailsRoute.page, path: 'details'),
   AutoRoute(page: PhotoViewerRoute.page, path: "album"),
   AutoRoute(page: LibrarySearchRoute.page, path: 'library'),
+];
+
+// Admin routes - nested tabs
+final List<AutoRoute> _adminChildren = [
+  AutoRoute(page: AdminSelectionRoute.page, path: 'list'),
+  AutoRoute(page: AdminActivityRoute.page, path: 'activity'),
+  AutoRoute(page: AdminGeneralRoute.page, path: 'general'),
+  AutoRoute(page: AdminBrandingRoute.page, path: 'branding'),
+  AutoRoute(page: AdminUsersRoute.page, path: 'users'),
+  AutoRoute(page: AdminSessionsRoute.page, path: 'sessions'),
+  AutoRoute(page: AdminTasksRoute.page, path: 'tasks'),
+  AutoRoute(page: AdminDevicesRoute.page, path: 'devices'),
+  AutoRoute(page: AdminLibrariesRoute.page, path: 'libraries'),
+  AutoRoute(page: AdminTranscodingRoute.page, path: 'transcoding'),
+  AutoRoute(page: AdminResumeRoute.page, path: 'resume'),
+  AutoRoute(page: AdminStreamingRoute.page, path: 'streaming'),
+  AutoRoute(page: AdminTrickplayRoute.page, path: 'trickplay'),
+  AutoRoute(page: AdminDisplayRoute.page, path: 'display'),
+  AutoRoute(page: AdminMetadataRoute.page, path: 'metadata'),
+  AutoRoute(page: AdminNfoRoute.page, path: 'nfo'),
 ];
 
 final List<AutoRoute> _defaultRoutes = [

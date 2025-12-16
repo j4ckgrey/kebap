@@ -95,7 +95,6 @@ class SettingsLeftPane extends ConsumerWidget {
             // New categorized settings pages
             SettingsListTile(
               key: const ValueKey('dashboard_settings'),
-              autoFocus: true,
               label: const Text('Dashboard'),
               subLabel: const Text('Home screen & banner settings'),
               selected: containsRoute(const DashboardSettingsRoute()),

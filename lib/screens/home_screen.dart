@@ -223,6 +223,22 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
         })
         .nonNulls
         .toList();
+    
+    // Add admin dashboard for admin users
+    final user = ref.watch(userProvider);
+    final isAdmin = user?.policy?.isAdministrator ?? false;
+    if (isAdmin) {
+      destinations.add(
+        DestinationModel(
+          label: 'Server Admin',
+          icon: const Icon(IconsaxPlusLinear.shield_security),
+          selectedIcon: const Icon(IconsaxPlusBold.shield_security),
+          route: const AdminDashboardRoute(),
+          action: () => context.navigateTo(const AdminDashboardRoute()),
+        ),
+      );
+    }
+
     return InputHandler<GlobalHotKeys>(
         autoFocus: false,
         keyMapResult: (result) {

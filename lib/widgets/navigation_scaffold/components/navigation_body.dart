@@ -63,15 +63,16 @@ class _NavigationBodyState extends ConsumerState<NavigationBody> {
     final isSettingsPage = widget.currentLocation.toLowerCase().contains('settings');
     final isDetailsPage = widget.currentLocation.toLowerCase().contains('details');
     final isSearchPage = widget.currentLocation.toLowerCase().contains('search');
+    final isAdminPage = widget.currentLocation.toLowerCase().contains('admin');
     
-    // Settings & Search: No navigation
+    // Settings, Search & Admin: No navigation
     // Details: Back button on left, no hamburger
     // Others: Hamburger on left, Back on right
     // TV: No buttons shown (remote has back button), left navigation opens drawer
     
-    final showNavigation = !isSettingsPage && !isSearchPage;
+    final showNavigation = !isSettingsPage && !isSearchPage && !isAdminPage;
     final showHamburger = !isDetailsPage && showNavigation;
-    final showBackButton = showNavigation; // Back button always shown if navigation is shown (except settings)
+    final showBackButton = showNavigation; // Back button always shown if navigation is shown (except settings/admin)
     
     // On details page, back button is on the left (replaces hamburger position)
     // On other pages, back button is on the right
@@ -84,7 +85,7 @@ class _NavigationBodyState extends ConsumerState<NavigationBody> {
           fallbackNode: navBarNode,
           drawerKey: widget.drawerKey,
           inputDevice: currentInputDevice,
-          showHamburger: !isDetailsPage && !isSettingsPage && !isSearchPage,
+          showHamburger: !isDetailsPage && !isSettingsPage && !isSearchPage && !isAdminPage,
         ),
         child: Stack(
           children: [

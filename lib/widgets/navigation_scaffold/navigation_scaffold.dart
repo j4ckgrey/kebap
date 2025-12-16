@@ -181,7 +181,15 @@ class _NavigationScaffoldState extends ConsumerState<NavigationScaffold> with Wi
                   child: Scaffold(
                     key: _effectiveKey,
                   drawerEnableOpenDragGesture: false,
-                  appBar: (fullScreenChildRoute || (currentLocation.contains("Settings") && !isDesktop)) ? null : const KebapAppBar(),
+                  appBar: () {
+                    final loc = currentLocation.toLowerCase();
+                    final isAdmin = loc.startsWith("admin") || loc.contains("admin");
+                    print('[APPBAR_CHECK] location: "$currentLocation", isAdmin: $isAdmin, returning: ${isAdmin ? "KebapAppBar" : "KebapAppBar"}');
+                    return (fullScreenChildRoute || 
+                           (currentLocation.contains("Settings") && !isDesktop)) 
+                      ? null 
+                      : const KebapAppBar();
+                  }(),
                   extendBodyBehindAppBar: false,
                   resizeToAvoidBottomInset: false,
                   extendBody: true,
@@ -213,7 +221,7 @@ class _NavigationScaffoldState extends ConsumerState<NavigationScaffold> with Wi
                   floatingActionButton: AdaptiveLayout.layoutModeOf(context) == LayoutMode.single && isHomeScreen
                       ? widget.destinations.elementAtOrNull(currentIndex)?.floatingActionButton?.normal
                       : null,
-                  drawer: homeRoutes.any((element) => element.name.contains(currentLocation))
+                  drawer: (homeRoutes.any((element) => element.name.contains(currentLocation)) && !currentLocation.toLowerCase().startsWith("admin"))
                       ? Consumer(
                           builder: (context, ref, child) {
                             final views = ref.watch(viewsProvider.select((value) => value.views));
@@ -241,7 +249,7 @@ class _NavigationScaffoldState extends ConsumerState<NavigationScaffold> with Wi
                                 currentLocation: currentLocation,
                                 drawerKey: _effectiveKey,
                               ),
-                              if (!currentLocation.contains("Settings"))
+                              if (!currentLocation.contains("Settings") && !currentLocation.toLowerCase().startsWith("admin"))
                                 IgnorePointer(
                                   child: const Align(
                                     alignment: Alignment.topCenter,

@@ -60,9 +60,9 @@ class _SettingsListTileState extends State<SettingsListTile> with AutomaticKeepA
       },
       child: Card(
         elevation: 0,
-        color: _focused
-            ? Theme.of(context).colorScheme.surfaceContainerHighest
-            : (widget.selected ? Theme.of(context).colorScheme.surfaceContainerLow : Colors.transparent),
+        color: widget.selected
+            ? Theme.of(context).colorScheme.primaryContainer
+            : (_focused ? Theme.of(context).colorScheme.surfaceContainerHighest : Colors.transparent),
         shadowColor: Colors.transparent,
         shape: const RoundedRectangleBorder(
             borderRadius: BorderRadius.only(topLeft: Radius.circular(8), bottomLeft: Radius.circular(8))),
@@ -97,11 +97,15 @@ class _SettingsListTileState extends State<SettingsListTile> with AutomaticKeepA
                     children: [
                       DefaultTextStyle.merge(
                         style: TextStyle(
-                          color: widget.contentColor ?? Theme.of(context).colorScheme.onSurface,
+                          color: widget.contentColor ?? (widget.selected 
+                            ? Theme.of(context).colorScheme.onPrimaryContainer 
+                            : Theme.of(context).colorScheme.onSurface),
                         ),
                         child: IconTheme(
                           data: IconThemeData(
-                            color: widget.contentColor ?? Theme.of(context).colorScheme.onSurface,
+                            color: widget.contentColor ?? (widget.selected 
+                              ? Theme.of(context).colorScheme.onPrimaryContainer 
+                              : Theme.of(context).colorScheme.onSurface),
                           ),
                           child: leadingWidget,
                         ),
@@ -113,14 +117,20 @@ class _SettingsListTileState extends State<SettingsListTile> with AutomaticKeepA
                           children: [
                             Material(
                               color: Colors.transparent,
-                              textStyle: Theme.of(context).textTheme.titleLarge?.copyWith(color: widget.contentColor),
+                              textStyle: Theme.of(context).textTheme.titleLarge?.copyWith(
+                                color: widget.contentColor ?? (widget.selected 
+                                  ? Theme.of(context).colorScheme.onPrimaryContainer 
+                                  : null)
+                              ),
                               child: widget.label,
                             ),
                             if (widget.subLabel != null)
                               Material(
                                 color: Colors.transparent,
                                 textStyle: Theme.of(context).textTheme.labelLarge?.copyWith(
-                                      color: (widget.contentColor ?? Theme.of(context).colorScheme.onSurface)
+                                      color: (widget.contentColor ?? (widget.selected 
+                                        ? Theme.of(context).colorScheme.onPrimaryContainer 
+                                        : Theme.of(context).colorScheme.onSurface))
                                           .withValues(alpha: 0.65),
                                     ),
                                 child: widget.subLabel,

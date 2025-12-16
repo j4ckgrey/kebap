@@ -813,6 +813,7 @@ class JellyService {
   }
 
   Future<Response<ServerConfiguration>> systemConfigurationGet() => api.systemConfigurationGet();
+  Future<Response> systemConfigurationPost(ServerConfiguration config) => api.systemConfigurationPost(body: config);
   Future<Response<PublicSystemInfo>> systemInfoPublicGet() => api.systemInfoPublicGet();
 
   Future<Response<UserSettings>> getCustomConfig() async {
