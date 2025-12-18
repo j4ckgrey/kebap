@@ -14,9 +14,21 @@ _BaklavaConfig _$BaklavaConfigFromJson(Map<String, dynamic> json) =>
       tmdbApiKey: json['tmdbApiKey'] as String?,
       enableSearchFilter: json['enableSearchFilter'] as bool?,
       forceTVClientLocalSearch: json['forceTVClientLocalSearch'] as bool?,
-      versionUi: json['versionUi'] as String?,
-      audioUi: json['audioUi'] as String?,
-      subtitleUi: json['subtitleUi'] as String?,
+      versionUi: json['versionUi'] as String? ?? '',
+      audioUi: json['audioUi'] as String? ?? '',
+      subtitleUi: json['subtitleUi'] as String? ?? '',
+      gelatoBaseUrl: json['gelatoBaseUrl'] as String? ?? '',
+      gelatoAuthHeader: json['gelatoAuthHeader'] as String? ?? '',
+      debridService: json['debridService'] as String? ?? 'realdebrid',
+      debridApiKey: json['debridApiKey'] as String? ?? '',
+      enableDebridMetadata: json['enableDebridMetadata'] as bool? ?? true,
+      enableFallbackProbe: json['enableFallbackProbe'] as bool? ?? false,
+      fetchCachedMetadataPerVersion:
+          json['fetchCachedMetadataPerVersion'] as bool? ?? false,
+      fetchAllNonCachedMetadata:
+          json['fetchAllNonCachedMetadata'] as bool? ?? false,
+      enableExternalSubtitles:
+          json['enableExternalSubtitles'] as bool? ?? false,
     );
 
 Map<String, dynamic> _$BaklavaConfigToJson(_BaklavaConfig instance) =>
@@ -30,4 +42,13 @@ Map<String, dynamic> _$BaklavaConfigToJson(_BaklavaConfig instance) =>
       'versionUi': instance.versionUi,
       'audioUi': instance.audioUi,
       'subtitleUi': instance.subtitleUi,
+      'gelatoBaseUrl': instance.gelatoBaseUrl,
+      'gelatoAuthHeader': instance.gelatoAuthHeader,
+      'debridService': instance.debridService,
+      'debridApiKey': instance.debridApiKey,
+      'enableDebridMetadata': instance.enableDebridMetadata,
+      'enableFallbackProbe': instance.enableFallbackProbe,
+      'fetchCachedMetadataPerVersion': instance.fetchCachedMetadataPerVersion,
+      'fetchAllNonCachedMetadata': instance.fetchAllNonCachedMetadata,
+      'enableExternalSubtitles': instance.enableExternalSubtitles,
     };

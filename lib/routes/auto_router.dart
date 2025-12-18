@@ -102,6 +102,7 @@ final List<AutoRoute> _settingsChildren = [
   AutoRoute(page: PlayerSettingsRoute.page, path: 'player'),
   AutoRoute(page: AboutSettingsRoute.page, path: 'about'),
   AutoRoute(page: ContentFilterSettingsRoute.page, path: 'content-filter'),
+  AutoRoute(page: BaklavaSettingsRoute.page, path: 'baklava'),
   // Deprecated - settings moved to categorized pages above
   // AutoRoute(page: ClientSettingsRoute.page, path: 'client'),
   // AutoRoute(page: KebapSettingsRoute.page, path: 'kebap'),

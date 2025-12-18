@@ -168,6 +168,15 @@ class SettingsLeftPane extends ConsumerWidget {
                 icon: IconsaxPlusLinear.shield_tick,
                 onTap: () => navigateTo(const ContentFilterSettingsRoute()),
               ),
+            if (ref.watch(userProvider)?.policy?.isAdministrator == true)
+              SettingsListTile(
+                key: const ValueKey('baklava_settings'),
+                label: const Text('Baklava'),
+                subLabel: const Text('Request manager & plugins'),
+                selected: containsRoute(const BaklavaSettingsRoute()),
+                icon: IconsaxPlusLinear.box,
+                onTap: () => navigateTo(const BaklavaSettingsRoute()),
+              ),
             SettingsListTile(
               key: const ValueKey('about_settings'),
               label: Text(context.localized.about),

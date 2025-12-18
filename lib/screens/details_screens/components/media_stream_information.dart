@@ -116,7 +116,7 @@ class MediaStreamInformation extends ConsumerWidget {
                 label: const Icon(IconsaxPlusBold.volume_high),
                 current: mediaStream.isLoading 
                     ? context.localized.loading 
-                    : (mediaStream.currentAudioStream?.displayTitle ?? context.localized.none),
+                    : (mediaStream.currentAudioStream?.extendedDisplayTitle ?? context.localized.none),
                 isLoading: mediaStream.isLoading,
                 itemBuilder: (context) => mediaStream.isLoading
                     ? []
@@ -126,7 +126,7 @@ class MediaStreamInformation extends ConsumerWidget {
                             selected: mediaStream.currentAudioStream?.index == e.index,
                             label: textWidget(
                               context,
-                              label: e.displayTitle,
+                              label: e.extendedDisplayTitle,
                             ),
                             action: () => onAudioIndexChanged?.call(e.index),
                           ),

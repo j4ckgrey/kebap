@@ -315,6 +315,65 @@ class AudioStreamModel extends AudioAndSubStreamModel {
   String get title =>
       [name, language, codec, channelLayout].nonNulls.where((element) => element.isNotEmpty).join(' - ');
 
+  // Helper map for common language codes
+  static const _langMap = {
+    'en': 'English', 'eng': 'English',
+    'fr': 'French', 'fre': 'French', 'fra': 'French',
+    'de': 'German', 'ger': 'German', 'deu': 'German',
+    'es': 'Spanish', 'spa': 'Spanish',
+    'it': 'Italian', 'ita': 'Italian',
+    'ja': 'Japanese', 'jpn': 'Japanese',
+    'ko': 'Korean', 'kor': 'Korean',
+    'zh': 'Chinese', 'chi': 'Chinese', 'zho': 'Chinese',
+    'ru': 'Russian', 'rus': 'Russian',
+    'pt': 'Portuguese', 'por': 'Portuguese',
+    'nl': 'Dutch', 'nld': 'Dutch', 'dut': 'Dutch',
+    'pl': 'Polish', 'pol': 'Polish',
+    'tr': 'Turkish', 'tur': 'Turkish',
+    'ar': 'Arabic', 'ara': 'Arabic',
+    'hi': 'Hindi', 'hin': 'Hindi',
+    'sv': 'Swedish', 'swe': 'Swedish',
+    'no': 'Norwegian', 'nor': 'Norwegian',
+    'da': 'Danish', 'dan': 'Danish',
+    'fi': 'Finnish', 'fin': 'Finnish',
+    'cs': 'Czech', 'ces': 'Czech',
+    'el': 'Greek', 'gre': 'Greek', 'ell': 'Greek',
+    'he': 'Hebrew', 'heb': 'Hebrew',
+    'id': 'Indonesian', 'ind': 'Indonesian',
+    'uk': 'Ukrainian', 'ukr': 'Ukrainian',
+    'vi': 'Vietnamese', 'vie': 'Vietnamese',
+    'th': 'Thai', 'tha': 'Thai',
+  };
+
+  String get extendedDisplayTitle {
+    // 0. Handle "Off" or other special cases
+    if (index == -1) return displayTitle;
+
+    // 1. Resolve Language
+    // Try to map code to full name, otherwise capitalize first letter of whatever we have
+    String lang = language;
+    final lowerLang = language.toLowerCase();
+    
+    if (_langMap.containsKey(lowerLang)) {
+      lang = _langMap[lowerLang]!;
+    } else if (lang.length == 2 || lang.length == 3) {
+       // Probably a code we missed, render it upper case
+       lang = lang.toUpperCase();
+    }
+
+    // 2. Build Details (Codec + Layout)
+    final details = <String>[];
+    if (codec.isNotEmpty) details.add(codec.toUpperCase());
+    if (channelLayout.isNotEmpty) details.add(channelLayout);
+
+    // 3. Combine
+    if (details.isNotEmpty) {
+      return "$lang (${details.join(' ')})";
+    } else {
+      return lang;
+    }
+  }
+
   AudioStreamModel.no({
     super.name = 'Off',
     super.displayTitle = 'Off',

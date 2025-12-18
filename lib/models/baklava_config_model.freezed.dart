@@ -23,6 +23,15 @@ mixin _$BaklavaConfig {
   String? get versionUi;
   String? get audioUi;
   String? get subtitleUi;
+  String? get gelatoBaseUrl;
+  String? get gelatoAuthHeader;
+  String? get debridService;
+  String? get debridApiKey;
+  bool? get enableDebridMetadata;
+  bool? get enableFallbackProbe;
+  bool? get fetchCachedMetadataPerVersion;
+  bool? get fetchAllNonCachedMetadata;
+  bool? get enableExternalSubtitles;
 
   /// Create a copy of BaklavaConfig
   /// with the given fields replaced by the non-null parameter values.
@@ -57,7 +66,29 @@ mixin _$BaklavaConfig {
                 other.versionUi == versionUi) &&
             (identical(other.audioUi, audioUi) || other.audioUi == audioUi) &&
             (identical(other.subtitleUi, subtitleUi) ||
-                other.subtitleUi == subtitleUi));
+                other.subtitleUi == subtitleUi) &&
+            (identical(other.gelatoBaseUrl, gelatoBaseUrl) ||
+                other.gelatoBaseUrl == gelatoBaseUrl) &&
+            (identical(other.gelatoAuthHeader, gelatoAuthHeader) ||
+                other.gelatoAuthHeader == gelatoAuthHeader) &&
+            (identical(other.debridService, debridService) ||
+                other.debridService == debridService) &&
+            (identical(other.debridApiKey, debridApiKey) ||
+                other.debridApiKey == debridApiKey) &&
+            (identical(other.enableDebridMetadata, enableDebridMetadata) ||
+                other.enableDebridMetadata == enableDebridMetadata) &&
+            (identical(other.enableFallbackProbe, enableFallbackProbe) ||
+                other.enableFallbackProbe == enableFallbackProbe) &&
+            (identical(other.fetchCachedMetadataPerVersion,
+                    fetchCachedMetadataPerVersion) ||
+                other.fetchCachedMetadataPerVersion ==
+                    fetchCachedMetadataPerVersion) &&
+            (identical(other.fetchAllNonCachedMetadata,
+                    fetchAllNonCachedMetadata) ||
+                other.fetchAllNonCachedMetadata == fetchAllNonCachedMetadata) &&
+            (identical(
+                    other.enableExternalSubtitles, enableExternalSubtitles) ||
+                other.enableExternalSubtitles == enableExternalSubtitles));
   }
 
   @JsonKey(includeFromJson: false, includeToJson: false)
@@ -72,11 +103,20 @@ mixin _$BaklavaConfig {
       forceTVClientLocalSearch,
       versionUi,
       audioUi,
-      subtitleUi);
+      subtitleUi,
+      gelatoBaseUrl,
+      gelatoAuthHeader,
+      debridService,
+      debridApiKey,
+      enableDebridMetadata,
+      enableFallbackProbe,
+      fetchCachedMetadataPerVersion,
+      fetchAllNonCachedMetadata,
+      enableExternalSubtitles);
 
   @override
   String toString() {
-    return 'BaklavaConfig(defaultTmdbId: $defaultTmdbId, enableAutoImport: $enableAutoImport, showReviewsCarousel: $showReviewsCarousel, tmdbApiKey: $tmdbApiKey, enableSearchFilter: $enableSearchFilter, forceTVClientLocalSearch: $forceTVClientLocalSearch, versionUi: $versionUi, audioUi: $audioUi, subtitleUi: $subtitleUi)';
+    return 'BaklavaConfig(defaultTmdbId: $defaultTmdbId, enableAutoImport: $enableAutoImport, showReviewsCarousel: $showReviewsCarousel, tmdbApiKey: $tmdbApiKey, enableSearchFilter: $enableSearchFilter, forceTVClientLocalSearch: $forceTVClientLocalSearch, versionUi: $versionUi, audioUi: $audioUi, subtitleUi: $subtitleUi, gelatoBaseUrl: $gelatoBaseUrl, gelatoAuthHeader: $gelatoAuthHeader, debridService: $debridService, debridApiKey: $debridApiKey, enableDebridMetadata: $enableDebridMetadata, enableFallbackProbe: $enableFallbackProbe, fetchCachedMetadataPerVersion: $fetchCachedMetadataPerVersion, fetchAllNonCachedMetadata: $fetchAllNonCachedMetadata, enableExternalSubtitles: $enableExternalSubtitles)';
   }
 }
 
@@ -95,7 +135,16 @@ abstract mixin class $BaklavaConfigCopyWith<$Res> {
       bool? forceTVClientLocalSearch,
       String? versionUi,
       String? audioUi,
-      String? subtitleUi});
+      String? subtitleUi,
+      String? gelatoBaseUrl,
+      String? gelatoAuthHeader,
+      String? debridService,
+      String? debridApiKey,
+      bool? enableDebridMetadata,
+      bool? enableFallbackProbe,
+      bool? fetchCachedMetadataPerVersion,
+      bool? fetchAllNonCachedMetadata,
+      bool? enableExternalSubtitles});
 }
 
 /// @nodoc
@@ -120,6 +169,15 @@ class _$BaklavaConfigCopyWithImpl<$Res>
     Object? versionUi = freezed,
     Object? audioUi = freezed,
     Object? subtitleUi = freezed,
+    Object? gelatoBaseUrl = freezed,
+    Object? gelatoAuthHeader = freezed,
+    Object? debridService = freezed,
+    Object? debridApiKey = freezed,
+    Object? enableDebridMetadata = freezed,
+    Object? enableFallbackProbe = freezed,
+    Object? fetchCachedMetadataPerVersion = freezed,
+    Object? fetchAllNonCachedMetadata = freezed,
+    Object? enableExternalSubtitles = freezed,
   }) {
     return _then(_self.copyWith(
       defaultTmdbId: null == defaultTmdbId
@@ -158,6 +216,42 @@ class _$BaklavaConfigCopyWithImpl<$Res>
           ? _self.subtitleUi
           : subtitleUi // ignore: cast_nullable_to_non_nullable
               as String?,
+      gelatoBaseUrl: freezed == gelatoBaseUrl
+          ? _self.gelatoBaseUrl
+          : gelatoBaseUrl // ignore: cast_nullable_to_non_nullable
+              as String?,
+      gelatoAuthHeader: freezed == gelatoAuthHeader
+          ? _self.gelatoAuthHeader
+          : gelatoAuthHeader // ignore: cast_nullable_to_non_nullable
+              as String?,
+      debridService: freezed == debridService
+          ? _self.debridService
+          : debridService // ignore: cast_nullable_to_non_nullable
+              as String?,
+      debridApiKey: freezed == debridApiKey
+          ? _self.debridApiKey
+          : debridApiKey // ignore: cast_nullable_to_non_nullable
+              as String?,
+      enableDebridMetadata: freezed == enableDebridMetadata
+          ? _self.enableDebridMetadata
+          : enableDebridMetadata // ignore: cast_nullable_to_non_nullable
+              as bool?,
+      enableFallbackProbe: freezed == enableFallbackProbe
+          ? _self.enableFallbackProbe
+          : enableFallbackProbe // ignore: cast_nullable_to_non_nullable
+              as bool?,
+      fetchCachedMetadataPerVersion: freezed == fetchCachedMetadataPerVersion
+          ? _self.fetchCachedMetadataPerVersion
+          : fetchCachedMetadataPerVersion // ignore: cast_nullable_to_non_nullable
+              as bool?,
+      fetchAllNonCachedMetadata: freezed == fetchAllNonCachedMetadata
+          ? _self.fetchAllNonCachedMetadata
+          : fetchAllNonCachedMetadata // ignore: cast_nullable_to_non_nullable
+              as bool?,
+      enableExternalSubtitles: freezed == enableExternalSubtitles
+          ? _self.enableExternalSubtitles
+          : enableExternalSubtitles // ignore: cast_nullable_to_non_nullable
+              as bool?,
     ));
   }
 }
@@ -264,7 +358,16 @@ extension BaklavaConfigPatterns on BaklavaConfig {
             bool? forceTVClientLocalSearch,
             String? versionUi,
             String? audioUi,
-            String? subtitleUi)?
+            String? subtitleUi,
+            String? gelatoBaseUrl,
+            String? gelatoAuthHeader,
+            String? debridService,
+            String? debridApiKey,
+            bool? enableDebridMetadata,
+            bool? enableFallbackProbe,
+            bool? fetchCachedMetadataPerVersion,
+            bool? fetchAllNonCachedMetadata,
+            bool? enableExternalSubtitles)?
         $default, {
     required TResult orElse(),
   }) {
@@ -280,7 +383,16 @@ extension BaklavaConfigPatterns on BaklavaConfig {
             _that.forceTVClientLocalSearch,
             _that.versionUi,
             _that.audioUi,
-            _that.subtitleUi);
+            _that.subtitleUi,
+            _that.gelatoBaseUrl,
+            _that.gelatoAuthHeader,
+            _that.debridService,
+            _that.debridApiKey,
+            _that.enableDebridMetadata,
+            _that.enableFallbackProbe,
+            _that.fetchCachedMetadataPerVersion,
+            _that.fetchAllNonCachedMetadata,
+            _that.enableExternalSubtitles);
       case _:
         return orElse();
     }
@@ -310,7 +422,16 @@ extension BaklavaConfigPatterns on BaklavaConfig {
             bool? forceTVClientLocalSearch,
             String? versionUi,
             String? audioUi,
-            String? subtitleUi)
+            String? subtitleUi,
+            String? gelatoBaseUrl,
+            String? gelatoAuthHeader,
+            String? debridService,
+            String? debridApiKey,
+            bool? enableDebridMetadata,
+            bool? enableFallbackProbe,
+            bool? fetchCachedMetadataPerVersion,
+            bool? fetchAllNonCachedMetadata,
+            bool? enableExternalSubtitles)
         $default,
   ) {
     final _that = this;
@@ -325,7 +446,16 @@ extension BaklavaConfigPatterns on BaklavaConfig {
             _that.forceTVClientLocalSearch,
             _that.versionUi,
             _that.audioUi,
-            _that.subtitleUi);
+            _that.subtitleUi,
+            _that.gelatoBaseUrl,
+            _that.gelatoAuthHeader,
+            _that.debridService,
+            _that.debridApiKey,
+            _that.enableDebridMetadata,
+            _that.enableFallbackProbe,
+            _that.fetchCachedMetadataPerVersion,
+            _that.fetchAllNonCachedMetadata,
+            _that.enableExternalSubtitles);
       case _:
         throw StateError('Unexpected subclass');
     }
@@ -354,7 +484,16 @@ extension BaklavaConfigPatterns on BaklavaConfig {
             bool? forceTVClientLocalSearch,
             String? versionUi,
             String? audioUi,
-            String? subtitleUi)?
+            String? subtitleUi,
+            String? gelatoBaseUrl,
+            String? gelatoAuthHeader,
+            String? debridService,
+            String? debridApiKey,
+            bool? enableDebridMetadata,
+            bool? enableFallbackProbe,
+            bool? fetchCachedMetadataPerVersion,
+            bool? fetchAllNonCachedMetadata,
+            bool? enableExternalSubtitles)?
         $default,
   ) {
     final _that = this;
@@ -369,7 +508,16 @@ extension BaklavaConfigPatterns on BaklavaConfig {
             _that.forceTVClientLocalSearch,
             _that.versionUi,
             _that.audioUi,
-            _that.subtitleUi);
+            _that.subtitleUi,
+            _that.gelatoBaseUrl,
+            _that.gelatoAuthHeader,
+            _that.debridService,
+            _that.debridApiKey,
+            _that.enableDebridMetadata,
+            _that.enableFallbackProbe,
+            _that.fetchCachedMetadataPerVersion,
+            _that.fetchAllNonCachedMetadata,
+            _that.enableExternalSubtitles);
       case _:
         return null;
     }
@@ -386,9 +534,18 @@ class _BaklavaConfig implements BaklavaConfig {
       this.tmdbApiKey,
       this.enableSearchFilter,
       this.forceTVClientLocalSearch,
-      this.versionUi,
-      this.audioUi,
-      this.subtitleUi});
+      this.versionUi = '',
+      this.audioUi = '',
+      this.subtitleUi = '',
+      this.gelatoBaseUrl = '',
+      this.gelatoAuthHeader = '',
+      this.debridService = 'realdebrid',
+      this.debridApiKey = '',
+      this.enableDebridMetadata = true,
+      this.enableFallbackProbe = false,
+      this.fetchCachedMetadataPerVersion = false,
+      this.fetchAllNonCachedMetadata = false,
+      this.enableExternalSubtitles = false});
   factory _BaklavaConfig.fromJson(Map<String, dynamic> json) =>
       _$BaklavaConfigFromJson(json);
 
@@ -408,11 +565,41 @@ class _BaklavaConfig implements BaklavaConfig {
   @override
   final bool? forceTVClientLocalSearch;
   @override
+  @JsonKey()
   final String? versionUi;
   @override
+  @JsonKey()
   final String? audioUi;
   @override
+  @JsonKey()
   final String? subtitleUi;
+  @override
+  @JsonKey()
+  final String? gelatoBaseUrl;
+  @override
+  @JsonKey()
+  final String? gelatoAuthHeader;
+  @override
+  @JsonKey()
+  final String? debridService;
+  @override
+  @JsonKey()
+  final String? debridApiKey;
+  @override
+  @JsonKey()
+  final bool? enableDebridMetadata;
+  @override
+  @JsonKey()
+  final bool? enableFallbackProbe;
+  @override
+  @JsonKey()
+  final bool? fetchCachedMetadataPerVersion;
+  @override
+  @JsonKey()
+  final bool? fetchAllNonCachedMetadata;
+  @override
+  @JsonKey()
+  final bool? enableExternalSubtitles;
 
   /// Create a copy of BaklavaConfig
   /// with the given fields replaced by the non-null parameter values.
@@ -451,7 +638,29 @@ class _BaklavaConfig implements BaklavaConfig {
                 other.versionUi == versionUi) &&
             (identical(other.audioUi, audioUi) || other.audioUi == audioUi) &&
             (identical(other.subtitleUi, subtitleUi) ||
-                other.subtitleUi == subtitleUi));
+                other.subtitleUi == subtitleUi) &&
+            (identical(other.gelatoBaseUrl, gelatoBaseUrl) ||
+                other.gelatoBaseUrl == gelatoBaseUrl) &&
+            (identical(other.gelatoAuthHeader, gelatoAuthHeader) ||
+                other.gelatoAuthHeader == gelatoAuthHeader) &&
+            (identical(other.debridService, debridService) ||
+                other.debridService == debridService) &&
+            (identical(other.debridApiKey, debridApiKey) ||
+                other.debridApiKey == debridApiKey) &&
+            (identical(other.enableDebridMetadata, enableDebridMetadata) ||
+                other.enableDebridMetadata == enableDebridMetadata) &&
+            (identical(other.enableFallbackProbe, enableFallbackProbe) ||
+                other.enableFallbackProbe == enableFallbackProbe) &&
+            (identical(other.fetchCachedMetadataPerVersion,
+                    fetchCachedMetadataPerVersion) ||
+                other.fetchCachedMetadataPerVersion ==
+                    fetchCachedMetadataPerVersion) &&
+            (identical(other.fetchAllNonCachedMetadata,
+                    fetchAllNonCachedMetadata) ||
+                other.fetchAllNonCachedMetadata == fetchAllNonCachedMetadata) &&
+            (identical(
+                    other.enableExternalSubtitles, enableExternalSubtitles) ||
+                other.enableExternalSubtitles == enableExternalSubtitles));
   }
 
   @JsonKey(includeFromJson: false, includeToJson: false)
@@ -466,11 +675,20 @@ class _BaklavaConfig implements BaklavaConfig {
       forceTVClientLocalSearch,
       versionUi,
       audioUi,
-      subtitleUi);
+      subtitleUi,
+      gelatoBaseUrl,
+      gelatoAuthHeader,
+      debridService,
+      debridApiKey,
+      enableDebridMetadata,
+      enableFallbackProbe,
+      fetchCachedMetadataPerVersion,
+      fetchAllNonCachedMetadata,
+      enableExternalSubtitles);
 
   @override
   String toString() {
-    return 'BaklavaConfig(defaultTmdbId: $defaultTmdbId, enableAutoImport: $enableAutoImport, showReviewsCarousel: $showReviewsCarousel, tmdbApiKey: $tmdbApiKey, enableSearchFilter: $enableSearchFilter, forceTVClientLocalSearch: $forceTVClientLocalSearch, versionUi: $versionUi, audioUi: $audioUi, subtitleUi: $subtitleUi)';
+    return 'BaklavaConfig(defaultTmdbId: $defaultTmdbId, enableAutoImport: $enableAutoImport, showReviewsCarousel: $showReviewsCarousel, tmdbApiKey: $tmdbApiKey, enableSearchFilter: $enableSearchFilter, forceTVClientLocalSearch: $forceTVClientLocalSearch, versionUi: $versionUi, audioUi: $audioUi, subtitleUi: $subtitleUi, gelatoBaseUrl: $gelatoBaseUrl, gelatoAuthHeader: $gelatoAuthHeader, debridService: $debridService, debridApiKey: $debridApiKey, enableDebridMetadata: $enableDebridMetadata, enableFallbackProbe: $enableFallbackProbe, fetchCachedMetadataPerVersion: $fetchCachedMetadataPerVersion, fetchAllNonCachedMetadata: $fetchAllNonCachedMetadata, enableExternalSubtitles: $enableExternalSubtitles)';
   }
 }
 
@@ -491,7 +709,16 @@ abstract mixin class _$BaklavaConfigCopyWith<$Res>
       bool? forceTVClientLocalSearch,
       String? versionUi,
       String? audioUi,
-      String? subtitleUi});
+      String? subtitleUi,
+      String? gelatoBaseUrl,
+      String? gelatoAuthHeader,
+      String? debridService,
+      String? debridApiKey,
+      bool? enableDebridMetadata,
+      bool? enableFallbackProbe,
+      bool? fetchCachedMetadataPerVersion,
+      bool? fetchAllNonCachedMetadata,
+      bool? enableExternalSubtitles});
 }
 
 /// @nodoc
@@ -516,6 +743,15 @@ class __$BaklavaConfigCopyWithImpl<$Res>
     Object? versionUi = freezed,
     Object? audioUi = freezed,
     Object? subtitleUi = freezed,
+    Object? gelatoBaseUrl = freezed,
+    Object? gelatoAuthHeader = freezed,
+    Object? debridService = freezed,
+    Object? debridApiKey = freezed,
+    Object? enableDebridMetadata = freezed,
+    Object? enableFallbackProbe = freezed,
+    Object? fetchCachedMetadataPerVersion = freezed,
+    Object? fetchAllNonCachedMetadata = freezed,
+    Object? enableExternalSubtitles = freezed,
   }) {
     return _then(_BaklavaConfig(
       defaultTmdbId: null == defaultTmdbId
@@ -554,6 +790,42 @@ class __$BaklavaConfigCopyWithImpl<$Res>
           ? _self.subtitleUi
           : subtitleUi // ignore: cast_nullable_to_non_nullable
               as String?,
+      gelatoBaseUrl: freezed == gelatoBaseUrl
+          ? _self.gelatoBaseUrl
+          : gelatoBaseUrl // ignore: cast_nullable_to_non_nullable
+              as String?,
+      gelatoAuthHeader: freezed == gelatoAuthHeader
+          ? _self.gelatoAuthHeader
+          : gelatoAuthHeader // ignore: cast_nullable_to_non_nullable
+              as String?,
+      debridService: freezed == debridService
+          ? _self.debridService
+          : debridService // ignore: cast_nullable_to_non_nullable
+              as String?,
+      debridApiKey: freezed == debridApiKey
+          ? _self.debridApiKey
+          : debridApiKey // ignore: cast_nullable_to_non_nullable
+              as String?,
+      enableDebridMetadata: freezed == enableDebridMetadata
+          ? _self.enableDebridMetadata
+          : enableDebridMetadata // ignore: cast_nullable_to_non_nullable
+              as bool?,
+      enableFallbackProbe: freezed == enableFallbackProbe
+          ? _self.enableFallbackProbe
+          : enableFallbackProbe // ignore: cast_nullable_to_non_nullable
+              as bool?,
+      fetchCachedMetadataPerVersion: freezed == fetchCachedMetadataPerVersion
+          ? _self.fetchCachedMetadataPerVersion
+          : fetchCachedMetadataPerVersion // ignore: cast_nullable_to_non_nullable
+              as bool?,
+      fetchAllNonCachedMetadata: freezed == fetchAllNonCachedMetadata
+          ? _self.fetchAllNonCachedMetadata
+          : fetchAllNonCachedMetadata // ignore: cast_nullable_to_non_nullable
+              as bool?,
+      enableExternalSubtitles: freezed == enableExternalSubtitles
+          ? _self.enableExternalSubtitles
+          : enableExternalSubtitles // ignore: cast_nullable_to_non_nullable
+              as bool?,
     ));
   }
 }

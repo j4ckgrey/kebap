@@ -61,6 +61,16 @@ class BaklavaService {
     String? versionUi,
     String? audioUi,
     String? subtitleUi,
+    String? tmdbApiKey,
+    String? gelatoBaseUrl,
+    String? gelatoAuthHeader,
+    String? debridService,
+    String? debridApiKey,
+    bool? enableDebridMetadata,
+    bool? enableFallbackProbe,
+    bool? fetchCachedMetadataPerVersion,
+    bool? fetchAllNonCachedMetadata,
+    bool? enableExternalSubtitles,
   }) async {
     try {
       final api = ref.read(jellyApiProvider).api;
@@ -72,33 +82,44 @@ class BaklavaService {
 
       // WORKAROUND: Fetch current config to preserve tmdbApiKey from being overwritten
       // The server unconditionally overwrites tmdbApiKey even when not provided
+      // NOTE: If we are providing tmdbApiKey, we don't need to fetch it.
       String? currentTmdbApiKey;
-      try {
-        final currentConfig = await fetchConfig();
-        if (currentConfig.isSuccessful && currentConfig.body != null) {
-          currentTmdbApiKey = currentConfig.body!.tmdbApiKey;
-        }
-      } catch (_) {
-        // Ignore errors, proceed without tmdbApiKey
+      if (tmdbApiKey == null) {
+          try {
+            final currentConfig = await fetchConfig();
+            if (currentConfig.isSuccessful && currentConfig.body != null) {
+              currentTmdbApiKey = currentConfig.body!.tmdbApiKey;
+            }
+          } catch (_) {
+            // Ignore errors, proceed without tmdbApiKey
+          }
       }
 
       final body = <String, dynamic>{};
-      // Include current tmdbApiKey to prevent server from overwriting it
-      if (currentTmdbApiKey != null && currentTmdbApiKey.isNotEmpty) {
+      
+      // Handle TMDB API Key: Use provided or preserve current
+      if (tmdbApiKey != null) {
+        body['tmdbApiKey'] = tmdbApiKey;
+      } else if (currentTmdbApiKey != null && currentTmdbApiKey.isNotEmpty) {
         body['tmdbApiKey'] = currentTmdbApiKey;
       }
-      if (enableAutoImport != null) {
-        body['enableAutoImport'] = enableAutoImport;
-      }
-      if (showReviewsCarousel != null) {
-        body['showReviewsCarousel'] = showReviewsCarousel;
-      }
-      if (forceTVClientLocalSearch != null) {
-        body['forceTVClientLocalSearch'] = forceTVClientLocalSearch;
-      }
+
+      if (enableAutoImport != null) body['enableAutoImport'] = enableAutoImport;
+      if (showReviewsCarousel != null) body['showReviewsCarousel'] = showReviewsCarousel;
+      if (forceTVClientLocalSearch != null) body['forceTVClientLocalSearch'] = forceTVClientLocalSearch;
       if (versionUi != null) body['versionUi'] = versionUi;
       if (audioUi != null) body['audioUi'] = audioUi;
       if (subtitleUi != null) body['subtitleUi'] = subtitleUi;
+      
+      if (gelatoBaseUrl != null) body['gelatoBaseUrl'] = gelatoBaseUrl;
+      if (gelatoAuthHeader != null) body['gelatoAuthHeader'] = gelatoAuthHeader;
+      if (debridService != null) body['debridService'] = debridService;
+      if (debridApiKey != null) body['debridApiKey'] = debridApiKey;
+      if (enableDebridMetadata != null) body['enableDebridMetadata'] = enableDebridMetadata;
+      if (enableFallbackProbe != null) body['enableFallbackProbe'] = enableFallbackProbe;
+      if (fetchCachedMetadataPerVersion != null) body['fetchCachedMetadataPerVersion'] = fetchCachedMetadataPerVersion;
+      if (fetchAllNonCachedMetadata != null) body['fetchAllNonCachedMetadata'] = fetchAllNonCachedMetadata;
+      if (enableExternalSubtitles != null) body['enableExternalSubtitles'] = enableExternalSubtitles;
 
       final cleanServerUrl = serverUrl.endsWith('/') 
           ? serverUrl.substring(0, serverUrl.length - 1) 
@@ -122,6 +143,126 @@ class BaklavaService {
       return Response(response.base, null);
     } catch (e) {
       throw Exception('Failed to update config: $e');
+    }
+  }
+
+  // --- Cache Management ---
+
+  /// Get list of cached items
+  Future<Response<List<dynamic>>> getCacheList() async {
+    try {
+      final api = ref.read(jellyApiProvider).api;
+      final serverUrl = ref.read(serverUrlProvider);
+      if (serverUrl == null || serverUrl.isEmpty) throw Exception('Server URL not available');
+
+      final cleanServerUrl = serverUrl.endsWith('/') ? serverUrl.substring(0, serverUrl.length - 1) : serverUrl;
+      final url = '$cleanServerUrl/api/baklava/metadata/cache';
+      final request = Request('GET', Uri.parse(url), Uri.parse(serverUrl));
+      
+      final response = await api.client.send(request);
+
+      if (response.isSuccessful && response.body != null) {
+        final dynamic bodyData = response.body is String 
+             ? jsonDecode(response.body as String)
+             : response.body;
+        return Response(response.base, bodyData as List<dynamic>);
+      }
+      return Response(response.base, []);
+    } catch (e) {
+      throw Exception('Failed to get cache list: $e');
+    }
+  }
+
+  /// Delete single cache item
+  Future<Response<void>> deleteCacheItem(String itemId) async {
+    try {
+      final api = ref.read(jellyApiProvider).api;
+      final serverUrl = ref.read(serverUrlProvider);
+      if (serverUrl == null || serverUrl.isEmpty) throw Exception('Server URL not available');
+
+      final cleanServerUrl = serverUrl.endsWith('/') ? serverUrl.substring(0, serverUrl.length - 1) : serverUrl;
+      final url = '$cleanServerUrl/api/baklava/metadata/cache/$itemId';
+      final request = Request('DELETE', Uri.parse(url), Uri.parse(serverUrl));
+      
+      final response = await api.client.send(request);
+
+      if (!response.isSuccessful) {
+        throw Exception('Failed to delete cache item: ${response.statusCode}');
+      }
+      return Response(response.base, null);
+    } catch (e) {
+      throw Exception('Failed to delete cache item: $e');
+    }
+  }
+
+  /// Delete ALL cache
+  Future<Response<void>> deleteAllCache() async {
+    try {
+      final api = ref.read(jellyApiProvider).api;
+      final serverUrl = ref.read(serverUrlProvider);
+      if (serverUrl == null || serverUrl.isEmpty) throw Exception('Server URL not available');
+
+      final cleanServerUrl = serverUrl.endsWith('/') ? serverUrl.substring(0, serverUrl.length - 1) : serverUrl;
+      final url = '$cleanServerUrl/api/baklava/metadata/cache';
+      final request = Request('DELETE', Uri.parse(url), Uri.parse(serverUrl));
+      
+      final response = await api.client.send(request);
+
+      if (!response.isSuccessful) {
+        throw Exception('Failed to delete all cache: ${response.statusCode}');
+      }
+      return Response(response.base, null);
+    } catch (e) {
+      throw Exception('Failed to delete all cache: $e');
+    }
+  }
+
+  /// Probe ALL cache (fetch full metadata)
+  Future<Response<dynamic>> probeAllCache() async {
+    try {
+      final api = ref.read(jellyApiProvider).api;
+      final serverUrl = ref.read(serverUrlProvider);
+      if (serverUrl == null || serverUrl.isEmpty) throw Exception('Server URL not available');
+
+      final cleanServerUrl = serverUrl.endsWith('/') ? serverUrl.substring(0, serverUrl.length - 1) : serverUrl;
+      final url = '$cleanServerUrl/api/baklava/metadata/cache/probe-all';
+      final request = Request('POST', Uri.parse(url), Uri.parse(serverUrl));
+      
+      final response = await api.client.send(request);
+
+      if (!response.isSuccessful) {
+        throw Exception('Failed to probe all cache: ${response.statusCode}');
+      }
+      
+       final dynamic bodyData = response.body is String 
+             ? jsonDecode(response.body as String)
+             : response.body;
+
+      return Response(response.base, bodyData);
+    } catch (e) {
+      throw Exception('Failed to probe all cache: $e');
+    }
+  }
+
+  /// Refresh single cache item
+  Future<Response<void>> refreshCacheItem(String itemId) async {
+    try {
+      final api = ref.read(jellyApiProvider).api;
+      final serverUrl = ref.read(serverUrlProvider);
+      if (serverUrl == null || serverUrl.isEmpty) throw Exception('Server URL not available');
+
+      final cleanServerUrl = serverUrl.endsWith('/') ? serverUrl.substring(0, serverUrl.length - 1) : serverUrl;
+      final url = '$cleanServerUrl/api/baklava/metadata/cache/$itemId/refresh';
+      final request = Request('POST', Uri.parse(url), Uri.parse(serverUrl));
+      
+      final response = await api.client.send(request);
+
+      if (!response.isSuccessful) {
+        throw Exception('Failed to refresh cache item: ${response.statusCode}');
+      }
+      return Response(response.base, null);
+    } catch (e) {
+      throw Exception('Failed to refresh cache item: $e');
     }
   }
 

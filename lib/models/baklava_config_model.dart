@@ -12,9 +12,18 @@ abstract class BaklavaConfig with _$BaklavaConfig {
     String? tmdbApiKey,
     bool? enableSearchFilter,
     bool? forceTVClientLocalSearch,
-    String? versionUi,
-    String? audioUi,
-    String? subtitleUi,
+    @Default('') String? versionUi,
+    @Default('') String? audioUi,
+    @Default('') String? subtitleUi,
+    @Default('') String? gelatoBaseUrl,
+    @Default('') String? gelatoAuthHeader,
+    @Default('realdebrid') String? debridService,
+    @Default('') String? debridApiKey,
+    @Default(true) bool? enableDebridMetadata,
+    @Default(false) bool? enableFallbackProbe,
+    @Default(false) bool? fetchCachedMetadataPerVersion,
+    @Default(false) bool? fetchAllNonCachedMetadata,
+    @Default(false) bool? enableExternalSubtitles,
   }) = _BaklavaConfig;
 
   factory BaklavaConfig.fromJson(Map<String, dynamic> json) => _$BaklavaConfigFromJson(json);

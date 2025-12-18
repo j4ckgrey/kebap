@@ -84,11 +84,13 @@ class _TextInputFieldDialog extends ConsumerWidget {
               style: Theme.of(context).textTheme.titleLarge,
             ),
             const Divider(),
-            Text(
-              description,
-              style: Theme.of(context).textTheme.bodyMedium,
-            ),
-            const Divider(),
+            if (description.isNotEmpty) ...[
+              Text(
+                description,
+                style: Theme.of(context).textTheme.bodyMedium,
+              ),
+              const Divider(),
+            ],
             ListView(
               shrinkWrap: true,
               padding: const EdgeInsets.all(6),

@@ -111,7 +111,7 @@ class _MediaStreamCarouselState extends ConsumerState<MediaStreamCarousel> {
                   return Padding(
                     padding: const EdgeInsets.only(right: 12),
                     child: _CarouselCard(
-                      title: audio.displayTitle,
+                      title: audio.extendedDisplayTitle,
                       isSelected: isSelected,
                       onTap: () => widget.onAudioIndexChanged?.call(audio.index),
                       onFocused: (value) {
