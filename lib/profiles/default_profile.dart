@@ -42,6 +42,7 @@ DeviceProfile defaultProfile(PlayerOptions player) => kIsWeb
         containerProfiles: [],
         subtitleProfiles: [
           SubtitleProfile(format: 'vtt', method: SubtitleDeliveryMethod.$external),
+          SubtitleProfile(format: 'srt', method: SubtitleDeliveryMethod.$external),
           SubtitleProfile(format: 'ass', method: SubtitleDeliveryMethod.$external),
           SubtitleProfile(format: 'ssa', method: SubtitleDeliveryMethod.$external),
           SubtitleProfile(format: 'pgssub', method: SubtitleDeliveryMethod.$external),
