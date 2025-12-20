@@ -42,29 +42,37 @@ class LibMDK extends BasePlayer {
 
   @override
   Future<void> loadVideo(Media media, bool play) async {
-    if (_controller != null) {
-      _controller?.dispose();
-    }
-    final validUrl = isValidUrl(media.url);
-    if (validUrl != null) {
-      _controller = VideoPlayerController.networkUrl(validUrl, httpHeaders: media.httpHeaders ?? {});
-    } else {
-      _controller = VideoPlayerController.file(File(media.url));
-    }
+    try {
+      if (_controller != null) {
+        _controller?.dispose();
+      }
+      final validUrl = isValidUrl(media.url);
+      if (validUrl != null) {
+        _controller = VideoPlayerController.networkUrl(validUrl, httpHeaders: media.httpHeaders ?? {});
+      } else {
+        _controller = VideoPlayerController.file(File(media.url));
+      }
 
-    await _controller?.initialize();
-    _controller?.addListener(() => updateState());
+      await _controller?.initialize();
+      _controller?.addListener(() => updateState());
 
-    if (play) {
-      await _controller?.play();
+      if (play) {
+        await _controller?.play();
+      }
+      _controller?.setBufferRange(
+        min: const Duration(seconds: 15).inMilliseconds,
+        max: const Duration(seconds: 30).inMilliseconds,
+      );
+      return setState(lastState.update(
+        buffering: true,
+      ));
+    } catch (e) {
+      debugPrint('[LibMDK] Error loading video: $e');
+      setState(lastState.update(
+        buffering: false,
+      ));
+      rethrow; // Re-throw so video_player_provider can handle it
     }
-    _controller?.setBufferRange(
-      min: const Duration(seconds: 15).inMilliseconds,
-      max: const Duration(seconds: 30).inMilliseconds,
-    );
-    return setState(lastState.update(
-      buffering: true,
-    ));
   }
 
   void setState(PlayerState state) {

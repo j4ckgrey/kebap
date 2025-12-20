@@ -305,11 +305,10 @@ class _HorizontalListState extends ConsumerState<HorizontalList> with TickerProv
                 firstItemWidth: _firstItemWidth ?? 250,
                 isFirstRow: widget.autoFocus,
                 onFocused: (node) {
-                  lastFocused = node;
-                  final correctIndex = _getCorrectIndexForNode(node);
-                  if (correctIndex != -1) {
-                    widget.onFocused?.call(correctIndex);
-                    _scrollToPosition(correctIndex);
+                  // Focus updates are now handled by individual item Focus wrappers
+                  // This callback is kept for edge cases but explicit wrappers are primary
+                  if (node.context != null) {
+                    lastFocused = node;
                   }
                 },
               ),
@@ -319,10 +318,10 @@ class _HorizontalListState extends ConsumerState<HorizontalList> with TickerProv
                 clipBehavior: Clip.none,
                 scrollDirection: Axis.horizontal,
                 padding: widget.contentPadding,
-                cacheExtent: _firstItemWidth ?? 250 * 3,
+                cacheExtent: (_firstItemWidth ?? 250) * 5,
                 // RepaintBoundary around each item to isolate card repaints from scroll
-                itemBuilder: (context, index) => RepaintBoundary(
-                  child: index == widget.items.length
+                itemBuilder: (context, index) {
+                  final Widget child = index == widget.items.length
                       ? PosterPlaceHolder(
                           onTap: widget.onLabelClick ?? () {},
                           aspectRatio: widget.dominantRatio ?? AdaptiveLayout.poster(context).ratio,
@@ -330,8 +329,30 @@ class _HorizontalListState extends ConsumerState<HorizontalList> with TickerProv
                       : Container(
                           key: index == 0 ? _firstItemKey : null,
                           child: widget.itemBuilder(context, index),
-                        ),
-                ),
+                        );
+                  
+                  // Wrap in explicit Focus widget to reliably track focus and prevent duplicate/ghost selections
+                  // canRequestFocus: false ensures this wrapper doesn't trap focus itself, but only listens to children
+                  return RepaintBoundary(
+                    child: Focus(
+                      canRequestFocus: false,
+                      onFocusChange: (value) {
+                         if (value) {
+                           lastFocused = _firstFullyVisibleNode(context, [Focus.of(context)]);
+                           
+                           // Explicitly notify parent of focus change using index
+                           // Allow index == widget.items.length (placeholder) to notify as well
+                           if (index <= widget.items.length) {
+                             widget.onFocused?.call(index);
+                             // Ensure we scroll to keep item visible
+                             _scrollToPosition(index);
+                           }
+                         }
+                      },
+                      child: child,
+                    ),
+                  );
+                },
                 separatorBuilder: (context, index) => SizedBox(width: contentPadding),
                 itemCount: widget.onLabelClick != null && AdaptiveLayout.inputDeviceOf(context) == InputDevice.dPad
                     ? widget.items.length + 1
@@ -426,7 +447,11 @@ class HorizontalRailFocus extends WidgetOrderTraversalPolicy {
 
     if (direction == TraversalDirection.left) {
       if (index == 0) {
-        Scaffold.of(parentNode.context!).openDrawer();
+        try {
+          Scaffold.of(parentNode.context!).openDrawer();
+        } catch (_) {
+          // No scaffold or drawer available, but we still consumed the left input
+        }
         return true;
       }
 

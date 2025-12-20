@@ -103,7 +103,20 @@ class _SingleRowViewState extends ConsumerState<SingleRowView> {
     });
   }
 
-  void _onItemFocused(ItemBaseModel item, String label) {
+  void _onItemFocused(ItemBaseModel? item, String label) {
+    
+    // If item is null (e.g. Show More focused), we still want to update state to null
+    // so the banner clears or stays empty, instead of showing the last selected item.
+    if (item == null) {
+       ref.read(focusedItemProvider.notifier).state = null;
+       if (_lastFocusedRowLabel != label) {
+          setState(() {
+            _lastFocusedRowLabel = label;
+          });
+       }
+       return;
+    }
+
     final currentFocused = ref.read(focusedItemProvider);
     // Only update if item actually changed
     if (currentFocused?.id != item.id) {

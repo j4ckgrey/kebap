@@ -33,7 +33,14 @@ class NativePlayer extends BasePlayer implements VideoPlayerListenerCallback {
   }
 
   @override
-  Future<void> loadVideo(Media media, bool play) async => player.open(media.url, play);
+  Future<void> loadVideo(Media media, bool play) async {
+    try {
+      await player.open(media.url, play);
+    } catch (e) {
+      debugPrint('[NativePlayer] Error loading video: $e');
+      rethrow;
+    }
+  }
 
   @override
   Future<StartResult> open(BuildContext newContext) async {

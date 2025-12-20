@@ -27,6 +27,10 @@ mixin _$BaklavaConfig {
   String? get gelatoAuthHeader;
   String? get debridService;
   String? get debridApiKey;
+  String? get realDebridApiKey;
+  String? get torboxApiKey;
+  String? get alldebridApiKey;
+  String? get premiumizeApiKey;
   bool? get enableDebridMetadata;
   bool? get enableFallbackProbe;
   bool? get fetchCachedMetadataPerVersion;
@@ -75,6 +79,14 @@ mixin _$BaklavaConfig {
                 other.debridService == debridService) &&
             (identical(other.debridApiKey, debridApiKey) ||
                 other.debridApiKey == debridApiKey) &&
+            (identical(other.realDebridApiKey, realDebridApiKey) ||
+                other.realDebridApiKey == realDebridApiKey) &&
+            (identical(other.torboxApiKey, torboxApiKey) ||
+                other.torboxApiKey == torboxApiKey) &&
+            (identical(other.alldebridApiKey, alldebridApiKey) ||
+                other.alldebridApiKey == alldebridApiKey) &&
+            (identical(other.premiumizeApiKey, premiumizeApiKey) ||
+                other.premiumizeApiKey == premiumizeApiKey) &&
             (identical(other.enableDebridMetadata, enableDebridMetadata) ||
                 other.enableDebridMetadata == enableDebridMetadata) &&
             (identical(other.enableFallbackProbe, enableFallbackProbe) ||
@@ -93,30 +105,35 @@ mixin _$BaklavaConfig {
 
   @JsonKey(includeFromJson: false, includeToJson: false)
   @override
-  int get hashCode => Object.hash(
-      runtimeType,
-      defaultTmdbId,
-      enableAutoImport,
-      showReviewsCarousel,
-      tmdbApiKey,
-      enableSearchFilter,
-      forceTVClientLocalSearch,
-      versionUi,
-      audioUi,
-      subtitleUi,
-      gelatoBaseUrl,
-      gelatoAuthHeader,
-      debridService,
-      debridApiKey,
-      enableDebridMetadata,
-      enableFallbackProbe,
-      fetchCachedMetadataPerVersion,
-      fetchAllNonCachedMetadata,
-      enableExternalSubtitles);
+  int get hashCode => Object.hashAll([
+        runtimeType,
+        defaultTmdbId,
+        enableAutoImport,
+        showReviewsCarousel,
+        tmdbApiKey,
+        enableSearchFilter,
+        forceTVClientLocalSearch,
+        versionUi,
+        audioUi,
+        subtitleUi,
+        gelatoBaseUrl,
+        gelatoAuthHeader,
+        debridService,
+        debridApiKey,
+        realDebridApiKey,
+        torboxApiKey,
+        alldebridApiKey,
+        premiumizeApiKey,
+        enableDebridMetadata,
+        enableFallbackProbe,
+        fetchCachedMetadataPerVersion,
+        fetchAllNonCachedMetadata,
+        enableExternalSubtitles
+      ]);
 
   @override
   String toString() {
-    return 'BaklavaConfig(defaultTmdbId: $defaultTmdbId, enableAutoImport: $enableAutoImport, showReviewsCarousel: $showReviewsCarousel, tmdbApiKey: $tmdbApiKey, enableSearchFilter: $enableSearchFilter, forceTVClientLocalSearch: $forceTVClientLocalSearch, versionUi: $versionUi, audioUi: $audioUi, subtitleUi: $subtitleUi, gelatoBaseUrl: $gelatoBaseUrl, gelatoAuthHeader: $gelatoAuthHeader, debridService: $debridService, debridApiKey: $debridApiKey, enableDebridMetadata: $enableDebridMetadata, enableFallbackProbe: $enableFallbackProbe, fetchCachedMetadataPerVersion: $fetchCachedMetadataPerVersion, fetchAllNonCachedMetadata: $fetchAllNonCachedMetadata, enableExternalSubtitles: $enableExternalSubtitles)';
+    return 'BaklavaConfig(defaultTmdbId: $defaultTmdbId, enableAutoImport: $enableAutoImport, showReviewsCarousel: $showReviewsCarousel, tmdbApiKey: $tmdbApiKey, enableSearchFilter: $enableSearchFilter, forceTVClientLocalSearch: $forceTVClientLocalSearch, versionUi: $versionUi, audioUi: $audioUi, subtitleUi: $subtitleUi, gelatoBaseUrl: $gelatoBaseUrl, gelatoAuthHeader: $gelatoAuthHeader, debridService: $debridService, debridApiKey: $debridApiKey, realDebridApiKey: $realDebridApiKey, torboxApiKey: $torboxApiKey, alldebridApiKey: $alldebridApiKey, premiumizeApiKey: $premiumizeApiKey, enableDebridMetadata: $enableDebridMetadata, enableFallbackProbe: $enableFallbackProbe, fetchCachedMetadataPerVersion: $fetchCachedMetadataPerVersion, fetchAllNonCachedMetadata: $fetchAllNonCachedMetadata, enableExternalSubtitles: $enableExternalSubtitles)';
   }
 }
 
@@ -140,6 +157,10 @@ abstract mixin class $BaklavaConfigCopyWith<$Res> {
       String? gelatoAuthHeader,
       String? debridService,
       String? debridApiKey,
+      String? realDebridApiKey,
+      String? torboxApiKey,
+      String? alldebridApiKey,
+      String? premiumizeApiKey,
       bool? enableDebridMetadata,
       bool? enableFallbackProbe,
       bool? fetchCachedMetadataPerVersion,
@@ -173,6 +194,10 @@ class _$BaklavaConfigCopyWithImpl<$Res>
     Object? gelatoAuthHeader = freezed,
     Object? debridService = freezed,
     Object? debridApiKey = freezed,
+    Object? realDebridApiKey = freezed,
+    Object? torboxApiKey = freezed,
+    Object? alldebridApiKey = freezed,
+    Object? premiumizeApiKey = freezed,
     Object? enableDebridMetadata = freezed,
     Object? enableFallbackProbe = freezed,
     Object? fetchCachedMetadataPerVersion = freezed,
@@ -231,6 +256,22 @@ class _$BaklavaConfigCopyWithImpl<$Res>
       debridApiKey: freezed == debridApiKey
           ? _self.debridApiKey
           : debridApiKey // ignore: cast_nullable_to_non_nullable
+              as String?,
+      realDebridApiKey: freezed == realDebridApiKey
+          ? _self.realDebridApiKey
+          : realDebridApiKey // ignore: cast_nullable_to_non_nullable
+              as String?,
+      torboxApiKey: freezed == torboxApiKey
+          ? _self.torboxApiKey
+          : torboxApiKey // ignore: cast_nullable_to_non_nullable
+              as String?,
+      alldebridApiKey: freezed == alldebridApiKey
+          ? _self.alldebridApiKey
+          : alldebridApiKey // ignore: cast_nullable_to_non_nullable
+              as String?,
+      premiumizeApiKey: freezed == premiumizeApiKey
+          ? _self.premiumizeApiKey
+          : premiumizeApiKey // ignore: cast_nullable_to_non_nullable
               as String?,
       enableDebridMetadata: freezed == enableDebridMetadata
           ? _self.enableDebridMetadata
@@ -363,6 +404,10 @@ extension BaklavaConfigPatterns on BaklavaConfig {
             String? gelatoAuthHeader,
             String? debridService,
             String? debridApiKey,
+            String? realDebridApiKey,
+            String? torboxApiKey,
+            String? alldebridApiKey,
+            String? premiumizeApiKey,
             bool? enableDebridMetadata,
             bool? enableFallbackProbe,
             bool? fetchCachedMetadataPerVersion,
@@ -388,6 +433,10 @@ extension BaklavaConfigPatterns on BaklavaConfig {
             _that.gelatoAuthHeader,
             _that.debridService,
             _that.debridApiKey,
+            _that.realDebridApiKey,
+            _that.torboxApiKey,
+            _that.alldebridApiKey,
+            _that.premiumizeApiKey,
             _that.enableDebridMetadata,
             _that.enableFallbackProbe,
             _that.fetchCachedMetadataPerVersion,
@@ -427,6 +476,10 @@ extension BaklavaConfigPatterns on BaklavaConfig {
             String? gelatoAuthHeader,
             String? debridService,
             String? debridApiKey,
+            String? realDebridApiKey,
+            String? torboxApiKey,
+            String? alldebridApiKey,
+            String? premiumizeApiKey,
             bool? enableDebridMetadata,
             bool? enableFallbackProbe,
             bool? fetchCachedMetadataPerVersion,
@@ -451,6 +504,10 @@ extension BaklavaConfigPatterns on BaklavaConfig {
             _that.gelatoAuthHeader,
             _that.debridService,
             _that.debridApiKey,
+            _that.realDebridApiKey,
+            _that.torboxApiKey,
+            _that.alldebridApiKey,
+            _that.premiumizeApiKey,
             _that.enableDebridMetadata,
             _that.enableFallbackProbe,
             _that.fetchCachedMetadataPerVersion,
@@ -489,6 +546,10 @@ extension BaklavaConfigPatterns on BaklavaConfig {
             String? gelatoAuthHeader,
             String? debridService,
             String? debridApiKey,
+            String? realDebridApiKey,
+            String? torboxApiKey,
+            String? alldebridApiKey,
+            String? premiumizeApiKey,
             bool? enableDebridMetadata,
             bool? enableFallbackProbe,
             bool? fetchCachedMetadataPerVersion,
@@ -513,6 +574,10 @@ extension BaklavaConfigPatterns on BaklavaConfig {
             _that.gelatoAuthHeader,
             _that.debridService,
             _that.debridApiKey,
+            _that.realDebridApiKey,
+            _that.torboxApiKey,
+            _that.alldebridApiKey,
+            _that.premiumizeApiKey,
             _that.enableDebridMetadata,
             _that.enableFallbackProbe,
             _that.fetchCachedMetadataPerVersion,
@@ -541,6 +606,10 @@ class _BaklavaConfig implements BaklavaConfig {
       this.gelatoAuthHeader = '',
       this.debridService = 'realdebrid',
       this.debridApiKey = '',
+      this.realDebridApiKey = '',
+      this.torboxApiKey = '',
+      this.alldebridApiKey = '',
+      this.premiumizeApiKey = '',
       this.enableDebridMetadata = true,
       this.enableFallbackProbe = false,
       this.fetchCachedMetadataPerVersion = false,
@@ -585,6 +654,18 @@ class _BaklavaConfig implements BaklavaConfig {
   @override
   @JsonKey()
   final String? debridApiKey;
+  @override
+  @JsonKey()
+  final String? realDebridApiKey;
+  @override
+  @JsonKey()
+  final String? torboxApiKey;
+  @override
+  @JsonKey()
+  final String? alldebridApiKey;
+  @override
+  @JsonKey()
+  final String? premiumizeApiKey;
   @override
   @JsonKey()
   final bool? enableDebridMetadata;
@@ -647,6 +728,14 @@ class _BaklavaConfig implements BaklavaConfig {
                 other.debridService == debridService) &&
             (identical(other.debridApiKey, debridApiKey) ||
                 other.debridApiKey == debridApiKey) &&
+            (identical(other.realDebridApiKey, realDebridApiKey) ||
+                other.realDebridApiKey == realDebridApiKey) &&
+            (identical(other.torboxApiKey, torboxApiKey) ||
+                other.torboxApiKey == torboxApiKey) &&
+            (identical(other.alldebridApiKey, alldebridApiKey) ||
+                other.alldebridApiKey == alldebridApiKey) &&
+            (identical(other.premiumizeApiKey, premiumizeApiKey) ||
+                other.premiumizeApiKey == premiumizeApiKey) &&
             (identical(other.enableDebridMetadata, enableDebridMetadata) ||
                 other.enableDebridMetadata == enableDebridMetadata) &&
             (identical(other.enableFallbackProbe, enableFallbackProbe) ||
@@ -665,30 +754,35 @@ class _BaklavaConfig implements BaklavaConfig {
 
   @JsonKey(includeFromJson: false, includeToJson: false)
   @override
-  int get hashCode => Object.hash(
-      runtimeType,
-      defaultTmdbId,
-      enableAutoImport,
-      showReviewsCarousel,
-      tmdbApiKey,
-      enableSearchFilter,
-      forceTVClientLocalSearch,
-      versionUi,
-      audioUi,
-      subtitleUi,
-      gelatoBaseUrl,
-      gelatoAuthHeader,
-      debridService,
-      debridApiKey,
-      enableDebridMetadata,
-      enableFallbackProbe,
-      fetchCachedMetadataPerVersion,
-      fetchAllNonCachedMetadata,
-      enableExternalSubtitles);
+  int get hashCode => Object.hashAll([
+        runtimeType,
+        defaultTmdbId,
+        enableAutoImport,
+        showReviewsCarousel,
+        tmdbApiKey,
+        enableSearchFilter,
+        forceTVClientLocalSearch,
+        versionUi,
+        audioUi,
+        subtitleUi,
+        gelatoBaseUrl,
+        gelatoAuthHeader,
+        debridService,
+        debridApiKey,
+        realDebridApiKey,
+        torboxApiKey,
+        alldebridApiKey,
+        premiumizeApiKey,
+        enableDebridMetadata,
+        enableFallbackProbe,
+        fetchCachedMetadataPerVersion,
+        fetchAllNonCachedMetadata,
+        enableExternalSubtitles
+      ]);
 
   @override
   String toString() {
-    return 'BaklavaConfig(defaultTmdbId: $defaultTmdbId, enableAutoImport: $enableAutoImport, showReviewsCarousel: $showReviewsCarousel, tmdbApiKey: $tmdbApiKey, enableSearchFilter: $enableSearchFilter, forceTVClientLocalSearch: $forceTVClientLocalSearch, versionUi: $versionUi, audioUi: $audioUi, subtitleUi: $subtitleUi, gelatoBaseUrl: $gelatoBaseUrl, gelatoAuthHeader: $gelatoAuthHeader, debridService: $debridService, debridApiKey: $debridApiKey, enableDebridMetadata: $enableDebridMetadata, enableFallbackProbe: $enableFallbackProbe, fetchCachedMetadataPerVersion: $fetchCachedMetadataPerVersion, fetchAllNonCachedMetadata: $fetchAllNonCachedMetadata, enableExternalSubtitles: $enableExternalSubtitles)';
+    return 'BaklavaConfig(defaultTmdbId: $defaultTmdbId, enableAutoImport: $enableAutoImport, showReviewsCarousel: $showReviewsCarousel, tmdbApiKey: $tmdbApiKey, enableSearchFilter: $enableSearchFilter, forceTVClientLocalSearch: $forceTVClientLocalSearch, versionUi: $versionUi, audioUi: $audioUi, subtitleUi: $subtitleUi, gelatoBaseUrl: $gelatoBaseUrl, gelatoAuthHeader: $gelatoAuthHeader, debridService: $debridService, debridApiKey: $debridApiKey, realDebridApiKey: $realDebridApiKey, torboxApiKey: $torboxApiKey, alldebridApiKey: $alldebridApiKey, premiumizeApiKey: $premiumizeApiKey, enableDebridMetadata: $enableDebridMetadata, enableFallbackProbe: $enableFallbackProbe, fetchCachedMetadataPerVersion: $fetchCachedMetadataPerVersion, fetchAllNonCachedMetadata: $fetchAllNonCachedMetadata, enableExternalSubtitles: $enableExternalSubtitles)';
   }
 }
 
@@ -714,6 +808,10 @@ abstract mixin class _$BaklavaConfigCopyWith<$Res>
       String? gelatoAuthHeader,
       String? debridService,
       String? debridApiKey,
+      String? realDebridApiKey,
+      String? torboxApiKey,
+      String? alldebridApiKey,
+      String? premiumizeApiKey,
       bool? enableDebridMetadata,
       bool? enableFallbackProbe,
       bool? fetchCachedMetadataPerVersion,
@@ -747,6 +845,10 @@ class __$BaklavaConfigCopyWithImpl<$Res>
     Object? gelatoAuthHeader = freezed,
     Object? debridService = freezed,
     Object? debridApiKey = freezed,
+    Object? realDebridApiKey = freezed,
+    Object? torboxApiKey = freezed,
+    Object? alldebridApiKey = freezed,
+    Object? premiumizeApiKey = freezed,
     Object? enableDebridMetadata = freezed,
     Object? enableFallbackProbe = freezed,
     Object? fetchCachedMetadataPerVersion = freezed,
@@ -805,6 +907,22 @@ class __$BaklavaConfigCopyWithImpl<$Res>
       debridApiKey: freezed == debridApiKey
           ? _self.debridApiKey
           : debridApiKey // ignore: cast_nullable_to_non_nullable
+              as String?,
+      realDebridApiKey: freezed == realDebridApiKey
+          ? _self.realDebridApiKey
+          : realDebridApiKey // ignore: cast_nullable_to_non_nullable
+              as String?,
+      torboxApiKey: freezed == torboxApiKey
+          ? _self.torboxApiKey
+          : torboxApiKey // ignore: cast_nullable_to_non_nullable
+              as String?,
+      alldebridApiKey: freezed == alldebridApiKey
+          ? _self.alldebridApiKey
+          : alldebridApiKey // ignore: cast_nullable_to_non_nullable
+              as String?,
+      premiumizeApiKey: freezed == premiumizeApiKey
+          ? _self.premiumizeApiKey
+          : premiumizeApiKey // ignore: cast_nullable_to_non_nullable
               as String?,
       enableDebridMetadata: freezed == enableDebridMetadata
           ? _self.enableDebridMetadata

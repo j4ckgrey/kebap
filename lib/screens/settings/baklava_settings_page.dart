@@ -3,7 +3,6 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:auto_route/auto_route.dart';
 import 'package:iconsax_plus/iconsax_plus.dart';
 import 'package:kebap/providers/baklava_config_provider.dart';
-import 'package:kebap/providers/effective_baklava_config_provider.dart';
 import 'package:kebap/screens/settings/settings_list_tile.dart';
 import 'package:kebap/screens/settings/settings_scaffold.dart';
 import 'package:kebap/screens/settings/widgets/settings_label_divider.dart';
@@ -24,12 +23,16 @@ class _BaklavaSettingsPageState extends ConsumerState<BaklavaSettingsPage> {
   // Cache list state
   List<dynamic>? _cacheItems;
   bool _isLoadingCache = false;
+  
+  // Service dropdown state
+  List<dynamic> _cacheServices = [];
+  String? _selectedService;
 
   @override
   void initState() {
     super.initState();
-    // Load cache list on init
     _loadCacheList();
+    _loadCacheServices();
   }
 
   Future<void> _loadCacheList() async {
@@ -54,6 +57,19 @@ class _BaklavaSettingsPageState extends ConsumerState<BaklavaSettingsPage> {
     }
   }
 
+  Future<void> _loadCacheServices() async {
+    try {
+      final res = await ref.read(baklavaServiceProvider).getCacheServices();
+      if (mounted) {
+        setState(() {
+          _cacheServices = res.body ?? [];
+        });
+      }
+    } catch (e) {
+      // Silently fail - dropdown just won't have options
+    }
+  }
+
   Future<void> _refreshCacheItem(String itemId) async {
     try {
       await ref.read(baklavaServiceProvider).refreshCacheItem(itemId);
@@ -70,6 +86,7 @@ class _BaklavaSettingsPageState extends ConsumerState<BaklavaSettingsPage> {
     try {
       await ref.read(baklavaServiceProvider).deleteCacheItem(itemId);
       await _loadCacheList();
+      await _loadCacheServices();
       if (mounted) {
          ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content: Text('Item deleted')));
       }
@@ -79,19 +96,20 @@ class _BaklavaSettingsPageState extends ConsumerState<BaklavaSettingsPage> {
   }
 
   Future<void> _deleteAllCache() async {
+    final serviceName = _selectedService ?? 'All Services';
     final confirmed = await showDialog<bool>(
       context: context,
       builder: (context) => AlertDialog(
-        title: const Text('Clear All Cache?'),
-        content: const Text(
-          'This will delete all cached stream metadata and remove downloaded files from your Debrid service.\n\nAre you sure?',
+        title: Text('Clear Cache ($serviceName)?'),
+        content: Text(
+          'This will delete cached stream metadata${_selectedService != null ? ' for $serviceName' : ''} and remove downloaded files from your Debrid service.\n\nAre you sure?',
         ),
         actions: [
           TextButton(onPressed: () => Navigator.pop(context, false), child: const Text('Cancel')),
           TextButton(
             style: TextButton.styleFrom(foregroundColor: Colors.red),
             onPressed: () => Navigator.pop(context, true), 
-            child: const Text('Delete All'),
+            child: const Text('Delete'),
           ),
         ],
       ),
@@ -99,10 +117,11 @@ class _BaklavaSettingsPageState extends ConsumerState<BaklavaSettingsPage> {
 
     if (confirmed == true) {
       try {
-        await ref.read(baklavaServiceProvider).deleteAllCache();
+        await ref.read(baklavaServiceProvider).deleteAllCache(service: _selectedService);
         await _loadCacheList();
+        await _loadCacheServices();
         if (mounted) {
-           ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content: Text('All cache cleared')));
+           ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text('Cache cleared${_selectedService != null ? ' for $_selectedService' : ''}')));
         }
       } catch (e) {
         if (mounted) ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text('Failed to clear cache: $e')));
@@ -110,40 +129,9 @@ class _BaklavaSettingsPageState extends ConsumerState<BaklavaSettingsPage> {
     }
   }
 
-  Future<void> _probeAllCache() async {
-    final confirmed = await showDialog<bool>(
-      context: context,
-      builder: (context) => AlertDialog(
-        title: const Text('Probe All Cache?'),
-        content: const Text(
-          'This will scan all cached items, verify Debrid links, and perform FFprobe analysis on audio/subtitle streams.\n\nThis may take a long time.\nAre you sure?',
-        ),
-        actions: [
-          TextButton(onPressed: () => Navigator.pop(context, false), child: const Text('Cancel')),
-          TextButton(
-            onPressed: () => Navigator.pop(context, true), 
-            child: const Text('Probe All'),
-          ),
-        ],
-      ),
-    );
-
-    if (confirmed == true) {
-      try {
-        await ref.read(baklavaServiceProvider).probeAllCache();
-        if (mounted) {
-           ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content: Text('Probe All started in background. Check logs.')));
-        }
-      } catch (e) {
-        if (mounted) ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text('Failed: $e')));
-      }
-    }
-  }
-
   @override
   Widget build(BuildContext context) {
-    final baklavaConfigAsync = ref.watch(baklavaConfigProvider); // Use direct provider to get fresh server config
-    // We can also use effectiveBaklavaConfigProvider but for settings editing we usually want source of truth
+    final baklavaConfigAsync = ref.watch(baklavaConfigProvider);
 
     return SettingsScaffold(
       label: 'Baklava Settings',
@@ -161,7 +149,6 @@ class _BaklavaSettingsPageState extends ConsumerState<BaklavaSettingsPage> {
                     SettingsListTile(
                       label: const Text('TMDB API Key'),
                       subLabel: Text(config.tmdbApiKey?.isNotEmpty == true ? config.tmdbApiKey! : 'Not Set'),
-
                       leading: const Icon(IconsaxPlusLinear.key),
                       onTap: () => openSimpleTextInput(
                         context,
@@ -178,99 +165,123 @@ class _BaklavaSettingsPageState extends ConsumerState<BaklavaSettingsPage> {
                 ),
                 const SizedBox(height: 16),
 
-                // --- Debrid Integration Section ---
+                // --- Debrid API Keys Section ---
                 ...settingsListGroup(
                   context,
-                  const SettingsLabelDivider(label: 'Debrid Integration (Stream MediaInfo)'),
+                  const SettingsLabelDivider(label: 'Debrid API Keys'),
                   [
                     SettingsListTile(
-                      label: const Text('Debrid Service'),
-                      subLabel: Text(config.debridService ?? 'Real-Debrid'),
-                      leading: const Icon(IconsaxPlusLinear.cloud_connection),
-                      onTap: () {
-                         // Show selection
-                         showModalBottomSheet(
-                           context: context,
-                           builder: (context) => SafeArea(
-                             child: Column(
-                               mainAxisSize: MainAxisSize.min,
-                               children: ['realdebrid', 'alldebrid', 'premiumize', 'debridlink', 'torbox'].map((e) => ListTile(
-                                 title: Text(e),
-                                 trailing: config.debridService == e ? const Icon(Icons.check) : null,
-                                 onTap: () async {
-                                   Navigator.pop(context);
-                                   await ref.read(baklavaServiceProvider).updateConfig(debridService: e);
-                                   ref.invalidate(baklavaConfigProvider);
-                                 },
-                               )).toList(),
-                             ),
-                           ),
-                         );
-                      },
-                    ),
-                    SettingsListTile(
-                      label: const Text('Debrid API Key'),
-                      subLabel: Text(config.debridApiKey?.isNotEmpty == true ? config.debridApiKey! : 'Not Set'),
+                      label: const Text('RealDebrid API Key'),
+                      subLabel: Text((config.realDebridApiKey ?? config.debridApiKey)?.isNotEmpty == true 
+                          ? (config.realDebridApiKey ?? config.debridApiKey)! : 'Not Set'),
                       leading: const Icon(IconsaxPlusLinear.key_square),
                       onTap: () => openSimpleTextInput(
                         context,
-                        config.debridApiKey,
+                        config.realDebridApiKey ?? config.debridApiKey,
                         (val) async {
-                           await ref.read(baklavaServiceProvider).updateConfig(debridApiKey: val);
+                           await ref.read(baklavaServiceProvider).updateConfig(realDebridApiKey: val);
                            ref.invalidate(baklavaConfigProvider);
                         },
-                        'Debrid API Key',
+                        'RealDebrid API Key',
                         '',
                       ),
                     ),
                     SettingsListTile(
-                      label: const Text('Enable Cached Debrid Streams'),
-                      subLabel: const Text('Fetch metadata from debrid cache without downloading'),
-                      trailing: Switch(
-                        value: config.enableDebridMetadata ?? true,
-                        onChanged: (v) async {
-                          await ref.read(baklavaServiceProvider).updateConfig(enableDebridMetadata: v);
-                          ref.invalidate(baklavaConfigProvider);
+                      label: const Text('TorBox API Key'),
+                      subLabel: Text(config.torboxApiKey?.isNotEmpty == true ? config.torboxApiKey! : 'Not Set'),
+                      leading: const Icon(IconsaxPlusLinear.key_square),
+                      onTap: () => openSimpleTextInput(
+                        context,
+                        config.torboxApiKey,
+                        (val) async {
+                           await ref.read(baklavaServiceProvider).updateConfig(torboxApiKey: val);
+                           ref.invalidate(baklavaConfigProvider);
                         },
+                        'TorBox API Key',
+                        '',
                       ),
                     ),
-                    if (config.enableDebridMetadata == true)
-                      SettingsListTile(
-                        label: const Text('Fetch Cached Per Version'),
-                        subLabel: const Text('Only fetch metadata for selected version (Faster)'),
-                        trailing: Switch(
-                          value: config.fetchCachedMetadataPerVersion ?? false,
-                          onChanged: (v) async {
-                            await ref.read(baklavaServiceProvider).updateConfig(fetchCachedMetadataPerVersion: v);
-                            ref.invalidate(baklavaConfigProvider);
-                          },
-                        ),
-                      ),
                     SettingsListTile(
-                      label: const Text('Enable Non-Cached Streams (Probe)'),
-                      subLabel: const Text('WARNING: Will download file to debrid account if not cached'),
+                      label: const Text('AllDebrid API Key'),
+                      subLabel: Text(config.alldebridApiKey?.isNotEmpty == true ? config.alldebridApiKey! : 'Not Set'),
+                      leading: const Icon(IconsaxPlusLinear.key_square),
+                      onTap: () => openSimpleTextInput(
+                        context,
+                        config.alldebridApiKey,
+                        (val) async {
+                           await ref.read(baklavaServiceProvider).updateConfig(alldebridApiKey: val);
+                           ref.invalidate(baklavaConfigProvider);
+                        },
+                        'AllDebrid API Key',
+                        '',
+                      ),
+                    ),
+                    SettingsListTile(
+                      label: const Text('Premiumize API Key'),
+                      subLabel: Text(config.premiumizeApiKey?.isNotEmpty == true ? config.premiumizeApiKey! : 'Not Set'),
+                      leading: const Icon(IconsaxPlusLinear.key_square),
+                      onTap: () => openSimpleTextInput(
+                        context,
+                        config.premiumizeApiKey,
+                        (val) async {
+                           await ref.read(baklavaServiceProvider).updateConfig(premiumizeApiKey: val);
+                           ref.invalidate(baklavaConfigProvider);
+                        },
+                        'Premiumize API Key',
+                        '',
+                      ),
+                    ),
+                  ],
+                ),
+                const SizedBox(height: 16),
+
+                // --- Request Settings Section ---
+                ...settingsListGroup(
+                  context,
+                  const SettingsLabelDivider(label: 'Request Settings'),
+                  [
+                    SettingsListTile(
+                      label: const Text('Enable Auto Import'),
+                      subLabel: const Text('Allow non-admins to import directly'),
                       trailing: Switch(
-                        value: config.enableFallbackProbe ?? false,
+                        value: config.enableAutoImport,
                         onChanged: (v) async {
-                          await ref.read(baklavaServiceProvider).updateConfig(enableFallbackProbe: v);
+                          await ref.read(baklavaServiceProvider).updateConfig(enableAutoImport: v);
                           ref.invalidate(baklavaConfigProvider);
                         },
                       ),
                     ),
-                    // Advanced Toggles
+                  ],
+                ),
+                const SizedBox(height: 16),
 
-                    if (config.enableFallbackProbe == true)
-                      SettingsListTile(
-                        label: const Text('Fetch All Non-Cached'),
-                        subLabel: const Text('WARNING: Costly! Downloads all versions to probe.'),
+                // --- Debrid Integration Section (DISABLED) ---
+                ...settingsListGroup(
+                  context,
+                  const SettingsLabelDivider(label: 'Debrid Integration (Disabled)'),
+                  [
+                    Opacity(
+                      opacity: 0.5,
+                      child: SettingsListTile(
+                        label: const Text('Enable Cached Debrid Streams'),
+                        subLabel: const Text('Currently disabled in Baklava'),
                         trailing: Switch(
-                          value: config.fetchAllNonCachedMetadata ?? false,
-                          onChanged: (v) async {
-                            await ref.read(baklavaServiceProvider).updateConfig(fetchAllNonCachedMetadata: v);
-                            ref.invalidate(baklavaConfigProvider);
-                          },
+                          value: config.enableDebridMetadata ?? true,
+                          onChanged: null,
                         ),
                       ),
+                    ),
+                    Opacity(
+                      opacity: 0.5,
+                      child: SettingsListTile(
+                        label: const Text('Enable Non-Cached Streams (Probe)'),
+                        subLabel: const Text('Currently disabled in Baklava'),
+                        trailing: Switch(
+                          value: config.enableFallbackProbe ?? false,
+                          onChanged: null,
+                        ),
+                      ),
+                    ),
                   ],
                 ),
 
@@ -282,28 +293,53 @@ class _BaklavaSettingsPageState extends ConsumerState<BaklavaSettingsPage> {
                 Padding(
                   padding: const EdgeInsets.symmetric(horizontal: 16),
                   child: Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     children: [
-                      Text('Manage cached', style: Theme.of(context).textTheme.bodySmall), // Shortened label
-                      Row(
-                        mainAxisSize: MainAxisSize.min,
-                        children: [
-                          /* TextButton(
-                            onPressed: _probeAllCache,
-                            child: const Text('Probe All'),
+                      // Service dropdown
+                      Expanded(
+                        child: Container(
+                          padding: const EdgeInsets.symmetric(horizontal: 12),
+                          decoration: BoxDecoration(
+                            color: Theme.of(context).colorScheme.surfaceContainerHighest,
+                            borderRadius: BorderRadius.circular(8),
+                            border: Border.all(color: Theme.of(context).dividerColor.withValues(alpha: 0.3)),
                           ),
-                          const SizedBox(width: 8), */
-                          TextButton(
-                            style: TextButton.styleFrom(
-                              foregroundColor: Theme.of(context).colorScheme.error,
-                              padding: EdgeInsets.zero,
-                              minimumSize: const Size(0, 0),
-                              tapTargetSize: MaterialTapTargetSize.shrinkWrap,
-                            ),
-                            onPressed: _deleteAllCache,
-                            child: const Text('Clear All'),
+                          child: DropdownButton<String?>(
+                            value: _selectedService,
+                            isExpanded: true,
+                            underline: const SizedBox(),
+                            hint: const Text('All Services'),
+                            items: [
+                              const DropdownMenuItem<String?>(
+                                value: null,
+                                child: Text('All Services'),
+                              ),
+                              ..._cacheServices.map((svc) {
+                                final name = svc['name'] as String? ?? '';
+                                final fileCount = svc['fileCount'] as int? ?? 0;
+                                final hasFiles = svc['hasFiles'] as bool? ?? false;
+                                return DropdownMenuItem<String?>(
+                                  value: name,
+                                  enabled: hasFiles,
+                                  child: Text(
+                                    '$name ($fileCount files)',
+                                    style: TextStyle(
+                                      color: hasFiles ? null : Theme.of(context).disabledColor,
+                                    ),
+                                  ),
+                                );
+                              }),
+                            ],
+                            onChanged: (val) => setState(() => _selectedService = val),
                           ),
-                        ],
+                        ),
+                      ),
+                      const SizedBox(width: 8),
+                      TextButton(
+                        style: TextButton.styleFrom(
+                          foregroundColor: Theme.of(context).colorScheme.error,
+                        ),
+                        onPressed: _deleteAllCache,
+                        child: const Text('Clear'),
                       ),
                     ],
                   ),
@@ -338,7 +374,6 @@ class _BaklavaSettingsPageState extends ConsumerState<BaklavaSettingsPage> {
                                 final item = _cacheItems![index];
                                 final title = item['title'] ?? 'Unknown Item';
                                 final size = (item['size'] as num?)?.toInt() ?? 0;
-                                // Simple list item
                                 return ListTile(
                                   dense: true,
                                   contentPadding: const EdgeInsets.symmetric(horizontal: 8),

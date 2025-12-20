@@ -66,6 +66,10 @@ class BaklavaService {
     String? gelatoAuthHeader,
     String? debridService,
     String? debridApiKey,
+    String? realDebridApiKey,
+    String? torboxApiKey,
+    String? alldebridApiKey,
+    String? premiumizeApiKey,
     bool? enableDebridMetadata,
     bool? enableFallbackProbe,
     bool? fetchCachedMetadataPerVersion,
@@ -115,6 +119,10 @@ class BaklavaService {
       if (gelatoAuthHeader != null) body['gelatoAuthHeader'] = gelatoAuthHeader;
       if (debridService != null) body['debridService'] = debridService;
       if (debridApiKey != null) body['debridApiKey'] = debridApiKey;
+      if (realDebridApiKey != null) body['realDebridApiKey'] = realDebridApiKey;
+      if (torboxApiKey != null) body['torboxApiKey'] = torboxApiKey;
+      if (alldebridApiKey != null) body['alldebridApiKey'] = alldebridApiKey;
+      if (premiumizeApiKey != null) body['premiumizeApiKey'] = premiumizeApiKey;
       if (enableDebridMetadata != null) body['enableDebridMetadata'] = enableDebridMetadata;
       if (enableFallbackProbe != null) body['enableFallbackProbe'] = enableFallbackProbe;
       if (fetchCachedMetadataPerVersion != null) body['fetchCachedMetadataPerVersion'] = fetchCachedMetadataPerVersion;
@@ -195,15 +203,16 @@ class BaklavaService {
     }
   }
 
-  /// Delete ALL cache
-  Future<Response<void>> deleteAllCache() async {
+  /// Delete ALL cache (optionally filtered by service)
+  Future<Response<void>> deleteAllCache({String? service}) async {
     try {
       final api = ref.read(jellyApiProvider).api;
       final serverUrl = ref.read(serverUrlProvider);
       if (serverUrl == null || serverUrl.isEmpty) throw Exception('Server URL not available');
 
       final cleanServerUrl = serverUrl.endsWith('/') ? serverUrl.substring(0, serverUrl.length - 1) : serverUrl;
-      final url = '$cleanServerUrl/api/baklava/metadata/cache';
+      final serviceParam = service != null && service.isNotEmpty ? '?service=${Uri.encodeComponent(service)}' : '';
+      final url = '$cleanServerUrl/api/baklava/metadata/cache$serviceParam';
       final request = Request('DELETE', Uri.parse(url), Uri.parse(serverUrl));
       
       final response = await api.client.send(request);
@@ -214,6 +223,31 @@ class BaklavaService {
       return Response(response.base, null);
     } catch (e) {
       throw Exception('Failed to delete all cache: $e');
+    }
+  }
+
+  /// Get list of cache services (for dropdown)
+  Future<Response<List<dynamic>>> getCacheServices() async {
+    try {
+      final api = ref.read(jellyApiProvider).api;
+      final serverUrl = ref.read(serverUrlProvider);
+      if (serverUrl == null || serverUrl.isEmpty) throw Exception('Server URL not available');
+
+      final cleanServerUrl = serverUrl.endsWith('/') ? serverUrl.substring(0, serverUrl.length - 1) : serverUrl;
+      final url = '$cleanServerUrl/api/baklava/metadata/cache/services';
+      final request = Request('GET', Uri.parse(url), Uri.parse(serverUrl));
+      
+      final response = await api.client.send(request);
+
+      if (response.isSuccessful && response.body != null) {
+        final dynamic bodyData = response.body is String 
+             ? jsonDecode(response.body as String)
+             : response.body;
+        return Response(response.base, bodyData as List<dynamic>);
+      }
+      return Response(response.base, []);
+    } catch (e) {
+      throw Exception('Failed to get cache services: $e');
     }
   }
 

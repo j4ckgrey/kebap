@@ -229,6 +229,8 @@ class PlaybackModelHelper {
         print("[PlaybackModelHelper] Fetched fullItem is null");
         return null;
       }
+      
+      print("[PlaybackModelHelper] Fetched item UserData: playbackPositionTicks=${fullItem.userData.playbackPositionTicks}, played=${fullItem.userData.played}");
 
       SyncedItem? syncedItem = await ref.read(syncProvider.notifier).getSyncedItem(fullItem.id);
 
@@ -351,17 +353,26 @@ class PlaybackModelHelper {
           ref.read(videoPlayerSettingsProvider.select((value) => value.wantedPlayer == PlayerOptions.nativePlayer));
       final isExternalSub = usedStreamModel?.currentSubStream?.isExternal == true;
 
+      print('[PlaybackModel] Creating playback with startPosition: ${startPosition?.inSeconds}s (${startPosition?.toRuntimeTicks} ticks)');
+      print('[PlaybackModel] Item UserData playbackPositionTicks: ${item.userData.playbackPositionTicks}');
+      
       // Refresh metadata to clear cached stream URLs (fixes expired RealDebrid/Torrentio links)
-      try {
-        await api.itemsItemIdRefreshPost(
-          itemId: item.id,
-          metadataRefreshMode: MetadataRefresh.fullRefresh,
-          replaceAllMetadata: false,
-          replaceAllImages: false,
-        );
-      } catch (e) {
-        log("Failed to refresh metadata: ${e.toString()}");
-        // Continue anyway - cached URLs might still work
+      // Skip refresh when resuming to preserve playback position and avoid unnecessary server load
+      if (startPosition == null || startPosition == Duration.zero) {
+        try {
+          await api.itemsItemIdRefreshPost(
+            itemId: item.id,
+            metadataRefreshMode: MetadataRefresh.fullRefresh,
+            replaceAllMetadata: false,
+            replaceAllImages: false,
+          );
+          print('[PlaybackModel] Metadata refresh completed (new playback)');
+        } catch (e) {
+          log("Failed to refresh metadata: ${e.toString()}");
+          // Continue anyway - cached URLs might still work
+        }
+      } else {
+        print('[PlaybackModel] Skipping metadata refresh (resuming at ${startPosition.inSeconds}s)');
       }
 
       final Response<PlaybackInfoResponse> response = await api.itemsItemIdPlaybackInfoPost(

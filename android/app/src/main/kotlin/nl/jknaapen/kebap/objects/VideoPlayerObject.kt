@@ -39,7 +39,12 @@ object VideoPlayerObject {
         val now = Clock.System.now().toJavaInstant()
         val zone = ZoneId.systemDefault()
         val remainingMs = (dur - pos).coerceAtLeast(0L)
-        val endInstant = now.plusMillis(remainingMs)
+        
+        // Prevent long overflow by capping remainingMs to a reasonable max (e.g., 7 days in ms)
+        val maxMs = 7L * 24 * 60 * 60 * 1000 // 7 days
+        val safeRemainingMs = remainingMs.coerceAtMost(maxMs)
+        
+        val endInstant = now.plusMillis(safeRemainingMs)
 
         val endZoned = endInstant.atZone(zone)
 

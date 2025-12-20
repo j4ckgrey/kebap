@@ -16,7 +16,7 @@ class PosterRow extends ConsumerWidget {
   final double? collectionAspectRatio;
   final Function()? onLabelClick;
   final EdgeInsets contentPadding;
-  final Function(ItemBaseModel focused)? onFocused;
+  final Function(ItemBaseModel? focused)? onFocused;
   final bool primaryPosters;
   final double? explicitHeight; // Explicit height for cards
   final FocusNode? firstItemFocusNode;
@@ -66,7 +66,12 @@ class PosterRow extends ConsumerWidget {
       height: explicitHeight, // Use explicit height if provided
       onFocused: (index) {
         if (onFocused != null) {
-          onFocused?.call(posters[index]);
+          if (index < posters.length) {
+            onFocused?.call(posters[index]);
+          } else {
+            // Placeholder (Show More) focused
+            onFocused?.call(null);
+          }
         }
         // Only trigger tap action on focus if NO explicit tap handler is provided
         // This preserves "Focus updates banner" vs "Tap navigates" distinction

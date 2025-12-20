@@ -197,8 +197,7 @@ class _SearchResultModalState extends ConsumerState<SearchResultModal> {
               ref.read(baklavaMetadataProvider.notifier).setLibraryStatus(stremioItemId);
               
               // Refresh views and dashboard to reflect new item
-              ref.read(viewsProvider.notifier).fetchViews();
-              ref.read(dashboardProvider.notifier).fetchNextUpAndResume();
+              _refreshUi();
               
               return true;
             }
@@ -229,12 +228,28 @@ class _SearchResultModalState extends ConsumerState<SearchResultModal> {
       final success = await _performImport();
       if (success && mounted) {
         // Refresh views and dashboard to reflect new item
-        ref.read(viewsProvider.notifier).fetchViews();
-        ref.read(dashboardProvider.notifier).fetchNextUpAndResume();
+        _refreshUi();
       }
     } finally {
       if (mounted) setState(() => _importing = false);
     }
+  }
+
+  void _refreshUi() {
+    if (!mounted) return;
+    
+    // Immediate refresh
+    ref.read(viewsProvider.notifier).fetchViews();
+    ref.read(dashboardProvider.notifier).fetchNextUpAndResume();
+    
+    // Delayed refresh to catch any indexing lag from Jellyfin
+    Future.delayed(const Duration(seconds: 2), () {
+      if (mounted) {
+         debugPrint('[SearchResultModal] Triggering delayed UI refresh');
+         ref.read(viewsProvider.notifier).fetchViews();
+         ref.read(dashboardProvider.notifier).fetchNextUpAndResume();
+      }
+    });
   }
 
   Future<void> _handleRequest() async {
@@ -583,8 +598,7 @@ class _SearchResultModalState extends ConsumerState<SearchResultModal> {
                                   );
 
                                   // 3. Refresh views and dashboard to reflect new item
-                                  ref.read(viewsProvider.notifier).fetchViews();
-                                  ref.read(dashboardProvider.notifier).fetchNextUpAndResume();
+                                  _refreshUi();
 
                                   if (context.mounted) {
                                     kebapSnackbar(context, title: 'Request approved');

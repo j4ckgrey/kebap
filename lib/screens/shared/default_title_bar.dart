@@ -40,13 +40,17 @@ class _DefaultTitleBarState extends ConsumerState<DefaultTitleBar> with WindowLi
 
   Future<void> _updateWindowState() async {
     if (kIsWeb) return;
-    final minimized = await windowManager.isMinimized();
-    final maximized = await windowManager.isMaximized();
-    if (mounted) {
-      setState(() {
-        isMinimized = minimized;
-        isMaximized = maximized;
-      });
+    try {
+      final minimized = await windowManager.isMinimized();
+      final maximized = await windowManager.isMaximized();
+      if (mounted) {
+        setState(() {
+          isMinimized = minimized;
+          isMaximized = maximized;
+        });
+      }
+    } catch (e) {
+      // Ignored: Window manager might not be available on some platforms
     }
   }
 

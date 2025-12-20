@@ -98,7 +98,11 @@ class EpisodeDetailsProvider extends StateNotifier<EpisodeDetailModel> {
                            (firstVersion?.audioStreams.length ?? 0) + 
                            (firstVersion?.subStreams.length ?? 0);
       
-      if (firstVersion != null && totalStreams == 0 && firstVersion.id != null) {
+      if (firstVersion != null &&
+          (totalStreams == 0 ||
+              (firstVersion.audioStreams.isEmpty) ||
+              (firstVersion.subStreams.isEmpty)) &&
+          firstVersion.id != null) {
         episode = episode.copyWith(
           mediaStreams: episode.mediaStreams.copyWith(isLoading: true),
         );
@@ -335,7 +339,11 @@ class EpisodeDetailsProvider extends StateNotifier<EpisodeDetailModel> {
         (firstVersion?.audioStreams.length ?? 0) +
         (firstVersion?.subStreams.length ?? 0);
 
-    if (firstVersion != null && totalStreams == 0 && firstVersion.id != null) {
+    if (firstVersion != null &&
+        (totalStreams == 0 ||
+            (firstVersion.audioStreams.isEmpty) ||
+            (firstVersion.subStreams.isEmpty)) &&
+        firstVersion.id != null) {
       try {
         final playbackInfo = await api.itemsItemIdPlaybackInfoPost(
           itemId: currentEpisode.id,

@@ -61,7 +61,11 @@ class MovieDetails extends _$MovieDetails {
                              (firstVersion?.audioStreams.length ?? 0) + 
                              (firstVersion?.subStreams.length ?? 0);
         
-        if (firstVersion != null && totalStreams == 0 && firstVersion.id != null) {
+        if (firstVersion != null &&
+            (totalStreams == 0 ||
+                (firstVersion.audioStreams.isEmpty) ||
+                (firstVersion.subStreams.isEmpty)) &&
+            firstVersion.id != null) {
           newState = newState.copyWith(
             mediaStreams: newState.mediaStreams.copyWith(isLoading: true),
           );
@@ -271,7 +275,11 @@ class MovieDetails extends _$MovieDetails {
         (firstVersion?.audioStreams.length ?? 0) +
         (firstVersion?.subStreams.length ?? 0);
 
-    if (firstVersion != null && totalStreams == 0 && firstVersion.id != null) {
+    if (firstVersion != null &&
+        (totalStreams == 0 ||
+            (firstVersion.audioStreams.isEmpty) ||
+            (firstVersion.subStreams.isEmpty)) &&
+        firstVersion.id != null) {
       debugPrint('[StreamRefresh] Polling specific version: ${firstVersion.id}');
       try {
         final baklavaService = ref.read(baklavaServiceProvider);

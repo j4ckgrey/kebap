@@ -76,7 +76,10 @@ Future<void> _playVideo(
     return;
   }
 
-  final actualStartPosition = startPosition ?? await current.startDuration() ?? Duration.zero;
+  final currentStartDuration = await current.startDuration();
+  final actualStartPosition = startPosition ?? currentStartDuration ?? Duration.zero;
+  
+  print('[_playVideo] startPosition param: ${startPosition?.inSeconds}s, current.startDuration(): ${currentStartDuration?.inSeconds}s, actualStartPosition: ${actualStartPosition.inSeconds}s');
 
   final loadedCorrectly = await ref.read(videoPlayerProvider.notifier).loadPlaybackItem(
         current,
@@ -210,16 +213,26 @@ extension ItemBaseModelExtensions on ItemBaseModel? {
 
     _showLoadingIndicator(context);
 
+    Duration? actualStartPosition = startPosition;
+    // If we are resuming (startPosition is null) and not showing options, trust the client's current item state for position
+    // This fixes issues where the server re-fetch returns 0 progress for remote/sync items
+    if (actualStartPosition == null && !showPlaybackOption && itemModel.userData.playbackPositionTicks > 0) {
+      actualStartPosition = itemModel.userData.playBackPosition;
+      print("[ItemBaseModelExtensions] Using client-side resume position: ${actualStartPosition?.inSeconds}s (from playbackPositionTicks: ${itemModel.userData.playbackPositionTicks})");
+    } else {
+      print("[ItemBaseModelExtensions] StartPosition: ${actualStartPosition?.inSeconds}s, showPlaybackOption: $showPlaybackOption, playbackPositionTicks: ${itemModel.userData.playbackPositionTicks}");
+    }
+
     print("[ItemBaseModelExtensions] Calling createPlaybackModel...");
     PlaybackModel? model = await ref.read(playbackModelHelper).createPlaybackModel(
           context,
           itemModel,
           showPlaybackOptions: showPlaybackOption,
-          startPosition: startPosition,
+          startPosition: actualStartPosition,
         );
     print("[ItemBaseModelExtensions] createPlaybackModel returned: ${model != null ? 'Model found' : 'Null'}");
 
-    await _playVideo(context, startPosition: startPosition, current: model, ref: ref);
+    await _playVideo(context, startPosition: actualStartPosition, current: model, ref: ref);
   }
 }
 
