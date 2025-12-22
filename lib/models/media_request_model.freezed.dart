@@ -14,34 +14,34 @@ T _$identity<T>(T value) => value;
 
 /// @nodoc
 mixin _$MediaRequest {
-  @JsonKey(name: 'Id')
+  @JsonKey(name: 'id')
   String get id;
-  @JsonKey(name: 'Username')
+  @JsonKey(name: 'username')
   String? get username;
-  @JsonKey(name: 'UserId')
+  @JsonKey(name: 'userId')
   String? get userId;
-  @JsonKey(name: 'Timestamp')
+  @JsonKey(name: 'timestamp')
   int get timestamp;
-  @JsonKey(name: 'Title')
+  @JsonKey(name: 'title')
   String get title;
-  @JsonKey(name: 'Year')
+  @JsonKey(name: 'year')
   String? get year;
-  @JsonKey(name: 'Img')
+  @JsonKey(name: 'img')
   @ImageUrlConverter()
   String? get img;
-  @JsonKey(name: 'ImdbId')
+  @JsonKey(name: 'imdbId')
   String? get imdbId;
-  @JsonKey(name: 'TmdbId')
+  @JsonKey(name: 'tmdbId')
   String? get tmdbId;
-  @JsonKey(name: 'JellyfinId')
+  @JsonKey(name: 'jellyfinId')
   String? get jellyfinId;
-  @JsonKey(name: 'ItemType')
+  @JsonKey(name: 'itemType')
   String? get itemType;
-  @JsonKey(name: 'TmdbMediaType')
+  @JsonKey(name: 'tmdbMediaType')
   String? get tmdbMediaType;
-  @JsonKey(name: 'Status')
+  @JsonKey(name: 'status')
   String get status;
-  @JsonKey(name: 'ApprovedBy')
+  @JsonKey(name: 'approvedBy')
   String? get approvedBy;
 
   /// Create a copy of MediaRequest
@@ -114,20 +114,20 @@ abstract mixin class $MediaRequestCopyWith<$Res> {
       _$MediaRequestCopyWithImpl;
   @useResult
   $Res call(
-      {@JsonKey(name: 'Id') String id,
-      @JsonKey(name: 'Username') String? username,
-      @JsonKey(name: 'UserId') String? userId,
-      @JsonKey(name: 'Timestamp') int timestamp,
-      @JsonKey(name: 'Title') String title,
-      @JsonKey(name: 'Year') String? year,
-      @JsonKey(name: 'Img') @ImageUrlConverter() String? img,
-      @JsonKey(name: 'ImdbId') String? imdbId,
-      @JsonKey(name: 'TmdbId') String? tmdbId,
-      @JsonKey(name: 'JellyfinId') String? jellyfinId,
-      @JsonKey(name: 'ItemType') String? itemType,
-      @JsonKey(name: 'TmdbMediaType') String? tmdbMediaType,
-      @JsonKey(name: 'Status') String status,
-      @JsonKey(name: 'ApprovedBy') String? approvedBy});
+      {@JsonKey(name: 'id') String id,
+      @JsonKey(name: 'username') String? username,
+      @JsonKey(name: 'userId') String? userId,
+      @JsonKey(name: 'timestamp') int timestamp,
+      @JsonKey(name: 'title') String title,
+      @JsonKey(name: 'year') String? year,
+      @JsonKey(name: 'img') @ImageUrlConverter() String? img,
+      @JsonKey(name: 'imdbId') String? imdbId,
+      @JsonKey(name: 'tmdbId') String? tmdbId,
+      @JsonKey(name: 'jellyfinId') String? jellyfinId,
+      @JsonKey(name: 'itemType') String? itemType,
+      @JsonKey(name: 'tmdbMediaType') String? tmdbMediaType,
+      @JsonKey(name: 'status') String status,
+      @JsonKey(name: 'approvedBy') String? approvedBy});
 }
 
 /// @nodoc
@@ -312,20 +312,20 @@ extension MediaRequestPatterns on MediaRequest {
   @optionalTypeArgs
   TResult maybeWhen<TResult extends Object?>(
     TResult Function(
-            @JsonKey(name: 'Id') String id,
-            @JsonKey(name: 'Username') String? username,
-            @JsonKey(name: 'UserId') String? userId,
-            @JsonKey(name: 'Timestamp') int timestamp,
-            @JsonKey(name: 'Title') String title,
-            @JsonKey(name: 'Year') String? year,
-            @JsonKey(name: 'Img') @ImageUrlConverter() String? img,
-            @JsonKey(name: 'ImdbId') String? imdbId,
-            @JsonKey(name: 'TmdbId') String? tmdbId,
-            @JsonKey(name: 'JellyfinId') String? jellyfinId,
-            @JsonKey(name: 'ItemType') String? itemType,
-            @JsonKey(name: 'TmdbMediaType') String? tmdbMediaType,
-            @JsonKey(name: 'Status') String status,
-            @JsonKey(name: 'ApprovedBy') String? approvedBy)?
+            @JsonKey(name: 'id') String id,
+            @JsonKey(name: 'username') String? username,
+            @JsonKey(name: 'userId') String? userId,
+            @JsonKey(name: 'timestamp') int timestamp,
+            @JsonKey(name: 'title') String title,
+            @JsonKey(name: 'year') String? year,
+            @JsonKey(name: 'img') @ImageUrlConverter() String? img,
+            @JsonKey(name: 'imdbId') String? imdbId,
+            @JsonKey(name: 'tmdbId') String? tmdbId,
+            @JsonKey(name: 'jellyfinId') String? jellyfinId,
+            @JsonKey(name: 'itemType') String? itemType,
+            @JsonKey(name: 'tmdbMediaType') String? tmdbMediaType,
+            @JsonKey(name: 'status') String status,
+            @JsonKey(name: 'approvedBy') String? approvedBy)?
         $default, {
     required TResult orElse(),
   }) {
@@ -368,20 +368,20 @@ extension MediaRequestPatterns on MediaRequest {
   @optionalTypeArgs
   TResult when<TResult extends Object?>(
     TResult Function(
-            @JsonKey(name: 'Id') String id,
-            @JsonKey(name: 'Username') String? username,
-            @JsonKey(name: 'UserId') String? userId,
-            @JsonKey(name: 'Timestamp') int timestamp,
-            @JsonKey(name: 'Title') String title,
-            @JsonKey(name: 'Year') String? year,
-            @JsonKey(name: 'Img') @ImageUrlConverter() String? img,
-            @JsonKey(name: 'ImdbId') String? imdbId,
-            @JsonKey(name: 'TmdbId') String? tmdbId,
-            @JsonKey(name: 'JellyfinId') String? jellyfinId,
-            @JsonKey(name: 'ItemType') String? itemType,
-            @JsonKey(name: 'TmdbMediaType') String? tmdbMediaType,
-            @JsonKey(name: 'Status') String status,
-            @JsonKey(name: 'ApprovedBy') String? approvedBy)
+            @JsonKey(name: 'id') String id,
+            @JsonKey(name: 'username') String? username,
+            @JsonKey(name: 'userId') String? userId,
+            @JsonKey(name: 'timestamp') int timestamp,
+            @JsonKey(name: 'title') String title,
+            @JsonKey(name: 'year') String? year,
+            @JsonKey(name: 'img') @ImageUrlConverter() String? img,
+            @JsonKey(name: 'imdbId') String? imdbId,
+            @JsonKey(name: 'tmdbId') String? tmdbId,
+            @JsonKey(name: 'jellyfinId') String? jellyfinId,
+            @JsonKey(name: 'itemType') String? itemType,
+            @JsonKey(name: 'tmdbMediaType') String? tmdbMediaType,
+            @JsonKey(name: 'status') String status,
+            @JsonKey(name: 'approvedBy') String? approvedBy)
         $default,
   ) {
     final _that = this;
@@ -422,20 +422,20 @@ extension MediaRequestPatterns on MediaRequest {
   @optionalTypeArgs
   TResult? whenOrNull<TResult extends Object?>(
     TResult? Function(
-            @JsonKey(name: 'Id') String id,
-            @JsonKey(name: 'Username') String? username,
-            @JsonKey(name: 'UserId') String? userId,
-            @JsonKey(name: 'Timestamp') int timestamp,
-            @JsonKey(name: 'Title') String title,
-            @JsonKey(name: 'Year') String? year,
-            @JsonKey(name: 'Img') @ImageUrlConverter() String? img,
-            @JsonKey(name: 'ImdbId') String? imdbId,
-            @JsonKey(name: 'TmdbId') String? tmdbId,
-            @JsonKey(name: 'JellyfinId') String? jellyfinId,
-            @JsonKey(name: 'ItemType') String? itemType,
-            @JsonKey(name: 'TmdbMediaType') String? tmdbMediaType,
-            @JsonKey(name: 'Status') String status,
-            @JsonKey(name: 'ApprovedBy') String? approvedBy)?
+            @JsonKey(name: 'id') String id,
+            @JsonKey(name: 'username') String? username,
+            @JsonKey(name: 'userId') String? userId,
+            @JsonKey(name: 'timestamp') int timestamp,
+            @JsonKey(name: 'title') String title,
+            @JsonKey(name: 'year') String? year,
+            @JsonKey(name: 'img') @ImageUrlConverter() String? img,
+            @JsonKey(name: 'imdbId') String? imdbId,
+            @JsonKey(name: 'tmdbId') String? tmdbId,
+            @JsonKey(name: 'jellyfinId') String? jellyfinId,
+            @JsonKey(name: 'itemType') String? itemType,
+            @JsonKey(name: 'tmdbMediaType') String? tmdbMediaType,
+            @JsonKey(name: 'status') String status,
+            @JsonKey(name: 'approvedBy') String? approvedBy)?
         $default,
   ) {
     final _that = this;
@@ -466,65 +466,65 @@ extension MediaRequestPatterns on MediaRequest {
 @JsonSerializable()
 class _MediaRequest implements MediaRequest {
   const _MediaRequest(
-      {@JsonKey(name: 'Id') required this.id,
-      @JsonKey(name: 'Username') this.username,
-      @JsonKey(name: 'UserId') this.userId,
-      @JsonKey(name: 'Timestamp') this.timestamp = 0,
-      @JsonKey(name: 'Title') required this.title,
-      @JsonKey(name: 'Year') this.year,
-      @JsonKey(name: 'Img') @ImageUrlConverter() this.img,
-      @JsonKey(name: 'ImdbId') this.imdbId,
-      @JsonKey(name: 'TmdbId') this.tmdbId,
-      @JsonKey(name: 'JellyfinId') this.jellyfinId,
-      @JsonKey(name: 'ItemType') this.itemType,
-      @JsonKey(name: 'TmdbMediaType') this.tmdbMediaType,
-      @JsonKey(name: 'Status') this.status = 'pending',
-      @JsonKey(name: 'ApprovedBy') this.approvedBy});
+      {@JsonKey(name: 'id') required this.id,
+      @JsonKey(name: 'username') this.username,
+      @JsonKey(name: 'userId') this.userId,
+      @JsonKey(name: 'timestamp') this.timestamp = 0,
+      @JsonKey(name: 'title') required this.title,
+      @JsonKey(name: 'year') this.year,
+      @JsonKey(name: 'img') @ImageUrlConverter() this.img,
+      @JsonKey(name: 'imdbId') this.imdbId,
+      @JsonKey(name: 'tmdbId') this.tmdbId,
+      @JsonKey(name: 'jellyfinId') this.jellyfinId,
+      @JsonKey(name: 'itemType') this.itemType,
+      @JsonKey(name: 'tmdbMediaType') this.tmdbMediaType,
+      @JsonKey(name: 'status') this.status = 'pending',
+      @JsonKey(name: 'approvedBy') this.approvedBy});
   factory _MediaRequest.fromJson(Map<String, dynamic> json) =>
       _$MediaRequestFromJson(json);
 
   @override
-  @JsonKey(name: 'Id')
+  @JsonKey(name: 'id')
   final String id;
   @override
-  @JsonKey(name: 'Username')
+  @JsonKey(name: 'username')
   final String? username;
   @override
-  @JsonKey(name: 'UserId')
+  @JsonKey(name: 'userId')
   final String? userId;
   @override
-  @JsonKey(name: 'Timestamp')
+  @JsonKey(name: 'timestamp')
   final int timestamp;
   @override
-  @JsonKey(name: 'Title')
+  @JsonKey(name: 'title')
   final String title;
   @override
-  @JsonKey(name: 'Year')
+  @JsonKey(name: 'year')
   final String? year;
   @override
-  @JsonKey(name: 'Img')
+  @JsonKey(name: 'img')
   @ImageUrlConverter()
   final String? img;
   @override
-  @JsonKey(name: 'ImdbId')
+  @JsonKey(name: 'imdbId')
   final String? imdbId;
   @override
-  @JsonKey(name: 'TmdbId')
+  @JsonKey(name: 'tmdbId')
   final String? tmdbId;
   @override
-  @JsonKey(name: 'JellyfinId')
+  @JsonKey(name: 'jellyfinId')
   final String? jellyfinId;
   @override
-  @JsonKey(name: 'ItemType')
+  @JsonKey(name: 'itemType')
   final String? itemType;
   @override
-  @JsonKey(name: 'TmdbMediaType')
+  @JsonKey(name: 'tmdbMediaType')
   final String? tmdbMediaType;
   @override
-  @JsonKey(name: 'Status')
+  @JsonKey(name: 'status')
   final String status;
   @override
-  @JsonKey(name: 'ApprovedBy')
+  @JsonKey(name: 'approvedBy')
   final String? approvedBy;
 
   /// Create a copy of MediaRequest
@@ -603,20 +603,20 @@ abstract mixin class _$MediaRequestCopyWith<$Res>
   @override
   @useResult
   $Res call(
-      {@JsonKey(name: 'Id') String id,
-      @JsonKey(name: 'Username') String? username,
-      @JsonKey(name: 'UserId') String? userId,
-      @JsonKey(name: 'Timestamp') int timestamp,
-      @JsonKey(name: 'Title') String title,
-      @JsonKey(name: 'Year') String? year,
-      @JsonKey(name: 'Img') @ImageUrlConverter() String? img,
-      @JsonKey(name: 'ImdbId') String? imdbId,
-      @JsonKey(name: 'TmdbId') String? tmdbId,
-      @JsonKey(name: 'JellyfinId') String? jellyfinId,
-      @JsonKey(name: 'ItemType') String? itemType,
-      @JsonKey(name: 'TmdbMediaType') String? tmdbMediaType,
-      @JsonKey(name: 'Status') String status,
-      @JsonKey(name: 'ApprovedBy') String? approvedBy});
+      {@JsonKey(name: 'id') String id,
+      @JsonKey(name: 'username') String? username,
+      @JsonKey(name: 'userId') String? userId,
+      @JsonKey(name: 'timestamp') int timestamp,
+      @JsonKey(name: 'title') String title,
+      @JsonKey(name: 'year') String? year,
+      @JsonKey(name: 'img') @ImageUrlConverter() String? img,
+      @JsonKey(name: 'imdbId') String? imdbId,
+      @JsonKey(name: 'tmdbId') String? tmdbId,
+      @JsonKey(name: 'jellyfinId') String? jellyfinId,
+      @JsonKey(name: 'itemType') String? itemType,
+      @JsonKey(name: 'tmdbMediaType') String? tmdbMediaType,
+      @JsonKey(name: 'status') String status,
+      @JsonKey(name: 'approvedBy') String? approvedBy});
 }
 
 /// @nodoc

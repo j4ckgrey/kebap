@@ -60,8 +60,15 @@ class _NavigationBodyState extends ConsumerState<NavigationBody> {
     final currentInputDevice = AdaptiveLayout.inputDeviceOf(context);
 
     // Navigation visibility logic
+    // Navigation visibility logic
     final isSettingsPage = widget.currentLocation.toLowerCase().contains('settings');
-    final isDetailsPage = widget.currentLocation.toLowerCase().contains('details');
+    
+    // Check if we are on one of the main tabs (Dashboard, Library, etc.)
+    final isMainTab = widget.currentIndex != -1;
+
+    // We are on a details page ONLY if we are NOT on a main tab AND the location says details (or player/etc if expandable)
+    final isDetailsPage = !isMainTab && widget.currentLocation.toLowerCase().contains('details');
+    
     final isSearchPage = widget.currentLocation.toLowerCase().contains('search');
     
     // Settings & Search: No navigation
@@ -71,7 +78,10 @@ class _NavigationBodyState extends ConsumerState<NavigationBody> {
     
     final showNavigation = !isSettingsPage && !isSearchPage;
     final showHamburger = !isDetailsPage && showNavigation;
-    final showBackButton = showNavigation; // Back button always shown if navigation is shown (except settings)
+    
+    // Only show right-side back button if we are not on Dashboard (index 0) and router can actually pop
+    // This prevents "stuck" back buttons that do nothing or crash key handlers
+    final showBackButton = showNavigation && context.router.canPop(); 
     
     // On details page, back button is on the left (replaces hamburger position)
     // On other pages, back button is on the right

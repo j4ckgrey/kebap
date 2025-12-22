@@ -73,6 +73,11 @@ class LibrarySearchNotifier extends StateNotifier<LibrarySearchModel> {
         await loadFolders(folderId: folderId);
       } else {
         await loadViews(viewModelId, filters);
+        // Fallback: If viewModelId was provided but not found in User Views (e.g. Promoted Catalog/BoxSet),
+        // treat it as a folder.
+        if (viewModelId != null && state.views.included.isEmpty) {
+           await loadFolders(folderId: [viewModelId]);
+        }
       }
     }
 
@@ -169,8 +174,28 @@ class LibrarySearchNotifier extends StateNotifier<LibrarySearchModel> {
       if (state.searchQuery.isEmpty && state.filters.favourites == false) {
         state = state.copyWith(posters: []);
       } else {
-        final response = await _loadLibrary(recursive: true);
-        state = state.copyWith(posters: response?.items ?? []);
+        const globalKey = 'global';
+        final lastIndices = newLastIndices[globalKey];
+        // Only load if we haven't loaded anything yet (init) or if we haven't reached the end
+        if (init == true || (lastIndices == null) || (newLibraryItemCounts[globalKey] != null && lastIndices < newLibraryItemCounts[globalKey]!)) {
+          final startIndex = init == true ? 0 : (lastIndices ?? 0);
+          final response = await _loadLibrary(
+            recursive: true,
+            limit: pageSize,
+            startIndex: startIndex,
+          );
+          
+          if (response != null) {
+            newLibraryItemCounts[globalKey] = response.totalRecordCount ?? 0;
+            newLastIndices[globalKey] = startIndex + response.items.length;
+            
+            state = state.copyWith(
+              posters: init == true ? response.items : [...state.posters, ...response.items],
+              lastIndices: newLastIndices,
+              libraryItemCounts: newLibraryItemCounts,
+            );
+          }
+        }
       }
     }
 
@@ -223,7 +248,18 @@ class LibrarySearchNotifier extends StateNotifier<LibrarySearchModel> {
   Future<void> loadFilters() async {
     if (loadedFilters == true) return;
     loadedFilters = true;
-    final enabledCollections = state.views.included.map((e) => e.collectionType.itemKinds).expand((element) => element);
+    final enabledCollections = state.views.included.map((e) => e.collectionType.itemKinds).expand((element) => element).toList();
+    if (enabledCollections.isEmpty && state.folderOverwrite.isNotEmpty) {
+      // Fallback for folders/boxsets where no View is associated (e.g. promoted catalogs)
+      // Enable common types so we don't filter everything out
+      enabledCollections.addAll([
+        KebapItemType.movie, 
+        KebapItemType.series, 
+        KebapItemType.video, 
+        KebapItemType.folder, 
+        KebapItemType.boxset
+      ]);
+    }
     final mappedList = await Future.wait(state.views.included.map((viewModel) => _loadFilters(viewModel)));
     final studios = (await Future.wait(state.views.included.map((viewModel) => _loadStudios(viewModel))))
         .expand((element) => element)
@@ -281,6 +317,33 @@ class LibrarySearchNotifier extends StateNotifier<LibrarySearchModel> {
             : ref.read(searchModeNotifierProvider.notifier).processSearchTerm(searchString))
         : null;
     
+    final includeItemTypes = state.filters.types.included.map((e) => e.dtoKind).toList();
+
+    // Debug logging
+    debugPrint('[LibrarySearch] _loadLibrary query:');
+    debugPrint('  searchTerm (raw): $searchString');
+    debugPrint('  searchTerm (processed): $processedSearchString');
+    debugPrint('  parentId: ${viewModel?.id ?? id}');
+    debugPrint('  viewModel?.name: ${viewModel?.name}');
+    debugPrint('  recursive: ${searchString?.isNotEmpty == true ? true : recursive ?? state.filters.recursive}');
+    debugPrint('  includeItemTypes (count: ${includeItemTypes.length}): $includeItemTypes');
+    debugPrint('  views enabled: ${state.views.included.map((v) => v.name).toList()}');
+
+    // Fallback: If we are querying a BoxSet/Folder (which happens for promoted catalogs),
+    // and the filters only include BoxSet/Folder/CollectionFolder, we likely want to see EVERYTHING inside.
+    // Otherwise we just filter for BoxSets inside BoxSets, which is usually empty.
+    List<BaseItemKind>? finalIncludeTypes = includeItemTypes;
+    if (includeItemTypes.isNotEmpty && includeItemTypes.every((t) => t == BaseItemKind.boxset || t == BaseItemKind.folder || t == BaseItemKind.collectionfolder)) {
+       debugPrint('[LibrarySearch] Detected restrictive BoxSet-only filter for catalog. Enabling broad types.');
+       finalIncludeTypes = [
+         BaseItemKind.movie, 
+         BaseItemKind.series, 
+         BaseItemKind.video, 
+         BaseItemKind.boxset, 
+         BaseItemKind.folder
+       ];
+    }
+    
     final response = await api.itemsGet(
       parentId: viewModel?.id ?? id,
       searchTerm: processedSearchString,
@@ -312,8 +375,19 @@ class LibrarySearchNotifier extends StateNotifier<LibrarySearchModel> {
         ...state.filters.itemFilters.included,
         if (state.filters.favourites == true) ItemFilter.isfavorite,
       ],
-      includeItemTypes: state.filters.types.included.map((e) => e.dtoKind).toList(),
+      includeItemTypes: finalIncludeTypes,
     );
+    
+    debugPrint('[LibrarySearch] Response: ${response.body?.totalRecordCount ?? 0} items found for "$processedSearchString"');
+
+    // Safe logging of types
+    final types = <String, int>{};
+    for (final item in response.body?.items ?? []) {
+      final t = item.type.toString();
+      types[t] = (types[t] ?? 0) + 1;
+    }
+    debugPrint('[LibrarySearch] Returned Types: $types');
+    
     return response.body;
   }
 
@@ -771,12 +845,22 @@ class LibrarySearchNotifier extends StateNotifier<LibrarySearchModel> {
 extension SimpleSorter on List<ItemBaseModel> {
   List<ItemBaseModel> hideEmptyChildren(bool hide) {
     if (hide) {
-      return where((element) {
+      final filtered = where((element) {
         if (element.childCount == null) {
-          return true;
+          return true; // Keep if we don't know (likely didn't fetch childCount)
         }
         return (element.childCount ?? 0) > 0;
       }).toList();
+      
+      if (length != filtered.length) {
+        debugPrint('[LibrarySearch] hideEmptyChildren filtered out ${length - filtered.length} items (kept ${filtered.length})');
+        // Log a sample of what was removed
+        final removed = where((e) => !filtered.contains(e)).take(5).toList();
+        for (var r in removed) {
+          debugPrint('  Removed: ${r.name} (Type: ${r.type}, ChildCount: ${r.childCount})');
+        }
+      }
+      return filtered;
     } else {
       return this;
     }

@@ -46,6 +46,9 @@ mixin _$ClientSettingsModel implements DiagnosticableTreeMixin {
   MediaStreamViewType get mediaStreamViewType;
   LibraryLocation get libraryLocation;
   bool get showSimilarTo;
+  bool get enableCatalogs;
+  bool get dashboardShowLibraryContents;
+  DashboardLayoutMode get dashboardLayoutMode;
   Map<GlobalHotKeys, KeyCombination> get shortcuts;
 
   /// Create a copy of ClientSettingsModel
@@ -96,6 +99,10 @@ mixin _$ClientSettingsModel implements DiagnosticableTreeMixin {
       ..add(DiagnosticsProperty('mediaStreamViewType', mediaStreamViewType))
       ..add(DiagnosticsProperty('libraryLocation', libraryLocation))
       ..add(DiagnosticsProperty('showSimilarTo', showSimilarTo))
+      ..add(DiagnosticsProperty('enableCatalogs', enableCatalogs))
+      ..add(DiagnosticsProperty(
+          'dashboardShowLibraryContents', dashboardShowLibraryContents))
+      ..add(DiagnosticsProperty('dashboardLayoutMode', dashboardLayoutMode))
       ..add(DiagnosticsProperty('shortcuts', shortcuts));
   }
 
@@ -164,6 +171,14 @@ mixin _$ClientSettingsModel implements DiagnosticableTreeMixin {
                 other.libraryLocation == libraryLocation) &&
             (identical(other.showSimilarTo, showSimilarTo) ||
                 other.showSimilarTo == showSimilarTo) &&
+            (identical(other.enableCatalogs, enableCatalogs) ||
+                other.enableCatalogs == enableCatalogs) &&
+            (identical(other.dashboardShowLibraryContents,
+                    dashboardShowLibraryContents) ||
+                other.dashboardShowLibraryContents ==
+                    dashboardShowLibraryContents) &&
+            (identical(other.dashboardLayoutMode, dashboardLayoutMode) ||
+                other.dashboardLayoutMode == dashboardLayoutMode) &&
             const DeepCollectionEquality().equals(other.shortcuts, shortcuts));
   }
 
@@ -202,12 +217,15 @@ mixin _$ClientSettingsModel implements DiagnosticableTreeMixin {
         mediaStreamViewType,
         libraryLocation,
         showSimilarTo,
+        enableCatalogs,
+        dashboardShowLibraryContents,
+        dashboardLayoutMode,
         const DeepCollectionEquality().hash(shortcuts)
       ]);
 
   @override
   String toString({DiagnosticLevel minLevel = DiagnosticLevel.info}) {
-    return 'ClientSettingsModel(syncPath: $syncPath, position: $position, size: $size, timeOut: $timeOut, nextUpDateCutoff: $nextUpDateCutoff, themeMode: $themeMode, themeColor: $themeColor, deriveColorsFromItem: $deriveColorsFromItem, amoledBlack: $amoledBlack, blurPlaceHolders: $blurPlaceHolders, blurUpcomingEpisodes: $blurUpcomingEpisodes, selectedLocale: $selectedLocale, enableMediaKeys: $enableMediaKeys, posterSize: $posterSize, pinchPosterZoom: $pinchPosterZoom, mouseDragSupport: $mouseDragSupport, requireWifi: $requireWifi, showAllCollectionTypes: $showAllCollectionTypes, maxConcurrentDownloads: $maxConcurrentDownloads, schemeVariant: $schemeVariant, backgroundImage: $backgroundImage, checkForUpdates: $checkForUpdates, usePosterForLibrary: $usePosterForLibrary, useSystemIME: $useSystemIME, lastViewedUpdate: $lastViewedUpdate, libraryPageSize: $libraryPageSize, showClock: $showClock, use12HourClock: $use12HourClock, mediaStreamViewType: $mediaStreamViewType, libraryLocation: $libraryLocation, showSimilarTo: $showSimilarTo, shortcuts: $shortcuts)';
+    return 'ClientSettingsModel(syncPath: $syncPath, position: $position, size: $size, timeOut: $timeOut, nextUpDateCutoff: $nextUpDateCutoff, themeMode: $themeMode, themeColor: $themeColor, deriveColorsFromItem: $deriveColorsFromItem, amoledBlack: $amoledBlack, blurPlaceHolders: $blurPlaceHolders, blurUpcomingEpisodes: $blurUpcomingEpisodes, selectedLocale: $selectedLocale, enableMediaKeys: $enableMediaKeys, posterSize: $posterSize, pinchPosterZoom: $pinchPosterZoom, mouseDragSupport: $mouseDragSupport, requireWifi: $requireWifi, showAllCollectionTypes: $showAllCollectionTypes, maxConcurrentDownloads: $maxConcurrentDownloads, schemeVariant: $schemeVariant, backgroundImage: $backgroundImage, checkForUpdates: $checkForUpdates, usePosterForLibrary: $usePosterForLibrary, useSystemIME: $useSystemIME, lastViewedUpdate: $lastViewedUpdate, libraryPageSize: $libraryPageSize, showClock: $showClock, use12HourClock: $use12HourClock, mediaStreamViewType: $mediaStreamViewType, libraryLocation: $libraryLocation, showSimilarTo: $showSimilarTo, enableCatalogs: $enableCatalogs, dashboardShowLibraryContents: $dashboardShowLibraryContents, dashboardLayoutMode: $dashboardLayoutMode, shortcuts: $shortcuts)';
   }
 }
 
@@ -249,6 +267,9 @@ abstract mixin class $ClientSettingsModelCopyWith<$Res> {
       MediaStreamViewType mediaStreamViewType,
       LibraryLocation libraryLocation,
       bool showSimilarTo,
+      bool enableCatalogs,
+      bool dashboardShowLibraryContents,
+      DashboardLayoutMode dashboardLayoutMode,
       Map<GlobalHotKeys, KeyCombination> shortcuts});
 }
 
@@ -296,6 +317,9 @@ class _$ClientSettingsModelCopyWithImpl<$Res>
     Object? mediaStreamViewType = null,
     Object? libraryLocation = null,
     Object? showSimilarTo = null,
+    Object? enableCatalogs = null,
+    Object? dashboardShowLibraryContents = null,
+    Object? dashboardLayoutMode = null,
     Object? shortcuts = null,
   }) {
     return _then(_self.copyWith(
@@ -423,6 +447,18 @@ class _$ClientSettingsModelCopyWithImpl<$Res>
           ? _self.showSimilarTo
           : showSimilarTo // ignore: cast_nullable_to_non_nullable
               as bool,
+      enableCatalogs: null == enableCatalogs
+          ? _self.enableCatalogs
+          : enableCatalogs // ignore: cast_nullable_to_non_nullable
+              as bool,
+      dashboardShowLibraryContents: null == dashboardShowLibraryContents
+          ? _self.dashboardShowLibraryContents
+          : dashboardShowLibraryContents // ignore: cast_nullable_to_non_nullable
+              as bool,
+      dashboardLayoutMode: null == dashboardLayoutMode
+          ? _self.dashboardLayoutMode
+          : dashboardLayoutMode // ignore: cast_nullable_to_non_nullable
+              as DashboardLayoutMode,
       shortcuts: null == shortcuts
           ? _self.shortcuts
           : shortcuts // ignore: cast_nullable_to_non_nullable
@@ -556,6 +592,9 @@ extension ClientSettingsModelPatterns on ClientSettingsModel {
             MediaStreamViewType mediaStreamViewType,
             LibraryLocation libraryLocation,
             bool showSimilarTo,
+            bool enableCatalogs,
+            bool dashboardShowLibraryContents,
+            DashboardLayoutMode dashboardLayoutMode,
             Map<GlobalHotKeys, KeyCombination> shortcuts)?
         $default, {
     required TResult orElse(),
@@ -595,6 +634,9 @@ extension ClientSettingsModelPatterns on ClientSettingsModel {
             _that.mediaStreamViewType,
             _that.libraryLocation,
             _that.showSimilarTo,
+            _that.enableCatalogs,
+            _that.dashboardShowLibraryContents,
+            _that.dashboardLayoutMode,
             _that.shortcuts);
       case _:
         return orElse();
@@ -648,6 +690,9 @@ extension ClientSettingsModelPatterns on ClientSettingsModel {
             MediaStreamViewType mediaStreamViewType,
             LibraryLocation libraryLocation,
             bool showSimilarTo,
+            bool enableCatalogs,
+            bool dashboardShowLibraryContents,
+            DashboardLayoutMode dashboardLayoutMode,
             Map<GlobalHotKeys, KeyCombination> shortcuts)
         $default,
   ) {
@@ -686,6 +731,9 @@ extension ClientSettingsModelPatterns on ClientSettingsModel {
             _that.mediaStreamViewType,
             _that.libraryLocation,
             _that.showSimilarTo,
+            _that.enableCatalogs,
+            _that.dashboardShowLibraryContents,
+            _that.dashboardLayoutMode,
             _that.shortcuts);
       case _:
         throw StateError('Unexpected subclass');
@@ -738,6 +786,9 @@ extension ClientSettingsModelPatterns on ClientSettingsModel {
             MediaStreamViewType mediaStreamViewType,
             LibraryLocation libraryLocation,
             bool showSimilarTo,
+            bool enableCatalogs,
+            bool dashboardShowLibraryContents,
+            DashboardLayoutMode dashboardLayoutMode,
             Map<GlobalHotKeys, KeyCombination> shortcuts)?
         $default,
   ) {
@@ -776,6 +827,9 @@ extension ClientSettingsModelPatterns on ClientSettingsModel {
             _that.mediaStreamViewType,
             _that.libraryLocation,
             _that.showSimilarTo,
+            _that.enableCatalogs,
+            _that.dashboardShowLibraryContents,
+            _that.dashboardLayoutMode,
             _that.shortcuts);
       case _:
         return null;
@@ -819,6 +873,9 @@ class _ClientSettingsModel extends ClientSettingsModel
       this.mediaStreamViewType = MediaStreamViewType.dropdown,
       this.libraryLocation = LibraryLocation.dashboard,
       this.showSimilarTo = true,
+      this.enableCatalogs = false,
+      this.dashboardShowLibraryContents = false,
+      this.dashboardLayoutMode = DashboardLayoutMode.multiRow,
       final Map<GlobalHotKeys, KeyCombination> shortcuts = const {}})
       : _shortcuts = shortcuts,
         super._();
@@ -913,6 +970,15 @@ class _ClientSettingsModel extends ClientSettingsModel
   @override
   @JsonKey()
   final bool showSimilarTo;
+  @override
+  @JsonKey()
+  final bool enableCatalogs;
+  @override
+  @JsonKey()
+  final bool dashboardShowLibraryContents;
+  @override
+  @JsonKey()
+  final DashboardLayoutMode dashboardLayoutMode;
   final Map<GlobalHotKeys, KeyCombination> _shortcuts;
   @override
   @JsonKey()
@@ -975,6 +1041,10 @@ class _ClientSettingsModel extends ClientSettingsModel
       ..add(DiagnosticsProperty('mediaStreamViewType', mediaStreamViewType))
       ..add(DiagnosticsProperty('libraryLocation', libraryLocation))
       ..add(DiagnosticsProperty('showSimilarTo', showSimilarTo))
+      ..add(DiagnosticsProperty('enableCatalogs', enableCatalogs))
+      ..add(DiagnosticsProperty(
+          'dashboardShowLibraryContents', dashboardShowLibraryContents))
+      ..add(DiagnosticsProperty('dashboardLayoutMode', dashboardLayoutMode))
       ..add(DiagnosticsProperty('shortcuts', shortcuts));
   }
 
@@ -1043,6 +1113,14 @@ class _ClientSettingsModel extends ClientSettingsModel
                 other.libraryLocation == libraryLocation) &&
             (identical(other.showSimilarTo, showSimilarTo) ||
                 other.showSimilarTo == showSimilarTo) &&
+            (identical(other.enableCatalogs, enableCatalogs) ||
+                other.enableCatalogs == enableCatalogs) &&
+            (identical(other.dashboardShowLibraryContents,
+                    dashboardShowLibraryContents) ||
+                other.dashboardShowLibraryContents ==
+                    dashboardShowLibraryContents) &&
+            (identical(other.dashboardLayoutMode, dashboardLayoutMode) ||
+                other.dashboardLayoutMode == dashboardLayoutMode) &&
             const DeepCollectionEquality()
                 .equals(other._shortcuts, _shortcuts));
   }
@@ -1082,12 +1160,15 @@ class _ClientSettingsModel extends ClientSettingsModel
         mediaStreamViewType,
         libraryLocation,
         showSimilarTo,
+        enableCatalogs,
+        dashboardShowLibraryContents,
+        dashboardLayoutMode,
         const DeepCollectionEquality().hash(_shortcuts)
       ]);
 
   @override
   String toString({DiagnosticLevel minLevel = DiagnosticLevel.info}) {
-    return 'ClientSettingsModel(syncPath: $syncPath, position: $position, size: $size, timeOut: $timeOut, nextUpDateCutoff: $nextUpDateCutoff, themeMode: $themeMode, themeColor: $themeColor, deriveColorsFromItem: $deriveColorsFromItem, amoledBlack: $amoledBlack, blurPlaceHolders: $blurPlaceHolders, blurUpcomingEpisodes: $blurUpcomingEpisodes, selectedLocale: $selectedLocale, enableMediaKeys: $enableMediaKeys, posterSize: $posterSize, pinchPosterZoom: $pinchPosterZoom, mouseDragSupport: $mouseDragSupport, requireWifi: $requireWifi, showAllCollectionTypes: $showAllCollectionTypes, maxConcurrentDownloads: $maxConcurrentDownloads, schemeVariant: $schemeVariant, backgroundImage: $backgroundImage, checkForUpdates: $checkForUpdates, usePosterForLibrary: $usePosterForLibrary, useSystemIME: $useSystemIME, lastViewedUpdate: $lastViewedUpdate, libraryPageSize: $libraryPageSize, showClock: $showClock, use12HourClock: $use12HourClock, mediaStreamViewType: $mediaStreamViewType, libraryLocation: $libraryLocation, showSimilarTo: $showSimilarTo, shortcuts: $shortcuts)';
+    return 'ClientSettingsModel(syncPath: $syncPath, position: $position, size: $size, timeOut: $timeOut, nextUpDateCutoff: $nextUpDateCutoff, themeMode: $themeMode, themeColor: $themeColor, deriveColorsFromItem: $deriveColorsFromItem, amoledBlack: $amoledBlack, blurPlaceHolders: $blurPlaceHolders, blurUpcomingEpisodes: $blurUpcomingEpisodes, selectedLocale: $selectedLocale, enableMediaKeys: $enableMediaKeys, posterSize: $posterSize, pinchPosterZoom: $pinchPosterZoom, mouseDragSupport: $mouseDragSupport, requireWifi: $requireWifi, showAllCollectionTypes: $showAllCollectionTypes, maxConcurrentDownloads: $maxConcurrentDownloads, schemeVariant: $schemeVariant, backgroundImage: $backgroundImage, checkForUpdates: $checkForUpdates, usePosterForLibrary: $usePosterForLibrary, useSystemIME: $useSystemIME, lastViewedUpdate: $lastViewedUpdate, libraryPageSize: $libraryPageSize, showClock: $showClock, use12HourClock: $use12HourClock, mediaStreamViewType: $mediaStreamViewType, libraryLocation: $libraryLocation, showSimilarTo: $showSimilarTo, enableCatalogs: $enableCatalogs, dashboardShowLibraryContents: $dashboardShowLibraryContents, dashboardLayoutMode: $dashboardLayoutMode, shortcuts: $shortcuts)';
   }
 }
 
@@ -1131,6 +1212,9 @@ abstract mixin class _$ClientSettingsModelCopyWith<$Res>
       MediaStreamViewType mediaStreamViewType,
       LibraryLocation libraryLocation,
       bool showSimilarTo,
+      bool enableCatalogs,
+      bool dashboardShowLibraryContents,
+      DashboardLayoutMode dashboardLayoutMode,
       Map<GlobalHotKeys, KeyCombination> shortcuts});
 }
 
@@ -1178,6 +1262,9 @@ class __$ClientSettingsModelCopyWithImpl<$Res>
     Object? mediaStreamViewType = null,
     Object? libraryLocation = null,
     Object? showSimilarTo = null,
+    Object? enableCatalogs = null,
+    Object? dashboardShowLibraryContents = null,
+    Object? dashboardLayoutMode = null,
     Object? shortcuts = null,
   }) {
     return _then(_ClientSettingsModel(
@@ -1305,6 +1392,18 @@ class __$ClientSettingsModelCopyWithImpl<$Res>
           ? _self.showSimilarTo
           : showSimilarTo // ignore: cast_nullable_to_non_nullable
               as bool,
+      enableCatalogs: null == enableCatalogs
+          ? _self.enableCatalogs
+          : enableCatalogs // ignore: cast_nullable_to_non_nullable
+              as bool,
+      dashboardShowLibraryContents: null == dashboardShowLibraryContents
+          ? _self.dashboardShowLibraryContents
+          : dashboardShowLibraryContents // ignore: cast_nullable_to_non_nullable
+              as bool,
+      dashboardLayoutMode: null == dashboardLayoutMode
+          ? _self.dashboardLayoutMode
+          : dashboardLayoutMode // ignore: cast_nullable_to_non_nullable
+              as DashboardLayoutMode,
       shortcuts: null == shortcuts
           ? _self._shortcuts
           : shortcuts // ignore: cast_nullable_to_non_nullable

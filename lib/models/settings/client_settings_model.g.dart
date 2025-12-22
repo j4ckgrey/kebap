@@ -58,6 +58,12 @@ _ClientSettingsModel _$ClientSettingsModelFromJson(Map<String, dynamic> json) =>
               _$LibraryLocationEnumMap, json['libraryLocation']) ??
           LibraryLocation.dashboard,
       showSimilarTo: json['showSimilarTo'] as bool? ?? true,
+      enableCatalogs: json['enableCatalogs'] as bool? ?? false,
+      dashboardShowLibraryContents:
+          json['dashboardShowLibraryContents'] as bool? ?? false,
+      dashboardLayoutMode: $enumDecodeNullable(
+              _$DashboardLayoutModeEnumMap, json['dashboardLayoutMode']) ??
+          DashboardLayoutMode.multiRow,
       shortcuts: (json['shortcuts'] as Map<String, dynamic>?)?.map(
             (k, e) => MapEntry($enumDecode(_$GlobalHotKeysEnumMap, k),
                 KeyCombination.fromJson(e as Map<String, dynamic>)),
@@ -100,6 +106,10 @@ Map<String, dynamic> _$ClientSettingsModelToJson(
           _$MediaStreamViewTypeEnumMap[instance.mediaStreamViewType]!,
       'libraryLocation': _$LibraryLocationEnumMap[instance.libraryLocation]!,
       'showSimilarTo': instance.showSimilarTo,
+      'enableCatalogs': instance.enableCatalogs,
+      'dashboardShowLibraryContents': instance.dashboardShowLibraryContents,
+      'dashboardLayoutMode':
+          _$DashboardLayoutModeEnumMap[instance.dashboardLayoutMode]!,
       'shortcuts': instance.shortcuts
           .map((k, e) => MapEntry(_$GlobalHotKeysEnumMap[k]!, e)),
     };
@@ -154,6 +164,11 @@ const _$MediaStreamViewTypeEnumMap = {
 const _$LibraryLocationEnumMap = {
   LibraryLocation.dashboard: 'dashboard',
   LibraryLocation.sidebar: 'sidebar',
+};
+
+const _$DashboardLayoutModeEnumMap = {
+  DashboardLayoutMode.multiRow: 'multiRow',
+  DashboardLayoutMode.singleRow: 'singleRow',
 };
 
 const _$GlobalHotKeysEnumMap = {

@@ -79,6 +79,10 @@ class _NavigationScaffoldState extends ConsumerState<NavigationScaffold> with Wi
   }
 
   Future<void> _handleExit() async {
+    // Web browsers don't support exit(0) and SystemNavigator.pop() often freezes/crashes the tab.
+    // Generally, web apps shouldn't try to close themselves.
+    if (kIsWeb) return;
+
     final shouldExit = await showDialog<bool>(
       context: context,
       builder: (context) => AlertDialog(

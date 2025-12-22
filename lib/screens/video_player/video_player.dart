@@ -7,6 +7,7 @@ import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import 'package:kebap/models/media_playback_model.dart';
+import 'package:kebap/providers/dashboard_provider.dart';
 import 'package:kebap/providers/settings/video_player_settings_provider.dart';
 import 'package:kebap/providers/video_player_provider.dart';
 import 'package:kebap/screens/video_player/components/video_player_next_wrapper.dart';
@@ -51,6 +52,8 @@ class _VideoPlayerState extends ConsumerState<VideoPlayer> with WidgetsBindingOb
   void dispose() {
     WidgetsBinding.instance.removeObserver(this);
     SystemChrome.setPreferredOrientations(DeviceOrientation.values);
+    // Refresh dashboard to update progress/resume points
+    ref.read(dashboardProvider.notifier).fetchNextUpAndResume();
     super.dispose();
   }
 

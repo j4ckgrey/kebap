@@ -211,7 +211,7 @@ class _ItemDetailScreenState extends ConsumerState<MovieDetailScreen>
       backDrops: details?.images,
       content: (padding) {
         if (details == null) {
-          return const Center(child: CircularProgressIndicator());
+          return const SizedBox.shrink();
         }
         return Padding(
               padding: const EdgeInsets.only(bottom: 64),

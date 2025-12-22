@@ -26,6 +26,9 @@ extension CollectionTypeExtension on CollectionType {
         return {KebapItemType.series};
       case CollectionType.homevideos:
         return {KebapItemType.photoAlbum, KebapItemType.folder, KebapItemType.photo, KebapItemType.video};
+      case CollectionType.boxsets:
+      case CollectionType.folders:
+        return {KebapItemType.movie, KebapItemType.series, KebapItemType.video, KebapItemType.folder, KebapItemType.boxset};
       default:
         return {};
     }
@@ -66,7 +69,6 @@ extension CollectionTypeExtension on CollectionType {
   double? get aspectRatio => switch (this) {
         CollectionType.music ||
         CollectionType.homevideos ||
-        CollectionType.boxsets ||
         CollectionType.photos ||
         CollectionType.livetv ||
         CollectionType.playlists =>

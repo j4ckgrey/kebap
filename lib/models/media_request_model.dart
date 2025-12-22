@@ -29,20 +29,20 @@ class ImageUrlConverter implements JsonConverter<String?, String?> {
 @Freezed(copyWith: true)
 abstract class MediaRequest with _$MediaRequest {
   const factory MediaRequest({
-    @JsonKey(name: 'Id') required String id,
-    @JsonKey(name: 'Username') String? username,
-    @JsonKey(name: 'UserId') String? userId,
-    @JsonKey(name: 'Timestamp') @Default(0) int timestamp,
-    @JsonKey(name: 'Title') required String title,
-    @JsonKey(name: 'Year') String? year,
-    @JsonKey(name: 'Img') @ImageUrlConverter() String? img,
-    @JsonKey(name: 'ImdbId') String? imdbId,
-    @JsonKey(name: 'TmdbId') String? tmdbId,
-    @JsonKey(name: 'JellyfinId') String? jellyfinId,
-    @JsonKey(name: 'ItemType') String? itemType,
-    @JsonKey(name: 'TmdbMediaType') String? tmdbMediaType,
-    @JsonKey(name: 'Status') @Default('pending') String status,
-    @JsonKey(name: 'ApprovedBy') String? approvedBy,
+    @JsonKey(name: 'id') required String id,
+    @JsonKey(name: 'username') String? username,
+    @JsonKey(name: 'userId') String? userId,
+    @JsonKey(name: 'timestamp') @Default(0) int timestamp,
+    @JsonKey(name: 'title') required String title,
+    @JsonKey(name: 'year') String? year,
+    @JsonKey(name: 'img') @ImageUrlConverter() String? img,
+    @JsonKey(name: 'imdbId') String? imdbId,
+    @JsonKey(name: 'tmdbId') String? tmdbId,
+    @JsonKey(name: 'jellyfinId') String? jellyfinId,
+    @JsonKey(name: 'itemType') String? itemType,
+    @JsonKey(name: 'tmdbMediaType') String? tmdbMediaType,
+    @JsonKey(name: 'status') @Default('pending') String status,
+    @JsonKey(name: 'approvedBy') String? approvedBy,
   }) = _MediaRequest;
 
   factory MediaRequest.fromJson(Map<String, dynamic> json) =>

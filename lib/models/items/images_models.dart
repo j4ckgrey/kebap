@@ -115,8 +115,8 @@ class ImagesData {
                         itemid,
                         index,
                         backdrop,
-                        maxHeight: 1080,
-                        maxWidth: 1920,
+                        maxHeight: backDrop.height.toInt(),
+                        maxWidth: backDrop.width.toInt(),
                       ),
                 key: "${itemid}_backdrop_${index}_$backdrop",
                 hash: item.imageBlurHashes?.backdrop?[backdrop] ?? "",
@@ -142,17 +142,31 @@ class ImagesData {
     final imageProvider = ref.read(imageUtilityProvider);
 
     final newImgesData = ImagesData(
-      primary: (item.seriesPrimaryImageTag != null)
+      primary: (item.parentPrimaryImageTag != null)
           ? ImageData(
               path: imageProvider.getItemsImageUrl(
-                item.seriesId,
+                item.parentPrimaryImageItemId ?? item.parentId,
                 type: enums.ImageType.primary,
                 maxHeight: primary.height.toInt(),
                 maxWidth: primary.width.toInt(),
               ),
-              key: "${item.seriesId}_primary_${item.seriesPrimaryImageTag ?? ""}",
-              hash: item.imageBlurHashes?.primary?[item.seriesPrimaryImageTag] ?? "")
-          : null,
+              key:
+                  "${item.parentPrimaryImageItemId ?? item.parentId}_primary_${item.parentPrimaryImageTag ?? ""}",
+              hash: "")
+          : (item.seriesPrimaryImageTag != null)
+              ? ImageData(
+                  path: imageProvider.getItemsImageUrl(
+                    item.seriesId,
+                    type: enums.ImageType.primary,
+                    maxHeight: primary.height.toInt(),
+                    maxWidth: primary.width.toInt(),
+                  ),
+                  key:
+                      "${item.seriesId}_primary_${item.seriesPrimaryImageTag ?? ""}",
+                  hash: item.imageBlurHashes?.primary
+                          ?[item.seriesPrimaryImageTag] ??
+                      "")
+              : null,
       logo: (item.parentLogoImageTag != null)
           ? ImageData(
               path: imageProvider.getItemsImageUrl(

@@ -468,7 +468,7 @@ class _LibrarySearchScreenState extends ConsumerState<LibrarySearchScreen> {
                             onPressed: (item) {
                               // Check if this is a library-specific search (has viewModelId)
                               // or if we're in local search mode
-                              final isLibrarySearch = widget.viewModelId != null;
+                              final isLibrarySearch = widget.viewModelId != null || (widget.folderId != null && widget.folderId!.isNotEmpty);
                               final searchMode = ref.read(searchModeNotifierProvider);
                               final isLocalMode = searchMode == SearchMode.local;
                               

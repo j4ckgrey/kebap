@@ -58,7 +58,9 @@ class _InputDetectorState extends State<InputDetector> {
           event.logicalKey == LogicalKeyboardKey.open ||
           event.logicalKey == LogicalKeyboardKey.gameButtonA) {
         _lastKeyTime = DateTime.now();
+        final wasPointer = _currentInput != InputDevice.dPad;
         _updateInputDevice(InputDevice.dPad);
+        debugPrint('[InputDetector] KeyDown: ${event.logicalKey.keyLabel}, wasPointer: $wasPointer, returning false (not consumed)');
       } else {
       }
     }
@@ -87,9 +89,15 @@ class _InputDetectorState extends State<InputDetector> {
 
   void _updateInputDevice(InputDevice device) {
     if (_currentInput != device) {
-      print('[LAG_DEBUG] ${DateTime.now()} InputDetector switching to $device');
-      setState(() {
-        _currentInput = device;
+      // Delay the setState to AFTER the current key event is fully processed
+      // This prevents the rebuild from interfering with focus navigation
+      WidgetsBinding.instance.addPostFrameCallback((_) {
+        if (mounted && _currentInput != device) {
+          // TEMPORARILY DISABLED to prevent destructive rebuilds on focus
+          // setState(() {
+          //   _currentInput = device;
+          // });
+        }
       });
     }
   }

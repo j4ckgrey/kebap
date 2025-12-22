@@ -68,6 +68,7 @@ class PosterWidget extends ConsumerWidget {
         children: [
           Expanded(
             child: PosterImage(
+              key: ValueKey("poster_image_${poster.id}"),
               focusNode: focusNode,
               poster: poster,
               selected: selected,

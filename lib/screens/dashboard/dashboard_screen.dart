@@ -26,6 +26,7 @@ import 'package:kebap/models/settings/client_settings_model.dart';
 import 'package:kebap/providers/user_provider.dart';
 import 'package:kebap/providers/views_provider.dart';
 import 'package:kebap/routes/auto_router.gr.dart';
+import 'package:kebap/screens/dashboard/dashboard_single_row_view.dart';
 import 'package:kebap/screens/shared/default_alert_dialog.dart';
 import 'package:kebap/screens/shared/kebap_snackbar.dart';
 import 'package:kebap/screens/shared/media/single_row_view.dart';
@@ -45,10 +46,12 @@ class DashboardScreen extends ConsumerStatefulWidget {
   ConsumerState<ConsumerStatefulWidget> createState() => _DashboardScreenState();
 }
 
-class _DashboardScreenState extends ConsumerState<DashboardScreen> with AutoRouteAwareStateMixin<DashboardScreen> {
+class _DashboardScreenState extends ConsumerState<DashboardScreen> with AutoRouteAwareStateMixin<DashboardScreen>, AutomaticKeepAliveClientMixin {
   final ValueNotifier<ItemBaseModel?> selectedPoster = ValueNotifier(null);
   final FocusScopeNode _focusScopeNode = FocusScopeNode();
-  FocusNode? _lastFocusedNode;
+
+  @override
+  bool get wantKeepAlive => true;
 
   @override
   void initState() {
@@ -67,39 +70,28 @@ class _DashboardScreenState extends ConsumerState<DashboardScreen> with AutoRout
   @override
   void didPushNext() {
     super.didPushNext();
-    debugPrint('[FocusRestore] didPushNext - saving focus');
-    // A route is about to be pushed on top - save the current focus
-    _saveCurrentFocus();
+    // Just pass through - no saving needed
   }
 
   @override
   void didPopNext() {
     super.didPopNext();
-    debugPrint('[FocusRestore] didPopNext - restoring focus');
-    // Returning from a pushed route - restore focus
+    // Skip spurious refresh triggers during focus restoration
+    _skipRefresh = true;
+    Future.delayed(const Duration(milliseconds: 500), () {
+      _skipRefresh = false;
+    });
+    
+    // Request focus on the dashboard scope - focus will go to first available item
     WidgetsBinding.instance.addPostFrameCallback((_) {
-      if (mounted && _lastFocusedNode != null && _lastFocusedNode!.canRequestFocus) {
-        debugPrint('[FocusRestore] Restoring focus to saved node');
-        _lastFocusedNode!.requestFocus();
-      } else if (mounted) {
-        debugPrint('[FocusRestore] No saved node, falling back to scope');
-        // Fallback: focus the scope itself which will find a focusable child
+      if (mounted) {
         _focusScopeNode.requestFocus();
       }
     });
   }
-
-  void _saveCurrentFocus() {
-    // Save the currently focused node before navigating away
-    final focusManager = FocusManager.instance;
-    debugPrint('[FocusRestore] _saveCurrentFocus - primaryFocus: ${focusManager.primaryFocus?.debugLabel}, hasFocus: ${_focusScopeNode.hasFocus}');
-    if (focusManager.primaryFocus != null && _focusScopeNode.hasFocus) {
-      _lastFocusedNode = focusManager.primaryFocus;
-      debugPrint('[FocusRestore] Saved focus node: ${_lastFocusedNode?.debugLabel}');
-    } else {
-      debugPrint('[FocusRestore] Could not save focus - scope does not have focus');
-    }
-  }
+  
+  // Flag to skip spurious refresh triggers during route return
+  bool _skipRefresh = false;
 
   @override
   void dispose() {
@@ -109,11 +101,17 @@ class _DashboardScreenState extends ConsumerState<DashboardScreen> with AutoRout
   }
 
   Future<void> _refreshHome() async {
+    // Skip if this is a spurious trigger during route return
+    if (_skipRefresh) {
+      debugPrint('[DashboardScreen] _refreshHome skipped (route return window)');
+      return;
+    }
     await ref.read(dashboardProvider.notifier).fetchNextUpAndResume();
   }
 
   @override
   Widget build(BuildContext context) {
+    super.build(context); // Prepare KeepAlive
     final padding = AdaptiveLayout.adaptivePadding(context);
 
     final dashboardData = ref.watch(dashboardProvider);
@@ -159,14 +157,20 @@ class _DashboardScreenState extends ConsumerState<DashboardScreen> with AutoRout
                   final offlineMovies = allResume.where((e) => e.type == KebapItemType.movie || e.type == KebapItemType.video).toList();
                   final offlineShows = allResume.where((e) => e.type == KebapItemType.episode || e.type == KebapItemType.series).toList();
 
-                  final rows = [
+                final showLibraryContents = ref.watch(clientSettingsProvider.select((s) => s.dashboardShowLibraryContents));
+
+                /* ... (existing logic for offlineMovies, offlineShows, rows) ... */
+                
+                final isSingleRow = showLibraryContents && ref.watch(clientSettingsProvider.select((s) => s.dashboardLayoutMode)) == DashboardLayoutMode.singleRow;
+                
+                final rows = [
+                    // ... (existing static rows) ...
                     // Libraries Row (Top of Dashboard)
-                    if (dashboardViews.isNotEmpty && libraryLocation == LibraryLocation.dashboard)
+                    if (dashboardViews.isNotEmpty && libraryLocation == LibraryLocation.dashboard && !isSingleRow)
                       RowData(
                         label: context.localized.library(2),
-                        aspectRatio: 1.2, // Much wider
+                        aspectRatio: 1.2,
                         useStandardHeight: true,
-                        // onItemTap not provided -> Defaults to Focus behavior (updates banner)
                         onItemOpen: (item) => context.router.push(LibrarySearchRoute(viewModelId: item.id)),
                         posters: dashboardViews.map((view) => ItemBaseModel(
                           name: view.name,
@@ -195,8 +199,6 @@ class _DashboardScreenState extends ConsumerState<DashboardScreen> with AutoRout
                           label: context.localized.offlineShows,
                           posters: offlineShows,
                         ),
-                      // Fallback or other types (like music/books) if needed, or if movies/shows are empty but others exist?
-                      // User asked for 2 carousels specifically.
                       if (allResume.where((e) => !offlineMovies.contains(e) && !offlineShows.contains(e)).isNotEmpty)
                          RowData(
                           label: context.localized.downloads,
@@ -234,11 +236,13 @@ class _DashboardScreenState extends ConsumerState<DashboardScreen> with AutoRout
                         posters: [...allResume, ...dashboardData.nextUp],
                       ),
                     ...viewsList
-                        .where((element) => element.recentlyAdded.isNotEmpty)
+                        .where((element) => element.recentlyAdded?.isNotEmpty == true || showLibraryContents)
                         .map(
                           (view) => RowData(
-                            label: context.localized.dashboardRecentlyAdded(view.name),
-                            posters: view.recentlyAdded,
+                            label: showLibraryContents ? view.name : context.localized.dashboardRecentlyAdded(view.name),
+                            id: view.id,
+                            requiresLoading: view.recentlyAdded == null,
+                            posters: view.recentlyAdded ?? [],
                             aspectRatio: view.collectionType.aspectRatio,
                             onLabelClick: () => context.router.push(
                               LibrarySearchRoute(
@@ -247,17 +251,17 @@ class _DashboardScreenState extends ConsumerState<DashboardScreen> with AutoRout
                                   CollectionType.tvshows => {
                                       KebapItemType.episode: true,
                                     },
-                                  _ => {},
+                                  _ => null,
                                 },
-                                sortingOptions: switch (view.collectionType) {
+                                sortingOptions: showLibraryContents 
+                                    ? SortingOptions.sortName
+                                    : switch (view.collectionType) {
                                   CollectionType.books ||
-                                  CollectionType.boxsets ||
-                                  CollectionType.folders ||
                                   CollectionType.music =>
                                     SortingOptions.dateLastContentAdded,
                                   _ => SortingOptions.dateAdded,
                                 },
-                                sortOrder: SortingOrder.descending,
+                                sortOrder: showLibraryContents ? SortingOrder.ascending : SortingOrder.descending,
                                 recursive: true,
                               ),
                             ),
@@ -265,6 +269,14 @@ class _DashboardScreenState extends ConsumerState<DashboardScreen> with AutoRout
                         ),
                   ]
                 ];
+                if (isSingleRow) {
+                  return DashboardSingleRowView(
+                    rows: rows,
+                    contentPadding: padding,
+                    onRefresh: _refreshHome,
+                  );
+                }
+
                 return SingleRowView(
                   contentPadding: padding,
                   rows: rows,

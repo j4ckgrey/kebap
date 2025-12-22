@@ -115,11 +115,9 @@ class AdaptiveLayout extends InheritedWidget {
 
   @override
   bool updateShouldNotify(AdaptiveLayout oldWidget) {
-    final notify = data != oldWidget.data;
-    if (notify) {
-      print('[LAG_DEBUG] AdaptiveLayout notifying dependents. Data changed.');
-    }
-    return notify;
+    // Note: inputDevice is intentionally NOT included in equality model
+    // to prevent full rebuilds on input change.
+    return data != oldWidget.data;
   }
 }
 

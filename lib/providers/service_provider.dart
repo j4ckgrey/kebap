@@ -749,6 +749,10 @@ class JellyService {
     int? limit,
     bool? recursive,
     List<BaseItemKind>? includeItemTypes,
+    int? imageTypeLimit,
+    bool? enableImages,
+    List<ImageType>? enableImageTypes,
+    List<ItemFields>? fields,
   }) async {
     return api.usersUserIdItemsGet(
       parentId: parentId,
@@ -758,6 +762,10 @@ class JellyService {
       sortOrder: sortOrder,
       includeItemTypes: includeItemTypes,
       limit: limit,
+      imageTypeLimit: imageTypeLimit,
+      enableImages: enableImages,
+      enableImageTypes: enableImageTypes,
+      fields: fields,
     );
   }
 

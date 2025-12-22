@@ -90,10 +90,10 @@ class CompactItemBanner extends StatelessWidget {
                     child: showTrailer
                         ? TrailerBannerPlayer(
                             trailerUrl: trailerUrl,
-                            fallbackImage: item!.images?.backDrop?.firstOrNull ?? item!.images?.primary,
+                            fallbackImage: item!.bannerImage,
                           )
                         : KebapImage(
-                            image: item!.images?.backDrop?.firstOrNull ?? item!.images?.primary,
+                            image: item!.bannerImage,
                             decodeHeight: null,
                           ),
                   ),

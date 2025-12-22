@@ -45,10 +45,15 @@ class _MultiRowViewState extends ConsumerState<MultiRowView> {
         SizedBox(
           height: bannerHeight,
           child: RepaintBoundary(
-            child: CompactItemBanner(
-              key: ValueKey(ref.watch(focusedItemProvider)?.id),
-              item: ref.watch(focusedItemProvider),
-              maxHeight: bannerHeight,
+            child: Consumer(
+              builder: (context, ref, child) {
+                final focusedItem = ref.watch(focusedItemProvider);
+                return CompactItemBanner(
+                  key: ValueKey(focusedItem?.id),
+                  item: focusedItem,
+                  maxHeight: bannerHeight,
+                );
+              },
             ),
           ),
         ),
@@ -65,7 +70,7 @@ class _MultiRowViewState extends ConsumerState<MultiRowView> {
                 onLabelClick: row.onLabelClick,
                 onFocused: (item) {
                   final current = ref.read(focusedItemProvider);
-                  if (current?.id != item.id) {
+                  if (current?.id != item?.id) {
                     ref.read(focusedItemProvider.notifier).state = item;
                   }
                 },

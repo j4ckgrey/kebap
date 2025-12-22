@@ -86,10 +86,13 @@ class AdaptiveLayoutModel {
   @override
   bool operator ==(covariant AdaptiveLayoutModel other) {
     if (identical(this, other)) return true;
+    // Note: inputDevice is intentionally NOT included here
+    // Input device changes should NOT trigger full widget tree rebuilds
+    // as this disrupts focus navigation. Widgets that need inputDevice
+    // should use AdaptiveLayout.inputDeviceOf() which still works.
     return other.viewSize == viewSize &&
         other.layoutMode == layoutMode &&
-        other.sideBarWidth == sideBarWidth &&
-        other.inputDevice == inputDevice;
+        other.sideBarWidth == sideBarWidth;
   }
 
   @override

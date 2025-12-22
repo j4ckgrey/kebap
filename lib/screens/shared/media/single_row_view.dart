@@ -51,7 +51,23 @@ class _SingleRowViewState extends ConsumerState<SingleRowView> {
     super.didUpdateWidget(oldWidget);
     if (widget.rows.length != oldWidget.rows.length ||
         (widget.rows.isNotEmpty && oldWidget.rows.isNotEmpty && widget.rows[0].label != oldWidget.rows[0].label)) {
-      // Logic to handle row updates (e.g. Libraries loading in)
+      
+      // Handle row insertion/deletion by realigning to the last focused row
+      if (_lastFocusedRowLabel != null) {
+        final newIndex = widget.rows.indexWhere((r) => r.label == _lastFocusedRowLabel);
+        if (newIndex != -1 && newIndex != _currentPage) {
+           setState(() {
+             _currentPage = newIndex;
+           });
+           // Use addPostFrameCallback to ensure controller has clients and layout is ready
+           WidgetsBinding.instance.addPostFrameCallback((_) {
+             if (_pageController.hasClients) {
+               _pageController.jumpToPage(newIndex);
+             }
+           });
+        }
+      }
+
       if (widget.rows.isNotEmpty && oldWidget.rows.isNotEmpty && widget.rows[0].label != oldWidget.rows[0].label) {
          // If the first row replaced (e.g. Libraries loaded above Next Up), reset autofocus
          _hasAutoFocused = false;
@@ -329,6 +345,32 @@ class _SingleRowViewState extends ConsumerState<SingleRowView> {
                                       explicitHeight: cardHeight,
                                       onFocused: (item) => _onItemFocused(item, row.label), // Explicitly handle focus for banner
                                       selectedItemId: row.label == _lastFocusedRowLabel ? focusedItem?.id : null, // persistent selection only for active row
+                                      onLeftFromFirst: () {
+                                        // Open sidebar on LEFT from first item
+                                        try {
+                                          Scaffold.of(context).openDrawer();
+                                        } catch (_) {}
+                                      },
+                                      onUpFromRow: () {
+                                        // Go to previous row on UP, or block if first row
+                                        if (index > 0) {
+                                          _pageController.previousPage(
+                                            duration: const Duration(milliseconds: 300),
+                                            curve: Curves.easeInOut,
+                                          );
+                                        }
+                                        // If first row, do nothing (stay on current row)
+                                      },
+                                      onDownFromRow: () {
+                                        // Go to next row on DOWN, or block if last row
+                                        if (index < widget.rows.length - 1) {
+                                          _pageController.nextPage(
+                                            duration: const Duration(milliseconds: 300),
+                                            curve: Curves.easeInOut,
+                                          );
+                                        }
+                                        // If last row, do nothing (stay on current row)
+                                      },
                                     onCardTap: (item) {
                                       if (row.onItemTap != null) {
                                         row.onItemTap!(item);
@@ -385,9 +427,14 @@ class RowData {
   final double? aspectRatio;
   final bool useStandardHeight;
 
+  final String? id;
+  final bool requiresLoading;
+
   const RowData({
     required this.label,
     required this.posters,
+    this.id,
+    this.requiresLoading = false,
     this.aspectRatio,
     this.onLabelClick,
     this.onItemTap,

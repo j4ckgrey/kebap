@@ -6,7 +6,6 @@ import 'package:kebap/models/item_base_model.dart';
 import 'package:kebap/screens/shared/media/poster_widget.dart';
 import 'package:kebap/util/focus_provider.dart';
 import 'package:kebap/util/item_base_model/item_base_model_extensions.dart';
-import 'package:kebap/widgets/shared/ensure_visible.dart';
 import 'package:kebap/widgets/shared/horizontal_list.dart';
 
 class PosterRow extends ConsumerWidget {
@@ -23,6 +22,9 @@ class PosterRow extends ConsumerWidget {
   final Function(ItemBaseModel item)? onCardTap;
   final Function(ItemBaseModel item)? onCardAction;
   final String? selectedItemId; // ID of item shown in banner for persistent selection
+  final VoidCallback? onLeftFromFirst; // Callback when LEFT pressed on first item
+  final VoidCallback? onUpFromRow; // Callback when UP pressed
+  final VoidCallback? onDownFromRow; // Callback when DOWN pressed
 
   const PosterRow({
     required this.posters,
@@ -38,6 +40,9 @@ class PosterRow extends ConsumerWidget {
     this.onCardTap,
     this.onCardAction,
     this.selectedItemId,
+    this.onLeftFromFirst,
+    this.onUpFromRow,
+    this.onDownFromRow,
     super.key,
   });
 
@@ -54,7 +59,7 @@ class PosterRow extends ConsumerWidget {
       }
     }
 
-    return HorizontalList(
+    return HorizontalList<ItemBaseModel>(
       contentPadding: contentPadding,
       label: label,
       hideLabel: hideLabel,
@@ -64,6 +69,9 @@ class PosterRow extends ConsumerWidget {
       items: posters,
       startIndex: startIndex, // Pass the calculated start index
       height: explicitHeight, // Use explicit height if provided
+      onLeftFromFirst: onLeftFromFirst, // Pass through the callback
+      onUpFromRow: onUpFromRow, // Pass through UP callback
+      onDownFromRow: onDownFromRow, // Pass through DOWN callback
       onFocused: (index) {
         if (onFocused != null) {
           if (index < posters.length) {

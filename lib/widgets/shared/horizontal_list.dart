@@ -29,6 +29,10 @@ class HorizontalList<T> extends ConsumerStatefulWidget {
   final double? dominantRatio;
   final double? height;
   final bool shrinkWrap;
+  final VoidCallback? onLeftFromFirst; // Callback when LEFT pressed on first item
+  final VoidCallback? onUpFromRow; // Callback when UP pressed
+  final VoidCallback? onDownFromRow; // Callback when DOWN pressed
+
   const HorizontalList({
     this.autoFocus = false,
     required this.items,
@@ -45,6 +49,9 @@ class HorizontalList<T> extends ConsumerStatefulWidget {
     this.subtext,
     this.shrinkWrap = false,
     this.dominantRatio,
+    this.onLeftFromFirst,
+    this.onUpFromRow,
+    this.onDownFromRow,
     super.key,
   });
 
@@ -61,6 +68,7 @@ class _HorizontalListState extends ConsumerState<HorizontalList> with TickerProv
   final contentPadding = 8.0;
   double? contentWidth;
   double? _firstItemWidth;
+  bool _focusLocked = false; // Lock after focus is stable
   bool hasFocus = false;
 
   AnimationController? _scrollAnimation;
@@ -70,19 +78,8 @@ class _HorizontalListState extends ConsumerState<HorizontalList> with TickerProv
     super.didUpdateWidget(oldWidget);
     if (widget.startIndex != oldWidget.startIndex) {
       if (widget.startIndex != null) {
+        // Only scroll, don't request focus - let user navigation control focus
         _scrollToPosition(widget.startIndex!);
-        
-        // Restore focus to the new start index if this list is auto-focusing
-        if (widget.autoFocus) {
-          WidgetsBinding.instance.addPostFrameCallback((_) {
-            if (mounted) {
-              final nodes = _nodesInRow(parentNode);
-              if (nodes.isNotEmpty && widget.startIndex! < nodes.length) {
-                nodes[widget.startIndex!].requestFocus();
-              }
-            }
-          });
-        }
       }
     }
   }
@@ -90,6 +87,7 @@ class _HorizontalListState extends ConsumerState<HorizontalList> with TickerProv
   @override
   void initState() {
     super.initState();
+    debugPrint('[HL] initState - label: ${widget.label}, autoFocus: ${widget.autoFocus}');
     _measureFirstItem();
   }
 
@@ -102,6 +100,7 @@ class _HorizontalListState extends ConsumerState<HorizontalList> with TickerProv
   void _measureFirstItem() {
     if (_firstItemWidth != null) return;
     WidgetsBinding.instance.addPostFrameCallback((_) {
+      if (!mounted) return;
       final itemContext = _firstItemKey.currentContext;
       if (itemContext != null) {
         final box = itemContext.findRenderObject() as RenderBox;
@@ -109,10 +108,49 @@ class _HorizontalListState extends ConsumerState<HorizontalList> with TickerProv
         _scrollToPosition(widget.startIndex ?? 0);
       }
 
-      final nodesOnSameRow = _nodesInRow(parentNode);
-      if (nodesOnSameRow.isNotEmpty && (FocusProvider.autoFocusOf(context) || widget.autoFocus)) {
-        nodesOnSameRow[widget.startIndex ?? 0].requestFocus();
+      // Request focus if autoFocus is enabled and not locked yet
+      _requestInitialFocus();
+    });
+  }
+  
+  void _requestInitialFocus() {
+    if (_focusLocked) return;
+    if (!(FocusProvider.autoFocusOf(context) || widget.autoFocus)) return;
+    
+    final nodesOnSameRow = _nodesInRow(parentNode);
+    if (nodesOnSameRow.isEmpty) return;
+    
+    final targetIndex = widget.startIndex ?? 0;
+    if (targetIndex >= nodesOnSameRow.length) return;
+    
+    final targetNode = nodesOnSameRow[targetIndex];
+    
+    // Request focus with a small delay to ensure widgets are ready
+    Future.delayed(const Duration(milliseconds: 50), () {
+      if (!mounted || _focusLocked) return;
+      
+      // Check if we already have focus in this row
+      final currentPrimary = FocusManager.instance.primaryFocus;
+      final alreadyFocused = nodesOnSameRow.any((n) => n == currentPrimary);
+      
+      if (alreadyFocused) {
+        debugPrint('[HL] _requestInitialFocus - already focused in this row, locking. label: ${widget.label}');
+        _focusLocked = true;
+        return;
       }
+      
+      debugPrint('[HL] _requestInitialFocus - REQUESTING FOCUS on index $targetIndex, label: ${widget.label}');
+      targetNode.requestFocus();
+      
+      // Schedule lock check - if focus is maintained for 300ms, lock it
+      Future.delayed(const Duration(milliseconds: 300), () {
+        if (!mounted) return;
+        final stillFocused = nodesOnSameRow.any((n) => n == FocusManager.instance.primaryFocus);
+        if (stillFocused) {
+          _focusLocked = true;
+          debugPrint('[HL] _requestInitialFocus - Focus locked after 300ms, label: ${widget.label}');
+        }
+      });
     });
   }
 
@@ -171,6 +209,13 @@ class _HorizontalListState extends ConsumerState<HorizontalList> with TickerProv
 
   @override
   Widget build(BuildContext context) {
+    // Retry focus after each build until locked (handles async data loading rebuilds)
+    if (!_focusLocked && (FocusProvider.autoFocusOf(context) || widget.autoFocus)) {
+      WidgetsBinding.instance.addPostFrameCallback((_) {
+        if (mounted) _requestInitialFocus();
+      });
+    }
+    
     final hasPointer = AdaptiveLayout.inputDeviceOf(context) == InputDevice.pointer;
     return Column(
       mainAxisSize: MainAxisSize.min,
@@ -268,12 +313,57 @@ class _HorizontalListState extends ConsumerState<HorizontalList> with TickerProv
         if (!widget.hideLabel) const SizedBox(height: 8),
         Focus(
           focusNode: parentNode,
+          canRequestFocus: false, // Not a focusable target - only children are focusable
           onFocusChange: (value) {
+            debugPrint('[HL] onFocusChange - value: $value, hasFocus: $hasFocus, label: ${widget.label}');
             if (value && hasFocus != value) {
               hasFocus = value;
               final nodesOnSameRow = _nodesInRow(parentNode);
-              final currentNode =
-                  nodesOnSameRow.contains(lastFocused) ? lastFocused : _firstFullyVisibleNode(context, nodesOnSameRow);
+              final primaryFocus = FocusManager.instance.primaryFocus;
+              
+              // CRITICAL: If focus is on the parent node itself (not a child), it means
+              // focus is transitioning THROUGH this row (e.g., UP/DOWN navigation).
+              // Do NOT intercept - let it continue to its destination.
+              if (primaryFocus == parentNode) {
+                debugPrint('[HL] onFocusChange - focus is on parentNode, transitioning through. label: ${widget.label}');
+                return;
+              }
+              
+              // Check if any child already has focus
+              final alreadyFocused = nodesOnSameRow.any((n) => n.hasFocus || n == primaryFocus);
+              debugPrint('[HL] onFocusChange - alreadyFocused: $alreadyFocused, nodes: ${nodesOnSameRow.length}, primaryFocus: $primaryFocus, startIndex: ${widget.startIndex}');
+              
+              if (alreadyFocused) {
+                final focusedNode = nodesOnSameRow.firstWhere(
+                  (n) => n.hasFocus || n == primaryFocus, 
+                  orElse: () => nodesOnSameRow.first,
+                );
+                
+                // Just sync lastFocused to the currently focused node - no correction
+                lastFocused = focusedNode;
+                return; // Let the focused child keep focus
+              }
+              
+              // Check if focus is passing THROUGH the row (on its way somewhere else)
+              // If primaryFocus is already set to a node OUTSIDE this row, don't intercept
+              if (primaryFocus != null && !nodesOnSameRow.contains(primaryFocus)) {
+                debugPrint('[HL] onFocusChange - focus passing through, not intercepting. label: ${widget.label}');
+                return; // Focus is going elsewhere, don't intercept
+              }
+
+              // Only restore focus if NO child is focused (initial focus case)
+              FocusNode? targetNode;
+              if (lastFocused != null && nodesOnSameRow.contains(lastFocused)) {
+                targetNode = lastFocused;
+              }
+              
+              // Fallback to startIndex if available and valid
+              if (targetNode == null && widget.startIndex != null && widget.startIndex! < nodesOnSameRow.length) {
+                 targetNode = nodesOnSameRow[widget.startIndex!];
+              }
+
+              // Final fallback: first fully visible or just first
+              final currentNode = targetNode ?? _firstFullyVisibleNode(context, nodesOnSameRow);
 
               if (currentNode != null) {
                 lastFocused = currentNode;
@@ -304,6 +394,9 @@ class _HorizontalListState extends ConsumerState<HorizontalList> with TickerProv
                 scrollController: _scrollController,
                 firstItemWidth: _firstItemWidth ?? 250,
                 isFirstRow: widget.autoFocus,
+                onLeftFromFirst: widget.onLeftFromFirst,
+                onUpFromRow: widget.onUpFromRow,
+                onDownFromRow: widget.onDownFromRow,
                 onFocused: (node) {
                   // Focus updates are now handled by individual item Focus wrappers
                   // This callback is kept for edge cases but explicit wrappers are primary
@@ -335,18 +428,17 @@ class _HorizontalListState extends ConsumerState<HorizontalList> with TickerProv
                   // canRequestFocus: false ensures this wrapper doesn't trap focus itself, but only listens to children
                   return RepaintBoundary(
                     child: Focus(
+                      key: ValueKey("focus_idx_$index"),
                       canRequestFocus: false,
                       onFocusChange: (value) {
                          if (value) {
                            lastFocused = _firstFullyVisibleNode(context, [Focus.of(context)]);
                            
-                           // Explicitly notify parent of focus change using index
-                           // Allow index == widget.items.length (placeholder) to notify as well
+                           // Simple: notify parent of focus change and scroll
                            if (index <= widget.items.length) {
                              widget.onFocused?.call(index);
-                             // Ensure we scroll to keep item visible
-                             _scrollToPosition(index);
                            }
+                           _scrollToPosition(index);
                          }
                       },
                       child: child,
@@ -392,7 +484,8 @@ FocusNode? _firstFullyVisibleNode(
 ) {
   if (nodes.isEmpty) return null;
 
-  final scrollable = Scrollable.of(context);
+  final scrollable = Scrollable.maybeOf(context);
+  if (scrollable == null) return nodes.firstOrNull;
 
   final viewportBox = scrollable.context.findRenderObject() as RenderBox;
   final viewportSize = viewportBox.size;
@@ -430,6 +523,9 @@ class HorizontalRailFocus extends WidgetOrderTraversalPolicy {
   final ScrollController scrollController;
   final double firstItemWidth;
   final bool isFirstRow;
+  final VoidCallback? onLeftFromFirst;
+  final VoidCallback? onUpFromRow;
+  final VoidCallback? onDownFromRow;
 
   HorizontalRailFocus({
     required this.parentNode,
@@ -437,16 +533,54 @@ class HorizontalRailFocus extends WidgetOrderTraversalPolicy {
     required this.scrollController,
     required this.firstItemWidth,
     this.isFirstRow = false,
+    this.onLeftFromFirst,
+    this.onUpFromRow,
+    this.onDownFromRow,
   });
 
   @override
   bool inDirection(FocusNode currentNode, TraversalDirection direction) {
     final rowNodes = _nodesInRow(parentNode);
-    final index = rowNodes.indexOf(currentNode);
-    if (index == -1) return false;
+    var index = rowNodes.indexOf(currentNode);
+    
+    // Safety fallback: If current node not found (e.g. tree desync), find closest node visually
+    if (index == -1 && currentNode.context != null) {
+      final currentRender = currentNode.context!.findRenderObject() as RenderBox?;
+      if (currentRender != null) {
+        final currentCenter = currentRender.localToGlobal(currentRender.size.center(Offset.zero));
+        FocusNode? closest;
+        double minKDist = double.infinity;
+        
+        for (final node in rowNodes) {
+           final box = node.context!.findRenderObject() as RenderBox;
+           final center = box.localToGlobal(box.size.center(Offset.zero));
+           final dist = (center - currentCenter).distanceSquared;
+           if (dist < minKDist) {
+             minKDist = dist;
+             closest = node;
+           }
+        }
+        
+        if (closest != null) {
+          index = rowNodes.indexOf(closest);
+          debugPrint('[HRF] Recovered index $index via geometric fallback');
+        }
+      }
+    }
+    
+    debugPrint('[HRF] inDirection: $direction. Nodes: ${rowNodes.length}, CurrentIndex: $index');
+
+    if (index == -1) {
+       return false;
+    }
 
     if (direction == TraversalDirection.left) {
       if (index == 0) {
+        if (onLeftFromFirst != null) {
+          onLeftFromFirst!();
+          return true;
+        }
+        // Fallback to trying to open drawer
         try {
           Scaffold.of(parentNode.context!).openDrawer();
         } catch (_) {
@@ -461,7 +595,7 @@ class HorizontalRailFocus extends WidgetOrderTraversalPolicy {
         onFocused(target);
         return true;
       }
-      return true; // Stay on first item
+      return false; // Allow escape to sidebar
     }
 
     if (direction == TraversalDirection.right) {
@@ -471,9 +605,69 @@ class HorizontalRailFocus extends WidgetOrderTraversalPolicy {
         onFocused(target);
         return true;
       }
-      return true; // Stay on last item instead of losing focus
+      return false; // Allow escape to right
     }
 
+    // Handle UP - use callback if provided, otherwise use iterative traversal
+    if (direction == TraversalDirection.up) {
+      debugPrint('[HRF] UP direction - onUpFromRow: ${onUpFromRow != null}, currentNode: $currentNode');
+      if (onUpFromRow != null) {
+        onUpFromRow!();
+        return true;
+      }
+      // No callback - use iterative traversal to skip intermediate widgets
+      return _navigateVertically(currentNode, direction);
+    }
+
+    // Handle DOWN - use callback if provided, otherwise use iterative traversal
+    if (direction == TraversalDirection.down) {
+      debugPrint('[HRF] DOWN direction - onDownFromRow: ${onDownFromRow != null}');
+      if (onDownFromRow != null) {
+        onDownFromRow!();
+        return true;
+      }
+      // No callback - use iterative traversal to skip intermediate widgets
+      return _navigateVertically(currentNode, direction);
+    }
+
+    debugPrint('[HRF] Falling through to super.inDirection for $direction');
     return super.inDirection(currentNode, direction);
+  }
+  
+  /// Navigate vertically (UP/DOWN) and skip intermediate non-row elements.
+  /// Returns true if we successfully moved focus.
+  bool _navigateVertically(FocusNode startNode, TraversalDirection direction) {
+    final context = startNode.context;
+    if (context == null) return false;
+    
+    final scope = FocusScope.of(context);
+    final startFocus = FocusManager.instance.primaryFocus;
+    
+    // Try to move in the direction
+    bool moved = scope.focusInDirection(direction);
+    if (!moved) return false;
+    
+    // Check where focus landed - if still in this row, continue traversing
+    final newFocus = FocusManager.instance.primaryFocus;
+    debugPrint('[HRF] _navigateVertically: startFocus=$startFocus, newFocus=$newFocus');
+    
+    // If focus didn't move at all, or moved to us (same node), give up
+    if (newFocus == null || newFocus == startFocus) {
+      debugPrint('[HRF] _navigateVertically: focus did not move, giving up');
+      return moved;
+    }
+    
+    // Check if the new focus is inside OUR row - if so, we need to keep moving
+    final ourRowNodes = _nodesInRow(parentNode);
+    if (ourRowNodes.contains(newFocus)) {
+      debugPrint('[HRF] _navigateVertically: focus is still in our row, continuing');
+      // Focus went to another item in same row - try again
+      return _navigateVertically(newFocus, direction);
+    }
+    
+    // Check if new focus is in a HorizontalList (has a FocusTraversalGroup ancestor with HorizontalRailFocus)
+    // For now, just accept that focus moved outside our row
+    debugPrint('[HRF] _navigateVertically: focus moved outside our row, success');
+    return true;
   }
 }

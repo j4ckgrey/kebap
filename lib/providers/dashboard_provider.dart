@@ -20,26 +20,15 @@ final dashboardProvider = StateNotifierProvider<DashboardNotifier, HomeModel>((r
 
 class DashboardNotifier extends StateNotifier<HomeModel> {
   DashboardNotifier(this.ref) : super(HomeModel()) {
-    // Listen to Sync changes: when offline, if local DB loads, update UI
-    ref.listen<SyncSettingsModel>(syncProvider, (previous, next) {
-      if (ref.read(connectivityStatusProvider) == ConnectionState.offline) {
-        // If items changed (e.g. initial load finished), refresh dashboard
-        if (previous?.items != next.items) {
-           fetchNextUpAndResume();
-        }
-      }
-    });
-
-    // Listen to Connection changes: re-fetch data on any connectivity change
-    ref.listen<ConnectionState>(connectivityStatusProvider, (previous, next) {
-      if (previous != next) {
-         fetchNextUpAndResume();
-      }
-    });
-
+    // Listen to views provider to update resume items when views become available
     ref.listen<ViewsModel>(viewsProvider, (previous, next) {
-      if (previous?.views != next.views) {
-        debugPrint('[DashboardProvider] Views updated, re-fetching dashboard');
+      final previousTypes = previous?.views.map((e) => e.collectionType).toSet();
+      final nextTypes = next.views.map((e) => e.collectionType).toSet();
+      
+      // Only refetch if collection types change (e.g. initial load or new library)
+      // This prevents loop if fetchNextUpAndResume doesn't modify views (which it shouldn't)
+      if (!listEquals(previousTypes?.toList(), nextTypes.toList())) {
+        debugPrint('[DashboardNotifier] View types changed, fetching dashboard content');
         fetchNextUpAndResume();
       }
     });
@@ -54,28 +43,22 @@ class DashboardNotifier extends StateNotifier<HomeModel> {
     state = state.copyWith(loading: true);
 
     final connectionState = ref.read(connectivityStatusProvider);
-    print('[OFFLINE_DEBUG] fetchNextUpAndResume - connectionState: $connectionState');
     
     if (connectionState == ConnectionState.offline) {
-      print('[OFFLINE_DEBUG] We are OFFLINE - loading sync items');
       // Wait for sync provider to finish loading items from database
       var syncState = ref.read(syncProvider);
-      print('[OFFLINE_DEBUG] Initial syncState - items: ${syncState.items.length}, isLoading: ${syncState.isLoading}');
       
       if (syncState.items.isEmpty && syncState.isLoading) {
-        print('[OFFLINE_DEBUG] Waiting for sync items to load...');
         // Wait up to 2 seconds for items to load
         for (int i = 0; i < 8; i++) {
           await Future.delayed(const Duration(milliseconds: 250));
           syncState = ref.read(syncProvider);
-          print('[OFFLINE_DEBUG] Retry $i - items: ${syncState.items.length}, isLoading: ${syncState.isLoading}');
           if (!syncState.isLoading || syncState.items.isNotEmpty) break;
         }
       }
       
       final syncedItems = syncState.items;
       final allItems = syncedItems.map((e) => e.itemModel).nonNulls.toList();
-      print('[OFFLINE_DEBUG] Final allItems count: ${allItems.length}');
 
       final videos = allItems.where((e) {
         final type = e.type;
@@ -173,6 +156,7 @@ class DashboardNotifier extends StateNotifier<HomeModel> {
       nextUpDateCutoff: DateTime.now().subtract(
           ref.read(clientSettingsProvider.select((value) => value.nextUpDateCutoff ?? const Duration(days: 28)))),
       fields: fieldsToFetch,
+      enableImageTypes: imagesToFetch,
     );
 
     final next = nextResponse.body?.items

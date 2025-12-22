@@ -69,6 +69,20 @@ enum LibraryLocation {
   }
 }
 
+enum DashboardLayoutMode {
+  multiRow,
+  singleRow;
+
+  String label(BuildContext context) {
+    switch (this) {
+      case DashboardLayoutMode.multiRow:
+        return "Multi Row";
+      case DashboardLayoutMode.singleRow:
+        return "Single Row";
+    }
+  }
+}
+
 @Freezed(copyWith: true)
 abstract class ClientSettingsModel with _$ClientSettingsModel {
   const ClientSettingsModel._();
@@ -105,6 +119,9 @@ abstract class ClientSettingsModel with _$ClientSettingsModel {
     @Default(MediaStreamViewType.dropdown) MediaStreamViewType mediaStreamViewType,
     @Default(LibraryLocation.dashboard) LibraryLocation libraryLocation,
     @Default(true) bool showSimilarTo,
+    @Default(false) bool enableCatalogs,
+    @Default(false) bool dashboardShowLibraryContents,
+    @Default(DashboardLayoutMode.multiRow) DashboardLayoutMode dashboardLayoutMode,
     @Default({}) Map<GlobalHotKeys, KeyCombination> shortcuts,
   }) = _ClientSettingsModel;
 

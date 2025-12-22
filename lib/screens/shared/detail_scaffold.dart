@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'dart:developer';
 
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:palette_generator_master/palette_generator_master.dart';
@@ -62,9 +63,15 @@ class _DetailScaffoldState extends ConsumerState<DetailScaffold> {
   }
 
   void updateImage() {
-    if (lastImages == null) {
+    print("[DETAIL_SCAFFOLD] updateImage called. LastImages: ${lastImages?.length}, NewImages: ${widget.backDrops?.backDrop?.length}");
+    if (lastImages == null ||
+        (lastImages!.isEmpty && widget.backDrops?.backDrop?.isNotEmpty == true)) {
+      // log("[DETAIL_SCAFFOLD] Updating background image!");
       lastImages = widget.backDrops?.backDrop;
       backgroundImage = widget.backDrops?.randomBackDrop;
+      // log("[DETAIL_SCAFFOLD] Selected background: ${backgroundImage?.key}");
+    } else {
+       // log("[DETAIL_SCAFFOLD] Update skipped.");
     }
   }
 
@@ -120,13 +127,13 @@ class _DetailScaffoldState extends ConsumerState<DetailScaffold> {
         return PullToRefresh(
           onRefresh: () async {
             await widget.onRefresh?.call();
-            setState(() {
-              if (context.mounted) {
+            if (context.mounted) {
+              setState(() {
                 if (widget.backDrops?.backDrop?.contains(backgroundImage) == true) {
                   backgroundImage = widget.backDrops?.randomBackDrop;
                 }
-              }
-            });
+              });
+            }
           },
           refreshOnStart: true,
           child: Scaffold(

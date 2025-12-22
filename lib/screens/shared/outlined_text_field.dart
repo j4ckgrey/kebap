@@ -117,6 +117,10 @@ class _OutlinedTextFieldState extends ConsumerState<OutlinedTextField> {
     final isDPad = AdaptiveLayout.inputDeviceOf(context) == InputDevice.dPad;
     
     if (event is KeyDownEvent) {
+       // Allow system shortcuts (Ctrl+V, Cmd+V, etc) to pass through
+       if (HardwareKeyboard.instance.isControlPressed || HardwareKeyboard.instance.isMetaPressed) {
+         return KeyEventResult.ignored;
+       }
     }
 
     if (isDPad && event is KeyDownEvent) {

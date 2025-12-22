@@ -194,7 +194,7 @@ class _ItemDetailScreenState extends ConsumerState<EpisodeDetailScreen> {
       backDrops: details.episode?.images ?? details.series?.images,
       content: (padding) {
         if (seasonDetails == null || episodeDetails == null) {
-          return const Center(child: CircularProgressIndicator());
+          return const SizedBox.shrink();
         }
         return Padding(
               padding: const EdgeInsets.only(bottom: 64),

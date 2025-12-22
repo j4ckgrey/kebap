@@ -98,6 +98,15 @@ class _LibrariesSettingsPageState extends ConsumerState<LibrariesSettingsPage> {
                     ref.read(clientSettingsProvider.notifier).update((t) => t.copyWith(showSimilarTo: value)),
               ),
             ),
+            SettingsListTile(
+              label: const Text("Enable Catalogs as Libraries"),
+              subLabel: const Text("Show folders from Collections as separate libraries"),
+              onTap: () => ref.read(clientSettingsProvider.notifier).setEnableCatalogs(!clientSettings.enableCatalogs),
+              trailing: Switch(
+                value: clientSettings.enableCatalogs,
+                onChanged: (value) => ref.read(clientSettingsProvider.notifier).setEnableCatalogs(value),
+              ),
+            ),
           ],
         ),
       ],

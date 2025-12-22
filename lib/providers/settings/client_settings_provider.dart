@@ -102,6 +102,12 @@ class ClientSettingsNotifier extends StateNotifier<ClientSettingsModel> {
 
   void setShowClock(bool value) => state = state.copyWith(showClock: value);
 
+  void setEnableCatalogs(bool value) => state = state.copyWith(enableCatalogs: value);
+
+  void setDashboardShowLibraryContents(bool value) => state = state.copyWith(dashboardShowLibraryContents: value);
+
+  void setDashboardLayoutMode(DashboardLayoutMode value) => state = state.copyWith(dashboardLayoutMode: value);
+
   void setUse12HourClock(bool value) => state = state.copyWith(use12HourClock: value);
 
   Future<void> closeDirectory() => DirectoryBookmark().closeDirectory(syncPathKey);

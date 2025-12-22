@@ -1,3 +1,4 @@
+import 'dart:async';
 import 'package:flutter/material.dart';
 
 import 'package:auto_route/auto_route.dart';
@@ -42,34 +43,58 @@ class _SeriesDetailScreenState extends ConsumerState<SeriesDetailScreen> {
   AutoDisposeStateNotifierProvider<SeriesDetailViewNotifier, SeriesModel?> get providerId =>
       seriesDetailsProvider(widget.item.id);
   final FocusNode _playButtonNode = FocusNode();
+  
+  bool _focusLocked = false;  // Set to true once all async ops complete
+  Timer? _lockTimer;  // Debounce timer for focus lock
 
   @override
   void initState() {
     super.initState();
-    WidgetsBinding.instance.addPostFrameCallback((_) {
-      if (mounted) {
-      }
-    });
   }
 
   @override
   void dispose() {
+    _lockTimer?.cancel();
     _playButtonNode.dispose();
     super.dispose();
   }
 
-  bool _initialFocusRequested = false;
+  void _scheduleFocusLock() {
+    // Cancel any pending lock timer and restart
+    _lockTimer?.cancel();
+    // Lock focus 2 seconds after the LAST build (no more rebuilds = async complete)
+    _lockTimer = Timer(const Duration(seconds: 2), () {
+      _focusLocked = true;
+      debugPrint('[FocusDebug] Series focus locked - no rebuilds for 2 seconds');
+    });
+  }
+
+  void _requestPlayButtonFocus() {
+    if (_focusLocked) return;
+    
+    // Reset the lock timer on every focus request (debounce)
+    _scheduleFocusLock();
+    
+    // Use a delay to ensure widgets have built, then request focus
+    Future.delayed(const Duration(milliseconds: 300), () {
+      if (mounted && !_focusLocked && _playButtonNode.canRequestFocus) {
+        _playButtonNode.requestFocus();
+        debugPrint('[FocusDebug] Series Play button focus requested (delayed)');
+      }
+    });
+  }
 
   @override
   Widget build(BuildContext context) {
     final details = ref.watch(providerId);
 
-    WidgetsBinding.instance.addPostFrameCallback((_) {
-      if (!_initialFocusRequested && details != null && details.nextUp != null && _playButtonNode.canRequestFocus) {
-        _playButtonNode.requestFocus();
-        _initialFocusRequested = true;
-      }
-    });
+    // Request focus after EVERY build to overcome late async rebuilds
+    if (!_focusLocked && details != null && details.nextUp != null) {
+      WidgetsBinding.instance.addPostFrameCallback((_) {
+        _requestPlayButtonFocus();
+      });
+    }
+
 
     final wrapAlignment =
         AdaptiveLayout.viewSizeOf(context) != ViewSize.phone ? WrapAlignment.start : WrapAlignment.center;
@@ -223,7 +248,7 @@ class _SeriesDetailScreenState extends ConsumerState<SeriesDetailScreen> {
                 ].addPadding(const EdgeInsets.symmetric(vertical: 16)),
               ),
             )
-          : Container(),
+          : const SizedBox.shrink(),
     );
   }
 }

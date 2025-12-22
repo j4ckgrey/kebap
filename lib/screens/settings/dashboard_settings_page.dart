@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:auto_route/auto_route.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
+import 'package:kebap/models/settings/client_settings_model.dart';
 import 'package:kebap/models/settings/home_settings_model.dart';
 import 'package:kebap/providers/settings/client_settings_provider.dart';
 import 'package:kebap/providers/settings/home_settings_provider.dart';
@@ -12,6 +13,8 @@ import 'package:kebap/screens/settings/widgets/settings_label_divider.dart';
 import 'package:kebap/screens/settings/widgets/settings_list_group.dart';
 import 'package:kebap/util/localization_helper.dart';
 import 'package:kebap/util/option_dialogue.dart';
+import 'package:kebap/widgets/shared/enum_selection.dart';
+import 'package:kebap/widgets/shared/item_actions.dart';
 
 @RoutePage()
 class DashboardSettingsPage extends ConsumerWidget {
@@ -111,6 +114,34 @@ class DashboardSettingsPage extends ConsumerWidget {
                     .update((current) => current.copyWith(showAllCollectionTypes: value)),
               ),
             ),
+            SettingsListTile(
+              label: const Text("Show Library Contents"),
+              subLabel: const Text("Toggle between 'Recently Added' and full library contents on dashboard"),
+              onTap: () => ref
+                  .read(clientSettingsProvider.notifier)
+                  .setDashboardShowLibraryContents(!clientSettings.dashboardShowLibraryContents),
+              trailing: Switch(
+                value: clientSettings.dashboardShowLibraryContents,
+                onChanged: (value) =>
+                    ref.read(clientSettingsProvider.notifier).setDashboardShowLibraryContents(value),
+              ),
+            ),
+            if (clientSettings.dashboardShowLibraryContents)
+              SettingsListTile(
+                label: const Text("Dashboard Layout"),
+                subLabel: const Text("Choose between Multi-Row or Single-Row layout"),
+                trailing: EnumBox(
+                  current: clientSettings.dashboardLayoutMode.label(context),
+                  itemBuilder: (context) => DashboardLayoutMode.values
+                      .map(
+                        (entry) => ItemActionButton(
+                          label: Text(entry.label(context)),
+                          action: () => ref.read(clientSettingsProvider.notifier).setDashboardLayoutMode(entry),
+                        ),
+                      )
+                      .toList(),
+                ),
+              ),
           ],
         ),
       ],

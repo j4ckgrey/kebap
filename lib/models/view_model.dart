@@ -23,7 +23,7 @@ class ViewModel {
   final String parentId;
   final CollectionType collectionType;
   final dto.PlayAccess playAccess;
-  final List<ItemBaseModel> recentlyAdded;
+  final List<ItemBaseModel>? recentlyAdded;
   final ImagesData? imageData;
   final int childCount;
   final String? path;
@@ -84,7 +84,7 @@ class ViewModel {
       canDelete: item.canDelete ?? false,
       canDownload: item.canDownload ?? false,
       parentId: item.parentId ?? "",
-      recentlyAdded: [],
+      recentlyAdded: null,
       imageData: ImagesData.fromBaseItem(item, ref),
       collectionType: CollectionType.values
               .firstWhereOrNull((element) => element.name.toLowerCase() == item.collectionType?.value?.toLowerCase()) ??

@@ -185,7 +185,9 @@ class EpisodePoster extends ConsumerWidget {
                   ),
                   foregroundDecoration: KebapTheme.defaultPosterDecoration,
                   child: KebapImage(
-                    image: !episodeAvailable ? episode.parentImages?.primary : episode.images?.primary,
+                    image: (!episodeAvailable || episode.images?.primary == null)
+                        ? episode.parentImages?.primary
+                        : episode.images?.primary,
                     placeHolder: placeHolder,
                     blurOnly: !episodeAvailable
                         ? true

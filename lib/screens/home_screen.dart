@@ -96,6 +96,8 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
   final GlobalKey<ScaffoldState> _scaffoldKey = GlobalKey();
 
   Future<void> _handleExit() async {
+    if (kIsWeb) return;
+    
     final shouldExit = await showDialog<bool>(
       context: context,
       builder: (context) => AlertDialog(
