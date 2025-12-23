@@ -1,10 +1,12 @@
 import 'package:flutter/material.dart';
 
+import 'package:auto_route/auto_route.dart';
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:iconsax_plus/iconsax_plus.dart';
 
 import 'package:flutter/services.dart';
+import 'package:kebap/routes/auto_router.gr.dart';
 
 import 'package:kebap/models/item_base_model.dart';
 import 'package:kebap/jellyfin/jellyfin_open_api.swagger.dart';
@@ -487,16 +489,17 @@ class _SearchResultModalState extends ConsumerState<SearchResultModal> {
                   FilledButton.icon(
                     onPressed: () {
                       Navigator.of(context).pop();
-                      if (metadataState.jellyfinItemId != null) {
-                        final item = widget.item.copyWith(id: metadataState.jellyfinItemId);
-                        item.navigateTo(context, ref: ref);
-                      } else {
-                        widget.item.navigateTo(context, ref: ref);
-                      }
+                      // Get the Jellyfin ID - prefer backend's jellyfinItemId, fall back to widget.item.id
+                      // (local library search results already have the correct Jellyfin ID)
+                      final jellyfinId = metadataState.jellyfinItemId ?? widget.item.id;
+                      // Navigate with just ID - DetailsScreen will fetch the correctly typed model
+                      // This fixes empty series details (widget.item may be ItemBaseModel, not SeriesModel)
+                      context.router.push(DetailsRoute(id: jellyfinId));
                     },
                     icon: const Icon(IconsaxPlusLinear.play),
                     label: const Text('Open'),
                   )
+
                 // Only show "Requested" for PENDING requests (not approved/rejected)
                 // If request is approved/rejected but item not in library, allow re-request
                 else if (metadataState.existingRequestId != null && 

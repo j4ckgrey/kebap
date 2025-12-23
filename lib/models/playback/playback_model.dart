@@ -54,11 +54,23 @@ class Media {
 }
 
 extension PlaybackModelExtension on PlaybackModel? {
-  SubStreamModel? get defaultSubStream =>
-      this?.subStreams?.firstWhereOrNull((element) => element.index == this?.mediaStreams?.defaultSubStreamIndex);
+  SubStreamModel? get defaultSubStream {
+    final index = this?.mediaStreams?.defaultSubStreamIndex;
+    // If index is -1, user explicitly chose "off"
+    if (index == -1) return null;
+    // Try to find by index, fallback to first stream
+    return this?.subStreams?.firstWhereOrNull((element) => element.index == index) ??
+        this?.subStreams?.skip(1).firstOrNull; // skip(1) to skip the "Off" option
+  }
 
-  AudioStreamModel? get defaultAudioStream =>
-      this?.audioStreams?.firstWhereOrNull((element) => element.index == this?.mediaStreams?.defaultAudioStreamIndex);
+  AudioStreamModel? get defaultAudioStream {
+    final index = this?.mediaStreams?.defaultAudioStreamIndex;
+    // If index is -1, user explicitly chose "off"  
+    if (index == -1) return AudioStreamModel.no();
+    // Try to find by index, fallback to first stream
+    return this?.audioStreams?.firstWhereOrNull((element) => element.index == index) ??
+        this?.audioStreams?.skip(1).firstOrNull; // skip(1) to skip the "Off" option
+  }
 
   String? label(BuildContext context) => switch (this) {
         DirectPlaybackModel _ => PlaybackType.directStream.name(context),

@@ -425,7 +425,11 @@ class _MainState extends ConsumerState<Main> with WindowListener, WidgetsBinding
                 ),
               ),
               themeMode: themeMode,
-              routerConfig: autoRouter.config(),
+              routerConfig: autoRouter.config(
+                navigatorObservers: () => [
+                  AutoRouteObserver(),
+                ],
+              ),
             ),
         );
       },

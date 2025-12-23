@@ -25,6 +25,7 @@ class CustomShaderMaskState extends State<CustomShaderMask> {
     final bytes = data.buffer.asUint8List();
     final codec = await ui.instantiateImageCodec(bytes);
     final frame = await codec.getNextFrame();
+    if (!mounted) return; // Prevent setState after dispose
     setState(() {
       gradientImage = frame.image;
     });

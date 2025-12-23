@@ -14,11 +14,13 @@ class DashboardSingleRowView extends ConsumerStatefulWidget {
   final List<RowData> rows;
   final EdgeInsets contentPadding;
   final Future<void> Function()? onRefresh;
+  final bool isVisible;
 
   const DashboardSingleRowView({
     required this.rows,
     required this.contentPadding,
     this.onRefresh,
+    this.isVisible = true,
     super.key,
   });
 
@@ -81,6 +83,8 @@ class _DashboardSingleRowViewState extends ConsumerState<DashboardSingleRowView>
 
   void _setInitialFocus() {
     WidgetsBinding.instance.addPostFrameCallback((_) {
+      // Don't steal focus if we aren't the active screen
+      if (!widget.isVisible) return;
       if (!mounted || _lastAutoFocusedIndex >= 0 || widget.rows.isEmpty) return;
       
       final selectedRow = widget.rows[_selectedIndex];
@@ -317,6 +321,8 @@ class _DashboardSingleRowViewState extends ConsumerState<DashboardSingleRowView>
   void _ensureContent() {
     WidgetsBinding.instance.addPostFrameCallback((_) {
       if (!mounted) return;
+      // Don't trigger load actions that might affect focus if we aren't active
+      if (!widget.isVisible) return;
       if (widget.rows.isEmpty) return;
       final selectedRow = widget.rows[_selectedIndex];
       if (selectedRow.requiresLoading && selectedRow.id != null) {

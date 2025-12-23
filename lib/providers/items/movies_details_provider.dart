@@ -115,8 +115,8 @@ class MovieDetails extends _$MovieDetails {
                 name: firstVersion.name,
                 index: firstVersion.index,
                 id: firstVersion.id,
-                defaultAudioStreamIndex: audioStreams.isNotEmpty ? 0 : null,
-                defaultSubStreamIndex: null,
+                defaultAudioStreamIndex: audioStreams.firstOrNull?.index,
+                defaultSubStreamIndex: subStreams.firstOrNull?.index,
                 videoStreams: [],
                 audioStreams: audioStreams,
                 subStreams: subStreams,
@@ -130,8 +130,8 @@ class MovieDetails extends _$MovieDetails {
               newState = newState.copyWith(
                 mediaStreams: newState.mediaStreams.copyWith(
                   versionStreams: updatedVersionStreams,
-                  defaultAudioStreamIndex: audioStreams.isNotEmpty ? 0 : null,
-                  defaultSubStreamIndex: null,
+                  defaultAudioStreamIndex: audioStreams.firstOrNull?.index,
+                  defaultSubStreamIndex: subStreams.firstOrNull?.index,
                   isLoading: false,
                 ),
               );
@@ -225,8 +225,8 @@ class MovieDetails extends _$MovieDetails {
                 name: v.name,
                 index: v.index,
                 id: v.id,
-                defaultAudioStreamIndex: audioStreams.isNotEmpty ? 0 : null,
-                defaultSubStreamIndex: null,
+                defaultAudioStreamIndex: audioStreams.firstOrNull?.index,
+                defaultSubStreamIndex: subStreams.firstOrNull?.index,
                 videoStreams: [],
                 audioStreams: audioStreams,
                 subStreams: subStreams,
@@ -239,8 +239,8 @@ class MovieDetails extends _$MovieDetails {
             mediaStreams: state?.mediaStreams.copyWith(
               versionStreamIndex: index,
               versionStreams: updatedVersionStreams,
-              defaultAudioStreamIndex: audioStreams.isNotEmpty ? 0 : null,
-              defaultSubStreamIndex: null,
+              defaultAudioStreamIndex: audioStreams.firstOrNull?.index,
+              defaultSubStreamIndex: subStreams.firstOrNull?.index,
               isLoading: false,
             ),
           );
@@ -327,8 +327,8 @@ class MovieDetails extends _$MovieDetails {
             name: firstVersion.name,
             index: firstVersion.index,
             id: firstVersion.id,
-            defaultAudioStreamIndex: audioStreams.isNotEmpty ? 0 : null,
-            defaultSubStreamIndex: null,
+            defaultAudioStreamIndex: audioStreams.firstOrNull?.index,
+            defaultSubStreamIndex: subStreams.firstOrNull?.index,
             videoStreams: [],
             audioStreams: audioStreams,
             subStreams: subStreams,
@@ -342,8 +342,8 @@ class MovieDetails extends _$MovieDetails {
           state = state?.copyWith(
             mediaStreams: state!.mediaStreams.copyWith(
               versionStreams: updatedVersionStreams,
-              defaultAudioStreamIndex: audioStreams.isNotEmpty ? 0 : null,
-              defaultSubStreamIndex: null,
+              defaultAudioStreamIndex: audioStreams.firstOrNull?.index,
+              defaultSubStreamIndex: subStreams.firstOrNull?.index,
               // Do not set isLoading: false here as we didn't set it to true
             ),
           );

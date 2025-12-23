@@ -108,66 +108,96 @@ class DashboardNotifier extends StateNotifier<HomeModel> {
       ItemFields.genres,
     ];
 
-    if (viewTypes.containsAny([CollectionType.movies, CollectionType.tvshows])) {
-      final resumeVideoResponse = await api.usersUserIdItemsResumeGet(
-        enableImageTypes: imagesToFetch,
-        fields: fieldsToFetch,
-        mediaTypes: [MediaType.video],
-        enableTotalRecordCount: false,
-        limit: limit,
-      );
+    try {
+      if (viewTypes.containsAny([CollectionType.movies, CollectionType.tvshows])) {
+        try {
+          final resumeVideoResponse = await api.usersUserIdItemsResumeGet(
+            enableImageTypes: imagesToFetch,
+            fields: fieldsToFetch,
+            mediaTypes: [MediaType.video],
+            enableTotalRecordCount: false,
+            limit: limit,
+          );
 
-      final items = resumeVideoResponse.body?.items?.map((e) => ItemBaseModel.fromBaseDto(e, ref)).toList();
+          // Only update state if we got valid data
+          final items = resumeVideoResponse.body?.items?.map((e) => ItemBaseModel.fromBaseDto(e, ref)).toList();
+          if (items != null) {
+            state = state.copyWith(resumeVideo: items);
+          }
+        } catch (e) {
+          debugPrint('[DashboardNotifier] Error fetching resume video: $e');
+          // Keep existing resumeVideo data
+        }
+      }
 
-      state = state.copyWith(
-        resumeVideo: items,
-      );
+      if (viewTypes.contains(CollectionType.music)) {
+        try {
+          final resumeAudioResponse = await api.usersUserIdItemsResumeGet(
+            enableImageTypes: imagesToFetch,
+            fields: fieldsToFetch,
+            mediaTypes: [MediaType.audio],
+            enableTotalRecordCount: false,
+            limit: limit,
+          );
+
+          final items = resumeAudioResponse.body?.items?.map((e) => ItemBaseModel.fromBaseDto(e, ref)).toList();
+          if (items != null) {
+            state = state.copyWith(resumeAudio: items);
+          }
+        } catch (e) {
+          debugPrint('[DashboardNotifier] Error fetching resume audio: $e');
+          // Keep existing resumeAudio data
+        }
+      }
+
+      if (viewTypes.contains(CollectionType.books)) {
+        try {
+          final resumeBookResponse = await api.usersUserIdItemsResumeGet(
+            enableImageTypes: imagesToFetch,
+            fields: fieldsToFetch,
+            mediaTypes: [MediaType.book],
+            enableTotalRecordCount: false,
+            limit: limit,
+          );
+
+          final items = resumeBookResponse.body?.items?.map((e) => ItemBaseModel.fromBaseDto(e, ref)).toList();
+          if (items != null) {
+            state = state.copyWith(resumeBooks: items);
+          }
+        } catch (e) {
+          debugPrint('[DashboardNotifier] Error fetching resume books: $e');
+          // Keep existing resumeBooks data
+        }
+      }
+
+      try {
+        final nextResponse = await api.showsNextUpGet(
+          nextUpDateCutoff: DateTime.now().subtract(
+              ref.read(clientSettingsProvider.select((value) => value.nextUpDateCutoff ?? const Duration(days: 28)))),
+          fields: fieldsToFetch,
+          enableImageTypes: imagesToFetch,
+        );
+
+        final next = nextResponse.body?.items
+                ?.map(
+                  (e) => ItemBaseModel.fromBaseDto(e, ref),
+                )
+                .toList() ??
+            [];
+
+        state = state.copyWith(nextUp: next, loading: false);
+      } catch (e) {
+        debugPrint('[DashboardNotifier] Error fetching next up: $e');
+        // Keep existing nextUp data, just clear loading
+        state = state.copyWith(loading: false);
+      }
+    } catch (e) {
+      debugPrint('[DashboardNotifier] Error in fetchNextUpAndResume: $e');
+      // Keep existing state, just clear loading flag
+      state = state.copyWith(loading: false);
     }
-
-    if (viewTypes.contains(CollectionType.music)) {
-      final resumeAudioResponse = await api.usersUserIdItemsResumeGet(
-        enableImageTypes: imagesToFetch,
-        fields: fieldsToFetch,
-        mediaTypes: [MediaType.audio],
-        enableTotalRecordCount: false,
-        limit: limit,
-      );
-
-      state = state.copyWith(
-        resumeAudio: resumeAudioResponse.body?.items?.map((e) => ItemBaseModel.fromBaseDto(e, ref)).toList(),
-      );
-    }
-
-    if (viewTypes.contains(CollectionType.books)) {
-      final resumeBookResponse = await api.usersUserIdItemsResumeGet(
-        enableImageTypes: imagesToFetch,
-        fields: fieldsToFetch,
-        mediaTypes: [MediaType.book],
-        enableTotalRecordCount: false,
-        limit: limit,
-      );
-
-      state = state.copyWith(
-        resumeBooks: resumeBookResponse.body?.items?.map((e) => ItemBaseModel.fromBaseDto(e, ref)).toList(),
-      );
-    }
-
-    final nextResponse = await api.showsNextUpGet(
-      nextUpDateCutoff: DateTime.now().subtract(
-          ref.read(clientSettingsProvider.select((value) => value.nextUpDateCutoff ?? const Duration(days: 28)))),
-      fields: fieldsToFetch,
-      enableImageTypes: imagesToFetch,
-    );
-
-    final next = nextResponse.body?.items
-            ?.map(
-              (e) => ItemBaseModel.fromBaseDto(e, ref),
-            )
-            .toList() ??
-        [];
-
-    state = state.copyWith(nextUp: next, loading: false);
   }
+
 
   void clear() {
     state = HomeModel();

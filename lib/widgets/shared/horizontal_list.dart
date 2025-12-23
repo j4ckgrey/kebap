@@ -136,11 +136,24 @@ class _HorizontalListState extends ConsumerState<HorizontalList> with TickerProv
       if (alreadyFocused) {
         debugPrint('[HL] _requestInitialFocus - already focused in this row, locking. label: ${widget.label}');
         _focusLocked = true;
+        // Still notify parent of the focused index so banner updates
+        // Use geometric calculation for accurate index
+        final focusedIndex = _getCorrectIndexForNode(currentPrimary!);
+        if (focusedIndex != -1 && focusedIndex < widget.items.length) {
+          widget.onFocused?.call(focusedIndex);
+        }
         return;
       }
       
       debugPrint('[HL] _requestInitialFocus - REQUESTING FOCUS on index $targetIndex, label: ${widget.label}');
       targetNode.requestFocus();
+      lastFocused = targetNode;
+      
+      // Notify parent of focus and scroll to position
+      if (targetIndex < widget.items.length) {
+        widget.onFocused?.call(targetIndex);
+        _scrollToPosition(targetIndex);
+      }
       
       // Schedule lock check - if focus is maintained for 300ms, lock it
       Future.delayed(const Duration(milliseconds: 300), () {
@@ -339,8 +352,13 @@ class _HorizontalListState extends ConsumerState<HorizontalList> with TickerProv
                   orElse: () => nodesOnSameRow.first,
                 );
                 
-                // Just sync lastFocused to the currently focused node - no correction
+                // Sync lastFocused and notify parent of the current focus
                 lastFocused = focusedNode;
+                // Use geometric calculation for correct item index, not node list position
+                final focusedIndex = _getCorrectIndexForNode(focusedNode);
+                if (focusedIndex != -1 && focusedIndex < widget.items.length) {
+                  widget.onFocused?.call(focusedIndex);
+                }
                 return; // Let the focused child keep focus
               }
               
@@ -380,6 +398,9 @@ class _HorizontalListState extends ConsumerState<HorizontalList> with TickerProv
               }
             } else {
               hasFocus = false;
+              // Reset focus lock when we lose focus, so we can re-request it 
+              // if we become visible again (e.g. returning to dashboard)
+              _focusLocked = false;
             }
           },
           child: SizedBox(
@@ -398,10 +419,14 @@ class _HorizontalListState extends ConsumerState<HorizontalList> with TickerProv
                 onUpFromRow: widget.onUpFromRow,
                 onDownFromRow: widget.onDownFromRow,
                 onFocused: (node) {
-                  // Focus updates are now handled by individual item Focus wrappers
-                  // This callback is kept for edge cases but explicit wrappers are primary
+                  // Primary focus tracking - calculate index and notify parent
                   if (node.context != null) {
                     lastFocused = node;
+                    final correctIndex = _getCorrectIndexForNode(node);
+                    if (correctIndex != -1 && correctIndex < widget.items.length) {
+                      widget.onFocused?.call(correctIndex);
+                      _scrollToPosition(correctIndex);
+                    }
                   }
                 },
               ),
@@ -413,6 +438,7 @@ class _HorizontalListState extends ConsumerState<HorizontalList> with TickerProv
                 padding: widget.contentPadding,
                 cacheExtent: (_firstItemWidth ?? 250) * 5,
                 // RepaintBoundary around each item to isolate card repaints from scroll
+                // Focus tracking is handled by HorizontalRailFocus.onFocused - no wrapper needed
                 itemBuilder: (context, index) {
                   final Widget child = index == widget.items.length
                       ? PosterPlaceHolder(
@@ -424,29 +450,10 @@ class _HorizontalListState extends ConsumerState<HorizontalList> with TickerProv
                           child: widget.itemBuilder(context, index),
                         );
                   
-                  // Wrap in explicit Focus widget to reliably track focus and prevent duplicate/ghost selections
-                  // canRequestFocus: false ensures this wrapper doesn't trap focus itself, but only listens to children
-                  return RepaintBoundary(
-                    child: Focus(
-                      key: ValueKey("focus_idx_$index"),
-                      canRequestFocus: false,
-                      onFocusChange: (value) {
-                         if (value) {
-                           lastFocused = _firstFullyVisibleNode(context, [Focus.of(context)]);
-                           
-                           // Simple: notify parent of focus change and scroll
-                           if (index <= widget.items.length) {
-                             widget.onFocused?.call(index);
-                           }
-                           _scrollToPosition(index);
-                         }
-                      },
-                      child: child,
-                    ),
-                  );
+                  return RepaintBoundary(child: child);
                 },
                 separatorBuilder: (context, index) => SizedBox(width: contentPadding),
-                itemCount: widget.onLabelClick != null && AdaptiveLayout.inputDeviceOf(context) == InputDevice.dPad
+                itemCount: widget.onLabelClick != null
                     ? widget.items.length + 1
                     : widget.items.length,
               ),
@@ -513,9 +520,17 @@ FocusNode? _firstFullyVisibleNode(
 }
 
 List<FocusNode> _nodesInRow(FocusNode parentNode) {
-  return parentNode.descendants.where((n) => n.canRequestFocus && n.context != null).toList()
+  // Simple implementation - get all focusable descendants of this parent
+  // Each HorizontalList has its own parentNode, so this should only return
+  // items from THIS list's focus scope
+  return parentNode.descendants
+      .where((n) => n.canRequestFocus && n.context != null)
+      .toList()
     ..sort((a, b) => a.rect.left.compareTo(b.rect.left));
 }
+
+
+
 
 class HorizontalRailFocus extends WidgetOrderTraversalPolicy {
   final FocusNode parentNode;
@@ -576,17 +591,16 @@ class HorizontalRailFocus extends WidgetOrderTraversalPolicy {
 
     if (direction == TraversalDirection.left) {
       if (index == 0) {
-        if (onLeftFromFirst != null) {
-          onLeftFromFirst!();
+        // Open drawer on LEFT from first item
+        final scaffold = parentNode.context != null 
+            ? Scaffold.maybeOf(parentNode.context!) 
+            : null;
+        if (scaffold != null && scaffold.hasDrawer) {
+          scaffold.openDrawer();
           return true;
         }
-        // Fallback to trying to open drawer
-        try {
-          Scaffold.of(parentNode.context!).openDrawer();
-        } catch (_) {
-          // No scaffold or drawer available, but we still consumed the left input
-        }
-        return true;
+        // If no scaffold/drawer, let global policy handle
+        return false;
       }
 
       if (index > 0) {
@@ -608,66 +622,37 @@ class HorizontalRailFocus extends WidgetOrderTraversalPolicy {
       return false; // Allow escape to right
     }
 
-    // Handle UP - use callback if provided, otherwise use iterative traversal
+    // Handle UP - use callback if provided, otherwise try to escape to parent scope
     if (direction == TraversalDirection.up) {
       debugPrint('[HRF] UP direction - onUpFromRow: ${onUpFromRow != null}, currentNode: $currentNode');
       if (onUpFromRow != null) {
         onUpFromRow!();
         return true;
       }
-      // No callback - use iterative traversal to skip intermediate widgets
-      return _navigateVertically(currentNode, direction);
+      // No callback - try to navigate out using parent scope
+      if (parentNode.context != null) {
+        final outerScope = FocusScope.of(parentNode.context!);
+        return outerScope.focusInDirection(direction);
+      }
+      return false;
     }
 
-    // Handle DOWN - use callback if provided, otherwise use iterative traversal
+    // Handle DOWN - use callback if provided, otherwise try to escape to parent scope
     if (direction == TraversalDirection.down) {
       debugPrint('[HRF] DOWN direction - onDownFromRow: ${onDownFromRow != null}');
       if (onDownFromRow != null) {
         onDownFromRow!();
         return true;
       }
-      // No callback - use iterative traversal to skip intermediate widgets
-      return _navigateVertically(currentNode, direction);
+      // No callback - try to navigate out using parent scope
+      if (parentNode.context != null) {
+        final outerScope = FocusScope.of(parentNode.context!);
+        return outerScope.focusInDirection(direction);
+      }
+      return false;
     }
 
     debugPrint('[HRF] Falling through to super.inDirection for $direction');
     return super.inDirection(currentNode, direction);
-  }
-  
-  /// Navigate vertically (UP/DOWN) and skip intermediate non-row elements.
-  /// Returns true if we successfully moved focus.
-  bool _navigateVertically(FocusNode startNode, TraversalDirection direction) {
-    final context = startNode.context;
-    if (context == null) return false;
-    
-    final scope = FocusScope.of(context);
-    final startFocus = FocusManager.instance.primaryFocus;
-    
-    // Try to move in the direction
-    bool moved = scope.focusInDirection(direction);
-    if (!moved) return false;
-    
-    // Check where focus landed - if still in this row, continue traversing
-    final newFocus = FocusManager.instance.primaryFocus;
-    debugPrint('[HRF] _navigateVertically: startFocus=$startFocus, newFocus=$newFocus');
-    
-    // If focus didn't move at all, or moved to us (same node), give up
-    if (newFocus == null || newFocus == startFocus) {
-      debugPrint('[HRF] _navigateVertically: focus did not move, giving up');
-      return moved;
-    }
-    
-    // Check if the new focus is inside OUR row - if so, we need to keep moving
-    final ourRowNodes = _nodesInRow(parentNode);
-    if (ourRowNodes.contains(newFocus)) {
-      debugPrint('[HRF] _navigateVertically: focus is still in our row, continuing');
-      // Focus went to another item in same row - try again
-      return _navigateVertically(newFocus, direction);
-    }
-    
-    // Check if new focus is in a HorizontalList (has a FocusTraversalGroup ancestor with HorizontalRailFocus)
-    // For now, just accept that focus moved outside our row
-    debugPrint('[HRF] _navigateVertically: focus moved outside our row, success');
-    return true;
   }
 }

@@ -250,6 +250,11 @@ class _BaklavaSettingsPageState extends ConsumerState<BaklavaSettingsPage> {
                           ref.invalidate(baklavaConfigProvider);
                         },
                       ),
+                      onTap: () async {
+                        final newValue = !config.enableAutoImport;
+                        await ref.read(baklavaServiceProvider).updateConfig(enableAutoImport: newValue);
+                        ref.invalidate(baklavaConfigProvider);
+                      },
                     ),
                   ],
                 ),

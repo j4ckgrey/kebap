@@ -46,7 +46,7 @@ class DashboardScreen extends ConsumerStatefulWidget {
   ConsumerState<ConsumerStatefulWidget> createState() => _DashboardScreenState();
 }
 
-class _DashboardScreenState extends ConsumerState<DashboardScreen> with AutoRouteAwareStateMixin<DashboardScreen>, AutomaticKeepAliveClientMixin {
+class _DashboardScreenState extends ConsumerState<DashboardScreen> with AutomaticKeepAliveClientMixin, AutoRouteAwareStateMixin<DashboardScreen> {
   final ValueNotifier<ItemBaseModel?> selectedPoster = ValueNotifier(null);
   final FocusScopeNode _focusScopeNode = FocusScopeNode();
 
@@ -62,36 +62,31 @@ class _DashboardScreenState extends ConsumerState<DashboardScreen> with AutoRout
     });
   }
 
-  @override
-  void didChangeDependencies() {
-    super.didChangeDependencies();
-  }
+  // Flag to skip spurious refresh triggers
+  bool _skipRefresh = false;
+
+  // Track visibility for focus restoration
+  bool _isVisible = true;
 
   @override
   void didPushNext() {
-    super.didPushNext();
-    // Just pass through - no saving needed
+    setState(() => _isVisible = false);
+    debugPrint('[DashboardScreen] didPushNext: visible=$_isVisible');
   }
 
   @override
   void didPopNext() {
-    super.didPopNext();
-    // Skip spurious refresh triggers during focus restoration
-    _skipRefresh = true;
-    Future.delayed(const Duration(milliseconds: 500), () {
-      _skipRefresh = false;
-    });
+    setState(() => _isVisible = true);
+    debugPrint('[DashboardScreen] didPopNext: visible=$_isVisible');
     
-    // Request focus on the dashboard scope - focus will go to first available item
+    // Restore focus when we become the top route again
     WidgetsBinding.instance.addPostFrameCallback((_) {
       if (mounted) {
+        debugPrint('[DashboardScreen] Restoring focus on returning to dashboard');
         _focusScopeNode.requestFocus();
       }
     });
   }
-  
-  // Flag to skip spurious refresh triggers during route return
-  bool _skipRefresh = false;
 
   @override
   void dispose() {
@@ -112,11 +107,20 @@ class _DashboardScreenState extends ConsumerState<DashboardScreen> with AutoRout
   @override
   Widget build(BuildContext context) {
     super.build(context); // Prepare KeepAlive
+    
+    // Check top route to determine visibility
+    // If Settings (child route) is active, topRoute will be SettingsRoute
+    // final topRouteName = context.router.topRoute.name; // Removed: Logic moved to AutoRouteAware callbacks
+    // final isVisible = topRouteName == DashboardRoute.name; // Removed
+
+    // Focus restoration logic moved to didPopNext
+
     final padding = AdaptiveLayout.adaptivePadding(context);
 
     final dashboardData = ref.watch(dashboardProvider);
     final dashboardViews = ref.watch(viewsProvider.select((v) => v.dashboardViews));
     final viewsList = ref.watch(viewsProvider.select((v) => v.views));
+    final viewsLoading = ref.watch(viewsProvider.select((v) => v.loading));
     final homeSettings = ref.watch(homeSettingsProvider);
     final libraryLocation = ref.watch(clientSettingsProvider.select((s) => s.libraryLocation));
     final isOffline = ref.watch(connectivityStatusProvider.select((s) => s == ConnectionState.offline));
@@ -127,9 +131,11 @@ class _DashboardScreenState extends ConsumerState<DashboardScreen> with AutoRout
 
     final allResume = [...resumeVideo, ...resumeAudio, ...resumeBooks].toList();
 
-    return MediaQuery.removeViewInsets(
-      context: context,
-      child: NestedScaffold(
+    return ExcludeFocus(
+      excluding: !_isVisible,
+      child: MediaQuery.removeViewInsets(
+        context: context,
+        child: NestedScaffold(
         background: ValueListenableBuilder<ItemBaseModel?>(
           valueListenable: selectedPoster,
           builder: (_, value, __) {
@@ -150,9 +156,11 @@ class _DashboardScreenState extends ConsumerState<DashboardScreen> with AutoRout
             refreshOnStart: false,
             onRefresh: _refreshHome,
             child: FocusScope(
-            node: _focusScopeNode,
-            autofocus: true,
-            child: Builder(
+              node: _focusScopeNode,
+              // Only autofocus if we are the current route to prevent stealing focus 
+              // from other screens (like Settings) during background rebuilds
+              autofocus: _isVisible,
+              child: Builder(
               builder: (context) {
                   final offlineMovies = allResume.where((e) => e.type == KebapItemType.movie || e.type == KebapItemType.video).toList();
                   final offlineShows = allResume.where((e) => e.type == KebapItemType.episode || e.type == KebapItemType.series).toList();
@@ -269,6 +277,13 @@ class _DashboardScreenState extends ConsumerState<DashboardScreen> with AutoRout
                         ),
                   ]
                 ];
+                
+                // Show loading indicator when data is being fetched and rows are empty
+                // This prevents black screen when Jellyfin is doing media scan
+                if (rows.isEmpty && (viewsLoading || dashboardData.loading)) {
+                  return const Center(child: CircularProgressIndicator.adaptive());
+                }
+                
                 if (isSingleRow) {
                   return DashboardSingleRowView(
                     rows: rows,
@@ -286,6 +301,7 @@ class _DashboardScreenState extends ConsumerState<DashboardScreen> with AutoRout
             ),
           ),
         ),
+      ),
       ),
     );
   }

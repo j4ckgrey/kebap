@@ -312,11 +312,12 @@ class LibraryViews extends ConsumerWidget {
                   ),
                   SliverToBoxAdapter(
                     child: SizedBox(
-                      height: 280,
+                      height: 320, // Increased from 280 to accommodate poster + title text
                       child: ListView.builder(
                         scrollDirection: Axis.horizontal,
                         padding: const EdgeInsets.symmetric(horizontal: 16),
                         itemCount: group.length,
+                        clipBehavior: Clip.none, // Allow focus rings to extend
                         itemBuilder: (context, index) {
                           final item = group[index];
                           return Padding(

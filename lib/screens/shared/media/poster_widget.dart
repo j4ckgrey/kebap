@@ -93,16 +93,14 @@ class PosterWidget extends ConsumerWidget {
                 mainAxisSize: MainAxisSize.min,
                 crossAxisAlignment: CrossAxisAlignment.stretch,
                 children: [
-                  Flexible(
-                    child: ClickableText(
-                      onTap: AdaptiveLayout.viewSizeOf(context) != ViewSize.phone
-                          ? () => poster.parentBaseModel.navigateTo(context)
-                          : null,
-                      text: poster.title,
-                      maxLines: 1,
-                      overflow: TextOverflow.ellipsis,
-                      style: Theme.of(context).textTheme.titleMedium?.copyWith(fontWeight: FontWeight.bold),
-                    ),
+                  ClickableText(
+                    onTap: AdaptiveLayout.viewSizeOf(context) != ViewSize.phone
+                        ? () => poster.parentBaseModel.navigateTo(context)
+                        : null,
+                    text: poster.title,
+                    maxLines: 1,
+                    overflow: TextOverflow.ellipsis,
+                    style: Theme.of(context).textTheme.titleMedium?.copyWith(fontWeight: FontWeight.bold),
                   ),
                   Row(
                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -134,14 +132,12 @@ class PosterWidget extends ConsumerWidget {
                         ),
                     ],
                   ),
-                  Flexible(
-                    child: ClickableText(
-                      opacity: opacity,
-                      text: poster.subText?.isNotEmpty ?? false ? poster.subTextShort(context) ?? "" : "",
-                      maxLines: 1,
-                      overflow: TextOverflow.ellipsis,
-                      style: Theme.of(context).textTheme.titleSmall?.copyWith(fontWeight: FontWeight.bold),
-                    ),
+                  ClickableText(
+                    opacity: opacity,
+                    text: poster.subText?.isNotEmpty ?? false ? poster.subTextShort(context) ?? "" : "",
+                    maxLines: 1,
+                    overflow: TextOverflow.ellipsis,
+                    style: Theme.of(context).textTheme.titleSmall?.copyWith(fontWeight: FontWeight.bold),
                   ),
                 ].take(maxLines).toList(),
               ),
@@ -165,36 +161,32 @@ class PosterPlaceHolder extends StatelessWidget {
   Widget build(BuildContext context) {
     return AspectRatio(
       aspectRatio: aspectRatio,
-      child: FractionallySizedBox(
-        alignment: Alignment.topCenter,
-        heightFactor: 0.85,
-        child: Padding(
-          padding: const EdgeInsets.all(4),
-          child: FocusButton(
-            onTap: onTap,
-            child: Card(
-              color: Theme.of(context).colorScheme.surface.withValues(alpha: 0.2),
-              elevation: 0,
-              shadowColor: Colors.transparent,
-              child: Center(
-                child: Padding(
-                  padding: const EdgeInsets.all(8.0),
-                  child: Column(
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    crossAxisAlignment: CrossAxisAlignment.center,
-                    mainAxisSize: MainAxisSize.min,
-                    spacing: 8,
-                    children: [
-                      const Icon(
-                        IconsaxPlusLinear.more_square,
-                        size: 46,
-                      ),
-                      Text(
-                        context.localized.showMore,
-                        style: Theme.of(context).textTheme.labelMedium,
-                      )
-                    ],
-                  ),
+      child: Padding(
+        padding: const EdgeInsets.all(4),
+        child: FocusButton(
+          onTap: onTap,
+          child: Card(
+            color: Theme.of(context).colorScheme.surface.withValues(alpha: 0.2),
+            elevation: 0,
+            shadowColor: Colors.transparent,
+            child: Center(
+              child: Padding(
+                padding: const EdgeInsets.all(8.0),
+                child: Column(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  crossAxisAlignment: CrossAxisAlignment.center,
+                  mainAxisSize: MainAxisSize.min,
+                  spacing: 8,
+                  children: [
+                    const Icon(
+                      IconsaxPlusLinear.more_square,
+                      size: 46,
+                    ),
+                    Text(
+                      context.localized.showMore,
+                      style: Theme.of(context).textTheme.labelMedium,
+                    )
+                  ],
                 ),
               ),
             ),

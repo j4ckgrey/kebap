@@ -152,8 +152,8 @@ class EpisodeDetailsProvider extends StateNotifier<EpisodeDetailModel> {
               name: firstVersion.name,
               index: firstVersion.index,
               id: firstVersion.id,
-              defaultAudioStreamIndex: audioStreams.isNotEmpty ? 0 : null,
-              defaultSubStreamIndex: null,
+              defaultAudioStreamIndex: audioStreams.firstOrNull?.index,
+              defaultSubStreamIndex: subStreams.firstOrNull?.index,
               videoStreams: [],
               audioStreams: audioStreams,
               subStreams: subStreams,
@@ -167,8 +167,8 @@ class EpisodeDetailsProvider extends StateNotifier<EpisodeDetailModel> {
             episode = episode.copyWith(
               mediaStreams: episode.mediaStreams.copyWith(
                 versionStreams: updatedVersionStreams,
-                defaultAudioStreamIndex: audioStreams.isNotEmpty ? 0 : null,
-                defaultSubStreamIndex: null,
+                defaultAudioStreamIndex: audioStreams.firstOrNull?.index,
+                defaultSubStreamIndex: subStreams.firstOrNull?.index,
                 isLoading: false,
               ),
             );

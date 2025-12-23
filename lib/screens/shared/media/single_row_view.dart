@@ -22,11 +22,13 @@ class SingleRowView extends ConsumerStatefulWidget {
   final EdgeInsets contentPadding;
 
   final Future<void> Function()? onRefresh;
+  final bool isVisible;
 
   const SingleRowView({
     required this.rows,
     required this.contentPadding,
     this.onRefresh,
+    this.isVisible = true,
     super.key,
   });
 
@@ -79,6 +81,9 @@ class _SingleRowViewState extends ConsumerState<SingleRowView> {
   void _initializeFocus() {
     WidgetsBinding.instance.addPostFrameCallback((_) {
       if (!mounted) return;
+      
+      // Don't steal focus if we aren't the active screen (e.g. background rebuild)
+      if (!widget.isVisible) return;
       
       // Check if we already have system focus in this view
       final hasSystemFocus = FocusScope.of(context).hasFocus;
@@ -153,6 +158,25 @@ class _SingleRowViewState extends ConsumerState<SingleRowView> {
     if (page >= 0 && page < widget.rows.length && widget.rows[page].posters.isNotEmpty) {
       _onItemFocused(widget.rows[page].posters.first, widget.rows[page].label);
     }
+    // Request focus on new row's first item after animation settles
+    _requestFocusOnCurrentRow();
+  }
+
+  /// Requests focus on the first focusable item in the current row
+  void _requestFocusOnCurrentRow() {
+    // Wait for page animation and layout to complete
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      if (!mounted) return;
+      
+      // Find the focus scope of the current page and request focus on it
+      // This will trigger HorizontalList's auto-focus mechanism
+      final primaryFocus = FocusManager.instance.primaryFocus;
+      if (primaryFocus != null) {
+        // Already focused somewhere - try to move focus to our row
+        final scope = FocusScope.of(context);
+        scope.requestFocus();
+      }
+    });
   }
 
   @override
@@ -351,26 +375,20 @@ class _SingleRowViewState extends ConsumerState<SingleRowView> {
                                           Scaffold.of(context).openDrawer();
                                         } catch (_) {}
                                       },
-                                      onUpFromRow: () {
-                                        // Go to previous row on UP, or block if first row
-                                        if (index > 0) {
-                                          _pageController.previousPage(
-                                            duration: const Duration(milliseconds: 300),
-                                            curve: Curves.easeInOut,
-                                          );
-                                        }
-                                        // If first row, do nothing (stay on current row)
-                                      },
-                                      onDownFromRow: () {
-                                        // Go to next row on DOWN, or block if last row
-                                        if (index < widget.rows.length - 1) {
-                                          _pageController.nextPage(
-                                            duration: const Duration(milliseconds: 300),
-                                            curve: Curves.easeInOut,
-                                          );
-                                        }
-                                        // If last row, do nothing (stay on current row)
-                                      },
+                                      onUpFromRow: index > 0 ? () {
+                                        // Go to previous row on UP 
+                                        _pageController.previousPage(
+                                          duration: const Duration(milliseconds: 300),
+                                          curve: Curves.easeInOut,
+                                        );
+                                      } : null, // null on first row - don't consume input
+                                      onDownFromRow: index < widget.rows.length - 1 ? () {
+                                        // Go to next row on DOWN
+                                        _pageController.nextPage(
+                                          duration: const Duration(milliseconds: 300),
+                                          curve: Curves.easeInOut,
+                                        );
+                                      } : null, // null on last row - don't consume input
                                     onCardTap: (item) {
                                       if (row.onItemTap != null) {
                                         row.onItemTap!(item);

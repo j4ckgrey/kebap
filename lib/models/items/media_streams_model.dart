@@ -45,14 +45,20 @@ class MediaStreamsModel {
   }
 
   AudioStreamModel? get currentAudioStream {
-    if (defaultAudioStreamIndex == -1 || defaultAudioStreamIndex == null) {
+    // Only return "Off" if user explicitly chose -1
+    if (defaultAudioStreamIndex == -1) {
       return AudioStreamModel.no();
+    }
+    // If null (not explicitly set), fallback to first stream (default audio)
+    if (defaultAudioStreamIndex == null) {
+      return audioStreams.firstOrNull;
     }
     return audioStreams.firstWhereOrNull((element) => element.index == defaultAudioStreamIndex) ??
         audioStreams.firstOrNull;
   }
 
   SubStreamModel? get currentSubStream {
+    // null or -1 means no subtitles selected (default behavior)
     if (defaultSubStreamIndex == -1 || defaultSubStreamIndex == null) {
       return SubStreamModel.no();
     }

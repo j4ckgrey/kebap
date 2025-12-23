@@ -49,16 +49,8 @@ class _SettingsListTileState extends State<SettingsListTile> with AutomaticKeepA
           )
         : widget.leading ?? const SizedBox();
     
-    // Define the shortcuts wrapper
-    return CallbackShortcuts(
-      bindings: {
-        const SingleActivator(LogicalKeyboardKey.enter): () => widget.onTap?.call(),
-        const SingleActivator(LogicalKeyboardKey.numpadEnter): () => widget.onTap?.call(),
-        const SingleActivator(LogicalKeyboardKey.space): () => widget.onTap?.call(),
-        const SingleActivator(LogicalKeyboardKey.select): () => widget.onTap?.call(),
-        const SingleActivator(LogicalKeyboardKey.gameButtonA): () => widget.onTap?.call(),
-      },
-      child: Card(
+    // Define the card content
+    final card = Card(
         elevation: 0,
         color: _focused
             ? Theme.of(context).colorScheme.surfaceContainerHighest
@@ -147,7 +139,20 @@ class _SettingsListTileState extends State<SettingsListTile> with AutomaticKeepA
               ),
           ],
         ),
-      ),
+      );
+
+    if (widget.onTap == null) return card;
+
+    // Define the shortcuts wrapper
+    return CallbackShortcuts(
+      bindings: {
+        const SingleActivator(LogicalKeyboardKey.enter): () => widget.onTap?.call(),
+        const SingleActivator(LogicalKeyboardKey.numpadEnter): () => widget.onTap?.call(),
+        const SingleActivator(LogicalKeyboardKey.space): () => widget.onTap?.call(),
+        const SingleActivator(LogicalKeyboardKey.select): () => widget.onTap?.call(),
+        const SingleActivator(LogicalKeyboardKey.gameButtonA): () => widget.onTap?.call(),
+      },
+      child: card,
     );
   }
 }
