@@ -406,6 +406,14 @@ class _LibrarySearchScreenState extends ConsumerState<LibrarySearchScreen> {
                                     title: librarySearchResults.searchBarTitle(context),
                                     debounceDuration: const Duration(milliseconds: 500),
                                     onChanged: (value) {
+                                      // On TV/dPad, don't auto-search on every keystroke - only on submit
+                                      final isDPad = AdaptiveLayout.inputDeviceOf(context) == InputDevice.dPad;
+                                      if (isDPad) {
+                                        // Just update the search term without triggering search
+                                        libraryProvider.setSearch(value);
+                                        return;
+                                      }
+                                      
                                       if (librarySearchResults.searchQuery != value) {
                                         debouncer.run(() {
                                           libraryProvider.setSearch(value);

@@ -285,11 +285,14 @@ class _OutlinedTextFieldState extends ConsumerState<OutlinedTextField> {
                         setState(() => _isTypingActive = true);
                         _textFocus.requestFocus();
                         final text = controller.text;
-                        if (text.isNotEmpty) {
-                          final newText = text.substring(0, text.length - 1);
+                        final selection = controller.selection;
+                        if (text.isNotEmpty && selection.baseOffset > 0) {
+                          // Delete character BEFORE the cursor position
+                          final cursorPos = selection.baseOffset;
+                          final newText = text.substring(0, cursorPos - 1) + text.substring(cursorPos);
                           controller.value = TextEditingValue(
                             text: newText,
-                            selection: TextSelection.collapsed(offset: newText.length),
+                            selection: TextSelection.collapsed(offset: cursorPos - 1),
                           );
                           widget.onChanged?.call(newText);
                         }
@@ -314,10 +317,14 @@ class _OutlinedTextFieldState extends ConsumerState<OutlinedTextField> {
                            final char = event.character!;
                            // Only append if it's a valid printable char (simple check)
                            if (char.runes.length == 1 && char.runes.first >= 32) {
-                               final newText = controller.text + char;
+                               final text = controller.text;
+                               final selection = controller.selection;
+                               final cursorPos = selection.baseOffset.clamp(0, text.length);
+                               // Insert character AT the cursor position
+                               final newText = text.substring(0, cursorPos) + char + text.substring(cursorPos);
                                controller.value = TextEditingValue(
                                  text: newText,
-                                 selection: TextSelection.collapsed(offset: newText.length),
+                                 selection: TextSelection.collapsed(offset: cursorPos + 1),
                                );
                                widget.onChanged?.call(newText);
                            }

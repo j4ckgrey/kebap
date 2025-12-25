@@ -52,8 +52,11 @@ class SeriesDetailViewNotifier extends StateNotifier<SeriesModel?> {
       if (response.body == null || response.body!.items.isEmpty) return null;
       newState = response.body!.items.first as SeriesModel;
 
+      // CRITICAL: Use newState.id (canonical ID from response) instead of seriesModel.id!
+      // Gelato may redirect to a different canonical ID, so we must use the response's ID.
+      final effectiveSeriesId = newState.id;
 
-      final seasons = await api.showsSeriesIdSeasonsGet(seriesId: seriesModel.id, fields: [
+      final seasons = await api.showsSeriesIdSeasonsGet(seriesId: effectiveSeriesId, fields: [
         ItemFields.mediastreams,
         ItemFields.mediasources,
         ItemFields.overview,
@@ -62,7 +65,7 @@ class SeriesDetailViewNotifier extends StateNotifier<SeriesModel?> {
       ]);
 
       final episodes = await api.showsSeriesIdEpisodesGet(
-        seriesId: seriesModel.id,
+        seriesId: effectiveSeriesId,
         enableImageTypes: [
           ImageType.backdrop,
           ImageType.primary,
@@ -130,7 +133,7 @@ class SeriesDetailViewNotifier extends StateNotifier<SeriesModel?> {
       );
 
       final related =
-          await ref.read(relatedUtilityProvider).relatedContent(seriesModel.id);
+          await ref.read(relatedUtilityProvider).relatedContent(effectiveSeriesId);
       state = newState.copyWith(related: related.body);
       return response;
     } catch (e) {

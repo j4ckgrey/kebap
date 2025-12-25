@@ -35,11 +35,15 @@ class MovieDetails extends _$MovieDetails {
         newState = newState.copyWith(mediaStreams: state!.mediaStreams);
       }
       
+      // CRITICAL: Use newState.id (canonical ID from response) instead of item.id!
+      // Gelato may redirect to a different canonical ID, so we must use the response's ID.
+      final effectiveItemId = newState.id;
+      
       // If item has no media sources (non-Gelato items), fetch from PlaybackInfo
       if (newState.mediaStreams.versionStreams.isEmpty) {
         try {
           final playbackInfo = await api.itemsItemIdPlaybackInfoPost(
-            itemId: item.id,
+            itemId: effectiveItemId,
             body: const PlaybackInfoDto(
               enableDirectPlay: true,
               enableDirectStream: true,
@@ -74,7 +78,7 @@ class MovieDetails extends _$MovieDetails {
           try {
             final baklavaService = ref.read(baklavaServiceProvider);
             final streamsResponse = await baklavaService.getMediaStreams(
-              itemId: item.id,
+              itemId: effectiveItemId,
               mediaSourceId: firstVersion.id,
             );
             
@@ -145,7 +149,7 @@ class MovieDetails extends _$MovieDetails {
         }
       }
       
-      final related = await ref.read(relatedUtilityProvider).relatedContent(item.id);
+      final related = await ref.read(relatedUtilityProvider).relatedContent(effectiveItemId);
       state = newState?.copyWith(related: related.body);
       return null;
     } catch (e) {

@@ -71,11 +71,15 @@ class EpisodeDetailsProvider extends StateNotifier<EpisodeDetailModel> {
         episode = episode.copyWith(mediaStreams: state.episode!.mediaStreams);
       }
 
+      // CRITICAL: Use episode.id (canonical ID from response) instead of item.id!
+      // Gelato may redirect to a different canonical ID, so we must use the response's ID.
+      final effectiveItemId = episode.id;
+      
       // If item has no media sources (non-Gelato items), fetch from PlaybackInfo
       if (episode.mediaStreams.versionStreams.isEmpty) {
         try {
           final playbackInfo = await api.itemsItemIdPlaybackInfoPost(
-            itemId: item.id,
+            itemId: effectiveItemId,
             body: const PlaybackInfoDto(
               enableDirectPlay: true,
               enableDirectStream: true,
@@ -111,7 +115,7 @@ class EpisodeDetailsProvider extends StateNotifier<EpisodeDetailModel> {
         try {
           final baklavaService = ref.read(baklavaServiceProvider);
           final streamsResponse = await baklavaService.getMediaStreams(
-            itemId: item.id,
+            itemId: effectiveItemId,
             mediaSourceId: firstVersion.id,
           );
           
