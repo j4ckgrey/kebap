@@ -38,6 +38,7 @@ class PosterImage extends ConsumerWidget {
   final VoidCallback? onCustomTap; // Used for Card Tap (Focus)
   final VoidCallback? onCustomAction; // Used for Open/Enter (Navigation)
   final bool isSelectedForBanner; // Show persistent selection when shown in banner
+  final bool textOverlayMode;
 
   const PosterImage({
     required this.poster,
@@ -56,6 +57,7 @@ class PosterImage extends ConsumerWidget {
     this.onCustomTap,
     this.onCustomAction,
     this.isSelectedForBanner = false,
+    this.textOverlayMode = false,
     super.key,
   });
 
@@ -121,6 +123,40 @@ class PosterImage extends ConsumerWidget {
           ),
         ),
         overlays: [
+          // Text Overlay Mode (Library Chips)
+          if (textOverlayMode) ...[
+             IgnorePointer(
+               child: Container(
+                decoration: BoxDecoration(
+                  borderRadius: radius,
+                  color: Colors.black.withOpacity(0.5),
+                ),
+               ),
+             ),
+             Align(
+              alignment: Alignment.center,
+              child: Padding(
+                padding: const EdgeInsets.symmetric(horizontal: 8.0),
+                child: Text(
+                  poster.name,
+                  textAlign: TextAlign.center,
+                  maxLines: 2,
+                  overflow: TextOverflow.ellipsis,
+                  style: Theme.of(context).textTheme.titleMedium?.copyWith(
+                        color: Colors.white,
+                        fontWeight: FontWeight.bold,
+                        shadows: [
+                          Shadow(
+                            offset: const Offset(0, 1),
+                            blurRadius: 3.0,
+                            color: Colors.black.withOpacity(0.8),
+                          ),
+                        ],
+                      ),
+                ),
+              ),
+            ),
+          ],
           // Persistent CENTERED CLICKABLE "Open" button when selected for banner display
           if (isSelectedForBanner)
             Align(
@@ -139,12 +175,7 @@ class PosterImage extends ConsumerWidget {
                     child: Row(
                       mainAxisSize: MainAxisSize.min,
                       children: [
-                        Icon(
-                          IconsaxPlusBold.play_circle,
-                          color: Theme.of(context).colorScheme.onPrimary,
-                          size: 20,
-                        ),
-                        const SizedBox(width: 6),
+
                         Text(
                           'Open',
                           style: Theme.of(context).textTheme.titleSmall?.copyWith(
@@ -329,12 +360,7 @@ class PosterImage extends ConsumerWidget {
                   child: Row(
                     mainAxisSize: MainAxisSize.min,
                     children: [
-                      Icon(
-                        IconsaxPlusBold.play_circle,
-                        color: Theme.of(context).colorScheme.onPrimary,
-                        size: 20,
-                      ),
-                      const SizedBox(width: 6),
+
                       Text(
                         'Open',
                         style: Theme.of(context).textTheme.titleSmall?.copyWith(

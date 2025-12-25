@@ -63,7 +63,7 @@ _ClientSettingsModel _$ClientSettingsModelFromJson(Map<String, dynamic> json) =>
           json['dashboardShowLibraryContents'] as bool? ?? false,
       dashboardLayoutMode: $enumDecodeNullable(
               _$DashboardLayoutModeEnumMap, json['dashboardLayoutMode']) ??
-          DashboardLayoutMode.multiRow,
+          DashboardLayoutMode.singleRow,
       shortcuts: (json['shortcuts'] as Map<String, dynamic>?)?.map(
             (k, e) => MapEntry($enumDecode(_$GlobalHotKeysEnumMap, k),
                 KeyCombination.fromJson(e as Map<String, dynamic>)),

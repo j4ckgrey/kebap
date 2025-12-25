@@ -65,9 +65,11 @@ class KebapSettingsNotifier extends StateNotifier<KebapSettingsModel> {
   /// Called on app startup when useBaklava is enabled.
   void syncFromBaklava({
     required bool enableAutoImport,
+    required bool disableModal,
   }) {
     state = state.copyWith(
       enableAutoImport: enableAutoImport,
+      disableModal: disableModal,
     );
     _persist();
   }

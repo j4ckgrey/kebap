@@ -33,8 +33,15 @@ import 'package:kebap/widgets/shared/ensure_visible.dart';
 import 'package:kebap/widgets/shared/grid_focus_traveler.dart';
 import 'package:kebap/widgets/shared/item_actions.dart';
 
-final libraryViewTypeProvider = StateProvider<LibraryViewTypes>((ref) {
-  return LibraryViewTypes.carousel;
+final libraryViewTypeProvider = StateProvider.family<LibraryViewTypes, Key>((ref, key) {
+  // If the key is for global search (usually constructed as just 'EmptySearch' or contains that meaning)
+  // we want to default to Carousel to support grouped results.
+  // For individual libraries (which have a specific ID), we default to Grid.
+  final keyString = key.toString();
+  if (keyString.contains("EmptySearch")) {
+    return LibraryViewTypes.carousel;
+  }
+  return LibraryViewTypes.grid;
 });
 
 enum LibraryViewTypes {
@@ -66,7 +73,7 @@ class LibraryViews extends ConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     return SliverPadding(
-      padding: const EdgeInsets.symmetric(horizontal: 4),
+      padding: const EdgeInsets.symmetric(horizontal: 12),
       sliver: SliverAnimatedSwitcher(
         duration: const Duration(milliseconds: 250),
         child: _getWidget(context, ref),
@@ -114,7 +121,7 @@ class LibraryViews extends ConsumerWidget {
       ];
     }
 
-    switch (ref.watch(libraryViewTypeProvider)) {
+    switch (ref.watch(libraryViewTypeProvider(key!))) {
       case LibraryViewTypes.grid:
         Widget createGrid(List<ItemBaseModel> items) {
           final width = MediaQuery.of(context).size.width;
@@ -377,19 +384,16 @@ class LibraryViews extends ConsumerWidget {
       header: Container(
         height: 50,
         alignment: Alignment.centerLeft,
-        child: Transform.translate(
-          offset: const Offset(-20, 0),
-          child: Container(
-            decoration: BoxDecoration(
-              color: context.colors.surface.withValues(alpha: 0.9),
-              borderRadius: BorderRadius.circular(12),
-            ),
-            child: Padding(
-              padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
-              child: Text(
-                header,
-                style: Theme.of(context).textTheme.titleMedium?.copyWith(fontWeight: FontWeight.bold),
-              ),
+        child: Container(
+          decoration: BoxDecoration(
+            color: context.colors.surface.withValues(alpha: 0.9),
+            borderRadius: BorderRadius.circular(12),
+          ),
+          child: Padding(
+            padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+            child: Text(
+              header,
+              style: Theme.of(context).textTheme.titleMedium?.copyWith(fontWeight: FontWeight.bold),
             ),
           ),
         ),
@@ -442,7 +446,11 @@ class LibraryViews extends ConsumerWidget {
         if (context.mounted) context.refreshData();
         break;
       default:
-        action.call();
+        if (onPressed != null) {
+          onPressed!(item);
+        } else {
+          action.call();
+        }
         break;
     }
   }

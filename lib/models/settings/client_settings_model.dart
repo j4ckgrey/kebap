@@ -121,7 +121,7 @@ abstract class ClientSettingsModel with _$ClientSettingsModel {
     @Default(true) bool showSimilarTo,
     @Default(false) bool enableCatalogs,
     @Default(false) bool dashboardShowLibraryContents,
-    @Default(DashboardLayoutMode.multiRow) DashboardLayoutMode dashboardLayoutMode,
+    @Default(DashboardLayoutMode.singleRow) DashboardLayoutMode dashboardLayoutMode,
     @Default({}) Map<GlobalHotKeys, KeyCombination> shortcuts,
   }) = _ClientSettingsModel;
 

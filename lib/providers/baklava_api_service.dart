@@ -75,6 +75,7 @@ class BaklavaService {
     bool? fetchCachedMetadataPerVersion,
     bool? fetchAllNonCachedMetadata,
     bool? enableExternalSubtitles,
+    bool? disableModal,
   }) async {
     try {
       final api = ref.read(jellyApiProvider).api;
@@ -128,6 +129,7 @@ class BaklavaService {
       if (fetchCachedMetadataPerVersion != null) body['fetchCachedMetadataPerVersion'] = fetchCachedMetadataPerVersion;
       if (fetchAllNonCachedMetadata != null) body['fetchAllNonCachedMetadata'] = fetchAllNonCachedMetadata;
       if (enableExternalSubtitles != null) body['enableExternalSubtitles'] = enableExternalSubtitles;
+      if (disableModal != null) body['disableModal'] = disableModal;
 
       final cleanServerUrl = serverUrl.endsWith('/') 
           ? serverUrl.substring(0, serverUrl.length - 1) 

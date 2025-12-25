@@ -34,6 +34,7 @@ class PosterWidget extends ConsumerWidget {
   final VoidCallback? onCustomTap;
   final VoidCallback? onCustomAction;
   final bool isSelectedForBanner; // Show persistent selection when card is shown in banner
+  final bool textOverlayMode;
 
   const PosterWidget({
     required this.poster,
@@ -55,6 +56,7 @@ class PosterWidget extends ConsumerWidget {
     this.onCustomTap,
     this.onCustomAction,
     this.isSelectedForBanner = false,
+    this.textOverlayMode = false,
     super.key,
   });
 
@@ -85,9 +87,10 @@ class PosterWidget extends ConsumerWidget {
               onCustomTap: onCustomTap,
               onCustomAction: onCustomAction,
               isSelectedForBanner: isSelectedForBanner,
+              textOverlayMode: textOverlayMode,
             ),
           ),
-          if (!inlineTitle && underTitle)
+          if (!inlineTitle && underTitle && !textOverlayMode)
             ExcludeFocus(
               child: Column(
                 mainAxisSize: MainAxisSize.min,

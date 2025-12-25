@@ -10,6 +10,7 @@ _BaklavaConfig _$BaklavaConfigFromJson(Map<String, dynamic> json) =>
     _BaklavaConfig(
       defaultTmdbId: json['defaultTmdbId'] as String? ?? '',
       enableAutoImport: json['enableAutoImport'] as bool? ?? false,
+      disableModal: json['disableModal'] as bool? ?? false,
       showReviewsCarousel: json['showReviewsCarousel'] as bool? ?? true,
       tmdbApiKey: json['tmdbApiKey'] as String?,
       enableSearchFilter: json['enableSearchFilter'] as bool?,
@@ -39,6 +40,7 @@ Map<String, dynamic> _$BaklavaConfigToJson(_BaklavaConfig instance) =>
     <String, dynamic>{
       'defaultTmdbId': instance.defaultTmdbId,
       'enableAutoImport': instance.enableAutoImport,
+      'disableModal': instance.disableModal,
       'showReviewsCarousel': instance.showReviewsCarousel,
       'tmdbApiKey': instance.tmdbApiKey,
       'enableSearchFilter': instance.enableSearchFilter,

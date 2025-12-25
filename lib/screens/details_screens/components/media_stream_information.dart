@@ -72,13 +72,15 @@ class MediaStreamInformation extends ConsumerWidget {
       crossAxisAlignment: CrossAxisAlignment.stretch,
       children: [
           // Stream Options
-          if (mediaStream.versionStreams.length > 1)
+          if (mediaStream.versionStreams.length > 1 || mediaStream.isLoading)
             Padding(
               padding: const EdgeInsets.symmetric(vertical: 2),
               child: _StreamOptionSelect(
                 label: const Icon(IconsaxPlusBold.cd),
-                currentQuality: parseVersionName(mediaStream.currentVersionStream?.name ?? "").quality,
-                currentFilename: "${mediaStream.currentVersionStream?.size.byteFormat ?? ''}",
+                isLoading: mediaStream.isLoading,
+                current: mediaStream.isLoading ? context.localized.loading : null,
+                currentQuality: mediaStream.isLoading ? null : parseVersionName(mediaStream.currentVersionStream?.name ?? "").quality,
+                currentFilename: mediaStream.isLoading ? null : "${mediaStream.currentVersionStream?.size.byteFormat ?? ''}",
                 itemBuilder: (context) => mediaStream.versionStreams
                     .map((e) {
                       final parsed = parseVersionName(e.name);

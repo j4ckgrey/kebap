@@ -8,6 +8,7 @@ abstract class BaklavaConfig with _$BaklavaConfig {
   const factory BaklavaConfig({
     @Default('') String defaultTmdbId,
     @Default(false) bool enableAutoImport,
+    @Default(false) bool disableModal,
     @Default(true) bool showReviewsCarousel,
     String? tmdbApiKey,
     bool? enableSearchFilter,

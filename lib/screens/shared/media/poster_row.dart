@@ -25,6 +25,7 @@ class PosterRow extends ConsumerWidget {
   final VoidCallback? onLeftFromFirst; // Callback when LEFT pressed on first item
   final VoidCallback? onUpFromRow; // Callback when UP pressed
   final VoidCallback? onDownFromRow; // Callback when DOWN pressed
+  final bool textOverlayMode;
 
   const PosterRow({
     required this.posters,
@@ -43,6 +44,7 @@ class PosterRow extends ConsumerWidget {
     this.onLeftFromFirst,
     this.onUpFromRow,
     this.onDownFromRow,
+    this.textOverlayMode = false,
     super.key,
   });
 
@@ -99,7 +101,8 @@ class PosterRow extends ConsumerWidget {
           underTitle: !hideLabel, 
           onCustomTap: onCardTap != null ? () => onCardTap!(poster) : null,
           onCustomAction: onCardAction != null ? () => onCardAction!(poster) : null,
-          isSelectedForBanner: isSelected, 
+          isSelectedForBanner: isSelected,
+          textOverlayMode: textOverlayMode, 
         );
       },
     );

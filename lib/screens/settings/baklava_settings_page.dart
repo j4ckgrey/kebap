@@ -256,6 +256,23 @@ class _BaklavaSettingsPageState extends ConsumerState<BaklavaSettingsPage> {
                         ref.invalidate(baklavaConfigProvider);
                       },
                     ),
+                    if (config.enableAutoImport)
+                      SettingsListTile(
+                        label: const Text('Disable Modal'),
+                        subLabel: const Text('Directly open items on click'),
+                        trailing: Switch(
+                          value: config.disableModal,
+                          onChanged: (v) async {
+                            await ref.read(baklavaServiceProvider).updateConfig(disableModal: v);
+                            ref.invalidate(baklavaConfigProvider);
+                          },
+                        ),
+                        onTap: () async {
+                          final newValue = !config.disableModal;
+                          await ref.read(baklavaServiceProvider).updateConfig(disableModal: newValue);
+                          ref.invalidate(baklavaConfigProvider);
+                        },
+                      ),
                   ],
                 ),
                 const SizedBox(height: 16),

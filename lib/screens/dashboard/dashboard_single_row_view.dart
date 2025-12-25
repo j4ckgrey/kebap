@@ -1,14 +1,19 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:kebap/models/items/images_models.dart';
 import 'package:kebap/providers/focused_item_provider.dart';
 import 'package:kebap/screens/shared/media/poster_row.dart';
 import 'package:kebap/screens/shared/media/single_row_view.dart';
 import 'package:kebap/util/adaptive_layout/adaptive_layout.dart';
 import 'package:kebap/util/focus_provider.dart';
+import 'package:kebap/util/kebap_image.dart';
 import 'package:kebap/screens/shared/media/compact_item_banner.dart';
 import 'package:kebap/providers/settings/kebap_settings_provider.dart';
 import 'package:kebap/providers/views_provider.dart';
+import 'package:kebap/util/item_base_model/item_base_model_extensions.dart';
+import 'package:kebap/util/item_base_model/play_item_helpers.dart';
+import 'package:kebap/models/item_base_model.dart';
 
 class DashboardSingleRowView extends ConsumerStatefulWidget {
   final List<RowData> rows;
@@ -186,7 +191,7 @@ class _DashboardSingleRowViewState extends ConsumerState<DashboardSingleRowView>
 
         // Library Chips Row - no extra padding, full width
         SizedBox(
-          height: 50,
+          height: 70,
           child: FocusScope(
             node: _librariesScopeNode,
             onKeyEvent: (node, event) {
@@ -242,6 +247,7 @@ class _DashboardSingleRowViewState extends ConsumerState<DashboardSingleRowView>
                     focusNode: _libraryFocusNodes[index],
                     isSelected: isSelected,
                     label: row.label,
+                    image: row.image,
                     onSelected: (selected) {
                       if (selected) {
                         _switchToLibrary(index);
@@ -305,9 +311,17 @@ class _DashboardSingleRowViewState extends ConsumerState<DashboardSingleRowView>
                           ref.read(focusedItemProvider.notifier).state = item;
                           if (selectedRow.onItemTap != null) {
                             selectedRow.onItemTap!(item);
+                          } else {
+                            item.navigateTo(context, ref: ref);
                           }
                         },
-                        onCardAction: selectedRow.onItemOpen,
+                        onCardAction: (item) {
+                           if (selectedRow.onItemOpen != null) {
+                             selectedRow.onItemOpen!(item);
+                           } else {
+                             item.navigateTo(context, ref: ref);
+                           }
+                        },
                       );
                     },
                   ),
@@ -332,11 +346,12 @@ class _DashboardSingleRowViewState extends ConsumerState<DashboardSingleRowView>
   }
 }
 
-/// Library chip with hover border feedback
-class _LibraryChipWithHover extends StatefulWidget {
+/// Library chip with hover border feedback and background image support
+class _LibraryChipWithHover extends StatelessWidget {
   final FocusNode focusNode;
   final bool isSelected;
   final String label;
+  final ImagesData? image;
   final Function(bool) onSelected;
 
   const _LibraryChipWithHover({
@@ -344,42 +359,73 @@ class _LibraryChipWithHover extends StatefulWidget {
     required this.focusNode,
     required this.isSelected,
     required this.label,
+    required this.image,
     required this.onSelected,
   });
 
   @override
-  State<_LibraryChipWithHover> createState() => _LibraryChipWithHoverState();
-}
-
-class _LibraryChipWithHoverState extends State<_LibraryChipWithHover> {
-  bool _isHovered = false;
-
-  @override
   Widget build(BuildContext context) {
-    // Listen to focus changes to update visual state reliably
-    return AnimatedBuilder(
-      animation: widget.focusNode,
-      builder: (context, _) {
-        final hasFocus = widget.focusNode.hasFocus;
-        return MouseRegion(
-          onEnter: (_) => setState(() => _isHovered = true),
-          onExit: (_) => setState(() => _isHovered = false),
-          child: ChoiceChip(
-            focusNode: widget.focusNode,
-            label: Text(widget.label),
-            selected: widget.isSelected,
-            onSelected: widget.onSelected,
-            showCheckmark: false,
-            // Explicit visual feedback for focus and hover
-            side: (hasFocus || _isHovered)
-                ? BorderSide(
-                    color: Theme.of(context).colorScheme.primary.withOpacity(hasFocus ? 1.0 : 0.5), 
-                    width: hasFocus ? 2.0 : 1.0
-                  )
-                : BorderSide(color: Colors.transparent, width: 0),
+    final radius = BorderRadius.circular(12);
+    
+    return AspectRatio(
+      aspectRatio: 2.5,
+      child: FocusButton(
+        focusNode: focusNode,
+        onTap: () => onSelected(true),
+        child: Container(
+          decoration: BoxDecoration(
+            borderRadius: radius,
+            boxShadow: isSelected 
+               ? [BoxShadow(color: Theme.of(context).colorScheme.primary.withOpacity(0.4), blurRadius: 8, spreadRadius: 1)]
+               : [],
+            border: isSelected
+               ? Border.all(color: Theme.of(context).colorScheme.primary, width: 2)
+               : Border.all(color: Colors.transparent, width: 2),
           ),
-        );
-      },
+          child: ClipRRect(
+            borderRadius: radius,
+            child: Stack(
+              fit: StackFit.expand,
+              children: [
+                // Background Image
+                KebapImage(
+                   image: image?.primary, 
+                   fit: BoxFit.cover,
+                ),
+                // Dark Overlay - Only show if no image
+                if (image?.primary == null)
+                  Container(
+                    color: Colors.black.withOpacity(0.6),
+                  ),
+                // Centered Label - Only show if no image
+                if (image?.primary == null)
+                  Center(
+                    child: Padding(
+                      padding: const EdgeInsets.symmetric(horizontal: 4.0),
+                      child: Text(
+                         label,
+                         textAlign: TextAlign.center,
+                         maxLines: 2,
+                         overflow: TextOverflow.ellipsis,
+                         style: Theme.of(context).textTheme.titleSmall?.copyWith(
+                           color: Colors.white,
+                           fontWeight: FontWeight.bold,
+                           shadows: [
+                             Shadow(
+                               offset: const Offset(0, 1),
+                               blurRadius: 2.0,
+                               color: Colors.black.withOpacity(0.8),
+                             ),
+                           ],
+                         ),
+                      ),
+                    ),
+                  ),
+              ],
+            ),
+          ),
+        ),
+      ),
     );
   }
 }

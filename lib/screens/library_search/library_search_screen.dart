@@ -5,6 +5,7 @@ import 'package:flutter/services.dart';
 import 'package:auto_route/auto_route.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:iconsax_plus/iconsax_plus.dart';
+import 'package:kebap/providers/baklava_config_provider.dart';
 
 import 'package:kebap/models/boxset_model.dart';
 import 'package:kebap/models/item_base_model.dart';
@@ -16,6 +17,7 @@ import 'package:kebap/providers/arguments_provider.dart';
 import 'package:kebap/providers/library_search_provider.dart';
 import 'package:kebap/providers/search_mode_provider.dart';
 import 'package:kebap/providers/settings/client_settings_provider.dart';
+import 'package:kebap/providers/settings/kebap_settings_provider.dart';
 import 'package:kebap/screens/collections/add_to_collection.dart';
 import 'package:kebap/screens/library_search/widgets/library_filter_chips.dart';
 import 'package:kebap/screens/library_search/widgets/library_play_options_.dart';
@@ -162,8 +164,10 @@ class _LibrarySearchScreenState extends ConsumerState<LibrarySearchScreen> {
 
     final isEmptySearchScreen = widget.viewModelId == null && widget.favourites == null && widget.folderId == null;
     final librarySearchResults = ref.watch(providerKey);
+    // Watch baklava config to ensure settings are synced to KebapSettings
+    ref.watch(baklavaConfigProvider);
     final postersList = librarySearchResults.posters.hideEmptyChildren(librarySearchResults.filters.hideEmptyShows);
-    final libraryViewType = ref.watch(libraryViewTypeProvider);
+    final libraryViewType = ref.watch(libraryViewTypeProvider(uniqueKey));
 
     final floatingAppBar = AdaptiveLayout.layoutModeOf(context) != LayoutMode.single;
 
@@ -174,6 +178,21 @@ class _LibrarySearchScreenState extends ConsumerState<LibrarySearchScreen> {
       (previous, next) {
         if (previous?.filters != next.filters) {
           refreshSearch();
+        }
+        
+        // Fix for focus not being requested when items are loaded
+        // Relaxed check: If we have items and no focus, try to grab it.
+        if (next.posters.isNotEmpty) {
+           // Small delay to allow SliverAnimatedSwitcher to build the new child
+           Future.delayed(const Duration(milliseconds: 100), () {
+             if (mounted && !resultsFocusNode.hasFocus && !searchBarFocusNode.hasFocus) {
+               // Double check if we still need focus (user might have moved)
+               // Only force focus if focus is completely lost or on the body
+               // and only if we are in a mode that typically uses focus (or just force it for now to test)
+               print("[LibrarySearch] Attempting to request focus on first item. Node mounted: ${resultsFocusNode.context != null}");
+               resultsFocusNode.requestFocus();
+             }
+           });
         }
       },
     );
@@ -267,7 +286,7 @@ class _LibrarySearchScreenState extends ConsumerState<LibrarySearchScreen> {
                                     builder: (context) => AlertDialog(
                                       content: Consumer(
                                         builder: (context, ref, child) {
-                                          final currentType = ref.watch(libraryViewTypeProvider);
+                                          final currentType = ref.watch(libraryViewTypeProvider(uniqueKey));
                                           return Column(
                                             mainAxisSize: MainAxisSize.min,
                                             crossAxisAlignment: CrossAxisAlignment.stretch,
@@ -291,7 +310,7 @@ class _LibrarySearchScreenState extends ConsumerState<LibrarySearchScreen> {
                                                             ),
                                                           ),
                                                       onPressed: () {
-                                                        ref.read(libraryViewTypeProvider.notifier).state = e;
+                                                        ref.read(libraryViewTypeProvider(uniqueKey).notifier).state = e;
                                                       },
                                                       child: Row(
                                                         children: [
@@ -472,8 +491,15 @@ class _LibrarySearchScreenState extends ConsumerState<LibrarySearchScreen> {
                               final searchMode = ref.read(searchModeNotifierProvider);
                               final isLocalMode = searchMode == SearchMode.local;
                               
+                              // Only sync enableAutoImport from server config
+                              // All other settings are LOCAL to the client and not synced from server
+                              final kebapSettings = ref.read(kebapSettingsProvider);
+                              final disableModal = kebapSettings.disableModal;
+                              debugPrint('[LibrarySearch] disableModal check: $disableModal');
+                              final shouldBypassModal = disableModal;
+                              
                               // Only show modal for global search from sidebar (no viewModelId and global mode)
-                              if (!isLibrarySearch && !isLocalMode) {
+                              if (!isLibrarySearch && !isLocalMode && !shouldBypassModal) {
                                 showDialog(
                                   context: context,
                                   builder: (context) => Dialog(

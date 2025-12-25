@@ -20,6 +20,7 @@ final baklavaConfigProvider = FutureProvider<BaklavaConfig>((ref) async {
     // All other settings are LOCAL to the client and not synced from server
     ref.read(kebapSettingsProvider.notifier).syncFromBaklava(
       enableAutoImport: config.enableAutoImport,
+      disableModal: config.disableModal,
     );
     
     return config;

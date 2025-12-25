@@ -49,6 +49,7 @@ class _NavigationScaffoldState extends ConsumerState<NavigationScaffold> with Wi
   final FocusNode _drawerFirstItemFocusNode = FocusNode();
   GlobalKey<ScaffoldState> get _effectiveKey => widget.scaffoldKey ?? _key;
   bool _isDrawerOpen = false;
+  bool _isExiting = false;
 
   int get currentIndex =>
       widget.destinations.indexWhere((element) => element.route?.routeName == widget.currentRouteName);
@@ -83,6 +84,10 @@ class _NavigationScaffoldState extends ConsumerState<NavigationScaffold> with Wi
     // Generally, web apps shouldn't try to close themselves.
     if (kIsWeb) return;
 
+    setState(() {
+      _isExiting = true;
+    });
+
     final shouldExit = await showDialog<bool>(
       context: context,
       builder: (context) => AlertDialog(
@@ -101,6 +106,12 @@ class _NavigationScaffoldState extends ConsumerState<NavigationScaffold> with Wi
         ],
       ),
     );
+
+    if (mounted) {
+      setState(() {
+        _isExiting = false;
+      });
+    }
 
     if (shouldExit == true) {
       if (!kIsWeb && (Platform.isWindows || Platform.isLinux || Platform.isMacOS)) {
@@ -234,7 +245,7 @@ class _NavigationScaffoldState extends ConsumerState<NavigationScaffold> with Wi
                       : null,
                   body: widget.nestedChild != null
                       ? FocusScope(
-                          canRequestFocus: !_isDrawerOpen,
+                          canRequestFocus: !_isDrawerOpen && !_isExiting,
                           child: Stack(
                             children: [
                               NavigationBody(

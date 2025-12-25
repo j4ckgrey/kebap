@@ -16,6 +16,7 @@ T _$identity<T>(T value) => value;
 mixin _$BaklavaConfig {
   String get defaultTmdbId;
   bool get enableAutoImport;
+  bool get disableModal;
   bool get showReviewsCarousel;
   String? get tmdbApiKey;
   bool? get enableSearchFilter;
@@ -57,6 +58,8 @@ mixin _$BaklavaConfig {
                 other.defaultTmdbId == defaultTmdbId) &&
             (identical(other.enableAutoImport, enableAutoImport) ||
                 other.enableAutoImport == enableAutoImport) &&
+            (identical(other.disableModal, disableModal) ||
+                other.disableModal == disableModal) &&
             (identical(other.showReviewsCarousel, showReviewsCarousel) ||
                 other.showReviewsCarousel == showReviewsCarousel) &&
             (identical(other.tmdbApiKey, tmdbApiKey) ||
@@ -393,6 +396,7 @@ extension BaklavaConfigPatterns on BaklavaConfig {
     TResult Function(
             String defaultTmdbId,
             bool enableAutoImport,
+            bool disableModal,
             bool showReviewsCarousel,
             String? tmdbApiKey,
             bool? enableSearchFilter,
@@ -422,6 +426,7 @@ extension BaklavaConfigPatterns on BaklavaConfig {
         return $default(
             _that.defaultTmdbId,
             _that.enableAutoImport,
+            _that.disableModal,
             _that.showReviewsCarousel,
             _that.tmdbApiKey,
             _that.enableSearchFilter,
@@ -465,6 +470,7 @@ extension BaklavaConfigPatterns on BaklavaConfig {
     TResult Function(
             String defaultTmdbId,
             bool enableAutoImport,
+            bool disableModal,
             bool showReviewsCarousel,
             String? tmdbApiKey,
             bool? enableSearchFilter,
@@ -493,6 +499,7 @@ extension BaklavaConfigPatterns on BaklavaConfig {
         return $default(
             _that.defaultTmdbId,
             _that.enableAutoImport,
+            _that.disableModal,
             _that.showReviewsCarousel,
             _that.tmdbApiKey,
             _that.enableSearchFilter,
@@ -535,6 +542,7 @@ extension BaklavaConfigPatterns on BaklavaConfig {
     TResult? Function(
             String defaultTmdbId,
             bool enableAutoImport,
+            bool disableModal,
             bool showReviewsCarousel,
             String? tmdbApiKey,
             bool? enableSearchFilter,
@@ -563,6 +571,7 @@ extension BaklavaConfigPatterns on BaklavaConfig {
         return $default(
             _that.defaultTmdbId,
             _that.enableAutoImport,
+            _that.disableModal,
             _that.showReviewsCarousel,
             _that.tmdbApiKey,
             _that.enableSearchFilter,
@@ -595,6 +604,7 @@ class _BaklavaConfig implements BaklavaConfig {
   const _BaklavaConfig(
       {this.defaultTmdbId = '',
       this.enableAutoImport = false,
+      this.disableModal = false,
       this.showReviewsCarousel = true,
       this.tmdbApiKey,
       this.enableSearchFilter,
@@ -624,6 +634,9 @@ class _BaklavaConfig implements BaklavaConfig {
   @override
   @JsonKey()
   final bool enableAutoImport;
+  @override
+  @JsonKey()
+  final bool disableModal;
   @override
   @JsonKey()
   final bool showReviewsCarousel;
@@ -797,6 +810,7 @@ abstract mixin class _$BaklavaConfigCopyWith<$Res>
   $Res call(
       {String defaultTmdbId,
       bool enableAutoImport,
+      bool disableModal,
       bool showReviewsCarousel,
       String? tmdbApiKey,
       bool? enableSearchFilter,
@@ -834,6 +848,7 @@ class __$BaklavaConfigCopyWithImpl<$Res>
   $Res call({
     Object? defaultTmdbId = null,
     Object? enableAutoImport = null,
+    Object? disableModal = null,
     Object? showReviewsCarousel = null,
     Object? tmdbApiKey = freezed,
     Object? enableSearchFilter = freezed,

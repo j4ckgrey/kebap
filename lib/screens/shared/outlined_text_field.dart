@@ -161,10 +161,9 @@ class _OutlinedTextFieldState extends ConsumerState<OutlinedTextField> {
 
     WidgetsBinding.instance.addPostFrameCallback((_) {
       if (!mounted) return;
-      final useCustomKeyboard = (AdaptiveLayout.inputDeviceOf(context) == InputDevice.dPad || widget.useFocusWrapper) &&
-          ref.read(clientSettingsProvider.select((value) => !value.useSystemIME));
+      final useWrapper = (AdaptiveLayout.inputDeviceOf(context) == InputDevice.dPad || widget.useFocusWrapper);
       if (widget.autoFocus) {
-        if (useCustomKeyboard) {
+        if (useWrapper) {
           _wrapperFocus.requestFocus();
         } else {
           _textFocus.requestFocus();
@@ -186,14 +185,18 @@ class _OutlinedTextFieldState extends ConsumerState<OutlinedTextField> {
   @override
   Widget build(BuildContext context) {
     final isPasswordField = widget.keyboardType == TextInputType.visiblePassword;
-    final useCustomKeyboard = (AdaptiveLayout.inputDeviceOf(context) == InputDevice.dPad || widget.useFocusWrapper) &&
-        ref.watch(clientSettingsProvider.select((value) => !value.useSystemIME));
+    final useWrapper = (AdaptiveLayout.inputDeviceOf(context) == InputDevice.dPad || widget.useFocusWrapper);
+    final useSystemIME = ref.watch(clientSettingsProvider.select((value) => value.useSystemIME));
+    final useCustomKeyboard = useWrapper && !useSystemIME;
 
     // Calculate effective read-only state:
-    // If NOT using custom keyboard (Desktop/Mobile) -> readOnly = false (Native)
-    // If using custom keyboard (TV):
-    //    If _isTypingActive -> readOnly = false (Allow native input)
-    //    Else -> readOnly = true (Wrapper handles focus)
+    // If NOT using wrapper (Desktop/Mobile) -> readOnly = false (Native)
+    // If using wrapper:
+    //    If useCustomKeyboard:
+    //        If _isTypingActive -> readOnly = false (Allow native input)
+    //        Else -> readOnly = true (Wrapper handles focus)
+    //    If useSystemIME:
+    //        readOnly = false (Always allow native input so keyboard can open)
     final bool isReadOnly = useCustomKeyboard && !_isTypingActive;
 
     final textField = TextField(
@@ -209,7 +212,7 @@ class _OutlinedTextFieldState extends ConsumerState<OutlinedTextField> {
         widget.onSubmitted?.call(value);
         Future.microtask(() async {
           await Future.delayed(const Duration(milliseconds: 125));
-          if (mounted && useCustomKeyboard) _wrapperFocus.requestFocus();
+          if (mounted && useWrapper) _wrapperFocus.requestFocus();
         });
       },
       textInputAction: widget.textInputAction,
@@ -266,8 +269,8 @@ class _OutlinedTextFieldState extends ConsumerState<OutlinedTextField> {
               ignoring: widget.enabled == false,
               child: Focus(
                 focusNode: _wrapperFocus,
-                canRequestFocus: useCustomKeyboard,
-                skipTraversal: !useCustomKeyboard,
+                canRequestFocus: useWrapper,
+                skipTraversal: !useWrapper,
                 onFocusChange: (value) {
                   setState(() {
                     hasFocus = value;
@@ -323,7 +326,7 @@ class _OutlinedTextFieldState extends ConsumerState<OutlinedTextField> {
                     }
                   }
 
-                  if (keyboardFocus || AdaptiveLayout.inputDeviceOf(context) != InputDevice.dPad) return KeyEventResult.ignored;
+                  if (keyboardFocus || !useWrapper) return KeyEventResult.ignored;
                   if (event is KeyDownEvent && acceptKeys.contains(event.logicalKey)) {
                     if (_textFocus.hasFocus) {
                       // If using System IME, we must NOT consume Select/Enter here.
@@ -359,6 +362,7 @@ class _OutlinedTextFieldState extends ConsumerState<OutlinedTextField> {
                         });
                         return KeyEventResult.handled;
                       } else {
+                        // System IME: Focus text field to open keyboard
                         _textFocus.requestFocus();
                         return KeyEventResult.handled;
                       }
@@ -367,7 +371,7 @@ class _OutlinedTextFieldState extends ConsumerState<OutlinedTextField> {
                   return KeyEventResult.ignored;
                 },
                 child: ExcludeFocusTraversal(
-                  excluding: isReadOnly, // Use isReadOnly logic: Is active? Don't exclude child.
+                  excluding: isReadOnly || (useWrapper && !_isTypingActive && !(_textFocus.hasFocus)),
                   child: textField,
                 ),
               ),

@@ -875,7 +875,7 @@ class _ClientSettingsModel extends ClientSettingsModel
       this.showSimilarTo = true,
       this.enableCatalogs = false,
       this.dashboardShowLibraryContents = false,
-      this.dashboardLayoutMode = DashboardLayoutMode.multiRow,
+      this.dashboardLayoutMode = DashboardLayoutMode.singleRow,
       final Map<GlobalHotKeys, KeyCombination> shortcuts = const {}})
       : _shortcuts = shortcuts,
         super._();

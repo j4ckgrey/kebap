@@ -8,6 +8,7 @@ class KebapSettingsModel {
   final bool enableAutoImport;
   final bool showReviewsCarousel;
   final double mobileHomepageHeightRatio; // 0.3 to 0.7, controls banner height on phones
+  final bool disableModal;
 
   const KebapSettingsModel({
     this.useBaklava = false,
@@ -17,6 +18,7 @@ class KebapSettingsModel {
     this.enableAutoImport = false,
     this.showReviewsCarousel = true,
     this.mobileHomepageHeightRatio = 0.6,
+    this.disableModal = false,
   });
 
   KebapSettingsModel copyWith({
@@ -27,6 +29,7 @@ class KebapSettingsModel {
     bool? enableAutoImport,
     bool? showReviewsCarousel,
     double? mobileHomepageHeightRatio,
+    bool? disableModal,
   }) {
     return KebapSettingsModel(
       useBaklava: useBaklava ?? this.useBaklava,
@@ -36,6 +39,7 @@ class KebapSettingsModel {
       enableAutoImport: enableAutoImport ?? this.enableAutoImport,
       showReviewsCarousel: showReviewsCarousel ?? this.showReviewsCarousel,
       mobileHomepageHeightRatio: mobileHomepageHeightRatio ?? this.mobileHomepageHeightRatio,
+      disableModal: disableModal ?? this.disableModal,
     );
   }
 
@@ -48,6 +52,7 @@ class KebapSettingsModel {
       'enableAutoImport': enableAutoImport,
       'showReviewsCarousel': showReviewsCarousel,
       'mobileHomepageHeightRatio': mobileHomepageHeightRatio,
+      'disableModal': disableModal,
     };
   }
 
@@ -61,6 +66,7 @@ class KebapSettingsModel {
       enableAutoImport: json['enableAutoImport'] as bool? ?? false,
       showReviewsCarousel: json['showReviewsCarousel'] as bool? ?? true,
       mobileHomepageHeightRatio: (json['mobileHomepageHeightRatio'] as num?)?.toDouble() ?? 0.6,
+      disableModal: json['disableModal'] as bool? ?? false,
     );
   }
 

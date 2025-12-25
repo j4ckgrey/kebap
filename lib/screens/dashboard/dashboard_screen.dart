@@ -177,8 +177,9 @@ class _DashboardScreenState extends ConsumerState<DashboardScreen> with Automati
                     if (dashboardViews.isNotEmpty && libraryLocation == LibraryLocation.dashboard && !isSingleRow)
                       RowData(
                         label: context.localized.library(2),
-                        aspectRatio: 1.2,
+                        aspectRatio: 2.5, // Wider aspect ratio for chips
                         useStandardHeight: true,
+                        textOverlayMode: true, // Enable overlay mode
                         onItemOpen: (item) => context.router.push(LibrarySearchRoute(viewModelId: item.id)),
                         posters: dashboardViews.map((view) => ItemBaseModel(
                           name: view.name,
@@ -249,6 +250,7 @@ class _DashboardScreenState extends ConsumerState<DashboardScreen> with Automati
                           (view) => RowData(
                             label: showLibraryContents ? view.name : context.localized.dashboardRecentlyAdded(view.name),
                             id: view.id,
+                            image: view.imageData,
                             requiresLoading: view.recentlyAdded == null,
                             posters: view.recentlyAdded ?? [],
                             aspectRatio: view.collectionType.aspectRatio,
@@ -280,7 +282,9 @@ class _DashboardScreenState extends ConsumerState<DashboardScreen> with Automati
                 
                 // Show loading indicator when data is being fetched and rows are empty
                 // This prevents black screen when Jellyfin is doing media scan
-                if (rows.isEmpty && (viewsLoading || dashboardData.loading)) {
+                // Show loading indicator when data is being fetched
+                // This prevents content popping in (layout shift) especially for Next Up/Resume
+                if (viewsLoading || dashboardData.loading) {
                   return const Center(child: CircularProgressIndicator.adaptive());
                 }
                 

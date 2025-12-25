@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import 'package:kebap/models/item_base_model.dart';
+import 'package:kebap/models/items/images_models.dart';
 import 'package:kebap/providers/focused_item_provider.dart';
 import 'package:kebap/screens/shared/media/compact_item_banner.dart';
 import 'package:kebap/screens/shared/media/poster_row.dart';
@@ -367,6 +368,7 @@ class _SingleRowViewState extends ConsumerState<SingleRowView> {
                                       collectionAspectRatio: row.aspectRatio,
                                       onLabelClick: row.onLabelClick,
                                       explicitHeight: cardHeight,
+                                      textOverlayMode: row.textOverlayMode, // Pass overlay mode
                                       onFocused: (item) => _onItemFocused(item, row.label), // Explicitly handle focus for banner
                                       selectedItemId: row.label == _lastFocusedRowLabel ? focusedItem?.id : null, // persistent selection only for active row
                                       onLeftFromFirst: () {
@@ -444,6 +446,8 @@ class RowData {
   final Function(ItemBaseModel item)? onItemOpen;
   final double? aspectRatio;
   final bool useStandardHeight;
+  final bool textOverlayMode;
+  final ImagesData? image;
 
   final String? id;
   final bool requiresLoading;
@@ -452,11 +456,13 @@ class RowData {
     required this.label,
     required this.posters,
     this.id,
+    this.image,
     this.requiresLoading = false,
     this.aspectRatio,
     this.onLabelClick,
     this.onItemTap,
     this.onItemOpen,
     this.useStandardHeight = false,
+    this.textOverlayMode = false,
   });
 }
