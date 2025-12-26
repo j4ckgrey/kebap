@@ -235,9 +235,8 @@ class MovieDetails extends _$MovieDetails {
               )
           ];
           
-          final subStreams = <SubStreamModel>[
-            for (final s in subsList)
-              if (s['index'] != -1)
+            final subStreams = <SubStreamModel>[
+              for (final s in subsList)
                 SubStreamModel(
                   name: (s['title'] as String?) ?? '',
                   id: s['index'].toString(),

@@ -1,10 +1,3 @@
-//
-//  DirectoryBookmark.swift
-//  Runner
-//
-//  Created by Jop Knaapen on 15/11/2025.
-//
-
 import Foundation
 import AppKit
 

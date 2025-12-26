@@ -290,9 +290,8 @@ class EpisodeDetailsProvider extends StateNotifier<EpisodeDetailModel> {
           
           final subStreams = <SubStreamModel>[
             for (final s in subsList)
-              if (s['index'] != -1)
-                SubStreamModel(
-                  name: (s['title'] as String?) ?? '',
+              SubStreamModel(
+                name: (s['title'] as String?) ?? '',
                   id: s['index'].toString(),
                   title: (s['title'] as String?) ?? 'Subtitle ${s['index']}',
                   displayTitle: (s['title'] as String?) ?? 'Subtitle ${s['index']}',
