@@ -36,8 +36,7 @@ class MediaPlayButton extends ConsumerWidget {
       backgroundColor: WidgetStatePropertyAll(bgColor),
       iconColor: WidgetStatePropertyAll(fgColor),
       foregroundColor: WidgetStatePropertyAll(fgColor),
-      padding: const WidgetStatePropertyAll(EdgeInsets.zero), // Use zero button padding
-      // Remove fixed minimumSize to allow theme default (wider)
+      padding: const WidgetStatePropertyAll(EdgeInsets.zero),
     );
 
     const contentPadding = EdgeInsets.symmetric(vertical: 10);

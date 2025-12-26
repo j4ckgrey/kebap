@@ -121,7 +121,7 @@ class LibrarySearchNotifier extends StateNotifier<LibrarySearchModel> {
         newLibraryItemCounts[itemId] = result.totalRecordCount ?? 0;
         newLastIndices[itemId] = (lastIndices ?? 0) + result.items.length;
         state = state.copyWith(
-          posters: isEmpty ? result.items : [...state.posters, ...result.items],
+          posters: (isEmpty || init == true) ? result.items : [...state.posters, ...result.items],
           lastIndices: newLastIndices,
           libraryItemCounts: newLibraryItemCounts,
         );
@@ -160,7 +160,7 @@ class LibrarySearchNotifier extends StateNotifier<LibrarySearchModel> {
         }
       }
       state = state.copyWith(
-        posters: isEmpty ? newPosters : [...state.posters, ...newPosters],
+        posters: (isEmpty || init == true) ? newPosters : [...state.posters, ...newPosters],
         lastIndices: newLastIndices,
         libraryItemCounts: newLibraryItemCounts,
       );

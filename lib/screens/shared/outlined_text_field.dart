@@ -185,7 +185,10 @@ class _OutlinedTextFieldState extends ConsumerState<OutlinedTextField> {
   @override
   Widget build(BuildContext context) {
     final isPasswordField = widget.keyboardType == TextInputType.visiblePassword;
-    final useWrapper = (AdaptiveLayout.inputDeviceOf(context) == InputDevice.dPad || widget.useFocusWrapper);
+    // Use wrapper for keyboard navigation on non-phone platforms (desktop, TV) 
+    // This enables the search bar to be focusable via arrow key navigation
+    final isPhone = AdaptiveLayout.viewSizeOf(context) == ViewSize.phone;
+    final useWrapper = (!isPhone || widget.useFocusWrapper);
     final useSystemIME = ref.watch(clientSettingsProvider.select((value) => value.useSystemIME));
     final useCustomKeyboard = useWrapper && !useSystemIME;
 
@@ -359,6 +362,7 @@ class _OutlinedTextFieldState extends ConsumerState<OutlinedTextField> {
                               widget.onChanged?.call(controller.text);
                             },
                           );
+                          print('[OutlinedTextField] Keyboard closed. Calling onSubmitted with: ${controller.text}');
                           widget.onSubmitted?.call(controller.text);
                           if (context.mounted) {
                              setState(() {

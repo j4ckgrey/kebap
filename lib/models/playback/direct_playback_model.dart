@@ -31,7 +31,7 @@ class DirectPlaybackModel extends PlaybackModel {
   });
 
   @override
-  List<SubStreamModel> get subStreams => [SubStreamModel.no(), ...mediaStreams?.subStreams ?? []];
+  List<SubStreamModel> get subStreams => mediaStreams?.subStreams ?? [];
 
   List<QueueItem> get itemsInQueue =>
       queue.mapIndexed((index, element) => QueueItem(id: element.id, playlistItemId: "playlistItem$index")).toList();

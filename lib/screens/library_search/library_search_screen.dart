@@ -119,11 +119,16 @@ class _LibrarySearchScreenState extends ConsumerState<LibrarySearchScreen> {
     scrollController.addListener(() {
       scrollPosition();
     });
-    // Request focus on the first item for TV navigation, but ONLY if we are not in global search mode
+    // Request focus on the first item for TV/desktop navigation, but ONLY if we are not in global search mode
     // In global search mode (isEmptySearchScreen == true), we want the search bar to have focus.
-    if (AdaptiveLayout.inputDeviceOf(context) == InputDevice.dPad && !isEmptySearchScreen) {
-      WidgetsBinding.instance.addPostFrameCallback((_) {
-        resultsFocusNode.requestFocus();
+    // Skip on phones - users tap directly where they want focus
+    final isPhone = AdaptiveLayout.viewSizeOf(context) == ViewSize.phone;
+    if (!isPhone && !isEmptySearchScreen) {
+      // Wait for items to be in the widget tree after the refresh
+      Future.delayed(const Duration(milliseconds: 300), () {
+        if (mounted && resultsFocusNode.context != null) {
+          resultsFocusNode.requestFocus();
+        }
       });
     }
   }
@@ -181,15 +186,20 @@ class _LibrarySearchScreenState extends ConsumerState<LibrarySearchScreen> {
         }
         
         // Fix for focus not being requested when items are loaded
-        // Relaxed check: If we have items and no focus, try to grab it.
-        if (next.posters.isNotEmpty) {
-           // Small delay to allow SliverAnimatedSwitcher to build the new child
-           Future.delayed(const Duration(milliseconds: 100), () {
+        // On phone (touch), skip auto-focus since users tap directly
+        // On desktop/TV, always request focus for keyboard navigation
+        final isPhone = AdaptiveLayout.viewSizeOf(context) == ViewSize.phone;
+        final isEmptySearchScreen = widget.viewModelId == null && widget.favourites == null && widget.folderId == null;
+        final previousWasEmpty = previous?.posters.isEmpty ?? true;
+        final nowHasItems = next.posters.isNotEmpty;
+        
+        // Request focus when items first load (transition from empty to non-empty)
+        // Skip on phones (touch devices) and global search (let search bar have focus)
+        if (previousWasEmpty && nowHasItems && !isPhone && !isEmptySearchScreen) {
+           // Small delay to allow widgets to build
+           Future.delayed(const Duration(milliseconds: 150), () {
              if (mounted && !resultsFocusNode.hasFocus && !searchBarFocusNode.hasFocus) {
-               // Double check if we still need focus (user might have moved)
-               // Only force focus if focus is completely lost or on the body
-               // and only if we are in a mode that typically uses focus (or just force it for now to test)
-               print("[LibrarySearch] Attempting to request focus on first item. Node mounted: ${resultsFocusNode.context != null}");
+               print("[LibrarySearch] Requesting focus on first item. Node context: ${resultsFocusNode.context != null}");
                resultsFocusNode.requestFocus();
              }
            });
@@ -405,6 +415,7 @@ class _LibrarySearchScreenState extends ConsumerState<LibrarySearchScreen> {
                                     focusNode: searchBarFocusNode,
                                     title: librarySearchResults.searchBarTitle(context),
                                     debounceDuration: const Duration(milliseconds: 500),
+                                    textInputAction: TextInputAction.search,
                                     onChanged: (value) {
                                       // On TV/dPad, don't auto-search on every keystroke - only on submit
                                       final isDPad = AdaptiveLayout.inputDeviceOf(context) == InputDevice.dPad;
@@ -421,8 +432,11 @@ class _LibrarySearchScreenState extends ConsumerState<LibrarySearchScreen> {
                                         });
                                       }
                                     },
-                                    onSubmited: (value) async {
-                                      if (librarySearchResults.searchQuery != value) {
+                                    onSubmitted: (value) async {
+                                      // On dPad, onChanged already sets the search term but doesn't search
+                                      // So we must ALWAYS search on submit for dPad devices
+                                      final isDPad = AdaptiveLayout.inputDeviceOf(context) == InputDevice.dPad;
+                                      if (isDPad || librarySearchResults.searchQuery != value) {
                                         libraryProvider.setSearch(value);
                                         await _performSearch();
                                       }

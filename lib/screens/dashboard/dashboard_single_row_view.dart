@@ -282,7 +282,7 @@ class _DashboardSingleRowViewState extends ConsumerState<DashboardSingleRowView>
                         label: selectedRow.label,
                         hideLabel: true,
                         posters: selectedRow.posters,
-                        collectionAspectRatio: selectedRow.aspectRatio,
+                        collectionAspectRatio: selectedRow.useStandardHeight ? null : selectedRow.aspectRatio, // Use standard (null) if enforcing standard height
                         explicitHeight: posterRowHeight,
                         selectedItemId: focusedItem?.id,
                         onLabelClick: selectedRow.onLabelClick,
@@ -308,19 +308,17 @@ class _DashboardSingleRowViewState extends ConsumerState<DashboardSingleRowView>
                           ref.read(focusedItemProvider.notifier).state = item;
                         },
                         onCardTap: (item) {
+                          // Only focus the item on tap, don't navigate
+                          // (navigation happens via Enter/onCardAction)
                           ref.read(focusedItemProvider.notifier).state = item;
-                          if (selectedRow.onItemTap != null) {
-                            selectedRow.onItemTap!(item);
+                        },
+                        onCardAction: (item) {
+                          // Navigate when user presses Enter or taps the action button
+                          if (selectedRow.onItemOpen != null) {
+                            selectedRow.onItemOpen!(item);
                           } else {
                             item.navigateTo(context, ref: ref);
                           }
-                        },
-                        onCardAction: (item) {
-                           if (selectedRow.onItemOpen != null) {
-                             selectedRow.onItemOpen!(item);
-                           } else {
-                             item.navigateTo(context, ref: ref);
-                           }
                         },
                       );
                     },

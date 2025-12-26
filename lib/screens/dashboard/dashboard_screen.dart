@@ -178,7 +178,7 @@ class _DashboardScreenState extends ConsumerState<DashboardScreen> with Automati
                       RowData(
                         label: context.localized.library(2),
                         aspectRatio: 2.5, // Wider aspect ratio for chips
-                        useStandardHeight: true,
+                        useStandardHeight: false, // Use own aspect ratio for smaller cards
                         textOverlayMode: true, // Enable overlay mode
                         onItemOpen: (item) => context.router.push(LibrarySearchRoute(viewModelId: item.id)),
                         posters: dashboardViews.map((view) => ItemBaseModel(
@@ -254,6 +254,8 @@ class _DashboardScreenState extends ConsumerState<DashboardScreen> with Automati
                             requiresLoading: view.recentlyAdded == null,
                             posters: view.recentlyAdded ?? [],
                             aspectRatio: view.collectionType.aspectRatio,
+                            // movies and tv shows should have the same height
+                            useStandardHeight: view.collectionType == CollectionType.movies || view.collectionType == CollectionType.tvshows,
                             onLabelClick: () => context.router.push(
                               LibrarySearchRoute(
                                 viewModelId: view.id,

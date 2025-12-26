@@ -279,7 +279,12 @@ class LibraryRow extends ConsumerWidget {
           children: [
             FocusButton(
               key: Key(view.id),
-              onTap: isSelected ? null : () => onSelected?.call(view),
+              // Always provide onTap to keep focus behavior consistent on mobile
+              onTap: () {
+                if (!isSelected) {
+                  onSelected?.call(view);
+                }
+              },
               onLongPress: () => context.pushRoute(LibrarySearchRoute(viewModelId: view.id)),
               onSecondaryTapDown: (details) async {
                 Offset localPosition = details.globalPosition;

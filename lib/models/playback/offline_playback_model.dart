@@ -42,7 +42,7 @@ class OfflinePlaybackModel extends PlaybackModel {
   ItemBaseModel? get previousVideo => queue.previousOrNull(item);
 
   @override
-  List<SubStreamModel> get subStreams => [SubStreamModel.no(), ...syncedItem.subtitles];
+  List<SubStreamModel> get subStreams => syncedItem.subtitles;
 
   @override
   Future<OfflinePlaybackModel> setSubtitle(SubStreamModel? model, MediaControlsWrapper player) async {

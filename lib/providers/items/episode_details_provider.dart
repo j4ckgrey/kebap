@@ -1,5 +1,6 @@
 import 'package:chopper/chopper.dart';
 import 'package:collection/collection.dart';
+import 'package:flutter/foundation.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import 'package:kebap/jellyfin/jellyfin_open_api.swagger.dart';
@@ -235,63 +236,92 @@ class EpisodeDetailsProvider extends StateNotifier<EpisodeDetailModel> {
   }
 
   Future<void> setVersionIndex(int index) async {
+    debugPrint('[Episode.setVersionIndex] Called with index: $index');
     final newVersionStream = state.episode?.mediaStreams.versionStreams.elementAtOrNull(index);
+    if (newVersionStream == null || state.episode == null) {
+      debugPrint('[Episode.setVersionIndex] newVersionStream or episode is null, returning');
+      return;
+    }
+    debugPrint('[Episode.setVersionIndex] newVersionStream.id: ${newVersionStream.id}, audio: ${newVersionStream.audioStreams.length}, subs: ${newVersionStream.subStreams.length}');
     
-    // If the new version has no streams (not probed yet), we need to fetch them
-    final totalStreams = (newVersionStream?.videoStreams.length ?? 0) + 
-                         (newVersionStream?.audioStreams.length ?? 0) + 
-                         (newVersionStream?.subStreams.length ?? 0);
-    
-    if (newVersionStream != null && totalStreams == 0 && newVersionStream.id != null && state.episode != null) {
-      // Set loading state and clear audio/sub selections
-      state = state.copyWith(
-        episode: state.episode?.copyWith(
-          mediaStreams: state.episode?.mediaStreams.copyWith(
-            versionStreamIndex: index,
-            isLoading: true,
-            defaultAudioStreamIndex: null,
-            defaultSubStreamIndex: null,
-          ),
+    // First, switch to this version immediately (no loading state)
+    state = state.copyWith(
+      episode: state.episode?.copyWith(
+        mediaStreams: state.episode?.mediaStreams.copyWith(
+          versionStreamIndex: index,
+          defaultAudioStreamIndex: newVersionStream.defaultAudioStreamIndex,
+          defaultSubStreamIndex: newVersionStream.defaultSubStreamIndex,
         ),
-      );
-      
+      ),
+    );
+    
+    // Always fetch from Baklava to get complete stream data
+    // (Jellyfin initial data may be incomplete)
+    if (newVersionStream.id != null) {
+      debugPrint('[Episode.setVersionIndex] Fetching from Baklava for mediaSourceId: ${newVersionStream.id}');
       try {
-        final playbackInfo = await api.itemsItemIdPlaybackInfoPost(
+        final baklavaService = ref.read(baklavaServiceProvider);
+        final streamsResponse = await baklavaService.getMediaStreams(
           itemId: state.episode!.id,
-          body: PlaybackInfoDto(
-            enableDirectPlay: true,
-            enableDirectStream: true,
-            enableTranscoding: false,
-            autoOpenLiveStream: true,
-            mediaSourceId: newVersionStream.id,
-          ),
+          mediaSourceId: newVersionStream.id,
         );
         
-        if (playbackInfo.body?.mediaSources?.firstOrNull != null) {
-          final sourceWithStreams = playbackInfo.body!.mediaSources!.first;
+        debugPrint('[Episode.setVersionIndex] Baklava response body: ${streamsResponse.body}');
+        
+        if (streamsResponse.body != null) {
+          final audioList = (streamsResponse.body!['audio'] as List?)?.cast<Map<String, dynamic>>() ?? [];
+          final subsList = (streamsResponse.body!['subs'] as List?)?.cast<Map<String, dynamic>>() ?? [];
           
-          // Update the version stream with the fetched streams
+          debugPrint('[Episode.setVersionIndex] Parsed ${audioList.length} audio, ${subsList.length} subs');
+          
+          final audioStreams = <AudioStreamModel>[
+            for (final a in audioList)
+              AudioStreamModel(
+                displayTitle: (a['title'] as String?) ?? 'Audio ${a['index']}',
+                name: (a['title'] as String?) ?? '',
+                codec: (a['codec'] as String?) ?? '',
+                isDefault: false,
+                isExternal: false,
+                index: a['index'] as int,
+                language: (a['language'] as String?) ?? '',
+                channelLayout: '',
+              )
+          ];
+          
+          final subStreams = <SubStreamModel>[
+            for (final s in subsList)
+              if (s['index'] != -1)
+                SubStreamModel(
+                  name: (s['title'] as String?) ?? '',
+                  id: s['index'].toString(),
+                  title: (s['title'] as String?) ?? 'Subtitle ${s['index']}',
+                  displayTitle: (s['title'] as String?) ?? 'Subtitle ${s['index']}',
+                  language: (s['language'] as String?) ?? '',
+                  codec: (s['codec'] as String?) ?? '',
+                  isDefault: s['isDefault'] as bool? ?? false,
+                  isExternal: false,
+                  index: s['index'] as int,
+                )
+          ];
+          
+          debugPrint('[Episode.setVersionIndex] Built ${audioStreams.length} AudioStreamModels, ${subStreams.length} SubStreamModels');
+          
+          // Update ONLY this version's data, using list position (enumerate)
+          int listIndex = 0;
           final updatedVersionStreams = state.episode!.mediaStreams.versionStreams.map((v) {
-            if (v.index == index && sourceWithStreams.mediaStreams != null) {
-              final streams = sourceWithStreams.mediaStreams!;
+            final currentListIndex = listIndex++;
+            if (currentListIndex == index) {
+              debugPrint('[Episode.setVersionIndex] Updating version at list position $currentListIndex');
               return VersionStreamModel(
                 name: v.name,
                 index: v.index,
                 id: v.id,
-                defaultAudioStreamIndex: sourceWithStreams.defaultAudioStreamIndex,
-                defaultSubStreamIndex: sourceWithStreams.defaultSubtitleStreamIndex,
-                videoStreams: streams
-                    .where((element) => element.type == MediaStreamType.video)
-                    .map((e) => VideoStreamModel.fromMediaStream(e))
-                    .toList(),
-                audioStreams: streams
-                    .where((element) => element.type == MediaStreamType.audio)
-                    .map((e) => AudioStreamModel.fromMediaStream(e))
-                    .toList(),
-                subStreams: streams
-                    .where((element) => element.type == MediaStreamType.subtitle)
-                    .map((sub) => SubStreamModel.fromMediaStream(sub, ref))
-                    .toList(),
+                size: v.size,
+                defaultAudioStreamIndex: audioStreams.firstOrNull?.index,
+                defaultSubStreamIndex: subStreams.firstOrNull?.index,
+                videoStreams: v.videoStreams,
+                audioStreams: audioStreams,
+                subStreams: subStreams,
               );
             }
             return v;
@@ -300,40 +330,47 @@ class EpisodeDetailsProvider extends StateNotifier<EpisodeDetailModel> {
           state = state.copyWith(
             episode: state.episode?.copyWith(
               mediaStreams: state.episode?.mediaStreams.copyWith(
-                versionStreamIndex: index,
                 versionStreams: updatedVersionStreams,
-                defaultAudioStreamIndex: sourceWithStreams.defaultAudioStreamIndex,
-                defaultSubStreamIndex: sourceWithStreams.defaultSubtitleStreamIndex,
-                isLoading: false,
+                defaultAudioStreamIndex: audioStreams.firstOrNull?.index,
+                defaultSubStreamIndex: subStreams.firstOrNull?.index,
               ),
             ),
           );
-          return;
+          debugPrint('[Episode.setVersionIndex] State updated with new streams');
         }
-      } catch (e) {
-        // On error, clear loading state but keep version selected
-        state = state.copyWith(
-          episode: state.episode?.copyWith(
-            mediaStreams: state.episode?.mediaStreams.copyWith(
-              isLoading: false,
-            ),
-          ),
-        );
+      } catch (e, stack) {
+        debugPrint('[Episode.setVersionIndex] Error: $e\n$stack');
       }
-    } else {
-      // Version already has streams, just switch to it
-      final currentVersion = state.episode?.mediaStreams.versionStreams.elementAtOrNull(index);
-      state = state.copyWith(
-        episode: state.episode?.copyWith(
-          mediaStreams: state.episode?.mediaStreams.copyWith(
-            versionStreamIndex: index,
-            defaultAudioStreamIndex: currentVersion?.defaultAudioStreamIndex,
-            defaultSubStreamIndex: currentVersion?.defaultSubStreamIndex,
-          ),
-        ),
-      );
     }
   }
+
+  bool _areAudioStreamsEqual(List<AudioStreamModel> a, List<AudioStreamModel> b) {
+    if (a.length != b.length) return false;
+    for (int i = 0; i < a.length; i++) {
+      if (a[i].index != b[i].index ||
+          a[i].name != b[i].name ||
+          a[i].codec != b[i].codec ||
+          a[i].language != b[i].language) {
+        return false;
+      }
+    }
+    return true;
+  }
+
+  bool _areSubStreamsEqual(List<SubStreamModel> a, List<SubStreamModel> b) {
+    if (a.length != b.length) return false;
+    for (int i = 0; i < a.length; i++) {
+      if (a[i].index != b[i].index ||
+          a[i].name != b[i].name ||
+          a[i].codec != b[i].codec ||
+          a[i].language != b[i].language || 
+          a[i].isDefault != b[i].isDefault) {
+        return false;
+      }
+    }
+    return true;
+  }
+
   Future<void> refreshStreams() async {
     final currentEpisode = state.episode;
     if (currentEpisode == null) return;
@@ -365,6 +402,23 @@ class EpisodeDetailsProvider extends StateNotifier<EpisodeDetailModel> {
 
           if (sourceWithStreams.mediaStreams != null) {
             final streams = sourceWithStreams.mediaStreams!;
+            
+            final audioStreams = streams
+                  .where((element) => element.type == MediaStreamType.audio)
+                  .map((e) => AudioStreamModel.fromMediaStream(e))
+                  .toList();
+            
+            final subStreams = streams
+                  .where((element) => element.type == MediaStreamType.subtitle)
+                  .map((sub) => SubStreamModel.fromMediaStream(sub, ref))
+                  .toList();
+
+            // Check equality
+            if (_areAudioStreamsEqual(firstVersion.audioStreams, audioStreams) &&
+                _areSubStreamsEqual(firstVersion.subStreams, subStreams)) {
+              return;
+            }
+
             final updatedFirstVersion = VersionStreamModel(
               name: firstVersion.name,
               index: firstVersion.index,
@@ -375,14 +429,8 @@ class EpisodeDetailsProvider extends StateNotifier<EpisodeDetailModel> {
                   .where((element) => element.type == MediaStreamType.video)
                   .map((e) => VideoStreamModel.fromMediaStream(e))
                   .toList(),
-              audioStreams: streams
-                  .where((element) => element.type == MediaStreamType.audio)
-                  .map((e) => AudioStreamModel.fromMediaStream(e))
-                  .toList(),
-              subStreams: streams
-                  .where((element) => element.type == MediaStreamType.subtitle)
-                  .map((sub) => SubStreamModel.fromMediaStream(sub, ref))
-                  .toList(),
+              audioStreams: audioStreams,
+              subStreams: subStreams,
             );
 
             final updatedVersionStreams = [
@@ -400,27 +448,6 @@ class EpisodeDetailsProvider extends StateNotifier<EpisodeDetailModel> {
               ),
             );
           }
-        }
-      } catch (e) {
-        // Ignore error
-      }
-    } else if (currentEpisode.mediaStreams.versionStreams.isEmpty) {
-      try {
-        final playbackInfo = await api.itemsItemIdPlaybackInfoPost(
-          itemId: currentEpisode.id,
-          body: const PlaybackInfoDto(
-            enableDirectPlay: true,
-            enableDirectStream: true,
-            enableTranscoding: false,
-          ),
-        );
-
-        if (playbackInfo.body?.mediaSources != null && playbackInfo.body!.mediaSources!.isNotEmpty) {
-          state = state.copyWith(
-            episode: currentEpisode.copyWith(
-              mediaStreams: MediaStreamsModel.fromMediaStreamsList(playbackInfo.body!.mediaSources, ref),
-            ),
-          );
         }
       } catch (e) {
         // Ignore error

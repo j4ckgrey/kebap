@@ -102,7 +102,7 @@ class ItemActionButton extends ItemAction {
     final foregroundColor =
         selected ? Theme.of(context).colorScheme.onPrimaryContainer : Theme.of(context).colorScheme.onSurface;
     return ElevatedButton(
-      autofocus: AdaptiveLayout.inputDeviceOf(context) == InputDevice.dPad && selected,
+      autofocus: selected, // Always focus the selected item in dropdown
       style: ButtonStyle(
         backgroundColor: WidgetStatePropertyAll(
           selected ? Theme.of(context).colorScheme.primaryContainer : Colors.transparent,

@@ -74,7 +74,7 @@ Future<bool?> openKeyboard<T>(
           controller: controller,
           onChanged: onChanged ?? () {},
           onClose: (submitted) {
-            context.router.pop(submitted);
+            Navigator.of(context).pop(submitted);
             isKeyboardOpen.value = false;
           },
           inputType: inputType,

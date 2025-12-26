@@ -12,19 +12,22 @@ class SuggestionSearchBar extends ConsumerStatefulWidget {
   final bool autoFocus;
   final TextEditingController? textEditingController;
   final Duration debounceDuration;
-  final Function(String value)? onSubmited;
+  final Function(String value)? onSubmitted;
   final Function(String value)? onChanged;
   final Function()? onDown;
   final FocusNode? focusNode;
+  final TextInputAction? textInputAction;
+
   const SuggestionSearchBar({
     this.title,
     this.autoFocus = false,
     this.textEditingController,
     this.debounceDuration = const Duration(milliseconds: 250),
-    this.onSubmited,
+    this.onSubmitted,
     this.onChanged,
     this.onDown,
     this.focusNode,
+    this.textInputAction,
     super.key,
   });
 
@@ -61,11 +64,12 @@ class _SearchBarState extends ConsumerState<SuggestionSearchBar> {
             },
           },
           child: AdaptiveTextField(
+            textInputAction: widget.textInputAction,
             focusNode: focusNode,
             autoFocus: widget.autoFocus,
             controller: textEditingController,
             onSubmitted: (value) {
-              widget.onSubmited?.call(value);
+              widget.onSubmitted?.call(value);
             },
             onChanged: (value) {
               if (value.isEmpty) {

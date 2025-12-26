@@ -26,13 +26,28 @@ class MovieDetails extends _$MovieDetails {
         state = state ?? item;
       }
       MovieModel? newState;
-      final response = await api.usersUserIdItemsItemIdGet(itemId: item.id);
-      if (response.body == null) return null;
+
+      // Fetch detailed item information
+      final response = await api.usersUserIdItemsItemIdGet(
+        itemId: item.id!,
+      );
+
+      if (response.body == null) {
+        return null;
+      }
       newState = (response.bodyOrThrow as MovieModel).copyWith(related: state?.related);
       
-      // Preserve existing media streams if new state has none (prevents UI flicker)
-      if (state?.mediaStreams.versionStreams.isNotEmpty == true && newState.mediaStreams.versionStreams.isEmpty) {
-        newState = newState.copyWith(mediaStreams: state!.mediaStreams);
+      // Preserve media streams from input item if it has MORE versions than API response
+      // AND if the IDs match (to avoid mixing metadata from different items/redirects)
+      final inputVersionCount = (item is MovieModel) ? item.mediaStreams.versionStreams.length : 0;
+      final responseVersionCount = newState.mediaStreams.versionStreams.length;
+      
+      if (item.id == newState.id) { // CRITICAL CHECKS
+        if (inputVersionCount > responseVersionCount) {
+          newState = newState.copyWith(mediaStreams: (item as MovieModel).mediaStreams);
+        } else if (state?.mediaStreams.versionStreams.isNotEmpty == true && newState.mediaStreams.versionStreams.isEmpty) {
+          newState = newState.copyWith(mediaStreams: state!.mediaStreams);
+        }
       }
       
       // CRITICAL: Use newState.id (canonical ID from response) instead of item.id!
@@ -41,6 +56,7 @@ class MovieDetails extends _$MovieDetails {
       
       // If item has no media sources (non-Gelato items), fetch from PlaybackInfo
       if (newState.mediaStreams.versionStreams.isEmpty) {
+        debugPrint('[MovieDetailsProvider] No versions, trying PlaybackInfo...');
         try {
           final playbackInfo = await api.itemsItemIdPlaybackInfoPost(
             itemId: effectiveItemId,
@@ -151,6 +167,9 @@ class MovieDetails extends _$MovieDetails {
       
       final related = await ref.read(relatedUtilityProvider).relatedContent(effectiveItemId);
       state = newState?.copyWith(related: related.body);
+      debugPrint('[MovieDetailsProvider] ========== FETCH DETAILS END ==========');
+      debugPrint('[MovieDetailsProvider] Final state.id: ${state?.id}');
+      debugPrint('[MovieDetailsProvider] Final state has ${state?.mediaStreams.versionStreams.length ?? 0} versions');
       return null;
     } catch (e) {
       return null;
@@ -166,23 +185,27 @@ class MovieDetails extends _$MovieDetails {
   }
 
   Future<void> setVersionIndex(int index) async {
+    debugPrint('[setVersionIndex] Called with index: $index');
     final newVersionStream = state?.mediaStreams.versionStreams.elementAtOrNull(index);
+    if (newVersionStream == null) {
+      debugPrint('[setVersionIndex] newVersionStream is null, returning');
+      return;
+    }
+    debugPrint('[setVersionIndex] newVersionStream.id: ${newVersionStream.id}, audio: ${newVersionStream.audioStreams.length}, subs: ${newVersionStream.subStreams.length}');
     
-    // If the new version has no streams (not probed yet), we need to fetch them
-    final totalStreams = (newVersionStream?.videoStreams.length ?? 0) + 
-                         (newVersionStream?.audioStreams.length ?? 0) + 
-                         (newVersionStream?.subStreams.length ?? 0);
+    // First, switch to this version immediately (no loading state)
+    state = state?.copyWith(
+      mediaStreams: state?.mediaStreams.copyWith(
+        versionStreamIndex: index,
+        defaultAudioStreamIndex: newVersionStream.defaultAudioStreamIndex,
+        defaultSubStreamIndex: newVersionStream.defaultSubStreamIndex,
+      ),
+    );
     
-    if (newVersionStream != null && totalStreams == 0 && newVersionStream.id != null) {
-      state = state?.copyWith(
-        mediaStreams: state?.mediaStreams.copyWith(
-          versionStreamIndex: index,
-          isLoading: true,
-          defaultAudioStreamIndex: null,
-          defaultSubStreamIndex: null,
-        ),
-      );
-      
+    // Always fetch from Baklava to get complete stream data
+    // (Jellyfin initial data may be incomplete)
+    if (newVersionStream.id != null && state != null) {
+      debugPrint('[setVersionIndex] Fetching from Baklava for mediaSourceId: ${newVersionStream.id}');
       try {
         final baklavaService = ref.read(baklavaServiceProvider);
         final streamsResponse = await baklavaService.getMediaStreams(
@@ -190,9 +213,13 @@ class MovieDetails extends _$MovieDetails {
           mediaSourceId: newVersionStream.id,
         );
         
+        debugPrint('[setVersionIndex] Baklava response body: ${streamsResponse.body}');
+        
         if (streamsResponse.body != null) {
           final audioList = (streamsResponse.body!['audio'] as List?)?.cast<Map<String, dynamic>>() ?? [];
           final subsList = (streamsResponse.body!['subs'] as List?)?.cast<Map<String, dynamic>>() ?? [];
+          
+          debugPrint('[setVersionIndex] Parsed ${audioList.length} audio, ${subsList.length} subs');
           
           final audioStreams = <AudioStreamModel>[
             for (final a in audioList)
@@ -210,28 +237,36 @@ class MovieDetails extends _$MovieDetails {
           
           final subStreams = <SubStreamModel>[
             for (final s in subsList)
-              SubStreamModel(
-                name: (s['title'] as String?) ?? '',
-                id: s['index'].toString(),
-                title: (s['title'] as String?) ?? 'Subtitle ${s['index']}',
-                displayTitle: (s['title'] as String?) ?? 'Subtitle ${s['index']}',
-                language: (s['language'] as String?) ?? '',
-                codec: (s['codec'] as String?) ?? '',
-                isDefault: s['isDefault'] as bool? ?? false,
-                isExternal: false,
-                index: s['index'] as int,
-              )
+              if (s['index'] != -1)
+                SubStreamModel(
+                  name: (s['title'] as String?) ?? '',
+                  id: s['index'].toString(),
+                  title: (s['title'] as String?) ?? 'Subtitle ${s['index']}',
+                  displayTitle: (s['title'] as String?) ?? 'Subtitle ${s['index']}',
+                  language: (s['language'] as String?) ?? '',
+                  codec: (s['codec'] as String?) ?? '',
+                  isDefault: s['isDefault'] as bool? ?? false,
+                  isExternal: false,
+                  index: s['index'] as int,
+                )
           ];
           
+          debugPrint('[setVersionIndex] Built ${audioStreams.length} AudioStreamModels, ${subStreams.length} SubStreamModels');
+          
+          // Update ONLY this version's data, using list position (enumerate)
+          int listIndex = 0;
           final updatedVersionStreams = state!.mediaStreams.versionStreams.map((v) {
-            if (v.index == index) {
+            final currentListIndex = listIndex++;
+            if (currentListIndex == index) {
+              debugPrint('[setVersionIndex] Updating version at list position $currentListIndex');
               return VersionStreamModel(
                 name: v.name,
                 index: v.index,
                 id: v.id,
+                size: v.size,
                 defaultAudioStreamIndex: audioStreams.firstOrNull?.index,
                 defaultSubStreamIndex: subStreams.firstOrNull?.index,
-                videoStreams: [],
+                videoStreams: v.videoStreams,
                 audioStreams: audioStreams,
                 subStreams: subStreams,
               );
@@ -241,35 +276,46 @@ class MovieDetails extends _$MovieDetails {
           
           state = state?.copyWith(
             mediaStreams: state?.mediaStreams.copyWith(
-              versionStreamIndex: index,
               versionStreams: updatedVersionStreams,
               defaultAudioStreamIndex: audioStreams.firstOrNull?.index,
               defaultSubStreamIndex: subStreams.firstOrNull?.index,
-              isLoading: false,
             ),
           );
-          return;
+          debugPrint('[setVersionIndex] State updated with new streams');
         }
-      } catch (e) {
-        // On error, clear loading state but keep version selected
-        state = state?.copyWith(
-          mediaStreams: state?.mediaStreams.copyWith(
-            isLoading: false,
-          ),
-        );
+      } catch (e, stack) {
+        debugPrint('[setVersionIndex] Error: $e\n$stack');
       }
-    } else {
-      // Version already has streams, just switch to it
-      final currentVersion = state?.mediaStreams.versionStreams.elementAtOrNull(index);
-      state = state?.copyWith(
-        mediaStreams: state?.mediaStreams.copyWith(
-          versionStreamIndex: index,
-          defaultAudioStreamIndex: currentVersion?.defaultAudioStreamIndex,
-          defaultSubStreamIndex: currentVersion?.defaultSubStreamIndex,
-        ),
-      );
     }
   }
+
+  bool _areAudioStreamsEqual(List<AudioStreamModel> a, List<AudioStreamModel> b) {
+    if (a.length != b.length) return false;
+    for (int i = 0; i < a.length; i++) {
+      if (a[i].index != b[i].index ||
+          a[i].name != b[i].name ||
+          a[i].codec != b[i].codec ||
+          a[i].language != b[i].language) {
+        return false;
+      }
+    }
+    return true;
+  }
+
+  bool _areSubStreamsEqual(List<SubStreamModel> a, List<SubStreamModel> b) {
+    if (a.length != b.length) return false;
+    for (int i = 0; i < a.length; i++) {
+      if (a[i].index != b[i].index ||
+          a[i].name != b[i].name ||
+          a[i].codec != b[i].codec ||
+          a[i].language != b[i].language || 
+          a[i].isDefault != b[i].isDefault) {
+        return false;
+      }
+    }
+    return true;
+  }
+
   Future<void> refreshStreams() async {
     final currentState = state;
     if (currentState == null) return;
@@ -284,7 +330,6 @@ class MovieDetails extends _$MovieDetails {
             (firstVersion.audioStreams.isEmpty) ||
             (firstVersion.subStreams.isEmpty)) &&
         firstVersion.id != null) {
-      debugPrint('[StreamRefresh] Polling specific version: ${firstVersion.id}');
       try {
         final baklavaService = ref.read(baklavaServiceProvider);
         final streamsResponse = await baklavaService.getMediaStreams(
@@ -292,11 +337,9 @@ class MovieDetails extends _$MovieDetails {
           mediaSourceId: firstVersion.id,
         );
 
-        debugPrint('[StreamRefresh] Baklava response received');
         if (streamsResponse.body != null) {
           final audioList = (streamsResponse.body!['audio'] as List?)?.cast<Map<String, dynamic>>() ?? [];
           final subsList = (streamsResponse.body!['subs'] as List?)?.cast<Map<String, dynamic>>() ?? [];
-          debugPrint('[StreamRefresh] Found ${audioList.length} audio, ${subsList.length} subs');
 
           final audioStreams = <AudioStreamModel>[
             for (final a in audioList)
@@ -327,6 +370,13 @@ class MovieDetails extends _$MovieDetails {
               )
           ];
           
+          // Check equality before updating
+          if (_areAudioStreamsEqual(firstVersion.audioStreams, audioStreams) &&
+              _areSubStreamsEqual(firstVersion.subStreams, subStreams)) {
+            // No changes, skip update to prevent rebuilds/flicker
+            return;
+          }
+
           final updatedFirstVersion = VersionStreamModel(
             name: firstVersion.name,
             index: firstVersion.index,
@@ -348,7 +398,6 @@ class MovieDetails extends _$MovieDetails {
               versionStreams: updatedVersionStreams,
               defaultAudioStreamIndex: audioStreams.firstOrNull?.index,
               defaultSubStreamIndex: subStreams.firstOrNull?.index,
-              // Do not set isLoading: false here as we didn't set it to true
             ),
           );
         }
@@ -356,7 +405,6 @@ class MovieDetails extends _$MovieDetails {
         // Ignore error
       }
     } else if (currentState.mediaStreams.versionStreams.isEmpty) {
-      debugPrint('[StreamRefresh] No versions found. Polling for initial media sources...');
       try {
         final playbackInfo = await api.itemsItemIdPlaybackInfoPost(
           itemId: currentState.id,
@@ -367,20 +415,23 @@ class MovieDetails extends _$MovieDetails {
           ),
         );
 
-        debugPrint('[StreamRefresh] Initial PlaybackInfo response code: ${playbackInfo.statusCode}');
-        if (playbackInfo.body?.mediaSources != null) {
-             debugPrint('[StreamRefresh] Found sources: ${playbackInfo.body!.mediaSources!.length}');
-        }
-
         if (playbackInfo.body?.mediaSources != null && playbackInfo.body!.mediaSources!.isNotEmpty) {
+           // Basic equality check for version count (simple heuristic)
+           final newStreams = MediaStreamsModel.fromMediaStreamsList(playbackInfo.body!.mediaSources, ref);
+           if (newStreams.versionStreams.length == currentState.mediaStreams.versionStreams.length) {
+             // Deeper check needed? For now, if versions match count 0->0, no update.
+             // But here we are in isEmpty block, so count is 0. If new is >0, we definitely update.
+             if (newStreams.versionStreams.isEmpty) return;
+           }
+           
           state = state?.copyWith(
-            mediaStreams: MediaStreamsModel.fromMediaStreamsList(playbackInfo.body!.mediaSources, ref),
+            mediaStreams: newStreams,
           );
         }
       } catch (e) {
-        debugPrint('[StreamRefresh] Error polling initial sources: $e');
         // Ignore error
       }
     }
   }
 }
+

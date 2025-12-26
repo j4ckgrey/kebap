@@ -60,7 +60,7 @@ extension PlaybackModelExtension on PlaybackModel? {
     if (index == -1) return null;
     // Try to find by index, fallback to first stream
     return this?.subStreams?.firstWhereOrNull((element) => element.index == index) ??
-        this?.subStreams?.skip(1).firstOrNull; // skip(1) to skip the "Off" option
+        this?.subStreams?.firstOrNull; // fallback to first stream if index not found
   }
 
   AudioStreamModel? get defaultAudioStream {

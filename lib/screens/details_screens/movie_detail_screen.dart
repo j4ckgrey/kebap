@@ -42,11 +42,9 @@ class _ItemDetailScreenState extends ConsumerState<MovieDetailScreen>
     with AutoRouteAwareStateMixin<MovieDetailScreen> {
   MovieDetailsProvider get providerInstance => movieDetailsProvider(widget.item.id);
   final FocusNode _playButtonNode = FocusNode();
-  final FocusNode _mediaInfoNode = FocusNode(); // NEW FOCUS NODE
-
-  Timer? _pollingTimer;
-  int _pollCount = 0;
-  static const int _maxPolls = 15; // 30 seconds max (2s interval)
+  final FocusNode _mediaInfoNode = FocusNode(); // Version dropdown
+  final FocusNode _audioFocusNode = FocusNode(); // Audio dropdown
+  final FocusNode _subFocusNode = FocusNode(); // Subtitle dropdown
 
   bool _focusLocked = false;  // Set to true once all async ops complete
   Timer? _lockTimer;  // Debounce timer for focus lock
@@ -54,7 +52,6 @@ class _ItemDetailScreenState extends ConsumerState<MovieDetailScreen>
   @override
   void initState() {
     super.initState();
-    _playButtonNode.addListener(_onPlayButtonFocusChange);
   }
 
   // AutoRouteAware callback - called when returning to this screen from another route (e.g. video player)
@@ -63,10 +60,9 @@ class _ItemDetailScreenState extends ConsumerState<MovieDetailScreen>
     debugPrint('[MovieDetailScreen] didPopNext - refreshing details for resume button');
     // Refresh the item details so that playback progress/resume button updates
     ref.read(providerInstance.notifier).fetchDetails(widget.item);
-  }
-
-  void _onPlayButtonFocusChange() {
-    // Not used for locking anymore, but kept for potential future use
+    // Reset focus lock when returning
+    _focusLocked = false;
+    _requestPlayButtonFocus();
   }
 
   void _scheduleFocusLock() {
@@ -85,7 +81,7 @@ class _ItemDetailScreenState extends ConsumerState<MovieDetailScreen>
     // Reset the lock timer on every focus request (debounce)
     _scheduleFocusLock();
     
-    // Use a delay to ensure widgets have built, then ALWAYS request focus
+    // Use a delay to ensure widgets have built, then request focus
     Future.delayed(const Duration(milliseconds: 300), () {
       if (mounted && !_focusLocked && _playButtonNode.canRequestFocus) {
         _playButtonNode.requestFocus();
@@ -94,85 +90,18 @@ class _ItemDetailScreenState extends ConsumerState<MovieDetailScreen>
     });
   }
 
-  void _checkAndStartPolling(MovieModel? details) {
-    if (details == null) return;
-    if (_pollingTimer != null && _pollingTimer!.isActive) return; // Don't restart if active
-
-    debugPrint('[StreamRefresh] Checking if polling is needed for ${details.name}');
-
-    bool shouldPoll = false;
-    if (details.mediaStreams.versionStreams.isEmpty) {
-      debugPrint('[StreamRefresh] No version streams found. Polling required.');
-      shouldPoll = true;
-    } else {
-      final first = details.mediaStreams.versionStreams.firstOrNull;
-      final totalStreams = (first?.videoStreams.length ?? 0) +
-          (first?.audioStreams.length ?? 0) +
-          (first?.subStreams.length ?? 0);
-      debugPrint('[StreamRefresh] First version has $totalStreams streams.');
-      if (totalStreams == 0) shouldPoll = true;
-    }
-
-    if (shouldPoll) {
-      _startPolling();
-    }
-  }
-
-  void _startPolling() {
-    debugPrint('[StreamRefresh] Starting polling timer (max $_maxPolls polls)...');
-    _pollingTimer?.cancel();
-    _pollingTimer = Timer.periodic(const Duration(seconds: 2), (timer) async {
-      if (!mounted) {
-        timer.cancel();
-        return;
-      }
-
-      _pollCount++;
-       debugPrint('[StreamRefresh] Poll #$_pollCount...');
-      if (_pollCount > _maxPolls) {
-        debugPrint('[StreamRefresh] Max polls reached. Stopping.');
-        timer.cancel();
-        return;
-      }
-
-      final details = ref.read(providerInstance);
-      if (details == null) return;
-
-      bool hasStreams = false;
-      if (details.mediaStreams.versionStreams.isNotEmpty) {
-        final first = details.mediaStreams.versionStreams.firstOrNull;
-        final totalStreams = (first?.videoStreams.length ?? 0) +
-            (first?.audioStreams.length ?? 0) +
-            (first?.subStreams.length ?? 0);
-        if (totalStreams > 0) hasStreams = true;
-      }
-
-      if (hasStreams) {
-        debugPrint('[StreamRefresh] Streams found! Stopping polling.');
-        timer.cancel();
-        // Request focus after streams are loaded
-        _requestPlayButtonFocus();
-        return;
-      }
-
-      await ref.read(providerInstance.notifier).refreshStreams();
-    });
-  }
-
   @override
   void dispose() {
-    _pollingTimer?.cancel();
     _lockTimer?.cancel();
-    _playButtonNode.removeListener(_onPlayButtonFocusChange);
     _playButtonNode.dispose();
     _mediaInfoNode.dispose();
+    _audioFocusNode.dispose();
+    _subFocusNode.dispose();
     super.dispose();
   }
 
   @override
   Widget build(BuildContext context) {
-    // print('[LAG_DEBUG] ${DateTime.now()} MovieDetailScreen build: ${widget.item.name}');
-    
     // Request focus after EVERY build to overcome late async rebuilds
     if (!_focusLocked) {
       WidgetsBinding.instance.addPostFrameCallback((_) {
@@ -180,11 +109,6 @@ class _ItemDetailScreenState extends ConsumerState<MovieDetailScreen>
       });
     }
     
-    ref.listen(providerInstance, (prev, next) {
-      if (next != null) {
-         _checkAndStartPolling(next);
-      }
-    });
     final details = ref.watch(providerInstance);
 
     final wrapAlignment =
@@ -267,12 +191,9 @@ class _ItemDetailScreenState extends ConsumerState<MovieDetailScreen>
                           selectedIcon: IconsaxPlusBold.tick_circle,
                           icon: IconsaxPlusLinear.tick_circle,
                         ),
-                        Shortcuts(
-                          shortcuts: {
-                            const SingleActivator(LogicalKeyboardKey.arrowRight): const DoNothingIntent(),
-                          },
-                          child: SelectableIconButton(
-                            onPressed: () async {
+                        // Removed trapping Shortcuts
+                        SelectableIconButton(
+                          onPressed: () async {
                               await showBottomSheetPill(
                                 context: context,
                                 content: (context, scrollController) => ListView(
@@ -285,7 +206,7 @@ class _ItemDetailScreenState extends ConsumerState<MovieDetailScreen>
                             selected: false,
                             icon: IconsaxPlusLinear.more,
                           ),
-                        ),
+
                       ],
                     ),
                     originalTitle: details.originalTitle,
@@ -297,20 +218,21 @@ class _ItemDetailScreenState extends ConsumerState<MovieDetailScreen>
                     communityRating: details.overview.communityRating,
                     premiereDate: details.overview.premiereDate,
                   ),
-                  if (details.mediaStreams.versionStreams.isNotEmpty || details.mediaStreams.isLoading)
-                    MediaStreamInformation(
-                      focusNode: _mediaInfoNode,
-                      onVersionIndexChanged: (index) {
-                        ref.read(providerInstance.notifier).setVersionIndex(index);
-                      },
-                      onSubIndexChanged: (index) {
-                        ref.read(providerInstance.notifier).setSubIndex(index);
-                      },
-                      onAudioIndexChanged: (index) {
-                        ref.read(providerInstance.notifier).setAudioIndex(index);
-                      },
-                      mediaStream: details.mediaStreams,
-                    ).padding(padding),
+                  MediaStreamInformation(
+                    focusNode: _mediaInfoNode,
+                    audioFocusNode: _audioFocusNode,
+                    subFocusNode: _subFocusNode,
+                    onVersionIndexChanged: (index) {
+                      ref.read(providerInstance.notifier).setVersionIndex(index);
+                    },
+                    onSubIndexChanged: (index) {
+                      ref.read(providerInstance.notifier).setSubIndex(index);
+                    },
+                    onAudioIndexChanged: (index) {
+                      ref.read(providerInstance.notifier).setAudioIndex(index);
+                    },
+                    mediaStream: details.mediaStreams,
+                  ).padding(padding),
                   if (details.overview.summary.isNotEmpty == true)
                     ExpandingOverview(
                       text: details.overview.summary,

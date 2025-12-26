@@ -32,19 +32,28 @@ class MediaStreamInformation extends ConsumerWidget {
   final Function(int index)? onVersionIndexChanged;
   final Function(int index)? onAudioIndexChanged;
   final Function(int index)? onSubIndexChanged;
+  final FocusNode? focusNode; // Version dropdown focus
+  final FocusNode? audioFocusNode; // Audio dropdown focus
+  final FocusNode? subFocusNode; // Subtitle dropdown focus
+  
   const MediaStreamInformation({
     required this.mediaStream,
     required this.onVersionIndexChanged,
     this.onAudioIndexChanged,
     this.onSubIndexChanged,
     this.focusNode,
+    this.audioFocusNode,
+    this.subFocusNode,
     super.key,
   });
 
-  final FocusNode? focusNode;
-
   @override
   Widget build(BuildContext context, WidgetRef ref) {
+    debugPrint('[MediaStreamInfo] build - versionStreamIndex: ${mediaStream.versionStreamIndex}');
+    debugPrint('[MediaStreamInfo] build - currentVersionStream: ${mediaStream.currentVersionStream?.name}');
+    debugPrint('[MediaStreamInfo] build - audioStreams.length: ${mediaStream.audioStreams.length}');
+    debugPrint('[MediaStreamInfo] build - subStreams.length: ${mediaStream.subStreams.length}');
+    
     final viewType = ref.watch(mediaStreamViewTypeProvider);
     
     // Use carousel if setting is enabled
@@ -71,97 +80,107 @@ class MediaStreamInformation extends ConsumerWidget {
       mainAxisSize: MainAxisSize.min,
       crossAxisAlignment: CrossAxisAlignment.stretch,
       children: [
-          // Stream Options
-          if (mediaStream.versionStreams.length > 1 || mediaStream.isLoading)
-            Padding(
-              padding: const EdgeInsets.symmetric(vertical: 2),
-              child: _StreamOptionSelect(
-                label: const Icon(IconsaxPlusBold.cd),
-                isLoading: mediaStream.isLoading,
-                current: mediaStream.isLoading ? context.localized.loading : null,
-                currentQuality: mediaStream.isLoading ? null : parseVersionName(mediaStream.currentVersionStream?.name ?? "").quality,
-                currentFilename: mediaStream.isLoading ? null : "${mediaStream.currentVersionStream?.size.byteFormat ?? ''}",
-                itemBuilder: (context) => mediaStream.versionStreams
-                    .map((e) {
-                      final parsed = parseVersionName(e.name);
-                      return ItemActionButton(
-                        selected: mediaStream.currentVersionStream == e,
-                        label: Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          mainAxisSize: MainAxisSize.min,
-                          children: [
-                            Text(
-                              parsed.quality,
-                              style: Theme.of(context).textTheme.labelLarge?.copyWith(
-                                fontWeight: FontWeight.bold,
-                              ),
+          // Stream Options - Always show
+          Padding(
+            padding: const EdgeInsets.symmetric(vertical: 2),
+            child: _StreamOptionSelect(
+              focusNode: focusNode,
+              label: const Icon(IconsaxPlusBold.cd),
+              isLoading: mediaStream.isLoading,
+              current: mediaStream.isLoading ? context.localized.loading : null,
+              currentQuality: mediaStream.isLoading ? null : parseVersionName(mediaStream.currentVersionStream?.name ?? "").quality,
+              currentFilename: mediaStream.isLoading ? null : "${mediaStream.currentVersionStream?.size.byteFormat ?? ''}",
+              itemBuilder: (context) => mediaStream.versionStreams
+                  .map((e) {
+                    final parsed = parseVersionName(e.name);
+                    return ItemActionButton(
+                      selected: mediaStream.currentVersionStream == e,
+                      label: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        mainAxisSize: MainAxisSize.min,
+                        children: [
+                          Text(
+                            parsed.quality,
+                            style: Theme.of(context).textTheme.labelLarge?.copyWith(
+                              fontWeight: FontWeight.bold,
                             ),
-                            Text(
-                              "${e.size.byteFormat ?? ''}",
-                              style: Theme.of(context).textTheme.bodySmall?.copyWith(
-                                color: Theme.of(context).colorScheme.onSurfaceVariant,
-                              ),
+                          ),
+                          Text(
+                            "${e.size.byteFormat ?? ''}",
+                            style: Theme.of(context).textTheme.bodySmall?.copyWith(
+                              color: Theme.of(context).colorScheme.onSurfaceVariant,
                             ),
-                          ],
+                          ),
+                        ],
+                      ),
+                      action: () {
+                        onVersionIndexChanged?.call(e.index);
+                      },
+                    );
+                  }).toList(),
+            ),
+          ),
+          // Audio Options - Always show
+          Padding(
+            padding: const EdgeInsets.symmetric(vertical: 2),
+            child: _StreamOptionSelect(
+              focusNode: audioFocusNode,
+              label: const Icon(IconsaxPlusBold.volume_high),
+              current: mediaStream.isLoading 
+                  ? context.localized.loading 
+                  : (mediaStream.currentAudioStream?.displayTitle ?? context.localized.none),
+              isLoading: mediaStream.isLoading,
+              itemBuilder: (context) => mediaStream.isLoading
+                  ? []
+                  : [AudioStreamModel.no(), ...mediaStream.audioStreams]
+                      .map(
+                        (e) => ItemActionButton(
+                          selected: mediaStream.currentAudioStream?.index == e.index,
+                          label: textWidget(
+                            context,
+                            label: e.displayTitle,
+                          ),
+                          action: () => onAudioIndexChanged?.call(e.index),
                         ),
-                        action: () {
-                          onVersionIndexChanged?.call(e.index);
-                        },
-                      );
-                    }).toList(),
-              ),
+                      )
+                      .toList(),
             ),
-          if (showAudioDropdown)
-            Padding(
-              padding: const EdgeInsets.symmetric(vertical: 2),
-              child: _StreamOptionSelect(
-                label: const Icon(IconsaxPlusBold.volume_high),
-                current: mediaStream.isLoading 
-                    ? context.localized.loading 
-                    : (mediaStream.currentAudioStream?.displayTitle ?? context.localized.none),
-                isLoading: mediaStream.isLoading,
-                itemBuilder: (context) => mediaStream.isLoading
-                    ? []
-                    : [AudioStreamModel.no(), ...mediaStream.audioStreams]
-                        .map(
-                          (e) => ItemActionButton(
-                            selected: mediaStream.currentAudioStream?.index == e.index,
-                            label: textWidget(
-                              context,
-                              label: e.displayTitle,
-                            ),
-                            action: () => onAudioIndexChanged?.call(e.index),
+          ),
+          // Subtitle Options - Always show
+          Padding(
+            padding: const EdgeInsets.symmetric(vertical: 2),
+            child: _StreamOptionSelect(
+              focusNode: subFocusNode,
+              label: const Icon(IconsaxPlusBold.message_text_1),
+              current: mediaStream.isLoading
+                  ? context.localized.loading
+                  : (mediaStream.currentSubStream?.displayTitle ?? context.localized.none),
+              isLoading: mediaStream.isLoading,
+              itemBuilder: (context) => mediaStream.isLoading
+                  ? []
+                  : [
+                      SubStreamModel.no(), 
+                      ...mediaStream.subStreams.where((s) => 
+                        s.index != -1 && 
+                        s.name.toLowerCase() != 'off' && 
+                        s.name.toLowerCase() != 'none' &&
+                        !s.displayTitle.toLowerCase().contains('none') // Extra safety
+                      )
+                    ]
+                      .map(
+                        (e) => ItemActionButton(
+                          selected: mediaStream.currentSubStream?.index == e.index,
+                          label: textWidget(
+                            context,
+                            label: e.displayTitle,
                           ),
-                        )
-                        .toList(),
-              ),
+                          action: () => onSubIndexChanged?.call(e.index),
+                        ),
+                      )
+                      .toList(),
             ),
-          if (showSubDropdown)
-            Padding(
-              padding: const EdgeInsets.symmetric(vertical: 2),
-              child: _StreamOptionSelect(
-                label: const Icon(IconsaxPlusBold.message_text_1),
-                current: mediaStream.isLoading
-                    ? context.localized.loading
-                    : (mediaStream.currentSubStream?.displayTitle ?? context.localized.none),
-                isLoading: mediaStream.isLoading,
-                itemBuilder: (context) => mediaStream.isLoading
-                    ? []
-                    : [SubStreamModel.no(), ...mediaStream.subStreams]
-                        .map(
-                          (e) => ItemActionButton(
-                            selected: mediaStream.currentSubStream?.index == e.index,
-                            label: textWidget(
-                              context,
-                              label: e.displayTitle,
-                            ),
-                            action: () => onSubIndexChanged?.call(e.index),
-                          ),
-                        )
-                        .toList(),
-              ),
-            ),
-        ],
+          ),
+      ],
     );
   }
 
@@ -196,74 +215,76 @@ class _StreamOptionSelect<T> extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final itemList = itemBuilder(context);
-    // Force use of FocusButton/BottomSheet logic to ensure keyboard navigation works reliably
-    // even if the device reports as having a pointer (e.g. Linux desktop with mouse).
-    // This fixes the issue where dropdowns were skipped during focus traversal.
     
     return Padding(
       padding: const EdgeInsets.symmetric(vertical: 3),
       child: LabelTitleItem(
         title: label,
-        content: isLoading
-              ? Container(
-                  padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
-                  decoration: BoxDecoration(
-                    color: Theme.of(context).colorScheme.surfaceContainerHighest,
-                    borderRadius: BorderRadius.circular(8),
-                  ),
-                  child: Row(
-                    children: [
-                      SizedBox(
-                        width: 16,
-                        height: 16,
-                        child: CircularProgressIndicator(
-                          strokeWidth: 2,
-                          color: Theme.of(context).colorScheme.primary,
-                        ),
-                      ),
-                      const SizedBox(width: 8),
-                      Text(
-                        current ?? currentQuality ?? '',
-                        style: Theme.of(context).textTheme.bodyMedium?.copyWith(
-                          color: Theme.of(context).colorScheme.onSurfaceVariant,
-                        ),
-                      ),
-                    ],
-                  ),
-                )
-              : SizedBox(
-                  width: double.infinity,
-                  child: Card(
-                    color: itemList.length > 1 ? Theme.of(context).colorScheme.primaryContainer : Colors.transparent,
-                    shadowColor: Colors.transparent,
-                    elevation: 0,
-                    child: FocusButton(
-                            focusNode: focusNode,
-                            darkOverlay: false,
-                            onTap: () {
-                              if (itemList.length > 1) {
-                                showBottomSheetPill(
-                                  context: context,
-                                  content: (context, scrollController) => ListView(
-                                    shrinkWrap: true,
-                                    controller: scrollController,
-                                    children: [
-                                      const SizedBox(height: 6),
-                                      ...itemList.map((e) => e.toListItem(context)),
-                                    ],
-                                  ),
-                                );
-                              }
-                            },
-                            child: _buildDropdownContent(context, itemList),
-                          ),
-                  ),
-                ),
+        content: SizedBox(
+          width: double.infinity,
+          child: Card(
+            color: Theme.of(context).colorScheme.primaryContainer,
+            shadowColor: Colors.transparent,
+            elevation: 0,
+            child: FocusButton(
+              focusNode: focusNode,
+              darkOverlay: false,
+              onTap: () async {
+                if (!isLoading && itemList.length > 1) {
+                  // Show bottom sheet and wait for it to close
+                  await showBottomSheetPill(
+                    context: context,
+                    content: (context, scrollController) => ListView(
+                      shrinkWrap: true,
+                      controller: scrollController,
+                      children: [
+                        const SizedBox(height: 6),
+                        ...itemList.map((e) => e.toListItem(context)),
+                      ],
+                    ),
+                  );
+                  // Simple focus restore - just request focus after sheet closes
+                  if (focusNode != null && focusNode!.canRequestFocus) {
+                    focusNode!.requestFocus();
+                  }
+                }
+              },
+              child: _buildContent(context, itemList),
+            ),
+          ),
+        ),
       ),
     );
   }
 
-  Widget _buildDropdownContent(BuildContext context, List<ItemAction> itemList) {
+  Widget _buildContent(BuildContext context, List<ItemAction> itemList) {
+    final onPrimary = Theme.of(context).colorScheme.onPrimaryContainer;
+
+    if (isLoading) {
+      return Padding(
+        padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
+        child: Row(
+          children: [
+            SizedBox(
+              width: 16,
+              height: 16,
+              child: CircularProgressIndicator(
+                strokeWidth: 2,
+                color: onPrimary,
+              ),
+            ),
+            const SizedBox(width: 8),
+            Text(
+              current ?? currentQuality ?? context.localized.loading,
+              style: Theme.of(context).textTheme.bodyMedium?.copyWith(
+                color: onPrimary,
+              ),
+            ),
+          ],
+        ),
+      );
+    }
+    
     return Padding(
       padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
       child: Row(
@@ -279,16 +300,14 @@ class _StreamOptionSelect<T> extends StatelessWidget {
                         textAlign: TextAlign.start,
                         style: Theme.of(context).textTheme.titleMedium?.copyWith(
                           fontWeight: FontWeight.bold,
-                          color: itemList.length > 1 ? Theme.of(context).colorScheme.onPrimaryContainer : null,
+                          color: onPrimary,
                         ),
                       ),
                       Text(
                         currentFilename!,
                         textAlign: TextAlign.start,
                         style: Theme.of(context).textTheme.bodySmall?.copyWith(
-                          color: itemList.length > 1 
-                              ? Theme.of(context).colorScheme.onPrimaryContainer
-                              : Theme.of(context).colorScheme.onSurfaceVariant,
+                          color: onPrimary.withValues(alpha: 0.8),
                         ),
                         maxLines: 1,
                         overflow: TextOverflow.ellipsis,
@@ -300,7 +319,7 @@ class _StreamOptionSelect<T> extends StatelessWidget {
                     textAlign: TextAlign.start,
                     style: Theme.of(context).textTheme.titleMedium?.copyWith(
                       fontWeight: FontWeight.bold,
-                      color: itemList.length > 1 ? Theme.of(context).colorScheme.onPrimaryContainer : null,
+                      color: onPrimary,
                     ),
                   ),
           ),
@@ -308,7 +327,7 @@ class _StreamOptionSelect<T> extends StatelessWidget {
             const SizedBox(width: 8),
             Icon(
               Icons.keyboard_arrow_down,
-              color: Theme.of(context).colorScheme.onPrimaryContainer,
+              color: onPrimary,
             ),
           ],
         ],
