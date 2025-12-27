@@ -873,8 +873,8 @@ class _ClientSettingsModel extends ClientSettingsModel
       this.mediaStreamViewType = MediaStreamViewType.dropdown,
       this.libraryLocation = LibraryLocation.dashboard,
       this.showSimilarTo = true,
-      this.enableCatalogs = false,
-      this.dashboardShowLibraryContents = false,
+      this.enableCatalogs = true,
+      this.dashboardShowLibraryContents = true,
       this.dashboardLayoutMode = DashboardLayoutMode.singleRow,
       final Map<GlobalHotKeys, KeyCombination> shortcuts = const {}})
       : _shortcuts = shortcuts,

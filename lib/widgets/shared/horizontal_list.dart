@@ -87,7 +87,6 @@ class _HorizontalListState extends ConsumerState<HorizontalList> with TickerProv
   @override
   void initState() {
     super.initState();
-    debugPrint('[HL] initState - label: ${widget.label}, autoFocus: ${widget.autoFocus}');
     _measureFirstItem();
   }
 
@@ -134,7 +133,6 @@ class _HorizontalListState extends ConsumerState<HorizontalList> with TickerProv
       final alreadyFocused = nodesOnSameRow.any((n) => n == currentPrimary);
       
       if (alreadyFocused) {
-        debugPrint('[HL] _requestInitialFocus - already focused in this row, locking. label: ${widget.label}');
         _focusLocked = true;
         // Still notify parent of the focused index so banner updates
         // Use geometric calculation for accurate index
@@ -145,7 +143,6 @@ class _HorizontalListState extends ConsumerState<HorizontalList> with TickerProv
         return;
       }
       
-      debugPrint('[HL] _requestInitialFocus - REQUESTING FOCUS on index $targetIndex, label: ${widget.label}');
       targetNode.requestFocus();
       lastFocused = targetNode;
       
@@ -161,7 +158,6 @@ class _HorizontalListState extends ConsumerState<HorizontalList> with TickerProv
         final stillFocused = nodesOnSameRow.any((n) => n == FocusManager.instance.primaryFocus);
         if (stillFocused) {
           _focusLocked = true;
-          debugPrint('[HL] _requestInitialFocus - Focus locked after 300ms, label: ${widget.label}');
         }
       });
     });
@@ -270,52 +266,53 @@ class _HorizontalListState extends ConsumerState<HorizontalList> with TickerProv
                   ],
                 ),
               ),
-              if (widget.items.length > 1)
+              if (hasPointer && widget.items.length > 1)
                 ExcludeFocus(
-                  child: Card(
-                    elevation: 5,
-                    color: Theme.of(context).colorScheme.surface,
+                  child: Container(
+                    decoration: BoxDecoration(
+                      color: Theme.of(context).colorScheme.surfaceContainerLow.withValues(alpha: 0.8),
+                      borderRadius: BorderRadius.circular(12),
+                    ),
                     child: Row(
                       crossAxisAlignment: CrossAxisAlignment.center,
+                      mainAxisSize: MainAxisSize.min,
                       children: [
-                        if (hasPointer)
-                          GestureDetector(
-                            onLongPress: () => _scrollToStart(),
-                            child: IconButton(
-                                onPressed: () {
-                                  _scrollController.animateTo(
-                                      _scrollController.offset + -(MediaQuery.of(context).size.width / 1.75),
-                                      duration: const Duration(milliseconds: 250),
-                                      curve: Curves.easeInOut);
-                                },
-                                icon: const Icon(
-                                  IconsaxPlusLinear.arrow_left_1,
-                                  size: 20,
-                                )),
-                          ),
+                        GestureDetector(
+                          onLongPress: () => _scrollToStart(),
+                          child: IconButton(
+                              onPressed: () {
+                                _scrollController.animateTo(
+                                    _scrollController.offset + -(MediaQuery.of(context).size.width / 1.75),
+                                    duration: const Duration(milliseconds: 250),
+                                    curve: Curves.easeInOut);
+                              },
+                              icon: const Icon(
+                                IconsaxPlusLinear.arrow_left_1,
+                                size: 20,
+                              )),
+                        ),
                         if (widget.startIndex != null)
                           IconButton(
                               tooltip: "Scroll to current",
                               onPressed: () => _scrollToPosition(widget.startIndex!),
                               icon: const Icon(
-                                Icons.circle,
-                                size: 16,
+                                IconsaxPlusLinear.gps,
+                                size: 18,
                               )),
-                        if (hasPointer)
-                          GestureDetector(
-                            onLongPress: () => _scrollToEnd(),
-                            child: IconButton(
-                                onPressed: () {
-                                  _scrollController.animateTo(
-                                      _scrollController.offset + (MediaQuery.of(context).size.width / 1.75),
-                                      duration: const Duration(milliseconds: 250),
-                                      curve: Curves.easeInOut);
-                                },
-                                icon: const Icon(
-                                  IconsaxPlusLinear.arrow_right_3,
-                                  size: 20,
-                                )),
-                          ),
+                        GestureDetector(
+                          onLongPress: () => _scrollToEnd(),
+                          child: IconButton(
+                              onPressed: () {
+                                _scrollController.animateTo(
+                                    _scrollController.offset + (MediaQuery.of(context).size.width / 1.75),
+                                    duration: const Duration(milliseconds: 250),
+                                    curve: Curves.easeInOut);
+                              },
+                              icon: const Icon(
+                                IconsaxPlusLinear.arrow_right_3,
+                                size: 20,
+                              )),
+                        ),
                       ],
                     ),
                   ),
@@ -328,59 +325,40 @@ class _HorizontalListState extends ConsumerState<HorizontalList> with TickerProv
           focusNode: parentNode,
           canRequestFocus: false, // Not a focusable target - only children are focusable
           onFocusChange: (value) {
-            debugPrint('[HL] onFocusChange - value: $value, hasFocus: $hasFocus, label: ${widget.label}');
             if (value && hasFocus != value) {
               hasFocus = value;
               final nodesOnSameRow = _nodesInRow(parentNode);
               final primaryFocus = FocusManager.instance.primaryFocus;
-              
-              // CRITICAL: If focus is on the parent node itself (not a child), it means
-              // focus is transitioning THROUGH this row (e.g., UP/DOWN navigation).
-              // Do NOT intercept - let it continue to its destination.
-              if (primaryFocus == parentNode) {
-                debugPrint('[HL] onFocusChange - focus is on parentNode, transitioning through. label: ${widget.label}');
-                return;
-              }
-              
-              // Check if any child already has focus
+
+              if (primaryFocus == parentNode) return;
+
               final alreadyFocused = nodesOnSameRow.any((n) => n.hasFocus || n == primaryFocus);
-              debugPrint('[HL] onFocusChange - alreadyFocused: $alreadyFocused, nodes: ${nodesOnSameRow.length}, primaryFocus: $primaryFocus, startIndex: ${widget.startIndex}');
-              
+
               if (alreadyFocused) {
                 final focusedNode = nodesOnSameRow.firstWhere(
-                  (n) => n.hasFocus || n == primaryFocus, 
+                  (n) => n.hasFocus || n == primaryFocus,
                   orElse: () => nodesOnSameRow.first,
                 );
-                
-                // Sync lastFocused and notify parent of the current focus
+
                 lastFocused = focusedNode;
-                // Use geometric calculation for correct item index, not node list position
                 final focusedIndex = _getCorrectIndexForNode(focusedNode);
                 if (focusedIndex != -1 && focusedIndex < widget.items.length) {
                   widget.onFocused?.call(focusedIndex);
                 }
-                return; // Let the focused child keep focus
-              }
-              
-              // Check if focus is passing THROUGH the row (on its way somewhere else)
-              // If primaryFocus is already set to a node OUTSIDE this row, don't intercept
-              if (primaryFocus != null && !nodesOnSameRow.contains(primaryFocus)) {
-                debugPrint('[HL] onFocusChange - focus passing through, not intercepting. label: ${widget.label}');
-                return; // Focus is going elsewhere, don't intercept
+                return;
               }
 
-              // Only restore focus if NO child is focused (initial focus case)
+              if (primaryFocus != null && !nodesOnSameRow.contains(primaryFocus)) return;
+
               FocusNode? targetNode;
               if (lastFocused != null && nodesOnSameRow.contains(lastFocused)) {
                 targetNode = lastFocused;
               }
-              
-              // Fallback to startIndex if available and valid
+
               if (targetNode == null && widget.startIndex != null && widget.startIndex! < nodesOnSameRow.length) {
-                 targetNode = nodesOnSameRow[widget.startIndex!];
+                targetNode = nodesOnSameRow[widget.startIndex!];
               }
 
-              // Final fallback: first fully visible or just first
               final currentNode = targetNode ?? _firstFullyVisibleNode(context, nodesOnSameRow);
 
               if (currentNode != null) {
@@ -398,8 +376,6 @@ class _HorizontalListState extends ConsumerState<HorizontalList> with TickerProv
               }
             } else {
               hasFocus = false;
-              // Reset focus lock when we lose focus, so we can re-request it 
-              // if we become visible again (e.g. returning to dashboard)
               _focusLocked = false;
             }
           },
@@ -532,7 +508,7 @@ List<FocusNode> _nodesInRow(FocusNode parentNode) {
 
 
 
-class HorizontalRailFocus extends WidgetOrderTraversalPolicy {
+class HorizontalRailFocus extends ReadingOrderTraversalPolicy {
   final FocusNode parentNode;
   final void Function(FocusNode node) onFocused;
   final ScrollController scrollController;
@@ -555,104 +531,54 @@ class HorizontalRailFocus extends WidgetOrderTraversalPolicy {
 
   @override
   bool inDirection(FocusNode currentNode, TraversalDirection direction) {
-    final rowNodes = _nodesInRow(parentNode);
-    var index = rowNodes.indexOf(currentNode);
-    
-    // Safety fallback: If current node not found (e.g. tree desync), find closest node visually
-    if (index == -1 && currentNode.context != null) {
-      final currentRender = currentNode.context!.findRenderObject() as RenderBox?;
-      if (currentRender != null) {
-        final currentCenter = currentRender.localToGlobal(currentRender.size.center(Offset.zero));
-        FocusNode? closest;
-        double minKDist = double.infinity;
-        
-        for (final node in rowNodes) {
-           final box = node.context!.findRenderObject() as RenderBox;
-           final center = box.localToGlobal(box.size.center(Offset.zero));
-           final dist = (center - currentCenter).distanceSquared;
-           if (dist < minKDist) {
-             minKDist = dist;
-             closest = node;
-           }
-        }
-        
-        if (closest != null) {
-          index = rowNodes.indexOf(closest);
-          debugPrint('[HRF] Recovered index $index via geometric fallback');
-        }
-      }
-    }
-    
-    debugPrint('[HRF] inDirection: $direction. Nodes: ${rowNodes.length}, CurrentIndex: $index');
+    if (direction == TraversalDirection.left || direction == TraversalDirection.right) {
+      final rowNodes = _nodesInRow(parentNode);
+      var index = rowNodes.indexOf(currentNode);
+      
+      if (index == -1) return false;
 
-    if (index == -1) {
-       return false;
-    }
-
-    if (direction == TraversalDirection.left) {
-      if (index == 0) {
-        // Open drawer on LEFT from first item
-        final scaffold = parentNode.context != null 
-            ? Scaffold.maybeOf(parentNode.context!) 
-            : null;
-        if (scaffold != null && scaffold.hasDrawer) {
-          scaffold.openDrawer();
-          return true;
+      if (direction == TraversalDirection.left) {
+        if (index == 0) {
+          if (onLeftFromFirst != null) {
+            onLeftFromFirst!();
+            return true;
+          }
+          final scaffold = parentNode.context != null ? Scaffold.maybeOf(parentNode.context!) : null;
+          if (scaffold != null && scaffold.hasDrawer) {
+            scaffold.openDrawer();
+            return true;
+          }
+          return false;
         }
-        // If no scaffold/drawer, let global policy handle
-        return false;
-      }
-
-      if (index > 0) {
         final target = rowNodes[index - 1];
         target.requestFocus();
         onFocused(target);
         return true;
       }
-      return false; // Allow escape to sidebar
+
+      if (direction == TraversalDirection.right) {
+        if (index < rowNodes.length - 1) {
+          final target = rowNodes[index + 1];
+          target.requestFocus();
+          onFocused(target);
+          return true;
+        }
+        return false;
+      }
     }
 
-    if (direction == TraversalDirection.right) {
-      if (index < rowNodes.length - 1) {
-        final target = rowNodes[index + 1];
-        target.requestFocus();
-        onFocused(target);
-        return true;
-      }
-      return false; // Allow escape to right
+    if (direction == TraversalDirection.up && onUpFromRow != null) {
+      onUpFromRow!();
+      return true;
     }
 
-    // Handle UP - use callback if provided, otherwise try to escape to parent scope
-    if (direction == TraversalDirection.up) {
-      debugPrint('[HRF] UP direction - onUpFromRow: ${onUpFromRow != null}, currentNode: $currentNode');
-      if (onUpFromRow != null) {
-        onUpFromRow!();
-        return true;
-      }
-      // No callback - try to navigate out using parent scope
-      if (parentNode.context != null) {
-        final outerScope = FocusScope.of(parentNode.context!);
-        return outerScope.focusInDirection(direction);
-      }
-      return false;
+    if (direction == TraversalDirection.down && onDownFromRow != null) {
+      onDownFromRow!();
+      return true;
     }
 
-    // Handle DOWN - use callback if provided, otherwise try to escape to parent scope
-    if (direction == TraversalDirection.down) {
-      debugPrint('[HRF] DOWN direction - onDownFromRow: ${onDownFromRow != null}');
-      if (onDownFromRow != null) {
-        onDownFromRow!();
-        return true;
-      }
-      // No callback - try to navigate out using parent scope
-      if (parentNode.context != null) {
-        final outerScope = FocusScope.of(parentNode.context!);
-        return outerScope.focusInDirection(direction);
-      }
-      return false;
-    }
-
-    debugPrint('[HRF] Falling through to super.inDirection for $direction');
+    // Use ReadingOrderTraversalPolicy's default behavior for UP/DOWN 
+    // to find the visual neighbor outside this row.
     return super.inDirection(currentNode, direction);
   }
 }

@@ -88,11 +88,6 @@ class _LibraryScreenState extends ConsumerState<LibraryScreen> with SingleTicker
               physics: const AlwaysScrollableScrollPhysics(),
               slivers: [
                 const DefaultSliverTopBadding(),
-                if (AdaptiveLayout.viewSizeOf(context) == ViewSize.phone)
-                  NestedSliverAppBar(
-                    route: LibrarySearchRoute(),
-                    parent: context,
-                  ),
                 if (views.isNotEmpty)
                   SliverToBoxAdapter(
                     child: LibraryRow(

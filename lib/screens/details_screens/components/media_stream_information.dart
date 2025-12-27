@@ -76,10 +76,13 @@ class MediaStreamInformation extends ConsumerWidget {
     final showAudioDropdown = mediaStream.isLoading || hasAnyAudioStreams;
     final showSubDropdown = mediaStream.isLoading || hasAnySubStreams;
     
-    return Column(
-      mainAxisSize: MainAxisSize.min,
-      crossAxisAlignment: CrossAxisAlignment.stretch,
-      children: [
+    return LayoutBuilder(
+      builder: (context, constraints) {
+        debugPrint('[MediaStreamInfo] build constraints: $constraints');
+        return Column(
+          mainAxisSize: MainAxisSize.min,
+          crossAxisAlignment: CrossAxisAlignment.stretch,
+          children: [
           // Stream Options - Always show
           Padding(
             padding: const EdgeInsets.symmetric(vertical: 2),
@@ -180,7 +183,9 @@ class MediaStreamInformation extends ConsumerWidget {
                       .toList(),
             ),
           ),
-      ],
+          ],
+        );
+      },
     );
   }
 

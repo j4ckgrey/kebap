@@ -112,6 +112,7 @@ mixin _$BaklavaConfig {
         runtimeType,
         defaultTmdbId,
         enableAutoImport,
+        disableModal,
         showReviewsCarousel,
         tmdbApiKey,
         enableSearchFilter,
@@ -136,7 +137,7 @@ mixin _$BaklavaConfig {
 
   @override
   String toString() {
-    return 'BaklavaConfig(defaultTmdbId: $defaultTmdbId, enableAutoImport: $enableAutoImport, showReviewsCarousel: $showReviewsCarousel, tmdbApiKey: $tmdbApiKey, enableSearchFilter: $enableSearchFilter, forceTVClientLocalSearch: $forceTVClientLocalSearch, versionUi: $versionUi, audioUi: $audioUi, subtitleUi: $subtitleUi, gelatoBaseUrl: $gelatoBaseUrl, gelatoAuthHeader: $gelatoAuthHeader, debridService: $debridService, debridApiKey: $debridApiKey, realDebridApiKey: $realDebridApiKey, torboxApiKey: $torboxApiKey, alldebridApiKey: $alldebridApiKey, premiumizeApiKey: $premiumizeApiKey, enableDebridMetadata: $enableDebridMetadata, enableFallbackProbe: $enableFallbackProbe, fetchCachedMetadataPerVersion: $fetchCachedMetadataPerVersion, fetchAllNonCachedMetadata: $fetchAllNonCachedMetadata, enableExternalSubtitles: $enableExternalSubtitles)';
+    return 'BaklavaConfig(defaultTmdbId: $defaultTmdbId, enableAutoImport: $enableAutoImport, disableModal: $disableModal, showReviewsCarousel: $showReviewsCarousel, tmdbApiKey: $tmdbApiKey, enableSearchFilter: $enableSearchFilter, forceTVClientLocalSearch: $forceTVClientLocalSearch, versionUi: $versionUi, audioUi: $audioUi, subtitleUi: $subtitleUi, gelatoBaseUrl: $gelatoBaseUrl, gelatoAuthHeader: $gelatoAuthHeader, debridService: $debridService, debridApiKey: $debridApiKey, realDebridApiKey: $realDebridApiKey, torboxApiKey: $torboxApiKey, alldebridApiKey: $alldebridApiKey, premiumizeApiKey: $premiumizeApiKey, enableDebridMetadata: $enableDebridMetadata, enableFallbackProbe: $enableFallbackProbe, fetchCachedMetadataPerVersion: $fetchCachedMetadataPerVersion, fetchAllNonCachedMetadata: $fetchAllNonCachedMetadata, enableExternalSubtitles: $enableExternalSubtitles)';
   }
 }
 
@@ -149,6 +150,7 @@ abstract mixin class $BaklavaConfigCopyWith<$Res> {
   $Res call(
       {String defaultTmdbId,
       bool enableAutoImport,
+      bool disableModal,
       bool showReviewsCarousel,
       String? tmdbApiKey,
       bool? enableSearchFilter,
@@ -186,6 +188,7 @@ class _$BaklavaConfigCopyWithImpl<$Res>
   $Res call({
     Object? defaultTmdbId = null,
     Object? enableAutoImport = null,
+    Object? disableModal = null,
     Object? showReviewsCarousel = null,
     Object? tmdbApiKey = freezed,
     Object? enableSearchFilter = freezed,
@@ -215,6 +218,10 @@ class _$BaklavaConfigCopyWithImpl<$Res>
       enableAutoImport: null == enableAutoImport
           ? _self.enableAutoImport
           : enableAutoImport // ignore: cast_nullable_to_non_nullable
+              as bool,
+      disableModal: null == disableModal
+          ? _self.disableModal
+          : disableModal // ignore: cast_nullable_to_non_nullable
               as bool,
       showReviewsCarousel: null == showReviewsCarousel
           ? _self.showReviewsCarousel
@@ -719,6 +726,8 @@ class _BaklavaConfig implements BaklavaConfig {
                 other.defaultTmdbId == defaultTmdbId) &&
             (identical(other.enableAutoImport, enableAutoImport) ||
                 other.enableAutoImport == enableAutoImport) &&
+            (identical(other.disableModal, disableModal) ||
+                other.disableModal == disableModal) &&
             (identical(other.showReviewsCarousel, showReviewsCarousel) ||
                 other.showReviewsCarousel == showReviewsCarousel) &&
             (identical(other.tmdbApiKey, tmdbApiKey) ||
@@ -771,6 +780,7 @@ class _BaklavaConfig implements BaklavaConfig {
         runtimeType,
         defaultTmdbId,
         enableAutoImport,
+        disableModal,
         showReviewsCarousel,
         tmdbApiKey,
         enableSearchFilter,
@@ -795,7 +805,7 @@ class _BaklavaConfig implements BaklavaConfig {
 
   @override
   String toString() {
-    return 'BaklavaConfig(defaultTmdbId: $defaultTmdbId, enableAutoImport: $enableAutoImport, showReviewsCarousel: $showReviewsCarousel, tmdbApiKey: $tmdbApiKey, enableSearchFilter: $enableSearchFilter, forceTVClientLocalSearch: $forceTVClientLocalSearch, versionUi: $versionUi, audioUi: $audioUi, subtitleUi: $subtitleUi, gelatoBaseUrl: $gelatoBaseUrl, gelatoAuthHeader: $gelatoAuthHeader, debridService: $debridService, debridApiKey: $debridApiKey, realDebridApiKey: $realDebridApiKey, torboxApiKey: $torboxApiKey, alldebridApiKey: $alldebridApiKey, premiumizeApiKey: $premiumizeApiKey, enableDebridMetadata: $enableDebridMetadata, enableFallbackProbe: $enableFallbackProbe, fetchCachedMetadataPerVersion: $fetchCachedMetadataPerVersion, fetchAllNonCachedMetadata: $fetchAllNonCachedMetadata, enableExternalSubtitles: $enableExternalSubtitles)';
+    return 'BaklavaConfig(defaultTmdbId: $defaultTmdbId, enableAutoImport: $enableAutoImport, disableModal: $disableModal, showReviewsCarousel: $showReviewsCarousel, tmdbApiKey: $tmdbApiKey, enableSearchFilter: $enableSearchFilter, forceTVClientLocalSearch: $forceTVClientLocalSearch, versionUi: $versionUi, audioUi: $audioUi, subtitleUi: $subtitleUi, gelatoBaseUrl: $gelatoBaseUrl, gelatoAuthHeader: $gelatoAuthHeader, debridService: $debridService, debridApiKey: $debridApiKey, realDebridApiKey: $realDebridApiKey, torboxApiKey: $torboxApiKey, alldebridApiKey: $alldebridApiKey, premiumizeApiKey: $premiumizeApiKey, enableDebridMetadata: $enableDebridMetadata, enableFallbackProbe: $enableFallbackProbe, fetchCachedMetadataPerVersion: $fetchCachedMetadataPerVersion, fetchAllNonCachedMetadata: $fetchAllNonCachedMetadata, enableExternalSubtitles: $enableExternalSubtitles)';
   }
 }
 
@@ -878,6 +888,10 @@ class __$BaklavaConfigCopyWithImpl<$Res>
       enableAutoImport: null == enableAutoImport
           ? _self.enableAutoImport
           : enableAutoImport // ignore: cast_nullable_to_non_nullable
+              as bool,
+      disableModal: null == disableModal
+          ? _self.disableModal
+          : disableModal // ignore: cast_nullable_to_non_nullable
               as bool,
       showReviewsCarousel: null == showReviewsCarousel
           ? _self.showReviewsCarousel

@@ -58,9 +58,9 @@ _ClientSettingsModel _$ClientSettingsModelFromJson(Map<String, dynamic> json) =>
               _$LibraryLocationEnumMap, json['libraryLocation']) ??
           LibraryLocation.dashboard,
       showSimilarTo: json['showSimilarTo'] as bool? ?? true,
-      enableCatalogs: json['enableCatalogs'] as bool? ?? false,
+      enableCatalogs: json['enableCatalogs'] as bool? ?? true,
       dashboardShowLibraryContents:
-          json['dashboardShowLibraryContents'] as bool? ?? false,
+          json['dashboardShowLibraryContents'] as bool? ?? true,
       dashboardLayoutMode: $enumDecodeNullable(
               _$DashboardLayoutModeEnumMap, json['dashboardLayoutMode']) ??
           DashboardLayoutMode.singleRow,

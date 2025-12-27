@@ -17,6 +17,7 @@ class SelectableIconButton extends ConsumerStatefulWidget {
   final bool selected;
   final Color? backgroundColor;
   final Color? iconColor;
+  final FocusNode? focusNode;
   const SelectableIconButton({
     required this.onPressed,
     required this.selected,
@@ -25,6 +26,7 @@ class SelectableIconButton extends ConsumerStatefulWidget {
     this.label,
     this.backgroundColor,
     this.iconColor,
+    this.focusNode,
     super.key,
   });
 
@@ -51,6 +53,7 @@ class _SelectableIconButtonState extends ConsumerState<SelectableIconButton> {
     return Tooltip(
       message: widget.label ?? "",
       child: ElevatedButton(
+        focusNode: widget.focusNode,
         style: ButtonStyle(
           side: buttonState,
           elevation: const WidgetStatePropertyAll(0),

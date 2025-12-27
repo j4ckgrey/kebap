@@ -119,8 +119,8 @@ abstract class ClientSettingsModel with _$ClientSettingsModel {
     @Default(MediaStreamViewType.dropdown) MediaStreamViewType mediaStreamViewType,
     @Default(LibraryLocation.dashboard) LibraryLocation libraryLocation,
     @Default(true) bool showSimilarTo,
-    @Default(false) bool enableCatalogs,
-    @Default(false) bool dashboardShowLibraryContents,
+    @Default(true) bool enableCatalogs,
+    @Default(true) bool dashboardShowLibraryContents,
     @Default(DashboardLayoutMode.singleRow) DashboardLayoutMode dashboardLayoutMode,
     @Default({}) Map<GlobalHotKeys, KeyCombination> shortcuts,
   }) = _ClientSettingsModel;

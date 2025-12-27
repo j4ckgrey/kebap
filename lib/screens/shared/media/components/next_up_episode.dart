@@ -15,7 +15,20 @@ import 'package:kebap/widgets/shared/ensure_visible.dart';
 class NextUpEpisode extends ConsumerWidget {
   final EpisodeModel nextEpisode;
   final Function(EpisodeModel episode)? onChanged;
-  const NextUpEpisode({required this.nextEpisode, this.onChanged, super.key});
+  final FocusNode? mediaInfoNode;
+  final FocusNode? audioFocusNode;
+  final FocusNode? subFocusNode;
+  final FocusNode? posterFocusNode;
+
+  const NextUpEpisode({
+    required this.nextEpisode,
+    this.onChanged,
+    this.mediaInfoNode,
+    this.audioFocusNode,
+    this.subFocusNode,
+    this.posterFocusNode,
+    super.key,
+  });
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
@@ -29,13 +42,13 @@ class NextUpEpisode extends ConsumerWidget {
         StickyHeaderText(
           label: alreadyPlayed ? context.localized.reWatch : context.localized.nextUp,
         ),
-        SelectableText(
+        Text(
           nextEpisode.seasonEpisodeLabelFull(context),
           style: style?.copyWith(
             color: Theme.of(context).colorScheme.onSurface.withValues(alpha: 0.75),
           ),
         ),
-        SelectableText(
+        Text(
           nextEpisode.name,
           style: Theme.of(context).textTheme.titleMedium,
         ),
@@ -47,6 +60,7 @@ class NextUpEpisode extends ConsumerWidget {
                 children: [
                   EpisodePoster(
                     episode: nextEpisode,
+                    focusNode: posterFocusNode,
                     showLabel: false,
                     onTap: () => nextEpisode.navigateTo(context),
                     actions: const [],
@@ -56,6 +70,20 @@ class NextUpEpisode extends ConsumerWidget {
                       }
                     },
                     isCurrentEpisode: false,
+                  ),
+                  const SizedBox(height: 16),
+                  MediaStreamInformation(
+                    focusNode: mediaInfoNode,
+                    audioFocusNode: audioFocusNode,
+                    subFocusNode: subFocusNode,
+                    mediaStream: nextEpisode.mediaStreams,
+                    onVersionIndexChanged: (index) => onChanged?.call(nextEpisode.copyWith(
+                      mediaStreams: nextEpisode.mediaStreams.copyWith(versionStreamIndex: index),
+                    )),
+                    onAudioIndexChanged: (index) => onChanged?.call(nextEpisode.copyWith(
+                        mediaStreams: nextEpisode.mediaStreams.copyWith(defaultAudioStreamIndex: index))),
+                    onSubIndexChanged: (index) => onChanged?.call(nextEpisode.copyWith(
+                        mediaStreams: nextEpisode.mediaStreams.copyWith(defaultSubStreamIndex: index))),
                   ),
                   const SizedBox(height: 16),
                   if (nextEpisode.overview.summary.isNotEmpty)
@@ -74,6 +102,7 @@ class NextUpEpisode extends ConsumerWidget {
                         maxWidth: MediaQuery.of(context).size.width / 2),
                     child: EpisodePoster(
                       episode: nextEpisode,
+                      focusNode: posterFocusNode,
                       showLabel: false,
                       onTap: () => nextEpisode.navigateTo(context),
                       actions: const [],
@@ -92,6 +121,9 @@ class NextUpEpisode extends ConsumerWidget {
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
                         MediaStreamInformation(
+                          focusNode: mediaInfoNode,
+                          audioFocusNode: audioFocusNode,
+                          subFocusNode: subFocusNode,
                           mediaStream: nextEpisode.mediaStreams,
                           onVersionIndexChanged: (index) => onChanged?.call(nextEpisode.copyWith(
                             mediaStreams: nextEpisode.mediaStreams.copyWith(versionStreamIndex: index),

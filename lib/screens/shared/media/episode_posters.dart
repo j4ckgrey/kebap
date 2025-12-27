@@ -149,7 +149,10 @@ class EpisodePoster extends ConsumerWidget {
     this.onFocusChanged,
     required this.isCurrentEpisode,
     this.heroTag,
+    this.focusNode,
   });
+
+  final FocusNode? focusNode;
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
@@ -167,6 +170,7 @@ class EpisodePoster extends ConsumerWidget {
         children: [
           Flexible(
             child: FocusButton(
+              focusNode: focusNode,
               onTap: onTap,
               onLongPress: onLongPress,
               onFocusChanged: onFocusChanged,

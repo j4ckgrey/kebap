@@ -1,13 +1,6 @@
-import 'dart:async';
-import 'dart:io';
-
-import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart' hide ConnectionState;
-import 'package:flutter/services.dart';
-
 import 'package:auto_route/auto_route.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:window_manager/window_manager.dart';
 
 import 'package:kebap/jellyfin/jellyfin_open_api.enums.swagger.dart';
 import 'package:kebap/jellyfin/jellyfin_open_api.swagger.dart';
@@ -17,18 +10,14 @@ import 'package:kebap/models/item_base_model.dart';
 import 'package:kebap/models/items/item_shared_models.dart';
 import 'package:kebap/models/library_search/library_search_options.dart';
 import 'package:kebap/models/settings/home_settings_model.dart';
-import 'package:kebap/providers/baklava_requests_provider.dart';
 import 'package:kebap/providers/connectivity_provider.dart';
 import 'package:kebap/providers/dashboard_provider.dart';
 import 'package:kebap/providers/settings/home_settings_provider.dart';
 import 'package:kebap/providers/settings/client_settings_provider.dart';
 import 'package:kebap/models/settings/client_settings_model.dart';
-import 'package:kebap/providers/user_provider.dart';
 import 'package:kebap/providers/views_provider.dart';
 import 'package:kebap/routes/auto_router.gr.dart';
 import 'package:kebap/screens/dashboard/dashboard_single_row_view.dart';
-import 'package:kebap/screens/shared/default_alert_dialog.dart';
-import 'package:kebap/screens/shared/kebap_snackbar.dart';
 import 'package:kebap/screens/shared/media/single_row_view.dart';
 import 'package:kebap/screens/shared/nested_scaffold.dart';
 import 'package:kebap/util/adaptive_layout/adaptive_layout.dart';
@@ -261,7 +250,7 @@ class _DashboardScreenState extends ConsumerState<DashboardScreen> with Automati
                                 viewModelId: view.id,
                                 types: switch (view.collectionType) {
                                   CollectionType.tvshows => {
-                                      KebapItemType.episode: true,
+                                      KebapItemType.series: true,
                                     },
                                   _ => null,
                                 },

@@ -51,10 +51,10 @@ class _ClockBadgeState extends ConsumerState<ClockBadge> {
     return Container(
       padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
       decoration: BoxDecoration(
-        color: Colors.green,
-        borderRadius: BorderRadius.circular(20),
+        color: theme.colorScheme.surfaceContainerLow.withValues(alpha: 0.8),
+        borderRadius: BorderRadius.circular(12),
         border: Border.all(
-          color: theme.colorScheme.outline.withValues(alpha: 0.2),
+          color: theme.colorScheme.outline.withValues(alpha: 0.1),
           width: 1,
         ),
       ),
@@ -62,7 +62,7 @@ class _ClockBadgeState extends ConsumerState<ClockBadge> {
         timeString,
         style: theme.textTheme.titleSmall?.copyWith(
           fontWeight: FontWeight.bold,
-          color: Colors.black,
+          color: theme.colorScheme.onSurface,
         ),
       ),
     );

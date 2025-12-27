@@ -42,10 +42,19 @@ class SeriesDetailScreen extends ConsumerStatefulWidget {
 class _SeriesDetailScreenState extends ConsumerState<SeriesDetailScreen> {
   AutoDisposeStateNotifierProvider<SeriesDetailViewNotifier, SeriesModel?> get providerId =>
       seriesDetailsProvider(widget.item.id);
-  final FocusNode _playButtonNode = FocusNode();
+  final FocusNode _playButtonNode = FocusNode(debugLabel: '[FocusDebug] PlayButton');
+  final FocusNode _nextUpPosterNode = FocusNode(debugLabel: '[FocusDebug] NextUpPoster');
+  final FocusNode _mediaInfoNode = FocusNode(debugLabel: '[FocusDebug] VersionDropdown'); // Version dropdown
+  final FocusNode _audioFocusNode = FocusNode(debugLabel: '[FocusDebug] AudioDropdown'); // Audio dropdown
+  final FocusNode _subFocusNode = FocusNode(debugLabel: '[FocusDebug] SubDropdown'); // Subtitle dropdown
   
-  bool _focusLocked = false;  // Set to true once all async ops complete
-  Timer? _lockTimer;  // Debounce timer for focus lock
+  final FocusNode _favoriteNode = FocusNode(debugLabel: '[FocusDebug] FavoriteButton');
+  final FocusNode _playedNode = FocusNode(debugLabel: '[FocusDebug] PlayedButton');
+  final FocusNode _moreNode = FocusNode(debugLabel: '[FocusDebug] MoreButton');
+  
+  bool _initialFocusRequested = false;
+  bool _autoFocusLocked = false;
+  Timer? _lockTimer;
 
   @override
   void initState() {
@@ -56,30 +65,56 @@ class _SeriesDetailScreenState extends ConsumerState<SeriesDetailScreen> {
   void dispose() {
     _lockTimer?.cancel();
     _playButtonNode.dispose();
+    _nextUpPosterNode.dispose();
+    _mediaInfoNode.dispose();
+    _audioFocusNode.dispose();
+    _subFocusNode.dispose();
+    _favoriteNode.dispose();
+    _playedNode.dispose();
+    _moreNode.dispose();
     super.dispose();
   }
 
   void _scheduleFocusLock() {
-    // Cancel any pending lock timer and restart
     _lockTimer?.cancel();
-    // Lock focus 2 seconds after the LAST build (no more rebuilds = async complete)
     _lockTimer = Timer(const Duration(seconds: 2), () {
-      _focusLocked = true;
-      debugPrint('[FocusDebug] Series focus locked - no rebuilds for 2 seconds');
+      if (mounted) {
+        setState(() {
+          _autoFocusLocked = true;
+        });
+      }
     });
   }
 
   void _requestPlayButtonFocus() {
-    if (_focusLocked) return;
+    if (_autoFocusLocked) return;
     
-    // Reset the lock timer on every focus request (debounce)
+    final currentFocus = FocusManager.instance.primaryFocus;
+    if (currentFocus != null && (
+        currentFocus == _playButtonNode || 
+        currentFocus == _nextUpPosterNode ||
+        currentFocus == _mediaInfoNode || 
+        currentFocus == _audioFocusNode || 
+        currentFocus == _subFocusNode ||
+        currentFocus == _favoriteNode ||
+        currentFocus == _playedNode ||
+        currentFocus == _moreNode
+    )) return;
+
     _scheduleFocusLock();
     
-    // Use a delay to ensure widgets have built, then request focus
     Future.delayed(const Duration(milliseconds: 300), () {
-      if (mounted && !_focusLocked && _playButtonNode.canRequestFocus) {
+      if (mounted && !_autoFocusLocked && _playButtonNode.canRequestFocus) {
+        final delayedFocus = FocusManager.instance.primaryFocus;
+        if (delayedFocus != null && (
+            delayedFocus == _playButtonNode || 
+            delayedFocus == _nextUpPosterNode ||
+            delayedFocus == _mediaInfoNode || 
+            delayedFocus == _audioFocusNode || 
+            delayedFocus == _subFocusNode
+        )) return;
+
         _playButtonNode.requestFocus();
-        debugPrint('[FocusDebug] Series Play button focus requested (delayed)');
       }
     });
   }
@@ -88,8 +123,9 @@ class _SeriesDetailScreenState extends ConsumerState<SeriesDetailScreen> {
   Widget build(BuildContext context) {
     final details = ref.watch(providerId);
 
-    // Request focus after EVERY build to overcome late async rebuilds
-    if (!_focusLocked && details != null && details.nextUp != null) {
+    // Request initial focus once when data is ready
+    if (!_initialFocusRequested && details != null && details.nextUp != null) {
+      _initialFocusRequested = true;
       WidgetsBinding.instance.addPostFrameCallback((_) {
         _requestPlayButtonFocus();
       });
@@ -156,6 +192,7 @@ class _SeriesDetailScreenState extends ConsumerState<SeriesDetailScreen> {
                             },
                           ),
                         SelectableIconButton(
+                          focusNode: _favoriteNode,
                           onPressed: () async {
                             await ref
                                 .read(userProvider.notifier)
@@ -166,6 +203,7 @@ class _SeriesDetailScreenState extends ConsumerState<SeriesDetailScreen> {
                           icon: IconsaxPlusLinear.heart,
                         ),
                         SelectableIconButton(
+                          focusNode: _playedNode,
                           onPressed: () async {
                             await ref.read(userProvider.notifier).markAsPlayed(!details.userData.played, details.id);
                           },
@@ -174,6 +212,7 @@ class _SeriesDetailScreenState extends ConsumerState<SeriesDetailScreen> {
                           icon: IconsaxPlusLinear.tick_circle,
                         ),
                         SelectableIconButton(
+                          focusNode: _moreNode,
                           onPressed: () async {
                             await showBottomSheetPill(
                               context: context,
@@ -202,6 +241,10 @@ class _SeriesDetailScreenState extends ConsumerState<SeriesDetailScreen> {
                   if (details.nextUp != null)
                     NextUpEpisode(
                       nextEpisode: details.nextUp!,
+                      posterFocusNode: _nextUpPosterNode,
+                      mediaInfoNode: _mediaInfoNode,
+                      audioFocusNode: _audioFocusNode,
+                      subFocusNode: _subFocusNode,
                       onChanged: (episode) => ref.read(providerId.notifier).updateEpisodeInfo(episode),
                     ).padding(padding),
                   if (details.overview.summary.isNotEmpty)
