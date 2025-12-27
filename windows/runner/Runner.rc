@@ -97,7 +97,7 @@ BEGIN
             VALUE "CompanyName", "j4ckgrey" "\0"
             VALUE "FileDescription", "Kebap" "\0"
             VALUE "FileVersion", VERSION_AS_STRING "\0"
-            VALUE "InternalName", "nl.jknaapen.kebap" "\0"
+            VALUE "InternalName", "jack.grey.kebap" "\0"
             VALUE "LegalCopyright", "Copyright (C) 2025 j4ckgrey. All rights reserved." "\0"
             VALUE "OriginalFilename", "kebap.exe" "\0"
             VALUE "ProductName", "Kebap" "\0"

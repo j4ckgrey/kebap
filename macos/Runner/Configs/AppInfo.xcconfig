@@ -8,7 +8,7 @@
 PRODUCT_NAME = Kebap
 
 // The application's bundle identifier
-PRODUCT_BUNDLE_IDENTIFIER = nl.jknaapen.kebap
+PRODUCT_BUNDLE_IDENTIFIER = jack.grey.kebap
 
 // The copyright displayed in application information
 PRODUCT_COPYRIGHT = Copyright © 2025 j4ckgrey. All rights reserved.

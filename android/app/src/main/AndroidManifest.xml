@@ -1,6 +1,6 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
-    package="nl.jknaapen.kebap">
+    package="jack.grey.kebap">
 
     <uses-permission android:name="android.permission.INTERNET" />
     <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
@@ -92,7 +92,7 @@
 
         <provider
             android:name="androidx.core.content.FileProvider"
-            android:authorities="nl.jknaapen.kebap.background_downloader.provider"
+            android:authorities="jack.grey.kebap.background_downloader.provider"
             android:exported="false"
             android:grantUriPermissions="true">
             <meta-data

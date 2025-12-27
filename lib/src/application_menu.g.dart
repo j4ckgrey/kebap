@@ -49,7 +49,7 @@ abstract class ApplicationMenu {
     messageChannelSuffix = messageChannelSuffix.isNotEmpty ? '.$messageChannelSuffix' : '';
     {
       final BasicMessageChannel<Object?> pigeonVar_channel = BasicMessageChannel<Object?>(
-          'dev.flutter.pigeon.nl_jknaapen_kebap.application_menu.ApplicationMenu.openNewWindow$messageChannelSuffix', pigeonChannelCodec,
+          'dev.flutter.pigeon.jack_grey_kebap.application_menu.ApplicationMenu.openNewWindow$messageChannelSuffix', pigeonChannelCodec,
           binaryMessenger: binaryMessenger);
       if (api == null) {
         pigeonVar_channel.setMessageHandler(null);

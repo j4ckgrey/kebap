@@ -8,7 +8,7 @@ import 'package:pigeon/pigeon.dart';
     swiftOptions: SwiftOptions(
       includeErrorClass: false,
     ),
-    dartPackageName: 'nl_jknaapen_kebap.application_menu',
+    dartPackageName: 'jack_grey_kebap.application_menu',
   ),
 )
 @FlutterApi()

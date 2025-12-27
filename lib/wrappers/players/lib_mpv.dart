@@ -37,7 +37,7 @@ class LibMPV extends BasePlayer {
 
     _player = mpv.Player(
       configuration: mpv.PlayerConfiguration(
-        title: "nl.jknaapen.kebap",
+        title: "jack.grey.kebap",
         libassAndroidFont: libassFallbackFont,
         libass: !kIsWeb && settings.useLibass,
         bufferSize: settings.bufferSize * 1024 * 1024, // MPV uses buffer size in bytes

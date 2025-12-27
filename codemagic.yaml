@@ -47,13 +47,25 @@ workflows:
       
       - name: Package Payload to IPA
         script: |
-          cd build/ios/iphoneos
-          mkdir -p Payload
-          cp -r Runner.app Payload/Runner.app
+          # Find the .app in the build directory (handling flavors)
+          APP_PATH=$(find build/ios -name "*.app" -type d | head -n 1)
+          if [ -z "$APP_PATH" ]; then
+            echo "No .app found in build/ios!"
+            ls -R build/ios
+            exit 1
+          fi
+          echo "Found app at: $APP_PATH"
+          
+          # Prepare Payload
+          rm -rf Payload
+          mkdir Payload
+          cp -r "$APP_PATH" Payload/
+          
+          # Zip into IPA
           zip -r -y kebap.ipa Payload
-          mv kebap.ipa ../../../
-          echo "IPA created at: $(pwd)/../../../kebap.ipa"
-          ls -lh ../../../kebap.ipa
+          
+          echo "IPA created at: $(pwd)/kebap.ipa"
+          ls -lh kebap.ipa
     
     artifacts:
       - kebap.ipa
@@ -99,14 +111,21 @@ workflows:
       
       - name: Create DMG
         script: |
-          cd build/macos/Build/Products/Release-production
-          APP_NAME=$(ls -d *.app | head -1)
+          # Find the .app in the build directory
+          APP_PATH=$(find build/macos -name "*.app" -type d | head -n 1)
+          if [ -z "$APP_PATH" ]; then
+            echo "No .app found in build/macos!"
+            exit 1
+          fi
+          echo "Found app at: $APP_PATH"
+          
           DMG_NAME="Kebap.dmg"
-          echo "Creating DMG for: $APP_NAME"
-          hdiutil create -volname "Kebap" -srcfolder "$APP_NAME" -ov -format UDZO "$DMG_NAME"
-          mv "$DMG_NAME" ../../../../
-          echo "DMG created at: $(pwd)/../../../../$DMG_NAME"
-          ls -lh "../../../../$DMG_NAME"
+          
+          # Create DMG using hdiutil
+          hdiutil create -volname "Kebap" -srcfolder "$APP_PATH" -ov -format UDZO "$DMG_NAME"
+          
+          echo "DMG created at: $(pwd)/$DMG_NAME"
+          ls -lh "$DMG_NAME"
     
     artifacts:
       - Kebap.dmg
@@ -154,13 +173,22 @@ workflows:
       
       - name: Package Payload to IPA
         script: |
-          cd build/ios/iphoneos
-          mkdir -p Payload
-          cp -r Runner.app Payload/Runner.app
+          # Find the .app in the build directory
+          APP_PATH=$(find build/ios -name "*.app" -type d | head -n 1)
+          if [ -z "$APP_PATH" ]; then
+            echo "No .app found!"
+            exit 1
+          fi
+          echo "Found app at: $APP_PATH"
+          
+          rm -rf Payload
+          mkdir Payload
+          cp -r "$APP_PATH" Payload/
+          
           zip -r -y kebap_dev.ipa Payload
-          mv kebap_dev.ipa ../../../
-          echo "IPA created at: $(pwd)/../../../kebap_dev.ipa"
-          ls -lh ../../../kebap_dev.ipa
+          
+          echo "IPA created at: $(pwd)/kebap_dev.ipa"
+          ls -lh kebap_dev.ipa
     
     artifacts:
       - kebap_dev.ipa    

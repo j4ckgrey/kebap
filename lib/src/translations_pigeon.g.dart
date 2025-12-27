@@ -67,7 +67,7 @@ abstract class TranslationsPigeon {
     messageChannelSuffix = messageChannelSuffix.isNotEmpty ? '.$messageChannelSuffix' : '';
     {
       final BasicMessageChannel<Object?> pigeonVar_channel = BasicMessageChannel<Object?>(
-          'dev.flutter.pigeon.nl_jknaapen_kebap.settings.TranslationsPigeon.next$messageChannelSuffix', pigeonChannelCodec,
+          'dev.flutter.pigeon.jack_grey_kebap.settings.TranslationsPigeon.next$messageChannelSuffix', pigeonChannelCodec,
           binaryMessenger: binaryMessenger);
       if (api == null) {
         pigeonVar_channel.setMessageHandler(null);
@@ -86,7 +86,7 @@ abstract class TranslationsPigeon {
     }
     {
       final BasicMessageChannel<Object?> pigeonVar_channel = BasicMessageChannel<Object?>(
-          'dev.flutter.pigeon.nl_jknaapen_kebap.settings.TranslationsPigeon.nextVideo$messageChannelSuffix', pigeonChannelCodec,
+          'dev.flutter.pigeon.jack_grey_kebap.settings.TranslationsPigeon.nextVideo$messageChannelSuffix', pigeonChannelCodec,
           binaryMessenger: binaryMessenger);
       if (api == null) {
         pigeonVar_channel.setMessageHandler(null);
@@ -105,7 +105,7 @@ abstract class TranslationsPigeon {
     }
     {
       final BasicMessageChannel<Object?> pigeonVar_channel = BasicMessageChannel<Object?>(
-          'dev.flutter.pigeon.nl_jknaapen_kebap.settings.TranslationsPigeon.close$messageChannelSuffix', pigeonChannelCodec,
+          'dev.flutter.pigeon.jack_grey_kebap.settings.TranslationsPigeon.close$messageChannelSuffix', pigeonChannelCodec,
           binaryMessenger: binaryMessenger);
       if (api == null) {
         pigeonVar_channel.setMessageHandler(null);
@@ -124,18 +124,18 @@ abstract class TranslationsPigeon {
     }
     {
       final BasicMessageChannel<Object?> pigeonVar_channel = BasicMessageChannel<Object?>(
-          'dev.flutter.pigeon.nl_jknaapen_kebap.settings.TranslationsPigeon.skip$messageChannelSuffix', pigeonChannelCodec,
+          'dev.flutter.pigeon.jack_grey_kebap.settings.TranslationsPigeon.skip$messageChannelSuffix', pigeonChannelCodec,
           binaryMessenger: binaryMessenger);
       if (api == null) {
         pigeonVar_channel.setMessageHandler(null);
       } else {
         pigeonVar_channel.setMessageHandler((Object? message) async {
           assert(message != null,
-          'Argument for dev.flutter.pigeon.nl_jknaapen_kebap.settings.TranslationsPigeon.skip was null.');
+          'Argument for dev.flutter.pigeon.jack_grey_kebap.settings.TranslationsPigeon.skip was null.');
           final List<Object?> args = (message as List<Object?>?)!;
           final String? arg_name = (args[0] as String?);
           assert(arg_name != null,
-              'Argument for dev.flutter.pigeon.nl_jknaapen_kebap.settings.TranslationsPigeon.skip was null, expected non-null String.');
+              'Argument for dev.flutter.pigeon.jack_grey_kebap.settings.TranslationsPigeon.skip was null, expected non-null String.');
           try {
             final String output = api.skip(arg_name!);
             return wrapResponse(result: output);
@@ -149,7 +149,7 @@ abstract class TranslationsPigeon {
     }
     {
       final BasicMessageChannel<Object?> pigeonVar_channel = BasicMessageChannel<Object?>(
-          'dev.flutter.pigeon.nl_jknaapen_kebap.settings.TranslationsPigeon.subtitles$messageChannelSuffix', pigeonChannelCodec,
+          'dev.flutter.pigeon.jack_grey_kebap.settings.TranslationsPigeon.subtitles$messageChannelSuffix', pigeonChannelCodec,
           binaryMessenger: binaryMessenger);
       if (api == null) {
         pigeonVar_channel.setMessageHandler(null);
@@ -168,7 +168,7 @@ abstract class TranslationsPigeon {
     }
     {
       final BasicMessageChannel<Object?> pigeonVar_channel = BasicMessageChannel<Object?>(
-          'dev.flutter.pigeon.nl_jknaapen_kebap.settings.TranslationsPigeon.off$messageChannelSuffix', pigeonChannelCodec,
+          'dev.flutter.pigeon.jack_grey_kebap.settings.TranslationsPigeon.off$messageChannelSuffix', pigeonChannelCodec,
           binaryMessenger: binaryMessenger);
       if (api == null) {
         pigeonVar_channel.setMessageHandler(null);
@@ -187,18 +187,18 @@ abstract class TranslationsPigeon {
     }
     {
       final BasicMessageChannel<Object?> pigeonVar_channel = BasicMessageChannel<Object?>(
-          'dev.flutter.pigeon.nl_jknaapen_kebap.settings.TranslationsPigeon.chapters$messageChannelSuffix', pigeonChannelCodec,
+          'dev.flutter.pigeon.jack_grey_kebap.settings.TranslationsPigeon.chapters$messageChannelSuffix', pigeonChannelCodec,
           binaryMessenger: binaryMessenger);
       if (api == null) {
         pigeonVar_channel.setMessageHandler(null);
       } else {
         pigeonVar_channel.setMessageHandler((Object? message) async {
           assert(message != null,
-          'Argument for dev.flutter.pigeon.nl_jknaapen_kebap.settings.TranslationsPigeon.chapters was null.');
+          'Argument for dev.flutter.pigeon.jack_grey_kebap.settings.TranslationsPigeon.chapters was null.');
           final List<Object?> args = (message as List<Object?>?)!;
           final int? arg_count = (args[0] as int?);
           assert(arg_count != null,
-              'Argument for dev.flutter.pigeon.nl_jknaapen_kebap.settings.TranslationsPigeon.chapters was null, expected non-null int.');
+              'Argument for dev.flutter.pigeon.jack_grey_kebap.settings.TranslationsPigeon.chapters was null, expected non-null int.');
           try {
             final String output = api.chapters(arg_count!);
             return wrapResponse(result: output);
@@ -212,18 +212,18 @@ abstract class TranslationsPigeon {
     }
     {
       final BasicMessageChannel<Object?> pigeonVar_channel = BasicMessageChannel<Object?>(
-          'dev.flutter.pigeon.nl_jknaapen_kebap.settings.TranslationsPigeon.nextUpInSeconds$messageChannelSuffix', pigeonChannelCodec,
+          'dev.flutter.pigeon.jack_grey_kebap.settings.TranslationsPigeon.nextUpInSeconds$messageChannelSuffix', pigeonChannelCodec,
           binaryMessenger: binaryMessenger);
       if (api == null) {
         pigeonVar_channel.setMessageHandler(null);
       } else {
         pigeonVar_channel.setMessageHandler((Object? message) async {
           assert(message != null,
-          'Argument for dev.flutter.pigeon.nl_jknaapen_kebap.settings.TranslationsPigeon.nextUpInSeconds was null.');
+          'Argument for dev.flutter.pigeon.jack_grey_kebap.settings.TranslationsPigeon.nextUpInSeconds was null.');
           final List<Object?> args = (message as List<Object?>?)!;
           final int? arg_seconds = (args[0] as int?);
           assert(arg_seconds != null,
-              'Argument for dev.flutter.pigeon.nl_jknaapen_kebap.settings.TranslationsPigeon.nextUpInSeconds was null, expected non-null int.');
+              'Argument for dev.flutter.pigeon.jack_grey_kebap.settings.TranslationsPigeon.nextUpInSeconds was null, expected non-null int.');
           try {
             final String output = api.nextUpInSeconds(arg_seconds!);
             return wrapResponse(result: output);
@@ -237,18 +237,18 @@ abstract class TranslationsPigeon {
     }
     {
       final BasicMessageChannel<Object?> pigeonVar_channel = BasicMessageChannel<Object?>(
-          'dev.flutter.pigeon.nl_jknaapen_kebap.settings.TranslationsPigeon.hoursAndMinutes$messageChannelSuffix', pigeonChannelCodec,
+          'dev.flutter.pigeon.jack_grey_kebap.settings.TranslationsPigeon.hoursAndMinutes$messageChannelSuffix', pigeonChannelCodec,
           binaryMessenger: binaryMessenger);
       if (api == null) {
         pigeonVar_channel.setMessageHandler(null);
       } else {
         pigeonVar_channel.setMessageHandler((Object? message) async {
           assert(message != null,
-          'Argument for dev.flutter.pigeon.nl_jknaapen_kebap.settings.TranslationsPigeon.hoursAndMinutes was null.');
+          'Argument for dev.flutter.pigeon.jack_grey_kebap.settings.TranslationsPigeon.hoursAndMinutes was null.');
           final List<Object?> args = (message as List<Object?>?)!;
           final String? arg_time = (args[0] as String?);
           assert(arg_time != null,
-              'Argument for dev.flutter.pigeon.nl_jknaapen_kebap.settings.TranslationsPigeon.hoursAndMinutes was null, expected non-null String.');
+              'Argument for dev.flutter.pigeon.jack_grey_kebap.settings.TranslationsPigeon.hoursAndMinutes was null, expected non-null String.');
           try {
             final String output = api.hoursAndMinutes(arg_time!);
             return wrapResponse(result: output);
@@ -262,18 +262,18 @@ abstract class TranslationsPigeon {
     }
     {
       final BasicMessageChannel<Object?> pigeonVar_channel = BasicMessageChannel<Object?>(
-          'dev.flutter.pigeon.nl_jknaapen_kebap.settings.TranslationsPigeon.endsAt$messageChannelSuffix', pigeonChannelCodec,
+          'dev.flutter.pigeon.jack_grey_kebap.settings.TranslationsPigeon.endsAt$messageChannelSuffix', pigeonChannelCodec,
           binaryMessenger: binaryMessenger);
       if (api == null) {
         pigeonVar_channel.setMessageHandler(null);
       } else {
         pigeonVar_channel.setMessageHandler((Object? message) async {
           assert(message != null,
-          'Argument for dev.flutter.pigeon.nl_jknaapen_kebap.settings.TranslationsPigeon.endsAt was null.');
+          'Argument for dev.flutter.pigeon.jack_grey_kebap.settings.TranslationsPigeon.endsAt was null.');
           final List<Object?> args = (message as List<Object?>?)!;
           final String? arg_time = (args[0] as String?);
           assert(arg_time != null,
-              'Argument for dev.flutter.pigeon.nl_jknaapen_kebap.settings.TranslationsPigeon.endsAt was null, expected non-null String.');
+              'Argument for dev.flutter.pigeon.jack_grey_kebap.settings.TranslationsPigeon.endsAt was null, expected non-null String.');
           try {
             final String output = api.endsAt(arg_time!);
             return wrapResponse(result: output);

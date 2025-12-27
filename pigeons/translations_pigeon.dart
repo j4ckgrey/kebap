@@ -4,11 +4,11 @@ import 'package:pigeon/pigeon.dart';
   PigeonOptions(
     dartOut: 'lib/src/translations_pigeon.g.dart',
     dartOptions: DartOptions(),
-    kotlinOut: 'android/app/src/main/kotlin/nl/jknaapen/kebap/api/TranslationsPigeon.g.kt',
+    kotlinOut: 'android/app/src/main/kotlin/jack/grey/kebap/api/TranslationsPigeon.g.kt',
     kotlinOptions: KotlinOptions(
       includeErrorClass: false,
     ),
-    dartPackageName: 'nl_jknaapen_kebap.settings',
+    dartPackageName: 'jack_grey_kebap.settings',
   ),
 )
 @FlutterApi()

@@ -46,7 +46,7 @@ android {
             ]
         }
     }
-    namespace = "nl.jknaapen.kebap"
+    namespace = "jack.grey.kebap"
     compileSdk = flutter.compileSdkVersion
     ndkVersion = flutter.ndkVersion
 
@@ -65,7 +65,7 @@ android {
     }
 
     defaultConfig {
-        applicationId = "nl.jknaapen.kebap"
+        applicationId = "jack.grey.kebap"
         minSdkVersion flutter.minSdkVersion
         targetSdk = flutter.targetSdkVersion
         versionCode = flutter.versionCode
