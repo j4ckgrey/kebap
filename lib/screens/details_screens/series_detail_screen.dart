@@ -52,14 +52,32 @@ class _SeriesDetailScreenState extends ConsumerState<SeriesDetailScreen> {
   final FocusNode _playedNode = FocusNode(debugLabel: '[FocusDebug] PlayedButton');
   final FocusNode _moreNode = FocusNode(debugLabel: '[FocusDebug] MoreButton');
   
-  bool _initialFocusRequested = false;
-  bool _autoFocusLocked = false;
+  bool _focusLocked = false; 
   Timer? _lockTimer;
+  bool _wasStreamsLoading = true;
+  FocusNode? _lastFocusedNode;
 
   @override
   void initState() {
     super.initState();
+    // Track focus changes
+    void listener() {
+      if (_playButtonNode.hasFocus) _lastFocusedNode = _playButtonNode;
+      if (_mediaInfoNode.hasFocus) _lastFocusedNode = _mediaInfoNode;
+      if (_audioFocusNode.hasFocus) _lastFocusedNode = _audioFocusNode;
+      if (_subFocusNode.hasFocus) _lastFocusedNode = _subFocusNode;
+    }
+    _playButtonNode.addListener(listener);
+    _mediaInfoNode.addListener(listener);
+    _audioFocusNode.addListener(listener);
+    _subFocusNode.addListener(listener);
   }
+  
+  // didPopNext removed as it's not AutoRouteAware? Wait, EpisodeDetailScreen uses it but SeriesDetailScreen doesn't seem to implement AutoRouteAware in the file view.
+  // Actually, checking original code, EpisodeDetailScreen extends ConsumerStatefulWidget, but doesn't implement AutoRouteAware mixin explicitly in the class def shown?
+  // Ah, the view_file for EpisodeDetailScreen didn't show the `with AutoRouteAware` mixin, maybe it's not there or I missed it.
+  // SeriesDetailScreen code shown also doesn't show mixin.
+  // I will just stick to the focus logic updates for now.
 
   @override
   void dispose() {
@@ -75,62 +93,98 @@ class _SeriesDetailScreenState extends ConsumerState<SeriesDetailScreen> {
     super.dispose();
   }
 
-  void _scheduleFocusLock() {
+  void _scheduleFocusLock(bool isPageLoading) {
     _lockTimer?.cancel();
+    if (isPageLoading) return;
     _lockTimer = Timer(const Duration(seconds: 2), () {
-      if (mounted) {
-        setState(() {
-          _autoFocusLocked = true;
-        });
-      }
+      _focusLocked = true;
+      debugPrint('[FocusDebug] Focus locked - no rebuilds for 2 seconds');
     });
   }
 
-  void _requestPlayButtonFocus() {
-    if (_autoFocusLocked) return;
-    
-    final currentFocus = FocusManager.instance.primaryFocus;
-    if (currentFocus != null && (
-        currentFocus == _playButtonNode || 
-        currentFocus == _nextUpPosterNode ||
-        currentFocus == _mediaInfoNode || 
-        currentFocus == _audioFocusNode || 
-        currentFocus == _subFocusNode ||
-        currentFocus == _favoriteNode ||
-        currentFocus == _playedNode ||
-        currentFocus == _moreNode
-    )) return;
+  void _requestPlayButtonFocus(bool isPageLoading) {
+    if (isPageLoading) {
+      _scheduleFocusLock(true);
+      return;
+    }
 
-    _scheduleFocusLock();
-    
-    Future.delayed(const Duration(milliseconds: 300), () {
-      if (mounted && !_autoFocusLocked && _playButtonNode.canRequestFocus) {
-        final delayedFocus = FocusManager.instance.primaryFocus;
-        if (delayedFocus != null && (
-            delayedFocus == _playButtonNode || 
-            delayedFocus == _nextUpPosterNode ||
-            delayedFocus == _mediaInfoNode || 
-            delayedFocus == _audioFocusNode || 
-            delayedFocus == _subFocusNode
-        )) return;
-
-        _playButtonNode.requestFocus();
+    void attemptFocus() {
+      if (!mounted) {
+        debugPrint('[FocusDebug] attemptFocus aborted: not mounted');
+        return;
       }
-    });
+      
+      // If ANY of our interactive nodes has focus, respect it!
+      if (_playButtonNode.hasFocus || _mediaInfoNode.hasFocus || _audioFocusNode.hasFocus || _subFocusNode.hasFocus || _nextUpPosterNode.hasFocus) {
+         debugPrint('[FocusDebug] A widget already has focus. Respecting it.');
+         return;
+      }
+      
+      if (_focusLocked) {
+         debugPrint('[FocusDebug] attemptFocus aborted: Focus is locked.');
+         return;
+      }
+
+      if (_playButtonNode.canRequestFocus) {
+        _playButtonNode.requestFocus();
+        debugPrint('[FocusDebug] Play button focus requested successfully.');
+      } else {
+        debugPrint('[FocusDebug] Play button CANNOT request focus yet (not attached or visible).');
+      }
+    }
+
+    attemptFocus(); 
+    Future.delayed(const Duration(milliseconds: 100), attemptFocus);
+    Future.delayed(const Duration(milliseconds: 300), attemptFocus);
+    Future.delayed(const Duration(milliseconds: 600), attemptFocus);
+
+    _scheduleFocusLock(false);
   }
 
   @override
   Widget build(BuildContext context) {
     final details = ref.watch(providerId);
 
-    // Request initial focus once when data is ready
-    if (!_initialFocusRequested && details != null && details.nextUp != null) {
-      _initialFocusRequested = true;
-      WidgetsBinding.instance.addPostFrameCallback((_) {
-        _requestPlayButtonFocus();
-      });
+    bool isPageLoading = details == null;
+    bool isStreamsLoading = true;
+    if (details != null) {
+      if (details.nextUp != null) {
+        isStreamsLoading = details.nextUp!.mediaStreams.isLoading;
+      } else {
+        isStreamsLoading = false;
+      }
     }
 
+    // Detect Transition: Streams Loading -> Loaded
+    if (_wasStreamsLoading && !isStreamsLoading) {
+      debugPrint('[FocusDebug] Streams finished loading (Transition).');
+      
+      // Schedule restoration for after this frame
+      WidgetsBinding.instance.addPostFrameCallback((_) {
+        // RESTORE FOCUS if it was on a dropdown
+        if (_lastFocusedNode == _mediaInfoNode || _lastFocusedNode == _audioFocusNode || _lastFocusedNode == _subFocusNode) {
+            if (_lastFocusedNode?.canRequestFocus == true) {
+                debugPrint('[FocusDebug] Restoring focus to last known dropdown node (PostFrame).');
+                _lastFocusedNode?.requestFocus();
+                // Re-lock briefly to prevent play button from stealing it back immediately
+                _focusLocked = true;
+                Future.delayed(const Duration(milliseconds: 500), () {
+                   if (mounted) _focusLocked = false;
+                });
+                return;
+            }
+        }
+        // If we didn't restore, just unlock
+        _focusLocked = false;
+      });
+    }
+    _wasStreamsLoading = isStreamsLoading;
+
+    if (!_focusLocked) {
+      WidgetsBinding.instance.addPostFrameCallback((_) {
+        _requestPlayButtonFocus(isPageLoading);
+      });
+    }
 
     final wrapAlignment =
         AdaptiveLayout.viewSizeOf(context) != ViewSize.phone ? WrapAlignment.start : WrapAlignment.center;

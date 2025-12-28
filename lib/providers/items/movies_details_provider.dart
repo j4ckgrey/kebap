@@ -37,18 +37,10 @@ class MovieDetails extends _$MovieDetails {
       }
       newState = (response.bodyOrThrow as MovieModel).copyWith(related: state?.related);
       
-      // Preserve media streams from input item if it has MORE versions than API response
-      // AND if the IDs match (to avoid mixing metadata from different items/redirects)
-      final inputVersionCount = (item is MovieModel) ? item.mediaStreams.versionStreams.length : 0;
-      final responseVersionCount = newState.mediaStreams.versionStreams.length;
-      
-      if (item.id == newState.id) { // CRITICAL CHECKS
-        if (inputVersionCount > responseVersionCount) {
-          newState = newState.copyWith(mediaStreams: (item as MovieModel).mediaStreams);
-        } else if (state?.mediaStreams.versionStreams.isNotEmpty == true && newState.mediaStreams.versionStreams.isEmpty) {
-          newState = newState.copyWith(mediaStreams: state!.mediaStreams);
-        }
-      }
+      // ALWAYS use API response versions - server is the source of truth
+      // Previously we preserved input item versions if they had MORE versions,
+      // but this caused issues when items came from different sources (Library vs API)
+      // with different/stale version ordering.
       
       // CRITICAL: Use newState.id (canonical ID from response) instead of item.id!
       // Gelato may redirect to a different canonical ID, so we must use the response's ID.

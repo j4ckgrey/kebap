@@ -67,10 +67,8 @@ class EpisodeDetailsProvider extends StateNotifier<EpisodeDetailModel> {
 
       var episode = (await api.usersUserIdItemsItemIdGet(itemId: item.id)).bodyOrThrow as EpisodeModel;
 
-      // Preserve existing media streams if new state has none (prevents UI flicker)
-      if (state.episode?.mediaStreams.versionStreams.isNotEmpty == true && episode.mediaStreams.versionStreams.isEmpty) {
-        episode = episode.copyWith(mediaStreams: state.episode!.mediaStreams);
-      }
+      // ALWAYS use API response versions - server is the source of truth
+      // Previously we preserved existing state if new had none, but this caused stale data issues
 
       // CRITICAL: Use episode.id (canonical ID from response) instead of item.id!
       // Gelato may redirect to a different canonical ID, so we must use the response's ID.

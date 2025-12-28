@@ -89,10 +89,10 @@ class MediaStreamInformation extends ConsumerWidget {
             child: _StreamOptionSelect(
               focusNode: focusNode,
               label: const Icon(IconsaxPlusBold.cd),
-              isLoading: mediaStream.isLoading,
-              current: mediaStream.isLoading ? context.localized.loading : null,
-              currentQuality: mediaStream.isLoading ? null : parseVersionName(mediaStream.currentVersionStream?.name ?? "").quality,
-              currentFilename: mediaStream.isLoading ? null : "${mediaStream.currentVersionStream?.size.byteFormat ?? ''}",
+              isLoading: mediaStream.isLoading && mediaStream.versionStreams.isEmpty,
+              current: mediaStream.isLoading && mediaStream.versionStreams.isEmpty ? context.localized.loading : null,
+              currentQuality: parseVersionName(mediaStream.currentVersionStream?.name ?? "").quality,
+              currentFilename: "${mediaStream.currentVersionStream?.size.byteFormat ?? ''}",
               itemBuilder: (context) => mediaStream.versionStreams
                   .map((e) {
                     final parsed = parseVersionName(e.name);
@@ -132,7 +132,8 @@ class MediaStreamInformation extends ConsumerWidget {
               current: mediaStream.isLoading 
                   ? context.localized.loading 
                   : (mediaStream.currentAudioStream?.displayTitle ?? context.localized.none),
-              isLoading: mediaStream.isLoading,
+              // Treat as loading if global loading is true, OR if we have versions but no audio/subs yet (masking the 'None' flash)
+              isLoading: mediaStream.isLoading || (mediaStream.versionStreams.isNotEmpty && mediaStream.audioStreams.isEmpty),
               itemBuilder: (context) => mediaStream.isLoading
                   ? []
                   : [AudioStreamModel.no(), ...mediaStream.audioStreams]
@@ -158,7 +159,8 @@ class MediaStreamInformation extends ConsumerWidget {
               current: mediaStream.isLoading
                   ? context.localized.loading
                   : (mediaStream.currentSubStream?.displayTitle ?? context.localized.none),
-              isLoading: mediaStream.isLoading,
+              // Treat as loading if global loading is true, OR if we have versions but no audio/subs yet
+              isLoading: mediaStream.isLoading || (mediaStream.versionStreams.isNotEmpty && mediaStream.subStreams.isEmpty),
               itemBuilder: (context) => mediaStream.isLoading
                   ? []
                   : [
@@ -248,9 +250,18 @@ class _StreamOptionSelect<T> extends StatelessWidget {
                       ],
                     ),
                   );
-                  // Simple focus restore - just request focus after sheet closes
-                  if (focusNode != null && focusNode!.canRequestFocus) {
-                    focusNode!.requestFocus();
+                  // Focus restore AFTER all rebuilds complete (including async stream data)
+                  // Need to wait longer because: 
+                  // 1. Version change triggers immediate rebuild
+                  // 2. Stream data fetch triggers another rebuild when complete
+                  if (focusNode != null) {
+                    // Wait for widget tree to stabilize after all async updates
+                    Future.delayed(const Duration(milliseconds: 500), () {
+                      if (focusNode!.canRequestFocus) {
+                        focusNode!.requestFocus();
+                        debugPrint('[FocusDebug] Dropdown focus restored (delayed 500ms)');
+                      }
+                    });
                   }
                 }
               },
@@ -265,77 +276,91 @@ class _StreamOptionSelect<T> extends StatelessWidget {
   Widget _buildContent(BuildContext context, List<ItemAction> itemList) {
     final onPrimary = Theme.of(context).colorScheme.onPrimaryContainer;
 
+    // Loading State
     if (isLoading) {
       return Padding(
-        padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
-        child: Row(
-          children: [
-            SizedBox(
-              width: 16,
-              height: 16,
-              child: CircularProgressIndicator(
-                strokeWidth: 2,
-                color: onPrimary,
+        padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6), // Match loaded padding
+        child: ConstrainedBox(
+          constraints: const BoxConstraints(minHeight: 40), // Standard height
+          child: Row(
+            children: [
+              SizedBox(
+                width: 16,
+                height: 16,
+                child: CircularProgressIndicator(
+                  strokeWidth: 2,
+                  color: onPrimary,
+                ),
               ),
-            ),
-            const SizedBox(width: 8),
-            Text(
-              current ?? currentQuality ?? context.localized.loading,
-              style: Theme.of(context).textTheme.bodyMedium?.copyWith(
-                color: onPrimary,
+              const SizedBox(width: 8),
+              Expanded(
+                child: Text(
+                  current ?? currentQuality ?? context.localized.loading,
+                  style: Theme.of(context).textTheme.bodyMedium?.copyWith(
+                    color: onPrimary,
+                  ),
+                ),
               ),
-            ),
-          ],
+            ],
+          ),
         ),
       );
     }
     
+    // Loaded State
     return Padding(
       padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
-      child: Row(
-        children: [
-          Expanded(
-            child: currentQuality != null && currentFilename != null
-                ? Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    mainAxisSize: MainAxisSize.min,
-                    children: [
-                      Text(
-                        currentQuality!,
+      child: ConstrainedBox(
+        constraints: const BoxConstraints(minHeight: 40), // Standard height
+        child: Row(
+          children: [
+            Expanded(
+              child: Align(
+                alignment: Alignment.centerLeft,
+                child: currentQuality != null && currentFilename != null
+                    ? Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        mainAxisSize: MainAxisSize.min,
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        children: [
+                          Text(
+                            currentQuality!,
+                            textAlign: TextAlign.start,
+                            style: Theme.of(context).textTheme.titleMedium?.copyWith(
+                              fontWeight: FontWeight.bold,
+                              color: onPrimary,
+                            ),
+                          ),
+                          Text(
+                            currentFilename!,
+                            textAlign: TextAlign.start,
+                            style: Theme.of(context).textTheme.bodySmall?.copyWith(
+                              color: onPrimary.withValues(alpha: 0.8),
+                            ),
+                            maxLines: 1,
+                            overflow: TextOverflow.ellipsis,
+                          ),
+                        ],
+                      )
+                    : Text(
+                        current ?? '',
                         textAlign: TextAlign.start,
                         style: Theme.of(context).textTheme.titleMedium?.copyWith(
                           fontWeight: FontWeight.bold,
                           color: onPrimary,
                         ),
                       ),
-                      Text(
-                        currentFilename!,
-                        textAlign: TextAlign.start,
-                        style: Theme.of(context).textTheme.bodySmall?.copyWith(
-                          color: onPrimary.withValues(alpha: 0.8),
-                        ),
-                        maxLines: 1,
-                        overflow: TextOverflow.ellipsis,
-                      ),
-                    ],
-                  )
-                : Text(
-                    current ?? '',
-                    textAlign: TextAlign.start,
-                    style: Theme.of(context).textTheme.titleMedium?.copyWith(
-                      fontWeight: FontWeight.bold,
-                      color: onPrimary,
-                    ),
-                  ),
-          ),
-          if (itemList.length > 1) ...[
-            const SizedBox(width: 8),
-            Icon(
-              Icons.keyboard_arrow_down,
-              color: onPrimary,
+              ),
             ),
+            if (itemList.length > 1) ...[
+              const SizedBox(width: 8),
+              Icon(
+                Icons.keyboard_arrow_down,
+                color: onPrimary,
+              ),
+            ],
           ],
-        ],
+        ),
       ),
     );
   }

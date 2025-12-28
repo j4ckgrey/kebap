@@ -305,18 +305,123 @@ class SeriesDetailViewNotifier extends StateNotifier<SeriesModel?> {
     }
   }
 
-  void updateEpisodeInfo(EpisodeModel episode) {
+  Future<void> updateEpisodeInfo(EpisodeModel episode) async {
     if (state?.availableEpisodes == null) return;
     
     final index = state!.availableEpisodes!.indexWhere((e) => e.id == episode.id);
 
     if (index != -1) {
-      final updatedEpisodes = List<EpisodeModel>.from(state!.availableEpisodes!);
+      // 1. Update state immediately with the new selection (e.g. version index changed in UI)
+      var updatedEpisodes = List<EpisodeModel>.from(state!.availableEpisodes!);
       updatedEpisodes[index] = episode;
       
       state = state!.copyWith(
         availableEpisodes: updatedEpisodes,
       );
+
+      // 2. Check if we need to fetch streams for the selected version
+      final versionIndex = episode.mediaStreams.versionStreamIndex ?? 0;
+      final selectedVersion = episode.mediaStreams.versionStreams.elementAtOrNull(versionIndex);
+
+      if (selectedVersion != null && selectedVersion.id != null) {
+          final totalStreams = selectedVersion.audioStreams.length + selectedVersion.subStreams.length;
+          
+          // If streams are empty, fetch them!
+          if (totalStreams == 0) {
+             try {
+                // Set loading state for this episode's streams
+                final loadingEpisode = episode.copyWith(
+                   mediaStreams: episode.mediaStreams.copyWith(isLoading: true),
+                );
+                updatedEpisodes[index] = loadingEpisode;
+                state = state!.copyWith(availableEpisodes: updatedEpisodes);
+
+                final baklavaService = ref.read(baklavaServiceProvider);
+                final streamsResponse = await baklavaService.getMediaStreams(
+                  itemId: episode.id,
+                  mediaSourceId: selectedVersion.id,
+                );
+
+                if (streamsResponse.body != null) {
+                  final audioList = (streamsResponse.body!['audio'] as List?)?.cast<Map<String, dynamic>>() ?? [];
+                  final subsList = (streamsResponse.body!['subs'] as List?)?.cast<Map<String, dynamic>>() ?? [];
+                  
+                  final audioStreams = <AudioStreamModel>[
+                    for (final a in audioList)
+                      AudioStreamModel(
+                        displayTitle: (a['title'] as String?) ?? 'Audio ${a['index']}',
+                        name: (a['title'] as String?) ?? '',
+                        codec: (a['codec'] as String?) ?? '',
+                        isDefault: false,
+                        isExternal: false,
+                        index: a['index'] as int,
+                        language: (a['language'] as String?) ?? '',
+                        channelLayout: '',
+                      )
+                  ];
+                  
+                  final subStreams = <SubStreamModel>[
+                    for (final s in subsList)
+                      SubStreamModel(
+                        name: (s['title'] as String?) ?? '',
+                        id: s['index'].toString(),
+                        title: (s['title'] as String?) ?? 'Subtitle ${s['index']}',
+                        displayTitle: (s['title'] as String?) ?? 'Subtitle ${s['index']}',
+                        language: (s['language'] as String?) ?? '',
+                        codec: (s['codec'] as String?) ?? '',
+                        isDefault: s['isDefault'] as bool? ?? false,
+                        isExternal: false,
+                        index: s['index'] as int,
+                      )
+                  ];
+                  
+                  // Update the version stream with new data
+                   final updatedVersion = VersionStreamModel(
+                      name: selectedVersion.name,
+                      index: selectedVersion.index,
+                      id: selectedVersion.id,
+                      size: selectedVersion.size,
+                      defaultAudioStreamIndex: audioStreams.firstOrNull?.index,
+                      defaultSubStreamIndex: subStreams.firstOrNull?.index,
+                      videoStreams: selectedVersion.videoStreams,
+                      audioStreams: audioStreams,
+                      subStreams: subStreams,
+                    );
+
+                    // Re-construct the version list
+                    var newVersionList = List<VersionStreamModel>.from(episode.mediaStreams.versionStreams);
+                    if (versionIndex < newVersionList.length) {
+                        newVersionList[versionIndex] = updatedVersion;
+                    }
+
+                    final fetchedEpisode = episode.copyWith(
+                      mediaStreams: episode.mediaStreams.copyWith(
+                        isLoading: false,
+                        versionStreams: newVersionList,
+                        defaultAudioStreamIndex: audioStreams.firstOrNull?.index,
+                        defaultSubStreamIndex: subStreams.firstOrNull?.index,
+                      ),
+                    );
+
+                    // Final update to state
+                    updatedEpisodes = List<EpisodeModel>.from(state!.availableEpisodes!);
+                    updatedEpisodes[index] = fetchedEpisode;
+                    state = state!.copyWith(availableEpisodes: updatedEpisodes);
+                } else {
+                    // Response body null - cancel loading
+                     updatedEpisodes = List<EpisodeModel>.from(state!.availableEpisodes!);
+                     updatedEpisodes[index] = episode.copyWith(mediaStreams: episode.mediaStreams.copyWith(isLoading: false));
+                     state = state!.copyWith(availableEpisodes: updatedEpisodes);
+                }
+
+             } catch (e) {
+                debugPrint('Error fetching streams for NextUp: $e');
+                updatedEpisodes = List<EpisodeModel>.from(state!.availableEpisodes!);
+                updatedEpisodes[index] = episode.copyWith(mediaStreams: episode.mediaStreams.copyWith(isLoading: false));
+                state = state!.copyWith(availableEpisodes: updatedEpisodes);
+             }
+          }
+      }
     }
   }
 }

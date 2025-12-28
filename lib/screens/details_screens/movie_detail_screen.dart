@@ -46,48 +46,79 @@ class _ItemDetailScreenState extends ConsumerState<MovieDetailScreen>
   final FocusNode _audioFocusNode = FocusNode(); // Audio dropdown
   final FocusNode _subFocusNode = FocusNode(); // Subtitle dropdown
 
-  bool _focusLocked = false;  // Set to true once all async ops complete
-  Timer? _lockTimer;  // Debounce timer for focus lock
+  bool _focusLocked = false; 
+  Timer? _lockTimer;
+  bool _wasStreamsLoading = true; // Track previous stream loading state
+  FocusNode? _lastFocusedNode; // Track which node had focus last
 
   @override
   void initState() {
     super.initState();
+    // Track focus changes
+    void listener() {
+      if (_playButtonNode.hasFocus) _lastFocusedNode = _playButtonNode;
+      if (_mediaInfoNode.hasFocus) _lastFocusedNode = _mediaInfoNode;
+      if (_audioFocusNode.hasFocus) _lastFocusedNode = _audioFocusNode;
+      if (_subFocusNode.hasFocus) _lastFocusedNode = _subFocusNode;
+    }
+    _playButtonNode.addListener(listener);
+    _mediaInfoNode.addListener(listener);
+    _audioFocusNode.addListener(listener);
+    _subFocusNode.addListener(listener);
   }
 
-  // AutoRouteAware callback - called when returning to this screen from another route (e.g. video player)
-  @override
-  void didPopNext() {
-    debugPrint('[MovieDetailScreen] didPopNext - refreshing details for resume button');
-    // Refresh the item details so that playback progress/resume button updates
-    ref.read(providerInstance.notifier).fetchDetails(widget.item);
-    // Reset focus lock when returning
-    _focusLocked = false;
-    _requestPlayButtonFocus();
+  // ... didPopNext ...
+
+  void _scheduleFocusLock(bool isPageLoading) {
+     _lockTimer?.cancel();
+     if (isPageLoading) return;
+     _lockTimer = Timer(const Duration(seconds: 2), () {
+       _focusLocked = true;
+       debugPrint('[FocusDebug] Focus locked - no rebuilds for 2 seconds');
+     });
   }
 
-  void _scheduleFocusLock() {
-    // Cancel any pending lock timer and restart
-    _lockTimer?.cancel();
-    // Lock focus 2 seconds after the LAST build (no more rebuilds = async complete)
-    _lockTimer = Timer(const Duration(seconds: 2), () {
-      _focusLocked = true;
-      debugPrint('[FocusDebug] Focus locked - no rebuilds for 2 seconds');
-    });
-  }
+  void _requestPlayButtonFocus(bool isPageLoading) {
+    if (isPageLoading) {
+      _scheduleFocusLock(true);
+      return;
+    }
 
-  void _requestPlayButtonFocus() {
-    if (_focusLocked) return;
-    
-    // Reset the lock timer on every focus request (debounce)
-    _scheduleFocusLock();
-    
-    // Use a delay to ensure widgets have built, then request focus
-    Future.delayed(const Duration(milliseconds: 300), () {
-      if (mounted && !_focusLocked && _playButtonNode.canRequestFocus) {
-        _playButtonNode.requestFocus();
-        debugPrint('[FocusDebug] Play button focus requested (delayed)');
+    void attemptFocus() {
+      if (!mounted) {
+        debugPrint('[FocusDebug] attemptFocus aborted: not mounted');
+        return;
       }
-    });
+      
+      // If ANY of our interactive nodes has focus, respect it!
+      // This prevents stealing focus from the Version dropdown after a stream refresh.
+      if (_playButtonNode.hasFocus || _mediaInfoNode.hasFocus || _audioFocusNode.hasFocus || _subFocusNode.hasFocus) {
+         debugPrint('[FocusDebug] A widget already has focus (Play: ${_playButtonNode.hasFocus}, Info: ${_mediaInfoNode.hasFocus}). Respecting it.');
+         // Do NOT lock here. Let the timer lock it. 
+         // This allows us to re-check in subsequent delayed calls if focus was lost briefly.
+         return;
+      }
+      
+      if (_focusLocked) {
+         debugPrint('[FocusDebug] attemptFocus aborted: Focus is locked.');
+         return;
+      }
+
+      if (_playButtonNode.canRequestFocus) {
+        _playButtonNode.requestFocus();
+        debugPrint('[FocusDebug] Play button focus requested successfully.');
+      } else {
+        debugPrint('[FocusDebug] Play button CANNOT request focus yet (not attached or visible).');
+      }
+    }
+
+    // Checking immediately + delays covers both instant and settled UI
+    attemptFocus(); 
+    Future.delayed(const Duration(milliseconds: 100), attemptFocus);
+    Future.delayed(const Duration(milliseconds: 300), attemptFocus);
+    Future.delayed(const Duration(milliseconds: 600), attemptFocus);
+
+    _scheduleFocusLock(false);
   }
 
   @override
@@ -102,14 +133,35 @@ class _ItemDetailScreenState extends ConsumerState<MovieDetailScreen>
 
   @override
   Widget build(BuildContext context) {
+    // Determine loading state
+    final details = ref.watch(providerInstance);
+    // Treated as loading if details null or explicit loading flag
+    final bool isPageLoading = details == null;
+    final bool isStreamsLoading = details?.mediaStreams.isLoading ?? true;
+
+    // Detect Transition: Streams Loading -> Loaded
+    if (_wasStreamsLoading && !isStreamsLoading) {
+      debugPrint('[FocusDebug] Streams finished loading (Transition).');
+      _focusLocked = false; 
+      
+      // RESTORE FOCUS if it was on a dropdown
+      if (_lastFocusedNode == _mediaInfoNode || _lastFocusedNode == _audioFocusNode || _lastFocusedNode == _subFocusNode) {
+         if (_lastFocusedNode?.canRequestFocus == true) {
+             debugPrint('[FocusDebug] Restoring focus to last known dropdown node.');
+             _lastFocusedNode?.requestFocus();
+             _focusLocked = true; // Lock it immediately so attemptFocus doesn't fight us
+         }
+      }
+    }
+    _wasStreamsLoading = isStreamsLoading;
+
     // Request focus after EVERY build to overcome late async rebuilds
+    // Pass isLoading so we don't lock focus prematurely
     if (!_focusLocked) {
       WidgetsBinding.instance.addPostFrameCallback((_) {
-        _requestPlayButtonFocus();
+        _requestPlayButtonFocus(isPageLoading);
       });
     }
-    
-    final details = ref.watch(providerInstance);
 
     final wrapAlignment =
         AdaptiveLayout.viewSizeOf(context) != ViewSize.phone ? WrapAlignment.start : WrapAlignment.center;
@@ -155,7 +207,7 @@ class _ItemDetailScreenState extends ConsumerState<MovieDetailScreen>
                       children: [
                         MediaPlayButton(
                           focusNode: _playButtonNode,
-                          autofocus: true,
+                          // autofocus removed to allow manual control
                           item: details,
                           onLongPressed: (restart) async {
                             await details.play(

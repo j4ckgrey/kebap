@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_widget_from_html/flutter_widget_from_html.dart';
@@ -95,23 +96,32 @@ class NextUpEpisode extends ConsumerWidget {
               );
             } else {
               return Row(
+                crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  ConstrainedBox(
+                   ConstrainedBox(
                     constraints: BoxConstraints(
                         maxHeight: AdaptiveLayout.poster(context).gridRatio,
                         maxWidth: MediaQuery.of(context).size.width / 2),
-                    child: EpisodePoster(
-                      episode: nextEpisode,
-                      focusNode: posterFocusNode,
-                      showLabel: false,
-                      onTap: () => nextEpisode.navigateTo(context),
-                      actions: const [],
-                      onFocusChanged: (value) {
-                        if (value) {
-                          context.ensureVisible();
-                        }
+                    child: CallbackShortcuts(
+                      bindings: {
+                        SingleActivator(LogicalKeyboardKey.arrowRight): () {
+                          debugPrint('[FocusDebug] Shortcut: ArrowRight pressed on Poster. Requesting dropdown focus.');
+                          mediaInfoNode?.requestFocus();
+                        },
                       },
-                      isCurrentEpisode: false,
+                      child: EpisodePoster(
+                        episode: nextEpisode,
+                        focusNode: posterFocusNode,
+                        showLabel: false,
+                        onTap: () => nextEpisode.navigateTo(context),
+                        actions: const [],
+                        onFocusChanged: (value) {
+                          if (value) {
+                            context.ensureVisible();
+                          }
+                        },
+                        isCurrentEpisode: false,
+                      ),
                     ),
                   ),
                   const SizedBox(width: 32),
