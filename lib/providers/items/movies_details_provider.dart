@@ -94,6 +94,15 @@ class MovieDetails extends _$MovieDetails {
               final audioList = (streamsResponse.body!['audio'] as List?)?.cast<Map<String, dynamic>>() ?? [];
               final subsList = (streamsResponse.body!['subs'] as List?)?.cast<Map<String, dynamic>>() ?? [];
               
+              if (audioList.isEmpty && subsList.isEmpty) {
+                debugPrint('[MovieDetailsProvider] Baklava returned no streams, skipping update');
+                newState = newState.copyWith(
+                  mediaStreams: newState.mediaStreams.copyWith(isLoading: false),
+                );
+                state = newState;
+                return null;
+              }
+
               final audioStreams = <AudioStreamModel>[
                 for (final a in audioList)
                   AudioStreamModel(
@@ -211,6 +220,11 @@ class MovieDetails extends _$MovieDetails {
           final audioList = (streamsResponse.body!['audio'] as List?)?.cast<Map<String, dynamic>>() ?? [];
           final subsList = (streamsResponse.body!['subs'] as List?)?.cast<Map<String, dynamic>>() ?? [];
           
+          if (audioList.isEmpty && subsList.isEmpty) {
+            debugPrint('[setVersionIndex] Baklava returned no streams, skipping update');
+            return;
+          }
+
           debugPrint('[setVersionIndex] Parsed ${audioList.length} audio, ${subsList.length} subs');
           
           final audioStreams = <AudioStreamModel>[
@@ -331,6 +345,11 @@ class MovieDetails extends _$MovieDetails {
         if (streamsResponse.body != null) {
           final audioList = (streamsResponse.body!['audio'] as List?)?.cast<Map<String, dynamic>>() ?? [];
           final subsList = (streamsResponse.body!['subs'] as List?)?.cast<Map<String, dynamic>>() ?? [];
+
+          if (audioList.isEmpty && subsList.isEmpty) {
+            debugPrint('[refreshStreams] Baklava returned no streams, skipping update');
+            return;
+          }
 
           final audioStreams = <AudioStreamModel>[
             for (final a in audioList)
